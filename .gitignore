@@ -1,0 +1,38 @@
+### Go template
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.log
+*.png
+*.jpeg
+*.bak
+.idea
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+main
+
+# Dependency directories (remove the comment below to include it)
+# vendor/
+
+# Mac
+.DS_Store
+.Trash
+
+# vscode
+.vscode/
+__debug_bin
+*/__debug_bin
+
+# binary
+bin/
+*/bin/
+
+*.toml
+*/docs
