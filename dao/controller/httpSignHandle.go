@@ -66,15 +66,14 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 	tokenAddress := utils.FixTo0xString(chainIdAndTokenAddress[64:128])
 	tokenChainId, _ := strconv.ParseInt(chainIdAndTokenAddress[:64], 16, 64)
 	var url string
-	urlMap := consts.NeedScanUrl()
-	for _, v := range urlMap {
-		urlChainId, errS := strconv.Atoi(v["tokenChainId"])
-		if errS != nil {
-			oo.LogW("strconv.Atoi failed. err:%v tokenChainId:%s", errS, urlChainId)
-			continue
-		}
-		if int64(urlChainId) == tokenChainId {
-			url = v["url"]
+
+	for indexScan := range svc.scanInfo {
+		for indexUrl := range svc.scanInfo[indexScan].ChainId {
+
+			chainId := svc.scanInfo[indexScan].ChainId[indexUrl]
+			if int64(chainId) == tokenChainId {
+				url = svc.scanInfo[indexScan].ScanUrl[indexUrl]
+			}
 		}
 	}
 	if url == "" || len(url) == 0 {

@@ -9,7 +9,6 @@ import (
 	_ "stp_dao_v2/consts"
 	"stp_dao_v2/models"
 	"stp_dao_v2/utils"
-	"strconv"
 	"strings"
 	"time"
 	_ "time"
@@ -17,107 +16,109 @@ import (
 
 func (svc *Service) DoScheduledTask() {
 	defer time.AfterFunc(time.Duration(1)*time.Second, svc.DoScheduledTask)
-	svc.scheduledTask(consts.NeedScanUrl())
+	svc.scheduledTask()
 }
 
-func (svc *Service) scheduledTask(scanMap map[string]map[string]string) {
+func (svc *Service) scheduledTask() {
 
-	for _, v := range scanMap {
+	for indexScan := range svc.scanInfo {
+		for indexUrl := range svc.scanInfo[indexScan].ChainId {
 
-		url := v["url"]
-		chainId, _ := strconv.Atoi(v["chainId"])
+			url := svc.scanInfo[indexScan].ScanUrl[indexUrl]
+			chainId := svc.scanInfo[indexScan].ChainId[indexUrl]
 
-		needEvent, currentBlockNum, haveFirstBlock, errNeed := needSaveEvent(chainId)
-		if errNeed != nil {
-			oo.LogW("needSaveEvent failed. err:%v chainId:%d", errNeed, chainId)
-			continue
-		}
-		if !haveFirstBlock || currentBlockNum == 0 {
-			oo.LogD("needSaveEvent failed. chainId:%d", chainId)
-			continue
-		}
-
-		var latestBlockNum int
-		resBlock, err := utils.QueryLatestBlock(url)
-		if err != nil {
-			oo.LogW("QueryLatestBlock failed. err: %v\n", err)
-			continue
-		}
-		latestBlockNum = utils.Hex2Dec(resBlock.Result)
-
-		latestBlockNum = int(math.Min(float64(latestBlockNum-svc.appConfig.DelayedBlockNumber), float64(currentBlockNum+svc.appConfig.BlockNumberPerReq)))
-		for ; currentBlockNum <= latestBlockNum; currentBlockNum++ {
-
-			var blockData = make([]map[string]interface{}, 0)
-			currentBlock := fmt.Sprintf("0x%x", currentBlockNum)
-			res, errCb := utils.ScanBlock(currentBlock, url)
-			if errCb != nil {
-				oo.LogW("ScanBlock failed. currentBlock id: %d. chainId:%d. err: %v\n", currentBlockNum, chainId, errCb)
-				break
+			needEvent, currentBlockNum, haveFirstBlock, errNeed := needSaveEvent(chainId)
+			if errNeed != nil {
+				oo.LogW("needSaveEvent failed. err:%v chainId:%d", errNeed, chainId)
+				continue
+			}
+			if !haveFirstBlock || currentBlockNum == 0 {
+				oo.LogD("needSaveEvent failed. chainId:%d", chainId)
+				continue
 			}
 
-			if len(res.Result) != 0 {
-				for i := range res.Result {
-					if !res.Result[i].Removed {
-						var topic0, topic1, topic2, topic3 string
-						if res.Result[i].Topics != nil && len(res.Result[i].Topics) == 1 {
-							topic0 = res.Result[i].Topics[0]
-							topic1 = "0x"
-							topic2 = "0x"
-							topic3 = "0x"
-						} else if res.Result[i].Topics != nil && len(res.Result[i].Topics) == 2 {
-							topic0 = res.Result[i].Topics[0]
-							topic1 = res.Result[i].Topics[1]
-							topic2 = "0x"
-							topic3 = "0x"
-						} else if res.Result[i].Topics != nil && len(res.Result[i].Topics) == 3 {
-							topic0 = res.Result[i].Topics[0]
-							topic1 = res.Result[i].Topics[1]
-							topic2 = res.Result[i].Topics[2]
-							topic3 = "0x"
-						} else if res.Result[i].Topics != nil && len(res.Result[i].Topics) == 4 {
-							topic0 = res.Result[i].Topics[0]
-							topic1 = res.Result[i].Topics[1]
-							topic2 = res.Result[i].Topics[2]
-							topic3 = res.Result[i].Topics[3]
-						}
-						eventType := consts.EventTypes(strings.TrimPrefix(topic0, "0x"))
+			var latestBlockNum int
+			resBlock, err := utils.QueryLatestBlock(url)
+			if err != nil {
+				oo.LogW("QueryLatestBlock failed. err: %v\n", err)
+				continue
+			}
+			latestBlockNum = utils.Hex2Dec(resBlock.Result)
 
-						for indexNeed := range needEvent {
-							if eventType == needEvent[indexNeed].EventType &&
-								res.Result[i].Address == strings.ToLower(needEvent[indexNeed].Address) &&
-								needEvent[indexNeed].LastBlockNumber <= currentBlockNum {
+			latestBlockNum = int(math.Min(float64(latestBlockNum-svc.appConfig.DelayedBlockNumber), float64(currentBlockNum+svc.appConfig.BlockNumberPerReq)))
+			for ; currentBlockNum <= latestBlockNum; currentBlockNum++ {
 
-								resTime, errTime := utils.QueryTimesTamp(currentBlock, url)
-								if errTime != nil {
-									oo.LogW("QueryTimesTamp failed. currentBlock id: %d. chainId:%s. err: %v\n", currentBlockNum, chainId, errTime)
+				var blockData = make([]map[string]interface{}, 0)
+				currentBlock := fmt.Sprintf("0x%x", currentBlockNum)
+				res, errCb := utils.ScanBlock(currentBlock, url)
+				if errCb != nil {
+					oo.LogW("ScanBlock failed. currentBlock id: %d. chainId:%d. err: %v\n", currentBlockNum, chainId, errCb)
+					break
+				}
+
+				if len(res.Result) != 0 {
+					for i := range res.Result {
+						if !res.Result[i].Removed {
+							var topic0, topic1, topic2, topic3 string
+							if res.Result[i].Topics != nil && len(res.Result[i].Topics) == 1 {
+								topic0 = res.Result[i].Topics[0]
+								topic1 = "0x"
+								topic2 = "0x"
+								topic3 = "0x"
+							} else if res.Result[i].Topics != nil && len(res.Result[i].Topics) == 2 {
+								topic0 = res.Result[i].Topics[0]
+								topic1 = res.Result[i].Topics[1]
+								topic2 = "0x"
+								topic3 = "0x"
+							} else if res.Result[i].Topics != nil && len(res.Result[i].Topics) == 3 {
+								topic0 = res.Result[i].Topics[0]
+								topic1 = res.Result[i].Topics[1]
+								topic2 = res.Result[i].Topics[2]
+								topic3 = "0x"
+							} else if res.Result[i].Topics != nil && len(res.Result[i].Topics) == 4 {
+								topic0 = res.Result[i].Topics[0]
+								topic1 = res.Result[i].Topics[1]
+								topic2 = res.Result[i].Topics[2]
+								topic3 = res.Result[i].Topics[3]
+							}
+							eventType := consts.EventTypes(strings.TrimPrefix(topic0, "0x"))
+
+							for indexNeed := range needEvent {
+								if eventType == needEvent[indexNeed].EventType &&
+									res.Result[i].Address == strings.ToLower(needEvent[indexNeed].Address) &&
+									needEvent[indexNeed].LastBlockNumber <= currentBlockNum {
+
+									resTime, errTime := utils.QueryTimesTamp(currentBlock, url)
+									if errTime != nil {
+										oo.LogW("QueryTimesTamp failed. currentBlock id: %d. chainId:%s. err: %v\n", currentBlockNum, chainId, errTime)
+									}
+
+									var b = make(map[string]interface{})
+									b["event_type"] = eventType
+									b["address"] = res.Result[i].Address
+									b["topic0"] = topic0
+									b["topic1"] = topic1
+									b["topic2"] = topic2
+									b["topic3"] = topic3
+									b["data"] = res.Result[i].Data
+									b["block_number"] = res.Result[i].BlockNumber
+									b["time_stamp"] = resTime.Result.Timestamp
+									b["gas_price"] = "0x"
+									b["gas_used"] = resTime.Result.GasUsed
+									b["log_index"] = res.Result[i].LogIndex
+									b["transaction_hash"] = res.Result[i].TransactionHash
+									b["transaction_index"] = res.Result[i].TransactionIndex
+									b["chain_id"] = chainId
+
+									blockData = append(blockData, b)
+									break
 								}
-
-								var b = make(map[string]interface{})
-								b["event_type"] = eventType
-								b["address"] = res.Result[i].Address
-								b["topic0"] = topic0
-								b["topic1"] = topic1
-								b["topic2"] = topic2
-								b["topic3"] = topic3
-								b["data"] = res.Result[i].Data
-								b["block_number"] = res.Result[i].BlockNumber
-								b["time_stamp"] = resTime.Result.Timestamp
-								b["gas_price"] = "0x"
-								b["gas_used"] = resTime.Result.GasUsed
-								b["log_index"] = res.Result[i].LogIndex
-								b["transaction_hash"] = res.Result[i].TransactionHash
-								b["transaction_index"] = res.Result[i].TransactionIndex
-								b["chain_id"] = chainId
-
-								blockData = append(blockData, b)
-								break
 							}
 						}
 					}
 				}
+				save(blockData, currentBlockNum, chainId)
 			}
-			save(blockData, currentBlockNum, chainId)
 		}
 	}
 }
@@ -391,12 +392,12 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 	//fmt.Println(currentBlockNum)
 }
 
-func DoUpdateDaoInfoTask() {
-	defer time.AfterFunc(time.Duration(60)*time.Second, DoUpdateDaoInfoTask)
-	updateDaoInfoTask(consts.NeedScanUrl())
+func (svc *Service) DoUpdateDaoInfoTask() {
+	defer time.AfterFunc(time.Duration(60)*time.Second, svc.DoUpdateDaoInfoTask)
+	svc.updateDaoInfoTask()
 }
 
-func updateDaoInfoTask(scanMap map[string]map[string]string) {
+func (svc *Service) updateDaoInfoTask() {
 	const data = "0xafe926e8"
 
 	var entities []models.DaoModel
@@ -409,40 +410,43 @@ func updateDaoInfoTask(scanMap map[string]map[string]string) {
 
 	if len(entities) != 0 {
 		for index := range entities {
-			for _, v := range scanMap {
-				url := v["url"]
-				chainId, _ := strconv.Atoi(v["chainId"])
 
-				if chainId == entities[index].ChainId {
-					res, errQ := utils.QueryDaoInfo(entities[index].DaoAddress, data, url)
-					if errQ != nil {
-						oo.LogW("QueryDaoInfo failed. chainId:%d. err: %v\n", chainId, errQ)
-						return
-					}
+			for indexScan := range svc.scanInfo {
+				for indexUrl := range svc.scanInfo[indexScan].ChainId {
 
-					if len(res.Result) != 0 {
-						var outputParameters []string
-						outputParameters = append(outputParameters, "string")
-						outputParameters = append(outputParameters, "string")
-						outputParameters = append(outputParameters, "string")
-						outputParameters = append(outputParameters, "string")
-						outputParameters = append(outputParameters, "string")
-						outputParameters = append(outputParameters, "string")
-						outputParameters = append(outputParameters, "string")
-						outputParameters = append(outputParameters, "string")
+					url := svc.scanInfo[indexScan].ScanUrl[indexUrl]
+					chainId := svc.scanInfo[indexScan].ChainId[indexUrl]
 
-						daoInfo, errDe := utils.Decode(outputParameters, strings.TrimPrefix(res.Result, "0x"))
-						if errDe != nil {
-							oo.LogW("Decode failed. chainId:%d. err: %v\n", chainId, errDe)
+					if chainId == entities[index].ChainId {
+						res, errQ := utils.QueryDaoInfo(entities[index].DaoAddress, data, url)
+						if errQ != nil {
+							oo.LogW("QueryDaoInfo failed. chainId:%d. err: %v\n", chainId, errQ)
 							return
 						}
 
-						saveDaoInfoAndCategory(daoInfo, entities[index].DaoAddress, chainId)
+						if len(res.Result) != 0 {
+							var outputParameters []string
+							outputParameters = append(outputParameters, "string")
+							outputParameters = append(outputParameters, "string")
+							outputParameters = append(outputParameters, "string")
+							outputParameters = append(outputParameters, "string")
+							outputParameters = append(outputParameters, "string")
+							outputParameters = append(outputParameters, "string")
+							outputParameters = append(outputParameters, "string")
+							outputParameters = append(outputParameters, "string")
+
+							daoInfo, errDe := utils.Decode(outputParameters, strings.TrimPrefix(res.Result, "0x"))
+							if errDe != nil {
+								oo.LogW("Decode failed. chainId:%d. err: %v\n", chainId, errDe)
+								return
+							}
+
+							saveDaoInfoAndCategory(daoInfo, entities[index].DaoAddress, chainId)
+
+						}
 
 					}
-
 				}
-
 			}
 
 		}

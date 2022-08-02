@@ -31,20 +31,6 @@ const (
 	SignMessagePrefix = "Welcome come Clique"
 )
 
-func NeedScanUrl() map[string]map[string]string {
-	ScanMap := make(map[string]map[string]string)
-
-	ScanMap["url01"] = make(map[string]string, 2)
-	ScanMap["url01"]["chainId"] = "4"
-	ScanMap["url01"]["url"] = "https://eth-rinkeby.blockvision.org/v1/2AruYS477FHohqhPsDiMNWxxiVL"
-
-	ScanMap["url02"] = make(map[string]string, 2)
-	ScanMap["url02"]["chainId"] = "1"
-	ScanMap["url02"]["url"] = "https://eth-mainnet.blockvision.org/v1/29dy5nutBpNq2hRJVWt9xbjUKxC"
-
-	return ScanMap
-}
-
 func EventTypes(event string) string {
 	var (
 		//CreateDAO(address indexed creator, address indexed daoAddress, uint256 chainId, address tokenAddress)

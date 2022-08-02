@@ -51,7 +51,7 @@ func (svc *Service) Start(ctx *cli.Context) error {
 	}
 
 	go svc.DoScheduledTask()
-	go DoUpdateDaoInfoTask()
+	go svc.DoUpdateDaoInfoTask()
 
 	router := gin.Default()
 	router.Use(utils.Cors())
@@ -138,9 +138,6 @@ func (svc *Service) loadGlobalConfig(ctx *cli.Context) error {
 			var scanInfo *config.ScanInfoConfig
 			if err = svc.gConfig.SessDecode(svc.appConfig.ScanInfoConfName[index], &scanInfo); err != nil {
 				return err
-			}
-			if len(scanInfo.SupportedCoin) != len(scanInfo.SupportedCoinAddress) || len(scanInfo.SupportedCoin) != len(scanInfo.SupportedCoinDecimals) {
-				return fmt.Errorf("supportedCoin length mismatch")
 			}
 			svc.scanInfo = append(svc.scanInfo, scanInfo)
 		}
