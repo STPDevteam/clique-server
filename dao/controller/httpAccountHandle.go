@@ -81,7 +81,7 @@ func httpQueryAccount(c *gin.Context) {
 
 	var myTokenEntities []models.HolderDataModel
 	sqlSel = oo.NewSqler().Table(consts.TbNameHolderData).Where("holder_address", params.Account).Select()
-	err = oo.SqlGet(sqlSel, &myTokenEntities)
+	err = oo.SqlSelect(sqlSel, &myTokenEntities)
 	if err != nil {
 		oo.LogW("%v", err)
 		c.JSON(http.StatusOK, models.Response{
@@ -101,7 +101,7 @@ func httpQueryAccount(c *gin.Context) {
 
 	var daosEntities []models.MemberModel
 	sqlSel = oo.NewSqler().Table(consts.TbNameMember).Where("account", params.Account).Where("join_switch", 1).Select()
-	err = oo.SqlGet(sqlSel, &daosEntities)
+	err = oo.SqlSelect(sqlSel, &daosEntities)
 	if err != nil {
 		oo.LogW("%v", err)
 		c.JSON(http.StatusOK, models.Response{
