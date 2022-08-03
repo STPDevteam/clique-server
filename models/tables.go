@@ -62,7 +62,7 @@ type MemberModel struct {
 	ChainId      int    `db:"chain_id"`
 	Account      string `db:"account"`
 	AccountLevel string `db:"account_level"`
-	JoinSwitch   bool   `db:"join_switch"`
+	JoinSwitch   int    `db:"join_switch"`
 }
 
 type DaoModel struct {

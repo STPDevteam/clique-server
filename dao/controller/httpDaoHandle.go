@@ -81,7 +81,8 @@ func httpDaoList(c *gin.Context) {
 		var proposals uint64
 		sqlProposal := oo.NewSqler().Table(consts.TbNameEventHistorical).
 			Where("event_type", consts.EvCreateProposal).
-			Where("address", daoListEntity[index].DaoAddress).Count()
+			Where("address", daoListEntity[index].DaoAddress).
+			Where("chain_id", daoListEntity[index].ChainId).Count()
 		err = oo.SqlGet(sqlProposal, &proposals)
 		if err != nil {
 			oo.LogW("SQL err: %v", err)
@@ -90,6 +91,7 @@ func httpDaoList(c *gin.Context) {
 		var members uint64
 		sqlMembers := oo.NewSqler().Table(consts.TbNameMember).
 			Where("dao_address", daoListEntity[index].DaoAddress).
+			Where("chain_id", daoListEntity[index].ChainId).
 			Where("join_switch", 1).Count()
 		err = oo.SqlGet(sqlMembers, &members)
 		if err != nil {
@@ -101,10 +103,10 @@ func httpDaoList(c *gin.Context) {
 			return
 		}
 
-		var joinSwitch bool
+		var joinSwitch int
 		var accountLevel string
 		if accountParam == "" {
-			joinSwitch = false
+			joinSwitch = 0
 			accountLevel = ""
 		} else {
 
@@ -122,7 +124,7 @@ func httpDaoList(c *gin.Context) {
 				return
 			}
 			if len(entity) == 0 {
-				joinSwitch = false
+				joinSwitch = 0
 				accountLevel = ""
 			} else {
 				joinSwitch = entity[0].JoinSwitch
@@ -314,4 +316,76 @@ func httpLeftDaoCreator(c *gin.Context) {
 		Data:    data,
 	})
 
+}
+
+// @Summary Dao info
+// @Tags Dao
+// @version 0.0.1
+// @description Dao info
+// @Produce json
+// @Param account query string false "account address"
+// @Param daoAddress query string true "dao Address"
+// @Param chainId query string true "chainId"
+// @Success 200 {object} models.ResDaoInfo
+// @Router /stpdao/v2/dao/info [get]
+func httpDaoInfo(c *gin.Context) {
+	accountParam := c.Query("account")
+	daoAddressParam := c.Query("daoAddress")
+	chainId := c.Query("chainId")
+	chainIdParam, _ := strconv.Atoi(chainId)
+
+	var members uint64
+	sqlMembers := oo.NewSqler().Table(consts.TbNameMember).
+		Where("dao_address", daoAddressParam).
+		Where("chain_id", chainIdParam).
+		Where("join_switch", 1).Count()
+	err := oo.SqlGet(sqlMembers, &members)
+	if err != nil {
+		oo.LogW("SQL err: %v", err)
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+
+	var joinSwitch int
+	var accountLevel string
+	if accountParam == "" {
+		joinSwitch = 0
+		accountLevel = ""
+	} else {
+
+		var entity []models.MemberModel
+		sqlAcc := oo.NewSqler().Table(consts.TbNameMember).
+			Where("account", accountParam).
+			Where("dao_address", daoAddressParam).
+			Where("chain_id", chainIdParam).Select()
+		err = oo.SqlSelect(sqlAcc, &entity)
+		if err != nil {
+			oo.LogW("SQL err: %v", err)
+			c.JSON(http.StatusInternalServerError, models.Response{
+				Code:    500,
+				Message: "Something went wrong, Please try again later.",
+			})
+			return
+		}
+		if len(entity) == 0 {
+			joinSwitch = 0
+			accountLevel = ""
+		} else {
+			joinSwitch = entity[0].JoinSwitch
+			accountLevel = entity[0].AccountLevel
+		}
+	}
+
+	c.JSON(http.StatusOK, models.Response{
+		Code:    http.StatusOK,
+		Message: "ok",
+		Data: models.ResDaoInfo{
+			Members:      members,
+			JoinSwitch:   joinSwitch,
+			AccountLevel: accountLevel,
+		},
+	})
 }

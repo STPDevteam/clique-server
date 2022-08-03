@@ -116,8 +116,8 @@ type ResDaoList struct {
 	Proposals uint64 `json:"proposals"`
 	// members total
 	Members uint64 `json:"members"`
-	// false:not joined Dao,true:joined Dao,default:false
-	JoinSwitch bool `json:"joinSwitch"`
+	// 0:not joined Dao, 1:joined Dao,default:0
+	JoinSwitch int `json:"joinSwitch"`
 	// Account Level:noRole,member,admin,superAdmin
 	AccountLevel string `json:"accountLevel"`
 }
@@ -198,4 +198,12 @@ type ResTokenList struct {
 type SignData struct {
 	Account   string `json:"account" validate:"eth_addr"`              // personal_sign签名地址,0x开头
 	Signature string `json:"signature" validate:"len=130,hexadecimal"` // personal_sign签名结果,不带0x开头
+}
+
+type ResDaoInfo struct {
+	Members uint64 `json:"members"`
+	// 0:not joined Dao, 1:joined Dao,default:0
+	JoinSwitch int `json:"joinSwitch"`
+	// Account Level:noRole,member,admin,superAdmin
+	AccountLevel string `json:"accountLevel"`
 }
