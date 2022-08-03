@@ -42,7 +42,7 @@ func httpDaoList(c *gin.Context) {
 		var categoryId int
 		sqlSelCategoryId := oo.NewSqler().Table(consts.TbNameCategory).Where("category_name", categoryParam).Select("id")
 		err := oo.SqlGet(sqlSelCategoryId, &categoryId)
-		if err != nil {
+		if err != nil && err != oo.ErrNoRows {
 			oo.LogW("SQL err: %v", err)
 			c.JSON(http.StatusInternalServerError, models.Response{
 				Code:    500,
@@ -388,4 +388,49 @@ func httpDaoInfo(c *gin.Context) {
 			AccountLevel: accountLevel,
 		},
 	})
+}
+
+// @Summary Dao admins
+// @Tags Dao
+// @version 0.0.1
+// @description Dao admins
+// @Produce json
+// @Param daoAddress query string true "dao Address"
+// @Param chainId query string true "chainId"
+// @Success 200 {object} models.ResAdminsList
+// @Router /stpdao/v2/dao/admins [get]
+func httpDaoAdmins(c *gin.Context) {
+	daoAddressParam := c.Query("daoAddress")
+	chainId := c.Query("chainId")
+	chainIdParam, _ := strconv.Atoi(chainId)
+
+	var adminEntities []models.MemberModel
+	sqlSel := oo.NewSqler().Table(consts.TbNameMember).
+		Where("dao_address", daoAddressParam).
+		Where("chain_id", chainIdParam).
+		Where("account_level='superAdmin' OR account_level='admin'").Select()
+	err := oo.SqlSelect(sqlSel, &adminEntities)
+	if err != nil {
+		oo.LogW("SQL err: %v", err)
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+
+	var data = make([]models.ResAdminsList, 0)
+	for index := range adminEntities {
+		data = append(data, models.ResAdminsList{
+			Account:      adminEntities[index].Account,
+			AccountLevel: adminEntities[index].AccountLevel,
+		})
+	}
+
+	c.JSON(http.StatusOK, models.Response{
+		Code:    http.StatusOK,
+		Message: "ok",
+		Data:    data,
+	})
+
 }

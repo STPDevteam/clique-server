@@ -50,8 +50,8 @@ func (svc *Service) Start(ctx *cli.Context) error {
 		return err
 	}
 
-	//go svc.DoScheduledTask()
-	//go svc.DoUpdateDaoInfoTask()
+	go svc.DoScheduledTask()
+	go svc.DoUpdateDaoInfoTask()
 
 	router := gin.Default()
 	router.Use(utils.Cors())
@@ -68,7 +68,8 @@ func (svc *Service) Start(ctx *cli.Context) error {
 		r2.GET("/list", httpDaoList)
 		r2.POST("/member", httpDaoJoinOrQuit)
 		r2.GET("/left", httpLeftDaoCreator)
-		r2.GET("info", httpDaoInfo)
+		r2.GET("/info", httpDaoInfo)
+		r2.GET("/admins", httpDaoAdmins)
 	}
 	r3 := router.Group(path.Join(basePath, "/proposal"))
 	{

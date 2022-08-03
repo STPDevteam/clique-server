@@ -510,7 +510,7 @@ func saveDaoInfoAndCategory(daoInfo []interface{}, daoAddress string, chainId in
 	var daoId int
 	sqlSelDId := oo.NewSqler().Table(consts.TbNameDao).Where("dao_address", daoAddress).Where("chain_id", chainId).Select("id")
 	err = oo.SqlGet(sqlSelDId, &daoId)
-	if err != nil {
+	if err != nil && err != oo.ErrNoRows {
 		oo.LogW("SQL failed. err: %v\n", err)
 		return
 	}
@@ -533,7 +533,7 @@ func saveDaoInfoAndCategory(daoInfo []interface{}, daoAddress string, chainId in
 		var categoryId int
 		sqlSelCId := oo.NewSqler().Table(consts.TbNameCategory).Where("category_name", categoryName).Select("id")
 		err = oo.SqlGet(sqlSelCId, &categoryId)
-		if err != nil {
+		if err != nil && err != oo.ErrNoRows {
 			oo.LogW("SQL failed. err: %v\n", err)
 			return
 		}

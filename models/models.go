@@ -207,3 +207,8 @@ type ResDaoInfo struct {
 	// Account Level:noRole,member,admin,superAdmin
 	AccountLevel string `json:"accountLevel"`
 }
+
+type ResAdminsList struct {
+	Account      string `json:"account"`
+	AccountLevel string `json:"accountLevel"`
+}
