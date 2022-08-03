@@ -201,7 +201,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 			daoAddress := utils.FixTo0xString(blockData[i]["topic2"].(string))
 			var addEvent = make([]map[string]interface{}, 0)
 			// Add CreateDao Event Type
-			eventType := []string{consts.EvCreateProposal, consts.EvVote, consts.EvCancelProposal, consts.EvAdmin, consts.EvSetting}
+			eventType := []string{consts.EvCreateProposal, consts.EvVote, consts.EvCancelProposal, consts.EvAdmin, consts.EvSetting, consts.EvOwnershipTransferred}
 			for eventIndex := range eventType {
 				var event = make(map[string]interface{})
 				event["event_type"] = eventType[eventIndex]
@@ -309,6 +309,24 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 				1,
 			)
 			_, errTx = oo.SqlxTxExec(tx, sqlIns)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+		}
+
+		if blockData[i]["event_type"] == consts.EvOwnershipTransferred {
+			daoAddress := blockData[i]["address"].(string)
+			previousOwner := utils.FixTo0xString(blockData[i]["topic1"].(string))
+			newOwner := utils.FixTo0xString(blockData[i]["topic2"].(string))
+			sqlUpSuperAdmin := fmt.Sprintf(`UPDATE %s SET account='%s' WHERE dao_address='%s' AND chain_id=%d AND account='%s'`,
+				consts.TbNameMember,
+				newOwner,
+				daoAddress,
+				chainId,
+				previousOwner,
+			)
+			_, errTx = oo.SqlxTxExec(tx, sqlUpSuperAdmin)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return

@@ -16,14 +16,15 @@ const (
 	TbNameDaoCategory     = "tb_dao_category"
 	TbNameHolderData      = "tb_holder_data"
 
-	EvCreateDao      = "CreateDao"
-	EvCreateProposal = "CreateProposal"
-	EvVote           = "Vote"
-	EvCancelProposal = "CancelProposal"
-	EvAdmin          = "Admin"
-	EvSetting        = "Setting"
-	EvCreateERC20    = "CreateERC20"
-	EvTransfer       = "Transfer"
+	EvCreateDao            = "CreateDao"
+	EvCreateProposal       = "CreateProposal"
+	EvVote                 = "Vote"
+	EvCancelProposal       = "CancelProposal"
+	EvAdmin                = "Admin"
+	EvSetting              = "Setting"
+	EvOwnershipTransferred = "OwnershipTransferred"
+	EvCreateERC20          = "CreateERC20"
+	EvTransfer             = "Transfer"
 
 	MaxValue    = 0x7fffffff
 	ZeroAddress = "0x0000000000000000000000000000000000000000000000000000000000000000"
@@ -51,6 +52,9 @@ func EventTypes(event string) string {
 		//Setting(uint256 indexed settingType)
 		setting = utils.Keccak256("Setting(uint256)")
 
+		//OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
+		ownershipTransferred = utils.Keccak256("OwnershipTransferred(address,address)")
+
 		//CreateERC20(address indexed creator, address token)
 		createERC20 = utils.Keccak256("CreateERC20(address,address)")
 
@@ -75,6 +79,9 @@ func EventTypes(event string) string {
 		break
 	case setting:
 		event = EvSetting
+		break
+	case ownershipTransferred:
+		event = EvOwnershipTransferred
 		break
 	case createERC20:
 		event = EvCreateERC20

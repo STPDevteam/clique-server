@@ -201,13 +201,13 @@ func httpDaoJoinOrQuit(c *gin.Context) {
 		return
 	}
 
-	var level []string
+	var level string
 	sqlSuperAdmin := oo.NewSqler().Table(consts.TbNameMember).
 		Where("dao_address", params.Params.DaoAddress).
 		Where("account", params.Params.Account).
 		Where("chain_id", params.Params.ChainId).Select("account_level")
-	err = oo.SqlSelect(sqlSuperAdmin, &level)
-	if err != nil {
+	err = oo.SqlGet(sqlSuperAdmin, &level)
+	if err != nil && err != oo.ErrNoRows {
 		oo.LogW("%v", err)
 		c.JSON(http.StatusOK, models.Response{
 			Code:    500,
@@ -216,7 +216,7 @@ func httpDaoJoinOrQuit(c *gin.Context) {
 		return
 	}
 
-	if level[0] != "superAdmin" {
+	if level != "superAdmin" {
 		if (count == 0 && params.Params.JoinSwitch == 1) || (count == 1 && params.Params.JoinSwitch == 1) {
 
 			sqlIns := fmt.Sprintf(`REPLACE INTO %s (dao_address,chain_id,account,account_level,join_switch) VALUES ('%s',%d,'%s','%s',%d)`,
