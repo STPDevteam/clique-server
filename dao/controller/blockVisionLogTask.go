@@ -298,7 +298,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 			if enable == 0 {
 				accountLevel = "member"
 			} else if enable == 1 {
-				accountLevel = "superAdmin"
+				accountLevel = "admin"
 			}
 			sqlIns := fmt.Sprintf(`REPLACE INTO %s (dao_address,chain_id,account,account_level,join_switch) VALUES ('%s',%d,'%s','%s',%d)`,
 				consts.TbNameMember,
