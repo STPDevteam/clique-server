@@ -247,13 +247,12 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 			}
 
 			//save superAdmin
-			sqlInsMember := fmt.Sprintf(`INSERT INTO %s (dao_address,chain_id,account,account_level,join_switch) VALUES ('%s',%d,'%s','%s',%t)`,
-				consts.TbNameMember,
+			sqlInsMember := fmt.Sprintf(`INSERT INTO %s (dao_address,chain_id,account,account_level) VALUES ('%s',%d,'%s','%s')`,
+				consts.TbNameAdmin,
 				daoAddress,
 				chainId,
 				creatorAddress,
-				"superAdmin",
-				true,
+				consts.LevelSuperAdmin,
 			)
 			_, errTx = oo.SqlxTxExec(tx, sqlInsMember)
 			if errTx != nil {
@@ -296,17 +295,16 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 			enable := utils.Hex2Dec(blockData[i]["data"].(string))
 			var accountLevel string
 			if enable == 0 {
-				accountLevel = "member"
+				accountLevel = consts.LevelNoRole
 			} else if enable == 1 {
-				accountLevel = "admin"
+				accountLevel = consts.LevelAdmin
 			}
-			sqlIns := fmt.Sprintf(`REPLACE INTO %s (dao_address,chain_id,account,account_level,join_switch) VALUES ('%s',%d,'%s','%s',%d)`,
-				consts.TbNameMember,
+			sqlIns := fmt.Sprintf(`REPLACE INTO %s (dao_address,chain_id,account,account_level) VALUES ('%s',%d,'%s','%s')`,
+				consts.TbNameAdmin,
 				daoAddress,
 				chainId,
 				account,
 				accountLevel,
-				1,
 			)
 			_, errTx = oo.SqlxTxExec(tx, sqlIns)
 			if errTx != nil {
@@ -320,7 +318,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 			previousOwner := utils.FixTo0xString(blockData[i]["topic1"].(string))
 			newOwner := utils.FixTo0xString(blockData[i]["topic2"].(string))
 			sqlUpSuperAdmin := fmt.Sprintf(`UPDATE %s SET account='%s' WHERE dao_address='%s' AND chain_id=%d AND account='%s'`,
-				consts.TbNameMember,
+				consts.TbNameAdmin,
 				newOwner,
 				daoAddress,
 				chainId,

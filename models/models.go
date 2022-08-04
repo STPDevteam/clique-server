@@ -83,9 +83,8 @@ type ResMyTokens struct {
 }
 
 type ResDaos struct {
-	DaoAddress   string `json:"daoAddress"`
-	ChainId      int    `json:"chainId"`
-	AccountLevel string `json:"accountLevel"`
+	DaoAddress string `json:"daoAddress"`
+	ChainId    int    `json:"chainId"`
 }
 
 type UpdateAccountWithSignParam struct {
@@ -118,8 +117,6 @@ type ResDaoList struct {
 	Members uint64 `json:"members"`
 	// 0:not joined Dao, 1:joined Dao,default:0
 	JoinSwitch int `json:"joinSwitch"`
-	// Account Level:noRole,member,admin,superAdmin
-	AccountLevel string `json:"accountLevel"`
 }
 
 type SignCreateDataParam struct {
@@ -150,11 +147,9 @@ type JoinDaoParam struct {
 }
 
 type ResLeftDaoCreator struct {
-	Account      string `json:"account"`
-	DaoName      string `json:"daoName"`
-	DaoAddress   string `json:"daoAddress"`
-	TokenAddress string `json:"tokenAddress"`
-	ChainId      int    `json:"chainId"`
+	Account    string `json:"account"`
+	DaoAddress string `json:"daoAddress"`
+	ChainId    int    `json:"chainId"`
 }
 
 type ResProposalsListPage struct {
@@ -204,8 +199,6 @@ type ResDaoInfo struct {
 	Members uint64 `json:"members"`
 	// 0:not joined Dao, 1:joined Dao,default:0
 	JoinSwitch int `json:"joinSwitch"`
-	// Account Level:noRole,member,admin,superAdmin
-	AccountLevel string `json:"accountLevel"`
 }
 
 type ResAdminsList struct {

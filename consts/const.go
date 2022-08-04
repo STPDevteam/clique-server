@@ -15,6 +15,7 @@ const (
 	TbNameCategory        = "tb_category"
 	TbNameDaoCategory     = "tb_dao_category"
 	TbNameHolderData      = "tb_holder_data"
+	TbNameAdmin           = "tb_admin"
 
 	EvCreateDao            = "CreateDao"
 	EvCreateProposal       = "CreateProposal"
@@ -25,6 +26,10 @@ const (
 	EvOwnershipTransferred = "OwnershipTransferred"
 	EvCreateERC20          = "CreateERC20"
 	EvTransfer             = "Transfer"
+
+	LevelSuperAdmin = "superAdmin"
+	LevelAdmin      = "admin"
+	LevelNoRole     = "noRole"
 
 	MaxValue    = 0x7fffffff
 	ZeroAddress = "0x0000000000000000000000000000000000000000000000000000000000000000"

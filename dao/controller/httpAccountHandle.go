@@ -99,8 +99,10 @@ func httpQueryAccount(c *gin.Context) {
 		})
 	}
 
-	var daosEntities []models.MemberModel
-	sqlSel = oo.NewSqler().Table(consts.TbNameMember).Where("account", params.Account).Where("join_switch", 1).Select()
+	var daosEntities []models.AdminModel
+	sqlSel = oo.NewSqler().Table(consts.TbNameAdmin).
+		Where("account", params.Account).
+		Where("account_level='superAdmin' OR account_level='admin'").Select()
 	err = oo.SqlSelect(sqlSel, &daosEntities)
 	if err != nil {
 		oo.LogW("%v", err)
@@ -113,9 +115,8 @@ func httpQueryAccount(c *gin.Context) {
 	var dataDaos = make([]models.ResDaos, 0)
 	for index := range daosEntities {
 		dataDaos = append(dataDaos, models.ResDaos{
-			DaoAddress:   daosEntities[index].DaoAddress,
-			ChainId:      daosEntities[index].ChainId,
-			AccountLevel: daosEntities[index].AccountLevel,
+			DaoAddress: daosEntities[index].DaoAddress,
+			ChainId:    daosEntities[index].ChainId,
 		})
 	}
 

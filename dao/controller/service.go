@@ -67,7 +67,7 @@ func (svc *Service) Start(ctx *cli.Context) error {
 	{
 		r2.GET("/list", httpDaoList)
 		r2.POST("/member", httpDaoJoinOrQuit)
-		r2.GET("/left", httpLeftDaoCreator)
+		r2.GET("/left", httpLeftDaoJoin)
 		r2.GET("/info", httpDaoInfo)
 		r2.GET("/admins", httpDaoAdmins)
 	}

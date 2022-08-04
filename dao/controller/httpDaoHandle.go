@@ -104,10 +104,8 @@ func httpDaoList(c *gin.Context) {
 		}
 
 		var joinSwitch int
-		var accountLevel string
 		if accountParam == "" {
 			joinSwitch = 0
-			accountLevel = ""
 		} else {
 
 			var entity []models.MemberModel
@@ -125,23 +123,20 @@ func httpDaoList(c *gin.Context) {
 			}
 			if len(entity) == 0 {
 				joinSwitch = 0
-				accountLevel = ""
 			} else {
 				joinSwitch = entity[0].JoinSwitch
-				accountLevel = entity[0].AccountLevel
 			}
 
 		}
 
 		listModel = append(listModel, models.ResDaoList{
-			DaoLogo:      daoListEntity[index].DaoLogo,
-			DaoName:      daoListEntity[index].DaoName,
-			DaoAddress:   daoListEntity[index].DaoAddress,
-			ChainId:      daoListEntity[index].ChainId,
-			Proposals:    proposals,
-			Members:      members,
-			JoinSwitch:   joinSwitch,
-			AccountLevel: accountLevel,
+			DaoLogo:    daoListEntity[index].DaoLogo,
+			DaoName:    daoListEntity[index].DaoName,
+			DaoAddress: daoListEntity[index].DaoAddress,
+			ChainId:    daoListEntity[index].ChainId,
+			Proposals:  proposals,
+			Members:    members,
+			JoinSwitch: joinSwitch,
 		})
 	}
 
@@ -201,69 +196,50 @@ func httpDaoJoinOrQuit(c *gin.Context) {
 		return
 	}
 
-	var level string
-	sqlSuperAdmin := oo.NewSqler().Table(consts.TbNameMember).
-		Where("dao_address", params.Params.DaoAddress).
-		Where("account", params.Params.Account).
-		Where("chain_id", params.Params.ChainId).Select("account_level")
-	err = oo.SqlGet(sqlSuperAdmin, &level)
-	if err != nil && err != oo.ErrNoRows {
-		oo.LogW("%v", err)
-		c.JSON(http.StatusOK, models.Response{
-			Code:    500,
-			Message: "Something went wrong, Please try again later.",
-		})
-		return
-	}
+	if (count == 0 && params.Params.JoinSwitch == 1) || (count == 1 && params.Params.JoinSwitch == 1) {
 
-	if level != "superAdmin" {
-		if (count == 0 && params.Params.JoinSwitch == 1) || (count == 1 && params.Params.JoinSwitch == 1) {
-
-			sqlIns := fmt.Sprintf(`REPLACE INTO %s (dao_address,chain_id,account,account_level,join_switch) VALUES ('%s',%d,'%s','%s',%d)`,
-				consts.TbNameMember,
-				params.Params.DaoAddress,
-				params.Params.ChainId,
-				params.Params.Account,
-				"member",
-				params.Params.JoinSwitch,
-			)
-			err = oo.SqlExec(sqlIns)
-			if err != nil {
-				oo.LogW("%v", err)
-				c.JSON(http.StatusOK, models.Response{
-					Code:    500,
-					Message: "Something went wrong, Please try again later.",
-				})
-				return
-			}
-
-		} else if count == 1 && params.Params.JoinSwitch == 0 {
-
-			sqlUp := fmt.Sprintf(`UPDATE %s SET account_level='%s',join_switch=%d WHERE dao_address='%s' AND account='%s' AND chain_id=%d`,
-				consts.TbNameMember,
-				"noRole",
-				params.Params.JoinSwitch,
-				params.Params.DaoAddress,
-				params.Params.Account,
-				params.Params.ChainId,
-			)
-			err = oo.SqlExec(sqlUp)
-			if err != nil {
-				oo.LogW("%v", err)
-				c.JSON(http.StatusOK, models.Response{
-					Code:    500,
-					Message: "Something went wrong, Please try again later.",
-				})
-				return
-			}
-
-		} else if count == 0 && params.Params.JoinSwitch == 0 {
+		sqlIns := fmt.Sprintf(`REPLACE INTO %s (dao_address,chain_id,account,join_switch) VALUES ('%s',%d,'%s',%d)`,
+			consts.TbNameMember,
+			params.Params.DaoAddress,
+			params.Params.ChainId,
+			params.Params.Account,
+			params.Params.JoinSwitch,
+		)
+		err = oo.SqlExec(sqlIns)
+		if err != nil {
+			oo.LogW("%v", err)
 			c.JSON(http.StatusOK, models.Response{
 				Code:    500,
 				Message: "Something went wrong, Please try again later.",
 			})
 			return
 		}
+
+	} else if count == 1 && params.Params.JoinSwitch == 0 {
+
+		sqlUp := fmt.Sprintf(`UPDATE %s SET join_switch=%d WHERE dao_address='%s' AND account='%s' AND chain_id=%d`,
+			consts.TbNameMember,
+			params.Params.JoinSwitch,
+			params.Params.DaoAddress,
+			params.Params.Account,
+			params.Params.ChainId,
+		)
+		err = oo.SqlExec(sqlUp)
+		if err != nil {
+			oo.LogW("%v", err)
+			c.JSON(http.StatusOK, models.Response{
+				Code:    500,
+				Message: "Something went wrong, Please try again later.",
+			})
+			return
+		}
+
+	} else if count == 0 && params.Params.JoinSwitch == 0 {
+		c.JSON(http.StatusOK, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
 	}
 
 	c.JSON(http.StatusOK, models.Response{
@@ -284,11 +260,11 @@ func httpDaoJoinOrQuit(c *gin.Context) {
 // @Param account query string true "account address"
 // @Success 200 {object} models.ResLeftDaoCreator
 // @Router /stpdao/v2/dao/left [get]
-func httpLeftDaoCreator(c *gin.Context) {
+func httpLeftDaoJoin(c *gin.Context) {
 	accountParam := c.Query("account")
 
-	var entities []models.DaoModel
-	sqler := oo.NewSqler().Table(consts.TbNameDao).Where("creator", accountParam).Select()
+	var entities []models.MemberModel
+	sqler := oo.NewSqler().Table(consts.TbNameMember).Where("account", accountParam).Where("join_switch", 1).Select()
 	err := oo.SqlSelect(sqler, &entities)
 	if err != nil {
 		oo.LogW("%v", err)
@@ -302,11 +278,9 @@ func httpLeftDaoCreator(c *gin.Context) {
 	var data = make([]models.ResLeftDaoCreator, 0)
 	for index := range entities {
 		data = append(data, models.ResLeftDaoCreator{
-			Account:      accountParam,
-			DaoName:      entities[index].DaoName,
-			DaoAddress:   entities[index].DaoAddress,
-			TokenAddress: entities[index].TokenAddress,
-			ChainId:      entities[index].ChainId,
+			Account:    accountParam,
+			DaoAddress: entities[index].DaoAddress,
+			ChainId:    entities[index].ChainId,
 		})
 	}
 
@@ -350,12 +324,9 @@ func httpDaoInfo(c *gin.Context) {
 	}
 
 	var joinSwitch int
-	var accountLevel string
 	if accountParam == "" {
 		joinSwitch = 0
-		accountLevel = ""
 	} else {
-
 		var entity []models.MemberModel
 		sqlAcc := oo.NewSqler().Table(consts.TbNameMember).
 			Where("account", accountParam).
@@ -372,10 +343,8 @@ func httpDaoInfo(c *gin.Context) {
 		}
 		if len(entity) == 0 {
 			joinSwitch = 0
-			accountLevel = ""
 		} else {
 			joinSwitch = entity[0].JoinSwitch
-			accountLevel = entity[0].AccountLevel
 		}
 	}
 
@@ -383,9 +352,8 @@ func httpDaoInfo(c *gin.Context) {
 		Code:    http.StatusOK,
 		Message: "ok",
 		Data: models.ResDaoInfo{
-			Members:      members,
-			JoinSwitch:   joinSwitch,
-			AccountLevel: accountLevel,
+			Members:    members,
+			JoinSwitch: joinSwitch,
 		},
 	})
 }
@@ -404,8 +372,8 @@ func httpDaoAdmins(c *gin.Context) {
 	chainId := c.Query("chainId")
 	chainIdParam, _ := strconv.Atoi(chainId)
 
-	var adminEntities []models.MemberModel
-	sqlSel := oo.NewSqler().Table(consts.TbNameMember).
+	var adminEntities []models.AdminModel
+	sqlSel := oo.NewSqler().Table(consts.TbNameAdmin).
 		Where("dao_address", daoAddressParam).
 		Where("chain_id", chainIdParam).
 		Where("account_level='superAdmin' OR account_level='admin'").Select()

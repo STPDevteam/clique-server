@@ -102,12 +102,27 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_member` (
   `dao_address` VARCHAR(128) NOT NULL,
   `chain_id` INT NOT NULL,
   `account` VARCHAR(128) NOT NULL,
-  `account_level` VARCHAR(128) NOT NULL,
   `join_switch` INT NOT NULL,
   INDEX `dao_address` (`dao_address` ASC),
   INDEX `account` (`account` ASC),
+  INDEX `chain_id` (`chain_id` ASC),
   UNIQUE INDEX `unique_index_chain_id_dao_address_account` (`chain_id` ASC, `dao_address` ASC, `account` ASC),
   PRIMARY KEY (`id`)
+);
+
+CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_admin` (
+`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+`create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+`update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+`dao_address` VARCHAR(128) NOT NULL,
+`chain_id` INT NOT NULL,
+`account` VARCHAR(128) NOT NULL,
+`account_level` VARCHAR(128),
+INDEX `dao_address` (`dao_address` ASC),
+INDEX `account` (`account` ASC),
+INDEX `chain_id` (`chain_id` ASC),
+UNIQUE INDEX `unique_index_chain_id_dao_address_account` (`chain_id` ASC, `dao_address` ASC, `account` ASC),
+PRIMARY KEY (`id`)
 );
 
 CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_holder_data` (

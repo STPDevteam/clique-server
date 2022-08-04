@@ -55,14 +55,13 @@ type NonceModel struct {
 }
 
 type MemberModel struct {
-	Id           uint64 `db:"id,omitempty" sqler:"skips"`
-	CreateTime   string `db:"create_time,omitempty" sqler:"skips"`
-	UpdateTime   string `db:"update_time,omitempty" sqler:"skips"`
-	DaoAddress   string `db:"dao_address"`
-	ChainId      int    `db:"chain_id"`
-	Account      string `db:"account"`
-	AccountLevel string `db:"account_level"`
-	JoinSwitch   int    `db:"join_switch"`
+	Id         uint64 `db:"id,omitempty" sqler:"skips"`
+	CreateTime string `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime string `db:"update_time,omitempty" sqler:"skips"`
+	DaoAddress string `db:"dao_address"`
+	ChainId    int    `db:"chain_id"`
+	Account    string `db:"account"`
+	JoinSwitch int    `db:"join_switch"`
 }
 
 type DaoModel struct {
@@ -110,4 +109,14 @@ type HolderDataModel struct {
 	HolderAddress string `db:"holder_address"`
 	Balance       string `db:"balance"`
 	ChainId       int    `db:"chain_id"`
+}
+
+type AdminModel struct {
+	Id           uint64 `db:"id,omitempty" sqler:"skips"`
+	CreateTime   string `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime   string `db:"update_time,omitempty" sqler:"skips"`
+	DaoAddress   string `db:"dao_address"`
+	ChainId      int    `db:"chain_id"`
+	Account      string `db:"account"`
+	AccountLevel string `db:"account_level"`
 }
