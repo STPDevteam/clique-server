@@ -376,7 +376,7 @@ func httpDaoAdmins(c *gin.Context) {
 	sqlSel := oo.NewSqler().Table(consts.TbNameAdmin).
 		Where("dao_address", daoAddressParam).
 		Where("chain_id", chainIdParam).
-		Where("account_level='superAdmin' OR account_level='admin'").Select()
+		Where("account_level='superAdmin' OR account_level='admin'").Order("account_level DESC").Select()
 	err := oo.SqlSelect(sqlSel, &adminEntities)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)
