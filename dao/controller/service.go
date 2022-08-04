@@ -92,6 +92,10 @@ func (svc *Service) Start(ctx *cli.Context) error {
 	{
 		r7.GET("/list", httpTokenList)
 	}
+	r8 := router.Group(path.Join(basePath, "/error"))
+	{
+		r8.POST("/info", httpErrorInfo)
+	}
 
 	url := ginSwagger.URL(svc.appConfig.SwaggerUrl)
 	router.GET(path.Join(basePath, "/swagger/*any"), ginSwagger.WrapHandler(swaggerFiles.Handler, url))

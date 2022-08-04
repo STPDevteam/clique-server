@@ -205,3 +205,10 @@ type ResAdminsList struct {
 	Account      string `json:"account"`
 	AccountLevel string `json:"accountLevel"`
 }
+
+type ErrorInfoParam struct {
+	Title   string `json:"title"`
+	Content string `json:"content"`
+	Func    string `json:"func"`
+	Params  string `json:"params"`
+}

@@ -16,6 +16,7 @@ const (
 	TbNameDaoCategory     = "tb_dao_category"
 	TbNameHolderData      = "tb_holder_data"
 	TbNameAdmin           = "tb_admin"
+	TbNameErrorInfo       = "error_info"
 
 	EvCreateDao            = "CreateDao"
 	EvCreateProposal       = "CreateProposal"
