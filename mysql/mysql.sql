@@ -152,6 +152,19 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`error_info` (
 PRIMARY KEY (`id`)
 );
 
+CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_account` (
+`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+`create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+`update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+`account` VARCHAR(128) NOT NULL UNIQUE,
+`account_logo` VARCHAR(128),
+`nickname` VARCHAR(128),
+`introduction` VARCHAR(200),
+`twitter` VARCHAR(128),
+`github` VARCHAR(128),
+PRIMARY KEY (`id`)
+);
+
 CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_proposal` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -189,19 +202,6 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_voting_records` (
 	INDEX `proposal_id` (`proposal_id` ASC),
 	INDEX `option_id` (`option_id` ASC),
 	PRIMARY KEY (`id`)
-);
-
-CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_account` (
-`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-`create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-`update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-`account` VARCHAR(128) NOT NULL UNIQUE,
-`account_logo` VARCHAR(128),
-`nickname` VARCHAR(128),
-`introduction` VARCHAR(200),
-`twitter` VARCHAR(128),
-`github` VARCHAR(128),
-PRIMARY KEY (`id`)
 );
 
 CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_token_list` (

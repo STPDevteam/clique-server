@@ -61,7 +61,6 @@ func (svc *Service) Start(ctx *cli.Context) error {
 	r1 := router.Group(path.Join(basePath, "/img"))
 	{
 		r1.POST("/upload", svc.httpUploadImg)
-		r1.GET("/show", httpShowImg)
 	}
 	r2 := router.Group(path.Join(basePath, "/dao"))
 	{

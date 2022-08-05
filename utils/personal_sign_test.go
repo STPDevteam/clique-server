@@ -79,6 +79,8 @@ dac17f958d2ee523a2206206994597c13d831ec7
 
 */
 func TestSignMessage(t *testing.T) {
+	a := Hex2Dec("")
+	fmt.Println(a)
 	to, err := Hex2BigInt("0x0")
 	str := to.String()
 	fmt.Println(str, to, err)

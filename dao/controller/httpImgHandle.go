@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -126,29 +125,4 @@ func (svc *Service) httpUploadImg(c *gin.Context) {
 		},
 		Message: "ok",
 	})
-}
-
-func httpShowImg(c *gin.Context) {
-	img := c.Query("img")
-
-	file, err := os.Open(img)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, models.Response{
-			Code:    http.StatusBadRequest,
-			Message: "Open failed.",
-		})
-		return
-	}
-	defer file.Close()
-
-	buff, err := ioutil.ReadAll(file)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, models.Response{
-			Code:    http.StatusBadRequest,
-			Message: "ReadAll failed.",
-		})
-		return
-	}
-
-	c.Writer.Write(buff)
 }
