@@ -86,6 +86,11 @@ func httpDaoList(c *gin.Context) {
 		err = oo.SqlGet(sqlProposal, &proposals)
 		if err != nil {
 			oo.LogW("SQL err: %v", err)
+			c.JSON(http.StatusInternalServerError, models.Response{
+				Code:    500,
+				Message: "Something went wrong, Please try again later.",
+			})
+			return
 		}
 
 		var members uint64
