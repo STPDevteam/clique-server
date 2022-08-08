@@ -125,10 +125,9 @@ func (svc *Service) scheduledTask() {
 
 func needSaveEvent(chainId int) ([]models.ScanTaskModel, int, bool, error) {
 	var (
-		err             error
-		needEvent       []models.ScanTaskModel
-		maxValue        = consts.MaxValue
-		currentBlockNum int
+		err       error
+		needEvent []models.ScanTaskModel
+		min       = consts.MaxValue
 	)
 	sqler := oo.NewSqler().Table(consts.TbNameScanTask).Where("chain_id", chainId).Select()
 	err = oo.SqlSelect(sqler, &needEvent)
@@ -140,11 +139,10 @@ func needSaveEvent(chainId int) ([]models.ScanTaskModel, int, bool, error) {
 	}
 
 	for i := range needEvent {
-		min := needEvent[i].LastBlockNumber
-		currentBlockNum = int(math.Min(float64(min), float64(maxValue)))
+		min = int(math.Min(float64(needEvent[i].LastBlockNumber), float64(min)))
 	}
 
-	return needEvent, currentBlockNum, true, nil
+	return needEvent, min, true, nil
 }
 
 func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
