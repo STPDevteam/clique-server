@@ -335,7 +335,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 			tokenAddress := blockData[i]["address"].(string)
 			from := utils.FixTo0xString(blockData[i]["topic1"].(string))
 			to := utils.FixTo0xString(blockData[i]["topic2"].(string))
-			amount, _ := utils.Dec2BigInt(blockData[i]["data"].(string))
+			amount, _ := utils.Hex2BigInt(blockData[i]["data"].(string))
 
 			var zeroAndTo []string
 			if blockData[i]["topic1"].(string) == consts.ZeroAddress { //save zero address for token list
@@ -356,9 +356,9 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 					return
 				}
 				if len(entityTo.Balance) == 0 {
-					entityTo.Balance = "0x0"
+					entityTo.Balance = "0"
 				}
-				toBaseAmount, _ := utils.Hex2BigInt(entityTo.Balance)
+				toBaseAmount, _ := utils.Dec2BigInt(entityTo.Balance)
 				amount.Add(amount, toBaseAmount)
 				sqlInsTo := fmt.Sprintf(`REPLACE INTO %s (token_address,holder_address,balance,chain_id) VALUES ('%s','%s','%s',%d)`,
 					consts.TbNameHolderData,
@@ -385,7 +385,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 					oo.LogW("SQL err: %v", err)
 					return
 				}
-				fromBaseAmount, _ := utils.Hex2BigInt(entityFrom.Balance)
+				fromBaseAmount, _ := utils.Dec2BigInt(entityFrom.Balance)
 				amount.Sub(fromBaseAmount, amount)
 				sqlInsFrom := fmt.Sprintf(`UPDATE %s SET balance='%s' WHERE token_address='%s' AND holder_address='%s' AND chain_id=%d`,
 					consts.TbNameHolderData,

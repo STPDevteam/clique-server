@@ -32,6 +32,12 @@ func TestCheckPersonalSign(t *testing.T) {
 }
 
 func TestSignMessage(t *testing.T) {
+	b, _ := Dec2BigInt("10")
+	c, _ := Dec2BigInt("10000")
+	fmt.Println(b, c)
+	c = c.Add(b, c)
+	fmt.Println(c)
+
 	a := Hex2Dec("")
 	fmt.Println(a)
 	to, err := Hex2BigInt("0x0")
