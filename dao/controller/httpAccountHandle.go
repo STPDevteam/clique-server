@@ -70,7 +70,7 @@ func httpQueryAccount(c *gin.Context) {
 	var entity models.AccountModel
 	sqlSel := oo.NewSqler().Table(consts.TbNameAccount).Where("account", params.Account).Select()
 	err = oo.SqlGet(sqlSel, &entity)
-	if err != nil && err != oo.ErrNoRows {
+	if err != nil {
 		oo.LogW("%v", err)
 		c.JSON(http.StatusOK, models.Response{
 			Code:    500,

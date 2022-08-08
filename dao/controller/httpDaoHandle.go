@@ -42,7 +42,7 @@ func httpDaoList(c *gin.Context) {
 		var categoryId int
 		sqlSelCategoryId := oo.NewSqler().Table(consts.TbNameCategory).Where("category_name", categoryParam).Select("id")
 		err := oo.SqlGet(sqlSelCategoryId, &categoryId)
-		if err != nil && err != oo.ErrNoRows {
+		if err != nil {
 			oo.LogW("SQL err: %v", err)
 			c.JSON(http.StatusInternalServerError, models.Response{
 				Code:    500,

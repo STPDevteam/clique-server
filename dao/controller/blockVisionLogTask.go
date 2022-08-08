@@ -508,13 +508,13 @@ func saveDaoInfoAndCategory(daoInfo []interface{}, daoAddress string, chainId in
 	var daoId int
 	sqlSelDId := oo.NewSqler().Table(consts.TbNameDao).Where("dao_address", daoAddress).Where("chain_id", chainId).Select("id")
 	err = oo.SqlGet(sqlSelDId, &daoId)
-	if err != nil && err != oo.ErrNoRows {
+	if err != nil {
 		oo.LogW("SQL failed. err: %v\n", err)
 		return
 	}
 
-	categorys := strings.Split(category.(string), ",")
-	for _, categoryName := range categorys {
+	categorySplit := strings.Split(category.(string), ",")
+	for _, categoryName := range categorySplit {
 		if categoryName == "" {
 			continue
 		}
@@ -522,7 +522,7 @@ func saveDaoInfoAndCategory(daoInfo []interface{}, daoAddress string, chainId in
 			consts.TbNameCategory,
 			categoryName,
 		)
-		_, err = oo.SqlxTxExec(tx, sqlUP)
+		err = oo.SqlExec(sqlUP)
 		if err != nil {
 			oo.LogW("SQL failed. err: %v\n", err)
 			return
@@ -531,7 +531,7 @@ func saveDaoInfoAndCategory(daoInfo []interface{}, daoAddress string, chainId in
 		var categoryId int
 		sqlSelCId := oo.NewSqler().Table(consts.TbNameCategory).Where("category_name", categoryName).Select("id")
 		err = oo.SqlGet(sqlSelCId, &categoryId)
-		if err != nil && err != oo.ErrNoRows {
+		if err != nil {
 			oo.LogW("SQL failed. err: %v\n", err)
 			return
 		}
