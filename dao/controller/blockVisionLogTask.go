@@ -5,6 +5,7 @@ import (
 	oo "github.com/Anna2024/liboo"
 	_ "golang.org/x/net/bpf"
 	"math"
+	"math/big"
 	"stp_dao_v2/consts"
 	_ "stp_dao_v2/consts"
 	"stp_dao_v2/models"
@@ -335,41 +336,34 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 			to := utils.FixTo0xString(blockData[i]["topic2"].(string))
 			amount, _ := utils.Hex2BigInt(blockData[i]["data"].(string))
 
-			var zeroAndTo []string
-			if blockData[i]["topic1"].(string) == consts.ZeroAddress { //save zero address for token list
-				zeroAndTo = []string{consts.ZeroAddress, to}
-			} else {
-				zeroAndTo = []string{to}
+			var entityTo []models.HolderDataModel
+			sqlTo := oo.NewSqler().Table(consts.TbNameHolderData).
+				Where("token_address", tokenAddress).
+				Where("holder_address", to).
+				Where("chain_id", chainId).Select()
+			err := oo.SqlSelect(sqlTo, &entityTo)
+			if err != nil && err != oo.ErrNoRows {
+				oo.LogW("SQL err: %v", err)
+				return
 			}
-
-			for _, holderAddress := range zeroAndTo {
-				var entityTo models.HolderDataModel
-				sqlTo := oo.NewSqler().Table(consts.TbNameHolderData).
-					Where("token_address", tokenAddress).
-					Where("holder_address", holderAddress).
-					Where("chain_id", chainId).Select()
-				err := oo.SqlSelect(sqlTo, &entityTo)
-				if err != nil {
-					oo.LogW("SQL err: %v", err)
-					return
-				}
-				if len(entityTo.Balance) == 0 {
-					entityTo.Balance = "0"
-				}
-				toBaseAmount, _ := utils.Dec2BigInt(entityTo.Balance)
-				amount.Add(amount, toBaseAmount)
-				sqlInsTo := fmt.Sprintf(`REPLACE INTO %s (token_address,holder_address,balance,chain_id) VALUES ('%s','%s','%s',%d)`,
-					consts.TbNameHolderData,
-					tokenAddress,
-					holderAddress,
-					amount.String(),
-					chainId,
-				)
-				_, errTx = oo.SqlxTxExec(tx, sqlInsTo)
-				if errTx != nil {
-					oo.LogW("SQL err: %v", errTx)
-					return
-				}
+			var toBaseAmount = new(big.Int)
+			if len(entityTo) == 0 {
+				toBaseAmount, _ = utils.Dec2BigInt("0")
+			} else {
+				toBaseAmount, _ = utils.Dec2BigInt(entityTo[0].Balance)
+			}
+			amount.Add(amount, toBaseAmount)
+			sqlInsTo := fmt.Sprintf(`REPLACE INTO %s (token_address,holder_address,balance,chain_id) VALUES ('%s','%s','%s',%d)`,
+				consts.TbNameHolderData,
+				tokenAddress,
+				to,
+				amount.String(),
+				chainId,
+			)
+			_, errTx = oo.SqlxTxExec(tx, sqlInsTo)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
 			}
 
 			if blockData[i]["topic1"].(string) != consts.ZeroAddress {
@@ -378,7 +372,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 					Where("token_address", tokenAddress).
 					Where("holder_address", from).
 					Where("chain_id", chainId).Select()
-				err := oo.SqlSelect(sqlFrom, &entityFrom)
+				err = oo.SqlSelect(sqlFrom, &entityFrom)
 				if err != nil {
 					oo.LogW("SQL err: %v", err)
 					return

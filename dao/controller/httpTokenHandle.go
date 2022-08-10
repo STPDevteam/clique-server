@@ -15,6 +15,8 @@ import (
 // @version 0.0.1
 // @description query Token list
 // @Produce json
+// @Param chainId query  string false "chainId"
+// @Param creator query  string false "creator"
 // @Param offset query  int true "offset,page"
 // @Param count query  int true "count,page"
 // @Success 200 {object} models.ResTokenListPage
@@ -24,10 +26,20 @@ func httpTokenList(c *gin.Context) {
 	count := c.Query("count")
 	offsetParam, _ := strconv.Atoi(offset)
 	countParam, _ := strconv.Atoi(count)
+	creatorParam := c.Query("creator")
+	chainIdParam := c.Query("chainId")
 
 	var total uint64
 	var listEntities []models.EventHistoricalModel
 	sqlSel := oo.NewSqler().Table(consts.TbNameEventHistorical).Where("event_type", consts.EvCreateERC20)
+	if creatorParam != "" {
+		creatorParam = utils.FixTo0x64String(creatorParam)
+		sqlSel = sqlSel.Where("topic1", creatorParam)
+	}
+	if chainIdParam != "" {
+		sqlSel = sqlSel.Where("chain_id", chainIdParam)
+	}
+
 	sqlCopy := *sqlSel
 	sqlStr := sqlCopy.Count()
 	err := oo.SqlGet(sqlStr, &total)
@@ -68,10 +80,10 @@ func httpTokenList(c *gin.Context) {
 		var totalSupply string
 		sqlTotal := oo.NewSqler().Table(consts.TbNameHolderData).
 			Where("token_address", tokenAddress).
-			Where("holder_address", consts.ZeroAddress).
+			Where("holder_address", contractAddress).
 			Where("chain_id", chainId).Select("balance")
-		err = oo.SqlSelect(sqlTotal, &totalSupply)
-		if err != nil {
+		err = oo.SqlGet(sqlTotal, &totalSupply)
+		if err != nil && err != oo.ErrNoRows {
 			oo.LogW("SQL err: %v", err)
 			c.JSON(http.StatusInternalServerError, models.Response{
 				Code:    500,
