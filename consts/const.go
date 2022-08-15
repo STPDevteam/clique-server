@@ -43,28 +43,21 @@ func EventTypes(event string) string {
 	var (
 		//CreateDAO(address indexed creator, address indexed daoAddress, uint256 chainId, address tokenAddress)
 		createDao = utils.Keccak256("CreateDAO(address,address,uint256,address)")
-
 		//CreateProposal(uint256 indexed proposalId, address indexed proposer, uint256 nonce, uint256 startTime, uint256 endTime)
 		createProposal = utils.Keccak256("CreateProposal(uint256,address,uint256,uint256,uint256)")
-
 		//CancelProposal(uint256 indexed proposalId)
 		cancelProposal = utils.Keccak256("CancelProposal(uint256)")
-
 		//Vote(uint256 indexed proposalId, address indexed voter, uint256 indexed optionIndex, uint256 amount, uint256 nonce)
 		vote = utils.Keccak256("Vote(uint256,address,uint256,uint256,uint256)")
-
 		//Admin(address indexed admin, bool enable)
 		admin = utils.Keccak256("Admin(address,bool)")
-
 		//Setting(uint256 indexed settingType)
 		setting = utils.Keccak256("Setting(uint256)")
-
 		//OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
 		ownershipTransferred = utils.Keccak256("OwnershipTransferred(address,address)")
 
 		//CreateERC20(address indexed creator, address token)
 		createERC20 = utils.Keccak256("CreateERC20(address,address)")
-
 		//Transfer(address indexed from, address indexed to, uint256 value);
 		transfer = utils.Keccak256("Transfer(address,address,uint256)")
 	)

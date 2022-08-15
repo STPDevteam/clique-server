@@ -98,7 +98,7 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 		balance = res.Result.Value
 
 	} else if params.SignType == "1" {
-		topic2 := fmt.Sprintf("0x%064s", strings.TrimPrefix(params.Account, "0x"))
+		topic2 := utils.FixTo0x64String(params.Account)
 		var VoteEntity []models.EventHistoricalModel
 		sqlVote := oo.NewSqler().Table(consts.TbNameEventHistorical).
 			Where("event_type", consts.EvCreateProposal).

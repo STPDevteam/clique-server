@@ -436,12 +436,8 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 					return
 				}
 			}
-
 		}
-
 	}
-
-	//fmt.Println(currentBlockNum)
 }
 
 func (svc *Service) DoUpdateDaoInfoTask() {
@@ -492,18 +488,13 @@ func (svc *Service) updateDaoInfoTask() {
 								oo.LogW("Decode failed. chainId:%d. err: %v\n", chainId, errDe)
 								return
 							}
-
 							saveDaoInfoAndCategory(daoInfo, entities[index].DaoAddress, chainId)
-
 						}
-
 					}
 				}
 			}
-
 		}
 	}
-
 }
 
 func saveDaoInfoAndCategory(daoInfo []interface{}, daoAddress string, chainId int) {
@@ -583,5 +574,4 @@ func saveDaoInfoAndCategory(daoInfo []interface{}, daoAddress string, chainId in
 			return
 		}
 	}
-
 }

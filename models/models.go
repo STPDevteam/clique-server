@@ -191,8 +191,8 @@ type ResTokenList struct {
 }
 
 type SignData struct {
-	Account   string `json:"account" validate:"eth_addr"`              // personal_sign签名地址,0x开头
-	Signature string `json:"signature" validate:"len=130,hexadecimal"` // personal_sign签名结果,不带0x开头
+	Account   string `json:"account" validate:"eth_addr"`              // personal_sign address,0x
+	Signature string `json:"signature" validate:"len=130,hexadecimal"` // personal_sign sign result,no 0x
 }
 
 type ResDaoInfo struct {
