@@ -84,7 +84,7 @@ func (svc *Service) httpUploadImg(c *gin.Context) {
 	}
 
 	// Create a new file in the uploads directory
-	path := fmt.Sprintf(fmt.Sprintf("/static/%d%s", time.Now().UnixNano(), filepath.Ext(fileHeader.Filename)))
+	path := fmt.Sprintf("/static/%d%s", time.Now().UnixNano(), filepath.Ext(fileHeader.Filename))
 	paths := fmt.Sprintf(".%s", path)
 	dst, err := os.Create(paths)
 	if err != nil {

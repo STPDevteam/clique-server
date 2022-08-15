@@ -328,6 +328,18 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 				oo.LogW("SQL err: %v", errTx)
 				return
 			}
+			sqlUpDaoCreator := fmt.Sprintf(`UPDATE %s SET creator='%s' WHERE dao_address='%s' AND chain_id=%d AND creator='%s'`,
+				consts.TbNameDao,
+				newOwner,
+				daoAddress,
+				chainId,
+				previousOwner,
+			)
+			_, errTx = oo.SqlxTxExec(tx, sqlUpDaoCreator)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
 		}
 
 		if blockData[i]["event_type"] == consts.EvTransfer {
