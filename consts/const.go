@@ -32,8 +32,9 @@ const (
 	LevelAdmin      = "admin"
 	LevelNoRole     = "noRole"
 
-	MaxValue    = 0x7fffffff
-	ZeroAddress = "0x0000000000000000000000000000000000000000000000000000000000000000"
+	MaxValue        = 0x7fffffff
+	ZeroAddress0x64 = "0x0000000000000000000000000000000000000000000000000000000000000000"
+	ZeroAddress0x40 = "0x0000000000000000000000000000000000000000"
 
 	SignMessagePrefix = "Welcome come Clique"
 )

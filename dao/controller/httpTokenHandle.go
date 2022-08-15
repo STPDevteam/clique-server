@@ -80,7 +80,7 @@ func httpTokenList(c *gin.Context) {
 		var totalSupply string
 		sqlTotal := oo.NewSqler().Table(consts.TbNameHolderData).
 			Where("token_address", tokenAddress).
-			Where("holder_address", contractAddress).
+			Where("holder_address", consts.ZeroAddress0x40).
 			Where("chain_id", chainId).Select("balance")
 		err = oo.SqlGet(sqlTotal, &totalSupply)
 		if err != nil && err != oo.ErrNoRows {
