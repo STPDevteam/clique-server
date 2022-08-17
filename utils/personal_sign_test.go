@@ -32,6 +32,8 @@ func TestCheckPersonalSign(t *testing.T) {
 }
 
 func TestSignMessage(t *testing.T) {
+	uuid := GenerateUuid()
+	fmt.Println(uuid)
 
 	a := Hex2Dec("")
 	fmt.Println(a)

@@ -26,7 +26,7 @@ func httpProposalsList(c *gin.Context) {
 	count := c.Query("count")
 	offset := c.Query("offset")
 	countParam, _ := strconv.Atoi(count)
-	offestParam, _ := strconv.Atoi(offset)
+	offsetParam, _ := strconv.Atoi(offset)
 
 	var listEntities []models.EventHistoricalModel
 	sqler := oo.NewSqler().Table(consts.TbNameEventHistorical).
@@ -38,7 +38,7 @@ func httpProposalsList(c *gin.Context) {
 	err := oo.SqlGet(sqlStr, &total)
 	if err == nil {
 		sqlCopy = *sqler
-		sqlStr = sqlCopy.Limit(countParam).Offset(offestParam).Select()
+		sqlStr = sqlCopy.Limit(countParam).Offset(offsetParam).Select()
 		err = oo.SqlSelect(sqlStr, &listEntities)
 	}
 	if err != nil {
@@ -91,6 +91,85 @@ func httpProposalsList(c *gin.Context) {
 		Data: models.ResProposalsListPage{
 			List:  data,
 			Total: total,
+		},
+	})
+
+}
+
+// @Summary save proposal info
+// @Tags proposal
+// @version 0.0.1
+// @description save proposal info
+// @Produce json
+// @Param request body models.ProposalInfoParam true "request"
+// @Success 200 {object} models.Response
+// @Router /stpdao/v2/proposal/save [post]
+func httpSaveProposal(c *gin.Context) {
+	var params models.ProposalInfoParam
+	err := c.ShouldBindJSON(&params)
+	if err != nil {
+		oo.LogW("%v", err)
+		c.JSON(http.StatusBadRequest, models.Response{
+			Code:    http.StatusBadRequest,
+			Message: "Invalid parameters.",
+		})
+		return
+	}
+
+	uuid := utils.GenerateUuid()
+	var m = make([]map[string]interface{}, 0)
+	var v = make(map[string]interface{})
+	v["uuid"] = uuid
+	v["content"] = params.Content
+	m = append(m, v)
+	sqlIns := oo.NewSqler().Table(consts.TbNameProposalInfo).Insert(m)
+	err = oo.SqlExec(sqlIns)
+	if err != nil {
+		oo.LogW("%v", err)
+		c.JSON(http.StatusOK, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, models.Response{
+		Code:    http.StatusOK,
+		Message: "ok",
+		Data: models.ResProposalUuid{
+			Uuid: uuid,
+		},
+	})
+}
+
+// @Summary query proposal info
+// @Tags proposal
+// @version 0.0.1
+// @description query proposal info
+// @Produce json
+// @Param uuid query string true "uuid"
+// @Success 200 {object} models.ResProposalContent
+// @Router /stpdao/v2/proposal/query [get]
+func httpQueryProposal(c *gin.Context) {
+	uuidParams := c.Query("uuid")
+
+	var content string
+	sqlSel := oo.NewSqler().Table(consts.TbNameProposalInfo).Where("uuid", uuidParams).Select("content")
+	err := oo.SqlGet(sqlSel, &content)
+	if err != nil {
+		oo.LogW("%v", err)
+		c.JSON(http.StatusOK, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, models.Response{
+		Code:    http.StatusOK,
+		Message: "ok",
+		Data: models.ResProposalContent{
+			Content: content,
 		},
 	})
 

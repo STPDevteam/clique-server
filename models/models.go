@@ -212,3 +212,15 @@ type ErrorInfoParam struct {
 	Func    string `json:"func"`
 	Params  string `json:"params"`
 }
+
+type ProposalInfoParam struct {
+	Content string `json:"content"`
+}
+
+type ResProposalUuid struct {
+	Uuid string `json:"uuid"`
+}
+
+type ResProposalContent struct {
+	Content string `json:"content"`
+}

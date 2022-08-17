@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/pborman/uuid"
 	"math/big"
 	"regexp"
 	"strconv"
@@ -75,4 +76,10 @@ func FixTo0x64String(str string) string {
 
 func FixTo0xString(str string) string {
 	return fmt.Sprintf("0x%s", strings.Trim(strings.TrimPrefix(str, "0x"), "0"))
+}
+
+func GenerateUuid() string {
+	uuidWithHyphen := uuid.NewRandom()
+	//uuid := strings.Replace(uuidWithHyphen.String(), "-", "", -1)
+	return uuidWithHyphen.String()
 }

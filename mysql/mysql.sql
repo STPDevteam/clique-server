@@ -165,84 +165,93 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_account` (
 PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_proposal` (
+CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_proposal_info` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	`dao_id` INT NOT NULL,
-	`title` VARCHAR(128) NOT NULL,
-	`content` MEDIUMTEXT NOT NULL,
-	`start_time` INT NOT NULL,
-	`end_time` INT NOT NULL,
-	`voting_type` VARCHAR(128) NOT NULL,
-	INDEX `dao_id` (`dao_id` ASC),
-	PRIMARY KEY (`id`)
+  `uuid` VARCHAR(36) NOT NULL,
+  `content` TEXT NOT NULL,
+  PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_options` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	`proposal_id` INT NOT NULL,
-	`voting_options` VARCHAR(128) NOT NULL,
-	INDEX `proposal_id` (`proposal_id` ASC),
-	PRIMARY KEY (`id`)
-);
-
-CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_voting_records` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	`dao_id` INT NOT NULL,
-	`proposal_id` INT NOT NULL,
-	`option_id` INT NOT NULL,
-	`account` VARCHAR(128) NOT NULL,
-	`votes` DECIMAL(65,0) UNSIGNED NOT NULL,
-	INDEX `dao_id` (`dao_id` ASC),
-	INDEX `proposal_id` (`proposal_id` ASC),
-	INDEX `option_id` (`option_id` ASC),
-	PRIMARY KEY (`id`)
-);
-
-CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_token_list` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	`token_logo` VARCHAR(128) NOT NULL,
-	`token` VARCHAR(128) NOT NULL,
-	`network` VARCHAR(128) NOT NULL,
-	`contract` VARCHAR(128) NOT NULL,
-	`total_supply` VARCHAR(128) NOT NULL,
-	`transfers` INT NOT NULL,
-	`holders` INT NOT NULL,
-	PRIMARY KEY (`id`)
-);
-
-CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_airdrop` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	`network` VARCHAR(128) NOT NULL,
-	`token` VARCHAR(128) NOT NULL,
-	`airdrop_amount` VARCHAR(128) NOT NULL,
-	`start_time` INT NOT NULL,
-	`end_time` INT NOT NULL,
-	`airdrop_address_file` VARCHAR(128) NOT NULL,
-	PRIMARY KEY (`id`)
-);
-
-CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_sale` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	`token` VARCHAR(128) NOT NULL,
-	`network` VARCHAR(128) NOT NULL,
-	`receiving_tokens` VARCHAR(128) NOT NULL,
-	`offering_amount` DECIMAL(65,0) UNSIGNED NOT NULL,
-	`price` DECIMAL(65,0) UNSIGNED NOT NULL,
-	`pledge_limit` VARCHAR(128),
-	`start_time` INT NOT NULL,
-	`end_time` INT NOT NULL,
-	`sale_description` VARCHAR(200),
-	PRIMARY KEY (`id`)
-);
+# CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_proposal` (
+#   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+#   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+#   `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+# 	`dao_id` INT NOT NULL,
+# 	`title` VARCHAR(128) NOT NULL,
+# 	`content` MEDIUMTEXT NOT NULL,
+# 	`start_time` INT NOT NULL,
+# 	`end_time` INT NOT NULL,
+# 	`voting_type` VARCHAR(128) NOT NULL,
+# 	INDEX `dao_id` (`dao_id` ASC),
+# 	PRIMARY KEY (`id`)
+# );
+#
+# CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_options` (
+#   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+#   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+#   `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+# 	`proposal_id` INT NOT NULL,
+# 	`voting_options` VARCHAR(128) NOT NULL,
+# 	INDEX `proposal_id` (`proposal_id` ASC),
+# 	PRIMARY KEY (`id`)
+# );
+#
+# CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_voting_records` (
+#   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+#   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+#   `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+# 	`dao_id` INT NOT NULL,
+# 	`proposal_id` INT NOT NULL,
+# 	`option_id` INT NOT NULL,
+# 	`account` VARCHAR(128) NOT NULL,
+# 	`votes` DECIMAL(65,0) UNSIGNED NOT NULL,
+# 	INDEX `dao_id` (`dao_id` ASC),
+# 	INDEX `proposal_id` (`proposal_id` ASC),
+# 	INDEX `option_id` (`option_id` ASC),
+# 	PRIMARY KEY (`id`)
+# );
+#
+# CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_token_list` (
+#   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+#   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+#   `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+# 	`token_logo` VARCHAR(128) NOT NULL,
+# 	`token` VARCHAR(128) NOT NULL,
+# 	`network` VARCHAR(128) NOT NULL,
+# 	`contract` VARCHAR(128) NOT NULL,
+# 	`total_supply` VARCHAR(128) NOT NULL,
+# 	`transfers` INT NOT NULL,
+# 	`holders` INT NOT NULL,
+# 	PRIMARY KEY (`id`)
+# );
+#
+# CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_airdrop` (
+#   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+#   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+#   `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+# 	`network` VARCHAR(128) NOT NULL,
+# 	`token` VARCHAR(128) NOT NULL,
+# 	`airdrop_amount` VARCHAR(128) NOT NULL,
+# 	`start_time` INT NOT NULL,
+# 	`end_time` INT NOT NULL,
+# 	`airdrop_address_file` VARCHAR(128) NOT NULL,
+# 	PRIMARY KEY (`id`)
+# );
+#
+# CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_sale` (
+#   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+#   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+#   `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+# 	`token` VARCHAR(128) NOT NULL,
+# 	`network` VARCHAR(128) NOT NULL,
+# 	`receiving_tokens` VARCHAR(128) NOT NULL,
+# 	`offering_amount` DECIMAL(65,0) UNSIGNED NOT NULL,
+# 	`price` DECIMAL(65,0) UNSIGNED NOT NULL,
+# 	`pledge_limit` VARCHAR(128),
+# 	`start_time` INT NOT NULL,
+# 	`end_time` INT NOT NULL,
+# 	`sale_description` VARCHAR(200),
+# 	PRIMARY KEY (`id`)
+# );

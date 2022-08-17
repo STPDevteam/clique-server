@@ -130,3 +130,11 @@ type ErrorInfoModel struct {
 	Func       string `db:"func"`
 	Params     string `db:"params"`
 }
+
+type ProposalInfoModel struct {
+	Id         uint64 `db:"id,omitempty" sqler:"skips"`
+	CreateTime string `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime string `db:"update_time,omitempty" sqler:"skips"`
+	Uuid       string `db:"uuid"`
+	Content    string `db:"content"`
+}
