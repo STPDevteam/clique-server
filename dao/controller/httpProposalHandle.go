@@ -156,7 +156,7 @@ func httpQueryProposal(c *gin.Context) {
 	var content string
 	sqlSel := oo.NewSqler().Table(consts.TbNameProposalInfo).Where("uuid", uuidParams).Select("content")
 	err := oo.SqlGet(sqlSel, &content)
-	if err != nil {
+	if err != nil && err != oo.ErrNoRows {
 		oo.LogW("%v", err)
 		c.JSON(http.StatusOK, models.Response{
 			Code:    500,
