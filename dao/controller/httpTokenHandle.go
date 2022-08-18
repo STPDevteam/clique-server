@@ -59,7 +59,7 @@ func httpTokenList(c *gin.Context) {
 
 	var data = make([]models.ResTokenList, 0)
 	for index := range listEntities {
-		tokenAddress := utils.FixTo0xString(listEntities[index].Data)
+		tokenAddress := utils.FixTo0x40String(listEntities[index].Data)
 		contractAddress := listEntities[index].Address
 		chainId := listEntities[index].ChainId
 

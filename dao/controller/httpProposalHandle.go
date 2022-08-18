@@ -52,10 +52,10 @@ func httpProposalsList(c *gin.Context) {
 
 	var data = make([]models.ResProposalsList, 0)
 	for index := range listEntities {
-		proposalId := utils.FixTo0xString(listEntities[index].Topic1)
-		proposer := utils.FixTo0xString(listEntities[index].Topic2)
-		startTime, _ := utils.Hex2Int64(utils.FixTo0xString(listEntities[index].Data[2:66]))
-		endTime, _ := utils.Hex2Int64(utils.FixTo0xString(listEntities[index].Data[66:130]))
+		proposalId := utils.FixTo0x40String(listEntities[index].Topic1)
+		proposer := utils.FixTo0x40String(listEntities[index].Topic2)
+		startTime, _ := utils.Hex2Int64(utils.FixTo0x40String(listEntities[index].Data[2:66]))
+		endTime, _ := utils.Hex2Int64(utils.FixTo0x40String(listEntities[index].Data[66:130]))
 
 		var counts int
 		sqlCancel := oo.NewSqler().Table(consts.TbNameEventHistorical).

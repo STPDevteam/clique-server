@@ -68,7 +68,7 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 		resNonce = fmt.Sprintf("%064s", strings.TrimPrefix(strconv.FormatInt(int64(nonceEntity[0].Nonce), 16), "0x"))
 	}
 
-	tokenAddress := utils.FixTo0xString(chainIdAndTokenAddress[64:128])
+	tokenAddress := utils.FixTo0x40String(chainIdAndTokenAddress[64:128])
 	tokenChainId, _ := strconv.ParseInt(chainIdAndTokenAddress[:64], 16, 64)
 	var url string
 
@@ -153,6 +153,7 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 		Code:    http.StatusOK,
 		Message: "ok",
 		Data: models.ResSignCreateData{
+			Account:      params.Account,
 			TokenChainId: tokenChainId,
 			TokenAddress: tokenAddress,
 			Balance:      balance,

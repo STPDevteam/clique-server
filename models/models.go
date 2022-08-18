@@ -127,6 +127,7 @@ type SignCreateDataParam struct {
 }
 
 type ResSignCreateData struct {
+	Account      string `json:"account"`
 	TokenChainId int64  `json:"tokenChainId"`
 	TokenAddress string `json:"tokenAddress"`
 	Signature    string `json:"signature"`

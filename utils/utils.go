@@ -74,8 +74,8 @@ func FixTo0x64String(str string) string {
 	return fmt.Sprintf("0x%064s", strings.TrimPrefix(str, "0x"))
 }
 
-func FixTo0xString(str string) string {
-	return fmt.Sprintf("0x%s", strings.Trim(strings.TrimPrefix(str, "0x"), "0"))
+func FixTo0x40String(str string) string {
+	return fmt.Sprintf("0x%040s", strings.Trim(strings.TrimPrefix(str, "0x"), "0"))
 }
 
 func GenerateUuid() string {

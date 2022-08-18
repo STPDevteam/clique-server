@@ -55,8 +55,8 @@ func httpVotesList(c *gin.Context) {
 
 	var data = make([]models.ResVotesList, 0)
 	for index := range listEntities {
-		optionIndex := utils.FixTo0xString(listEntities[index].Topic3)
-		voter := utils.FixTo0xString(listEntities[index].Topic2)
+		optionIndex := utils.FixTo0x40String(listEntities[index].Topic3)
+		voter := utils.FixTo0x40String(listEntities[index].Topic2)
 		amount, _ := utils.Hex2BigInt(listEntities[index].Data[:66])
 
 		data = append(data, models.ResVotesList{

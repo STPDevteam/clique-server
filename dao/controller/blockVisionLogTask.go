@@ -175,7 +175,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 
 	for i := range blockData {
 		if blockData[i]["event_type"] == consts.EvCreateERC20 {
-			tokenAddress := utils.FixTo0xString(blockData[i]["data"].(string))
+			tokenAddress := utils.FixTo0x40String(blockData[i]["data"].(string))
 			var addEvent = make([]map[string]interface{}, 0)
 			// Add CreateERC20 Event Type
 			eventType := []string{consts.EvTransfer}
@@ -197,7 +197,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 		}
 
 		if blockData[i]["event_type"] == consts.EvCreateDao {
-			daoAddress := utils.FixTo0xString(blockData[i]["topic2"].(string))
+			daoAddress := utils.FixTo0x40String(blockData[i]["topic2"].(string))
 			var addEvent = make([]map[string]interface{}, 0)
 			// Add CreateDao Event Type
 			eventType := []string{consts.EvCreateProposal, consts.EvVote, consts.EvCancelProposal, consts.EvAdmin, consts.EvSetting, consts.EvOwnershipTransferred}
@@ -218,8 +218,8 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 			}
 
 			//save dao
-			creatorAddress := utils.FixTo0xString(blockData[i]["topic1"].(string))
-			tokenAddress := utils.FixTo0xString(blockData[i]["data"].(string)[66:130])
+			creatorAddress := utils.FixTo0x40String(blockData[i]["topic1"].(string))
+			tokenAddress := utils.FixTo0x40String(blockData[i]["data"].(string)[66:130])
 			sqlInsDao := fmt.Sprintf(`INSERT INTO %s (dao_logo,dao_name,dao_address,creator,handle,description,chain_id,token_address,proposal_threshold,voting_quorum,voting_period,voting_type,twitter,github,discord,update_bool) VALUES ('%s','%s','%s','%s','%s','%s',%d,'%s',%d,%d,%d,'%s','%s','%s','%s',%t)`,
 				consts.TbNameDao,
 				"",
@@ -275,7 +275,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 		}
 
 		if blockData[i]["event_type"] == consts.EvCreateProposal {
-			proposer := utils.FixTo0xString(blockData[i]["topic2"].(string))
+			proposer := utils.FixTo0x40String(blockData[i]["topic2"].(string))
 			sqlIns := fmt.Sprintf(`INSERT INTO %s (account,nonce) VALUES ('%s',%d) ON DUPLICATE KEY UPDATE nonce=nonce+1`,
 				consts.TbNameNonce,
 				proposer,
@@ -290,7 +290,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 
 		if blockData[i]["event_type"] == consts.EvAdmin {
 			daoAddress := blockData[i]["address"].(string)
-			account := utils.FixTo0xString(blockData[i]["topic1"].(string))
+			account := utils.FixTo0x40String(blockData[i]["topic1"].(string))
 			enable := utils.Hex2Dec(blockData[i]["data"].(string))
 			var accountLevel string
 			if enable == 0 {
@@ -314,8 +314,8 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 
 		if blockData[i]["event_type"] == consts.EvOwnershipTransferred {
 			daoAddress := blockData[i]["address"].(string)
-			previousOwner := utils.FixTo0xString(blockData[i]["topic1"].(string))
-			newOwner := utils.FixTo0xString(blockData[i]["topic2"].(string))
+			previousOwner := utils.FixTo0x40String(blockData[i]["topic1"].(string))
+			newOwner := utils.FixTo0x40String(blockData[i]["topic2"].(string))
 			sqlUpSuperAdmin := fmt.Sprintf(`UPDATE %s SET account='%s' WHERE dao_address='%s' AND chain_id=%d AND account='%s'`,
 				consts.TbNameAdmin,
 				newOwner,
@@ -344,8 +344,8 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 
 		if blockData[i]["event_type"] == consts.EvTransfer {
 			tokenAddress := blockData[i]["address"].(string)
-			from := utils.FixTo0xString(blockData[i]["topic1"].(string))
-			to := utils.FixTo0xString(blockData[i]["topic2"].(string))
+			from := utils.FixTo0x40String(blockData[i]["topic1"].(string))
+			to := utils.FixTo0x40String(blockData[i]["topic2"].(string))
 			amount, _ := utils.Hex2BigInt(blockData[i]["data"].(string))
 
 			var entityTo []models.HolderDataModel
