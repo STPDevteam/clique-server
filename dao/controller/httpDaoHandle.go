@@ -31,10 +31,10 @@ func httpDaoList(c *gin.Context) {
 	offsetParam, _ := strconv.Atoi(offset)
 	countParam, _ := strconv.Atoi(count)
 
-	var sqlCount, sqlSel, sqlWhere, sqlLimit, sqlSubquery string
+	var sqlCount, sqlSel, sqlWhere, sqlOrderLimit, sqlSubquery string
 	sqlCount = fmt.Sprintf(`SELECT COUNT(*) FROM %s `, consts.TbNameDao)
 	sqlSel = fmt.Sprintf(`SELECT * FROM %s `, consts.TbNameDao)
-	sqlLimit = fmt.Sprintf(`Limit %d,%d `, offsetParam, countParam)
+	sqlOrderLimit = fmt.Sprintf(`ORDER BY create_time DESC Limit %d,%d `, offsetParam, countParam)
 	if keywordParam != "" {
 		sqlWhere = fmt.Sprintf(`WHERE (dao_address='%s' OR token_address='%s' OR dao_name LIKE '%%%s%%') `, keywordParam, keywordParam, keywordParam)
 	}
@@ -58,7 +58,7 @@ func httpDaoList(c *gin.Context) {
 	}
 
 	sqlStrCount := fmt.Sprintf(`%s%s%s`, sqlCount, sqlWhere, sqlSubquery)
-	sqlStrSel := fmt.Sprintf(`%s%s%s%s`, sqlSel, sqlWhere, sqlSubquery, sqlLimit)
+	sqlStrSel := fmt.Sprintf(`%s%s%s%s`, sqlSel, sqlWhere, sqlSubquery, sqlOrderLimit)
 
 	var total uint64
 	var daoListEntity []models.DaoModel
