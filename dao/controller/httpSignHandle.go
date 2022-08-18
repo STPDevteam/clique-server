@@ -148,6 +148,7 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 		})
 		return
 	}
+	signature = fmt.Sprintf("0x%s", signature)
 
 	c.JSON(http.StatusOK, models.Response{
 		Code:    http.StatusOK,
