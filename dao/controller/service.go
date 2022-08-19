@@ -50,8 +50,8 @@ func (svc *Service) Start(ctx *cli.Context) error {
 		return err
 	}
 
-	go svc.DoScheduledTask()
-	go svc.DoUpdateDaoInfoTask()
+	go svc.scheduledTask()
+	go svc.updateDaoInfoTask()
 
 	router := gin.Default()
 	router.Use(utils.Cors())

@@ -15,12 +15,8 @@ import (
 	_ "time"
 )
 
-func (svc *Service) DoScheduledTask() {
-	defer time.AfterFunc(time.Duration(1)*time.Second, svc.DoScheduledTask)
-	svc.scheduledTask()
-}
-
 func (svc *Service) scheduledTask() {
+	defer time.AfterFunc(time.Duration(1)*time.Second, svc.scheduledTask)
 
 	for indexScan := range svc.scanInfo {
 		for indexUrl := range svc.scanInfo[indexScan].ChainId {
@@ -440,12 +436,8 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 	}
 }
 
-func (svc *Service) DoUpdateDaoInfoTask() {
-	defer time.AfterFunc(time.Duration(60)*time.Second, svc.DoUpdateDaoInfoTask)
-	svc.updateDaoInfoTask()
-}
-
 func (svc *Service) updateDaoInfoTask() {
+	defer time.AfterFunc(time.Duration(60)*time.Second, svc.updateDaoInfoTask)
 	const data = "0xafe926e8"
 
 	var entities []models.DaoModel
