@@ -75,6 +75,7 @@ type DaoModel struct {
 	Handle            string `db:"handle"`
 	Description       string `db:"description"`
 	ChainId           int    `db:"chain_id"`
+	TokenChainId      int    `db:"token_chain_id"`
 	TokenAddress      string `db:"token_address"`
 	ProposalThreshold string `db:"proposal_threshold"`
 	VotingQuorum      string `db:"voting_quorum"`

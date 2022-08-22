@@ -66,7 +66,7 @@ func httpTokenList(c *gin.Context) {
 		var names []string
 		sqlName := oo.NewSqler().Table(consts.TbNameDao).
 			Where("token_address", tokenAddress).
-			Where("chain_id", chainId).Select("dao_name")
+			Where("token_chain_id", chainId).Select("dao_name")
 		err = oo.SqlSelect(sqlName, &names)
 		if err != nil {
 			oo.LogW("SQL err: %v", err)
@@ -112,10 +112,10 @@ func httpTokenList(c *gin.Context) {
 	})
 }
 
-// @Summary query Token list
+// @Summary query Token img
 // @Tags Token
 // @version 0.0.1
-// @description query Token list
+// @description query Token img
 // @Produce json
 // @Param chainId query int true "chainId"
 // @Param tokenAddress query string true "tokenAddress"

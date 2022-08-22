@@ -216,23 +216,14 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 			//save dao
 			creatorAddress := utils.FixTo0x40String(blockData[i]["topic1"].(string))
 			tokenAddress := utils.FixTo0x40String(blockData[i]["data"].(string)[66:130])
-			sqlInsDao := fmt.Sprintf(`INSERT INTO %s (dao_logo,dao_name,dao_address,creator,handle,description,chain_id,token_address,proposal_threshold,voting_quorum,voting_period,voting_type,twitter,github,discord,update_bool) VALUES ('%s','%s','%s','%s','%s','%s',%d,'%s',%d,%d,%d,'%s','%s','%s','%s',%t)`,
+			tokenChainId, _ := utils.Hex2Int64(blockData[i]["data"].(string)[:66])
+			sqlInsDao := fmt.Sprintf(`INSERT INTO %s (dao_address,creator,chain_id,token_chain_id,token_address,update_bool) VALUES ('%s','%s',%d,%d,'%s',%t)`,
 				consts.TbNameDao,
-				"",
-				"",
 				daoAddress,
 				creatorAddress,
-				"",
-				"",
 				chainId,
+				tokenChainId,
 				tokenAddress,
-				0,
-				0,
-				0,
-				"",
-				"",
-				"",
-				"",
 				false,
 			)
 			_, errTx = oo.SqlxTxExec(tx, sqlInsDao)
@@ -258,10 +249,11 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 		}
 
 		if blockData[i]["event_type"] == consts.EvSetting {
-			sqlUP := fmt.Sprintf(`UPDATE %s SET update_bool=%t WHERE dao_address='%s'`,
+			sqlUP := fmt.Sprintf(`UPDATE %s SET update_bool=%t WHERE dao_address='%s' AND chain_id=%d`,
 				consts.TbNameDao,
 				true,
 				blockData[i]["address"].(string),
+				chainId,
 			)
 			_, errTx = oo.SqlxTxExec(tx, sqlUP)
 			if errTx != nil {
@@ -282,6 +274,10 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 				oo.LogW("SQL err: %v", errTx)
 				return
 			}
+
+		}
+
+		if blockData[i]["event_type"] == consts.EvCancelProposal {
 
 		}
 
