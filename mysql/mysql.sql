@@ -193,13 +193,16 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_proposal` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `chain_id` INT NOT NULL,
-  `dao_address` VARCHAR(128) NOT NULL,
-	`content` MEDIUMTEXT NOT NULL,
+    `proposal_id` INT NOT NULL,
+    `chain_id` INT NOT NULL,
+    `dao_address` VARCHAR(128) NOT NULL,
+	`proposer` VARCHAR(128) NOT NULL,
 	`start_time` INT NOT NULL,
 	`end_time` INT NOT NULL,
-	`voting_type` VARCHAR(128) NOT NULL,
-	PRIMARY KEY (`id`)
+	PRIMARY KEY (`id`),
+    INDEX `index_chain_id` (`chain_id` ASC),
+    INDEX `index_dao_address` (`dao_address` ASC),
+    INDEX `index_proposalId` (`proposal_id` ASC)
 );
 
 # CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_options` (

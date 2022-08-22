@@ -16,7 +16,7 @@ import (
 // @version 0.0.1
 // @description query proposal list
 // @Produce json
-// @Param status query string false "status:Open,Closed"
+// @Param status query int false "status:Soon:1,Open:2,Closed:3"
 // @Param daoAddress query string true "Dao address"
 // @Param chainId query int true "chainId"
 // @Param offset query  int true "offset,page"
@@ -24,25 +24,37 @@ import (
 // @Success 200 {object} models.ResProposalsListPage
 // @Router /stpdao/v2/proposal/list [get]
 func httpProposalsList(c *gin.Context) {
+	chainId := c.Query("chainId")
+	chainIdParam, _ := strconv.Atoi(chainId)
 	daoAddressParam := c.Query("daoAddress")
 	count := c.Query("count")
 	offset := c.Query("offset")
-	chainIdParam := c.Query("chainId")
 	countParam, _ := strconv.Atoi(count)
 	offsetParam, _ := strconv.Atoi(offset)
-	//statusParam := c.Query("status")
+	status := c.Query("status")
+	statusParam, _ := strconv.Atoi(status)
 
-	var listEntities []models.EventHistoricalModel
-	sqler := oo.NewSqler().Table(consts.TbNameEventHistorical).
-		Where("event_type", consts.EvCreateProposal).
-		Where("address", daoAddressParam)
+	var listEntities []models.ProposalModel
+	sqler := oo.NewSqler().Table(consts.TbNameProposal).
+		Where("chain_id", chainIdParam).
+		Where("dao_address", daoAddressParam)
+	var now = time.Now().Unix()
+	if statusParam == 1 {
+		sqler = sqler.Where("start_time", ">=", now)
+	}
+	if statusParam == 2 {
+		sqler = sqler.Where("end_time", ">=", now).Where("start_time", "<=", now)
+	}
+	if statusParam == 3 {
+		sqler = sqler.Where("end_time", "<=", now)
+	}
 	var total uint64
 	sqlCopy := *sqler
 	sqlStr := sqlCopy.Count()
 	err := oo.SqlGet(sqlStr, &total)
 	if err == nil {
 		sqlCopy = *sqler
-		sqlStr = sqlCopy.Limit(countParam).Offset(offsetParam).Select()
+		sqlStr = sqlCopy.Order("proposal_id DESC").Limit(countParam).Offset(offsetParam).Select()
 		err = oo.SqlSelect(sqlStr, &listEntities)
 	}
 	if err != nil {
@@ -56,37 +68,13 @@ func httpProposalsList(c *gin.Context) {
 
 	var data = make([]models.ResProposalsList, 0)
 	for index := range listEntities {
-		proposalId := utils.FixTo0x40String(listEntities[index].Topic1)
-		proposer := utils.FixTo0x40String(listEntities[index].Topic2)
-		startTime, _ := utils.Hex2Int64(utils.FixTo0x40String(listEntities[index].Data[2:66]))
-		endTime, _ := utils.Hex2Int64(utils.FixTo0x40String(listEntities[index].Data[66:130]))
-
-		var counts int
-		sqlCancel := oo.NewSqler().Table(consts.TbNameEventHistorical).
-			Where("event_type", consts.EvCancelProposal).
-			Where("topic1", listEntities[index].Topic1).
-			Where("chain_id", chainIdParam).Count()
-		err = oo.SqlGet(sqlCancel, &counts)
-		if err != nil {
-			oo.LogW("%v", err)
-			c.JSON(http.StatusOK, models.Response{
-				Code:    500,
-				Message: "Something went wrong, Please try again later.",
-			})
-			return
-		}
-		status := "Open"
-		if time.Now().Unix() > endTime || counts >= 1 {
-			status = "Closed"
-		}
-
 		data = append(data, models.ResProposalsList{
+			ChainId:    chainIdParam,
 			DaoAddress: daoAddressParam,
-			ProposalId: proposalId,
-			Proposer:   proposer,
-			StartTime:  startTime,
-			EndTime:    endTime,
-			Status:     status,
+			ProposalId: listEntities[index].ProposalId,
+			Proposer:   listEntities[index].Proposer,
+			StartTime:  listEntities[index].StartTime,
+			EndTime:    listEntities[index].EndTime,
 		})
 	}
 

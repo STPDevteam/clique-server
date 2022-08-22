@@ -159,12 +159,12 @@ type ResProposalsListPage struct {
 }
 
 type ResProposalsList struct {
+	ChainId    int    `json:"chainId"`
 	DaoAddress string `json:"daoAddress"`
-	ProposalId string `json:"proposalId"`
+	ProposalId int    `json:"proposalId"`
 	Proposer   string `json:"proposer"`
 	StartTime  int64  `json:"startTime"`
 	EndTime    int64  `json:"endTime"`
-	Status     string `json:"status"`
 }
 
 type ResVotesListPage struct {
