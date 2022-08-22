@@ -15,6 +15,7 @@ import (
 // @version 0.0.1
 // @description query votes list
 // @Produce json
+// @Param chainId query int true "chainId"
 // @Param proposalId query string true "proposalId"
 // @Param daoAddress query string true "Dao address"
 // @Param offset query  int true "offset,page"
@@ -22,6 +23,8 @@ import (
 // @Success 200 {object} models.ResVotesListPage
 // @Router /stpdao/v2/votes/list [get]
 func httpVotesList(c *gin.Context) {
+	chainId := c.Query("chainId")
+	chainIdParam, _ := strconv.Atoi(chainId)
 	daoAddressParam := c.Query("daoAddress")
 	proposalIdParam := c.Query("proposalId")
 	count := c.Query("count")
@@ -35,13 +38,14 @@ func httpVotesList(c *gin.Context) {
 	sqler := oo.NewSqler().Table(consts.TbNameEventHistorical).
 		Where("event_type", consts.EvVote).
 		Where("address", daoAddressParam).
-		Where("topic1", proposalIdParam64)
+		Where("topic1", proposalIdParam64).
+		Where("chain_id", chainIdParam)
 	sqlCopy := *sqler
 	sqlStr := sqlCopy.Count()
 	err := oo.SqlGet(sqlStr, &total)
 	if err == nil {
 		sqlCopy = *sqler
-		sqlStr = sqlCopy.Limit(countParam).Offset(offsetParam).Select()
+		sqlStr = sqlCopy.Order("create_time DESC").Limit(countParam).Offset(offsetParam).Select()
 		err = oo.SqlSelect(sqlStr, &listEntities)
 	}
 	if err != nil {
@@ -55,7 +59,7 @@ func httpVotesList(c *gin.Context) {
 
 	var data = make([]models.ResVotesList, 0)
 	for index := range listEntities {
-		optionIndex := utils.FixTo0x40String(listEntities[index].Topic3)
+		optionIndex, _ := utils.Hex2Int64(listEntities[index].Topic3)
 		voter := utils.FixTo0x40String(listEntities[index].Topic2)
 		amount, _ := utils.Hex2BigInt(listEntities[index].Data[:66])
 
