@@ -144,7 +144,7 @@ type TokensImgModel struct {
 	Id           uint64 `db:"id,omitempty" sqler:"skips"`
 	CreateTime   string `db:"create_time,omitempty" sqler:"skips"`
 	UpdateTime   string `db:"update_time,omitempty" sqler:"skips"`
-	ChainId      int    `db:"chain_id"`
+	TokenChainId int    `db:"token_chain_id"`
 	TokenAddress string `db:"token_address"`
 	Thumb        string `db:"thumb"`
 	Small        string `db:"small"`

@@ -117,18 +117,18 @@ func httpTokenList(c *gin.Context) {
 // @version 0.0.1
 // @description query Token img
 // @Produce json
-// @Param chainId query int true "chainId"
+// @Param tokenChainId query int true "tokenChainId"
 // @Param tokenAddress query string true "tokenAddress"
 // @Success 200 {object} models.ResTokenImg
 // @Router /stpdao/v2/token/img [get]
 func httpTokenImg(c *gin.Context) {
-	chainId := c.Query("chainId")
-	chainIdParam, _ := strconv.Atoi(chainId)
+	tokenChainId := c.Query("tokenChainId")
+	tokenChainIdParam, _ := strconv.Atoi(tokenChainId)
 	tokenAddressParam := c.Query("tokenAddress")
 
 	var entity []models.TokensImgModel
 	sqlSel := oo.NewSqler().Table(consts.TbNameTokensImg).
-		Where("chain_id", chainIdParam).
+		Where("token_chain_id", tokenChainIdParam).
 		Where("token_address", tokenAddressParam).Select()
 	err := oo.SqlSelect(sqlSel, &entity)
 	if err != nil {
@@ -144,7 +144,7 @@ func httpTokenImg(c *gin.Context) {
 		Code:    http.StatusOK,
 		Message: "ok",
 		Data: models.ResTokenImg{
-			ChainId:      chainIdParam,
+			TokenChainId: tokenChainIdParam,
 			TokenAddress: tokenAddressParam,
 			Thumb:        entity[0].Thumb,
 			Small:        entity[0].Small,

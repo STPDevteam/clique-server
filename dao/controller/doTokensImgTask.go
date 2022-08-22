@@ -4,28 +4,35 @@ import (
 	"fmt"
 	oo "github.com/Anna2024/liboo"
 	"stp_dao_v2/consts"
+	"stp_dao_v2/models"
 	"stp_dao_v2/utils"
+	"time"
 )
 
-func tokensImgTask(chainId int, tokenAddress string) {
-	//defer time.AfterFunc(time.Duration(60*60*24)*time.Second, tokensImgTask)
+func tokensImgTask() {
+	defer time.AfterFunc(time.Duration(60*60*24)*time.Second, tokensImgTask)
 
-	var count int
-	sqlSel := oo.NewSqler().Table(consts.TbNameTokensImg).
-		Where("chain_id", chainId).Where("token_address", tokenAddress).Count()
-	err := oo.SqlGet(sqlSel, &count)
+	var entities []models.DaoModel
+	sqlNeed := oo.NewSqler().Table(consts.TbNameDao).Select("token_chain_id,token_address")
+	err := oo.SqlSelect(sqlNeed, &entities)
 	if err != nil {
 		oo.LogW("SQL failed. err: %v\n", err)
 		return
 	}
 
-	if count == 0 {
+	for indexToken := range entities {
+		tokenChainId := entities[indexToken].TokenChainId
+		tokenAddress := entities[indexToken].TokenAddress
+
 		var platforms string
-		switch chainId {
+		switch tokenChainId {
 		case 1:
 			platforms = "ethereum"
 			break
-		case 80001:
+		case 56:
+			platforms = "binance-smart-chain"
+			break
+		case 137:
 			platforms = "polygon-pos"
 			break
 		default:
@@ -39,24 +46,23 @@ func tokensImgTask(chainId int, tokenAddress string) {
 			oo.LogW("GetTokensId failed error: %v", err)
 			return
 		}
-		for index := range resId {
-			if resId[index].Platforms[platforms] == tokenAddress {
-				imgStr := fmt.Sprintf(`https://api.coingecko.com/api/v3/coins/%s?localization=false&tickers=false&market_data=false&community_data=false&developer_data=false&sparkline=false`, resId[index].Id)
+		for indexId := range resId {
+			if resId[indexId].Platforms[platforms] == tokenAddress {
+				imgStr := fmt.Sprintf(`https://api.coingecko.com/api/v3/coins/%s?localization=false&tickers=false&market_data=false&community_data=false&developer_data=false&sparkline=false`, resId[indexId].Id)
 				resImg, err := utils.GetTokenImg(imgStr)
 				if err != nil {
 					oo.LogW("GetTokenImg failed error: %v", err)
 					return
 				}
 
-				var m = make([]map[string]interface{}, 0)
-				var v = make(map[string]interface{})
-				v["chain_id"] = chainId
-				v["token_address"] = tokenAddress
-				v["thumb"] = resImg.Image.Thumb
-				v["small"] = resImg.Image.Small
-				v["large"] = resImg.Image.Large
-				m = append(m, v)
-				sqlIns := oo.NewSqler().Table(consts.TbNameTokensImg).Insert(m)
+				sqlIns := fmt.Sprintf(`REPLACE INTO %s (token_chain_id,token_address,thumb,small,large) VALUES (%d,'%s','%s','%s','%s')`,
+					consts.TbNameTokensImg,
+					tokenChainId,
+					tokenAddress,
+					resImg.Image.Thumb,
+					resImg.Image.Small,
+					resImg.Image.Large,
+				)
 				err = oo.SqlExec(sqlIns)
 				if err != nil {
 					oo.LogW("SQL failed. err: %v\n", err)
@@ -65,6 +71,7 @@ func tokensImgTask(chainId int, tokenAddress string) {
 				break
 			}
 		}
+		time.Sleep(time.Duration(1) * time.Second)
 	}
 
 }

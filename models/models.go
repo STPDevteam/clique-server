@@ -242,7 +242,7 @@ type TokenImg struct {
 }
 
 type ResTokenImg struct {
-	ChainId      int    `json:"chainId"`
+	TokenChainId int    `json:"tokenChainId"`
 	TokenAddress string `json:"tokenAddress"`
 	Thumb        string `json:"thumb"`
 	Small        string `json:"small"`

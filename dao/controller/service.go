@@ -52,6 +52,7 @@ func (svc *Service) Start(ctx *cli.Context) error {
 
 	go svc.scheduledTask()
 	go svc.updateDaoInfoTask()
+	go tokensImgTask()
 
 	router := gin.Default()
 	router.Use(utils.Cors())

@@ -1,3 +1,6 @@
+CREATE SCHEMA IF NOT EXISTS `stp_dao_v2` DEFAULT CHARACTER SET utf8 ;
+USE `stp_dao_v2`;
+
 CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`event_historical_data` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -179,14 +182,15 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_tokens_img` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    `chain_id` INT NOT NULL,
+    `token_chain_id` INT NOT NULL,
     `token_address` VARCHAR(128) NOT NULL,
     `thumb` VARCHAR(300) NOT NULL,
     `small` VARCHAR(300) NOT NULL,
     `large` VARCHAR(300) NOT NULL,
     PRIMARY KEY (`id`),
-    INDEX `index_chain_id` (`chain_id` ASC),
-    INDEX `index_token_address` (`token_address` ASC)
+    INDEX `index_chain_id` (`token_chain_id` ASC),
+    INDEX `index_token_address` (`token_address` ASC),
+    UNIQUE INDEX `unique_index_token_chain_id_token_address` (`token_chain_id` ASC, `token_address` ASC)
 );
 
 CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_proposal` (
