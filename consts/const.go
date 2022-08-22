@@ -18,6 +18,7 @@ const (
 	TbNameAdmin           = "tb_admin"
 	TbNameErrorInfo       = "error_info"
 	TbNameProposalInfo    = "tb_proposal_info"
+	TbNameTokensImg       = "tb_tokens_img"
 
 	EvCreateDao            = "CreateDao"
 	EvCreateProposal       = "CreateProposal"

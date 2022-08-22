@@ -111,3 +111,45 @@ func httpTokenList(c *gin.Context) {
 		},
 	})
 }
+
+// @Summary query Token list
+// @Tags Token
+// @version 0.0.1
+// @description query Token list
+// @Produce json
+// @Param chainId query int true "chainId"
+// @Param tokenAddress query string true "tokenAddress"
+// @Success 200 {object} models.ResTokenImg
+// @Router /stpdao/v2/token/img [get]
+func httpTokenImg(c *gin.Context) {
+	chainId := c.Query("chainId")
+	chainIdParam, _ := strconv.Atoi(chainId)
+	tokenAddressParam := c.Query("tokenAddress")
+
+	var entity []models.TokensImgModel
+	sqlSel := oo.NewSqler().Table(consts.TbNameTokensImg).
+		Where("chain_id", chainIdParam).
+		Where("token_address", tokenAddressParam).Select()
+	err := oo.SqlSelect(sqlSel, &entity)
+	if err != nil {
+		oo.LogW("SQL err: %v", err)
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, models.Response{
+		Code:    http.StatusOK,
+		Message: "ok",
+		Data: models.ResTokenImg{
+			ChainId:      chainIdParam,
+			TokenAddress: tokenAddressParam,
+			Thumb:        entity[0].Thumb,
+			Small:        entity[0].Small,
+			Large:        entity[0].Large,
+		},
+	})
+
+}

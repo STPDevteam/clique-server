@@ -138,3 +138,14 @@ type ProposalInfoModel struct {
 	Uuid       string `db:"uuid"`
 	Content    string `db:"content"`
 }
+
+type TokensImgModel struct {
+	Id           uint64 `db:"id,omitempty" sqler:"skips"`
+	CreateTime   string `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime   string `db:"update_time,omitempty" sqler:"skips"`
+	ChainId      int    `db:"chain_id"`
+	TokenAddress string `db:"token_address"`
+	Thumb        string `db:"thumb"`
+	Small        string `db:"small"`
+	Large        string `db:"large"`
+}

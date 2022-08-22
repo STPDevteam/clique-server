@@ -225,3 +225,26 @@ type ResProposalUuid struct {
 type ResProposalContent struct {
 	Content string `json:"content"`
 }
+
+type TokensInfo struct {
+	Id        string                 `json:"id"`
+	Symbol    string                 `json:"symbol"`
+	Name      string                 `json:"name"`
+	Platforms map[string]interface{} `json:"platforms"`
+}
+
+type TokenImg struct {
+	Image struct {
+		Thumb string `json:"thumb"`
+		Small string `json:"small"`
+		Large string `json:"large"`
+	} `json:"image"`
+}
+
+type ResTokenImg struct {
+	ChainId      int    `json:"chainId"`
+	TokenAddress string `json:"tokenAddress"`
+	Thumb        string `json:"thumb"`
+	Small        string `json:"small"`
+	Large        string `json:"large"`
+}

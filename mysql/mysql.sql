@@ -174,20 +174,34 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_proposal_info` (
   PRIMARY KEY (`id`)
 );
 
-# CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_proposal` (
-#   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-#   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-#   `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-# 	`dao_id` INT NOT NULL,
-# 	`title` VARCHAR(128) NOT NULL,
-# 	`content` MEDIUMTEXT NOT NULL,
-# 	`start_time` INT NOT NULL,
-# 	`end_time` INT NOT NULL,
-# 	`voting_type` VARCHAR(128) NOT NULL,
-# 	INDEX `dao_id` (`dao_id` ASC),
-# 	PRIMARY KEY (`id`)
-# );
-#
+CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_tokens_img` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `chain_id` INT NOT NULL,
+    `token_address` VARCHAR(128) NOT NULL,
+    `thumb` VARCHAR(300) NOT NULL,
+    `small` VARCHAR(300) NOT NULL,
+    `large` VARCHAR(300) NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `index_chain_id` (`chain_id` ASC),
+    INDEX `index_token_address` (`token_address` ASC)
+);
+
+CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_proposal` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	`dao_id` INT NOT NULL,
+	`title` VARCHAR(128) NOT NULL,
+	`content` MEDIUMTEXT NOT NULL,
+	`start_time` INT NOT NULL,
+	`end_time` INT NOT NULL,
+	`voting_type` VARCHAR(128) NOT NULL,
+	INDEX `dao_id` (`dao_id` ASC),
+	PRIMARY KEY (`id`)
+);
+
 # CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_options` (
 #   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 #   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

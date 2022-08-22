@@ -194,3 +194,47 @@ func DoPost(url string, contentType string, body string) (res []byte, err error)
 
 	return bodyBytes, nil
 }
+
+func GetTokensId(url string) ([]models.TokensInfo, error) {
+	res, err := DoGet(url)
+	if err != nil {
+		return nil, err
+	}
+
+	data := make([]models.TokensInfo, 0)
+	err = json.Unmarshal(res, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+func GetTokenImg(url string) (data *models.TokenImg, err error) {
+	res, err := DoGet(url)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(res, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+func DoGet(url string) (res []byte, err error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return bodyBytes, nil
+}

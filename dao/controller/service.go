@@ -92,6 +92,7 @@ func (svc *Service) Start(ctx *cli.Context) error {
 	r7 := router.Group(path.Join(basePath, "/token"))
 	{
 		r7.GET("/list", httpTokenList)
+		r7.GET("/img", httpTokenImg)
 	}
 	r8 := router.Group(path.Join(basePath, "/error"))
 	{

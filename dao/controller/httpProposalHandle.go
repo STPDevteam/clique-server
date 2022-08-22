@@ -16,7 +16,9 @@ import (
 // @version 0.0.1
 // @description query proposal list
 // @Produce json
+// @Param status query string false "status:Open,Closed"
 // @Param daoAddress query string true "Dao address"
+// @Param chainId query int true "chainId"
 // @Param offset query  int true "offset,page"
 // @Param count query  int true "count,page"
 // @Success 200 {object} models.ResProposalsListPage
@@ -25,8 +27,10 @@ func httpProposalsList(c *gin.Context) {
 	daoAddressParam := c.Query("daoAddress")
 	count := c.Query("count")
 	offset := c.Query("offset")
+	chainIdParam := c.Query("chainId")
 	countParam, _ := strconv.Atoi(count)
 	offsetParam, _ := strconv.Atoi(offset)
+	//statusParam := c.Query("status")
 
 	var listEntities []models.EventHistoricalModel
 	sqler := oo.NewSqler().Table(consts.TbNameEventHistorical).
@@ -60,7 +64,8 @@ func httpProposalsList(c *gin.Context) {
 		var counts int
 		sqlCancel := oo.NewSqler().Table(consts.TbNameEventHistorical).
 			Where("event_type", consts.EvCancelProposal).
-			Where("topic1", listEntities[index].Topic1).Count()
+			Where("topic1", listEntities[index].Topic1).
+			Where("chain_id", chainIdParam).Count()
 		err = oo.SqlGet(sqlCancel, &counts)
 		if err != nil {
 			oo.LogW("%v", err)

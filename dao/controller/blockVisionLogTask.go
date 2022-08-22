@@ -282,6 +282,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 				oo.LogW("SQL err: %v", errTx)
 				return
 			}
+
 		}
 
 		if blockData[i]["event_type"] == consts.EvAdmin {
@@ -480,7 +481,7 @@ func (svc *Service) updateDaoInfoTask() {
 								oo.LogW("Decode failed. chainId:%d. err: %v\n", chainId, errDe)
 								return
 							}
-							saveDaoInfoAndCategory(daoInfo, entities[index].DaoAddress, chainId)
+							saveDaoInfoAndCategory(daoInfo, entities[index].DaoAddress, entities[index].TokenAddress, chainId)
 						}
 					}
 				}
@@ -489,12 +490,16 @@ func (svc *Service) updateDaoInfoTask() {
 	}
 }
 
-func saveDaoInfoAndCategory(daoInfo []interface{}, daoAddress string, chainId int) {
+func saveDaoInfoAndCategory(daoInfo []interface{}, daoAddress, tokenAddress string, chainId int) {
 	tx, errTx := oo.NewSqlxTx()
 	if errTx != nil {
 		oo.LogW("SQL err: %v", errTx)
 	}
 	defer oo.CloseSqlxTx(tx, &errTx)
+
+	//id := 1
+	//t := "0xdf5e0e81dff6faf3a7e52ba697820c5e32d806a8"
+	tokensImgTask(chainId, tokenAddress)
 
 	daoName := daoInfo[0]
 	handle := daoInfo[1]
