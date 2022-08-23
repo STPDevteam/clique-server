@@ -217,13 +217,24 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 			creatorAddress := utils.FixTo0x40String(blockData[i]["topic1"].(string))
 			tokenAddress := utils.FixTo0x40String(blockData[i]["data"].(string)[66:130])
 			tokenChainId, _ := utils.Hex2Int64(blockData[i]["data"].(string)[:66])
-			sqlInsDao := fmt.Sprintf(`INSERT INTO %s (dao_address,creator,chain_id,token_chain_id,token_address,update_bool) VALUES ('%s','%s',%d,%d,'%s',%t)`,
+			sqlInsDao := fmt.Sprintf(`INSERT INTO %s (dao_logo,dao_name,dao_address,creator,handle,description,chain_id,token_chain_id,token_address,proposal_threshold,voting_quorum,voting_period,voting_type,twitter,github,discord,update_bool) VALUES ('%s','%s','%s','%s','%s','%s',%d,%d,'%s',%d,%d,%d,'%s','%s','%s','%s',%t)`,
 				consts.TbNameDao,
+				"",
+				"",
 				daoAddress,
 				creatorAddress,
+				"",
+				"",
 				chainId,
 				tokenChainId,
 				tokenAddress,
+				0,
+				0,
+				0,
+				"",
+				"",
+				"",
+				"",
 				false,
 			)
 			_, errTx = oo.SqlxTxExec(tx, sqlInsDao)
