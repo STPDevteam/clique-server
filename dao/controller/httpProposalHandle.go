@@ -167,3 +167,50 @@ func httpQueryProposal(c *gin.Context) {
 	})
 
 }
+
+// @Summary query proposal snapshot
+// @Tags proposal
+// @version 0.0.1
+// @description query proposal snapshot
+// @Produce json
+// @Param chainId query int true "chainId"
+// @Param daoAddress query string true "daoAddress"
+// @Param proposalId query string true "proposalId"
+// @Success 200 {object} models.ResProposalContent
+// @Router /stpdao/v2/proposal/snapshot [get]
+func httpQuerySnapshot(c *gin.Context) {
+	chainId := c.Query("chainId")
+	chainIdParam, _ := strconv.Atoi(chainId)
+	proposalId := c.Query("proposalId")
+	proposalIdParam, _ := strconv.Atoi(proposalId)
+	daoAddressParam := c.Query("daoAddress")
+
+	var blockNumber string
+	proposalId0x64 := utils.FixTo0x64String(strconv.FormatInt(int64(proposalIdParam), 16))
+	sqlSel := oo.NewSqler().Table(consts.TbNameEventHistorical).
+		Where("event_type", consts.EvCreateProposal).
+		Where("address", daoAddressParam).
+		Where("chain_id", chainIdParam).
+		Where("topic1", proposalId0x64).Select("block_number")
+	err := oo.SqlGet(sqlSel, &blockNumber)
+	if err != nil && err != oo.ErrNoRows {
+		oo.LogW("%v", err)
+		c.JSON(http.StatusOK, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+
+	snapshot, _ := utils.Hex2Int64(blockNumber)
+	c.JSON(http.StatusOK, models.Response{
+		Code:    http.StatusOK,
+		Message: "ok",
+		Data: models.ResSnapshot{
+			ChainId:    chainIdParam,
+			DaoAddress: daoAddressParam,
+			ProposalId: proposalIdParam,
+			Snapshot:   snapshot,
+		},
+	})
+}

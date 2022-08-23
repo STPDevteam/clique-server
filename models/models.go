@@ -248,3 +248,10 @@ type ResTokenImg struct {
 	Small        string `json:"small"`
 	Large        string `json:"large"`
 }
+
+type ResSnapshot struct {
+	ChainId    int    `json:"chainId"`
+	DaoAddress string `json:"daoAddress"`
+	ProposalId int    `json:"proposalId"`
+	Snapshot   int64  `json:"snapshot"`
+}

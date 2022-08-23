@@ -76,6 +76,7 @@ func (svc *Service) Start(ctx *cli.Context) error {
 		r3.GET("/list", httpProposalsList)
 		r3.POST("/save", httpSaveProposal)
 		r3.GET("/query", httpQueryProposal)
+		r3.GET("/snapshot", httpQuerySnapshot)
 	}
 	r4 := router.Group(path.Join(basePath, "/votes"))
 	{
