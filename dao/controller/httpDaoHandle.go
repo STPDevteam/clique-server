@@ -201,50 +201,60 @@ func httpDaoJoinOrQuit(c *gin.Context) {
 		return
 	}
 
-	if (count == 0 && params.Params.JoinSwitch == 1) || (count == 1 && params.Params.JoinSwitch == 1) {
-
-		sqlIns := fmt.Sprintf(`REPLACE INTO %s (dao_address,chain_id,account,join_switch) VALUES ('%s',%d,'%s',%d)`,
-			consts.TbNameMember,
-			params.Params.DaoAddress,
-			params.Params.ChainId,
-			params.Params.Account,
-			params.Params.JoinSwitch,
-		)
-		err = oo.SqlExec(sqlIns)
-		if err != nil {
-			oo.LogW("%v", err)
-			c.JSON(http.StatusOK, models.Response{
-				Code:    500,
-				Message: "Something went wrong, Please try again later.",
-			})
-			return
-		}
-
-	} else if count == 1 && params.Params.JoinSwitch == 0 {
-
-		sqlUp := fmt.Sprintf(`UPDATE %s SET join_switch=%d WHERE dao_address='%s' AND account='%s' AND chain_id=%d`,
-			consts.TbNameMember,
-			params.Params.JoinSwitch,
-			params.Params.DaoAddress,
-			params.Params.Account,
-			params.Params.ChainId,
-		)
-		err = oo.SqlExec(sqlUp)
-		if err != nil {
-			oo.LogW("%v", err)
-			c.JSON(http.StatusOK, models.Response{
-				Code:    500,
-				Message: "Something went wrong, Please try again later.",
-			})
-			return
-		}
-
-	} else if count == 0 && params.Params.JoinSwitch == 0 {
+	var role string
+	sqlSelRole := oo.NewSqler().Table(consts.TbNameAdmin).
+		Where("dao_address", params.Params.DaoAddress).
+		Where("chain_id", params.Params.ChainId).
+		Where("account", params.Params.Account).Select("account_level")
+	err = oo.SqlGet(sqlSelRole, &role)
+	if err != nil && err != oo.ErrNoRows {
+		oo.LogW("%v", err)
 		c.JSON(http.StatusOK, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",
 		})
 		return
+	}
+
+	if role != consts.LevelSuperAdmin {
+		if (count == 0 && params.Params.JoinSwitch == 1) || (count == 1 && params.Params.JoinSwitch == 1) {
+
+			sqlIns := fmt.Sprintf(`REPLACE INTO %s (dao_address,chain_id,account,join_switch) VALUES ('%s',%d,'%s',%d)`,
+				consts.TbNameMember,
+				params.Params.DaoAddress,
+				params.Params.ChainId,
+				params.Params.Account,
+				params.Params.JoinSwitch,
+			)
+			err = oo.SqlExec(sqlIns)
+			if err != nil {
+				oo.LogW("%v", err)
+				c.JSON(http.StatusOK, models.Response{
+					Code:    500,
+					Message: "Something went wrong, Please try again later.",
+				})
+				return
+			}
+
+		} else if count == 1 && params.Params.JoinSwitch == 0 {
+
+			sqlUp := fmt.Sprintf(`UPDATE %s SET join_switch=%d WHERE dao_address='%s' AND account='%s' AND chain_id=%d`,
+				consts.TbNameMember,
+				params.Params.JoinSwitch,
+				params.Params.DaoAddress,
+				params.Params.Account,
+				params.Params.ChainId,
+			)
+			err = oo.SqlExec(sqlUp)
+			if err != nil {
+				oo.LogW("%v", err)
+				c.JSON(http.StatusOK, models.Response{
+					Code:    500,
+					Message: "Something went wrong, Please try again later.",
+				})
+				return
+			}
+		}
 	}
 
 	c.JSON(http.StatusOK, models.Response{

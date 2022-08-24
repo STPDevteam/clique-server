@@ -5,6 +5,7 @@ import (
 	oo "github.com/Anna2024/liboo"
 	"github.com/gin-gonic/gin"
 	"math/big"
+	"math/rand"
 	"net/http"
 	"stp_dao_v2/consts"
 	"stp_dao_v2/models"
@@ -131,6 +132,9 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 		balance = res.Result.Value
 
 	}
+	a := rand.Intn(10000)
+	balance = fmt.Sprintf(`%d`, a) //test
+
 	decBalance, _ := new(big.Int).SetString(balance, 10)
 	resBalance := fmt.Sprintf("%064s", fmt.Sprintf("%x", decBalance))
 

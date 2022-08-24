@@ -244,19 +244,32 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 			}
 
 			//save superAdmin
-			sqlInsMember := fmt.Sprintf(`INSERT INTO %s (dao_address,chain_id,account,account_level) VALUES ('%s',%d,'%s','%s')`,
+			sqlInsAdmin := fmt.Sprintf(`INSERT INTO %s (dao_address,chain_id,account,account_level) VALUES ('%s',%d,'%s','%s')`,
 				consts.TbNameAdmin,
 				daoAddress,
 				chainId,
 				creatorAddress,
 				consts.LevelSuperAdmin,
 			)
-			_, errTx = oo.SqlxTxExec(tx, sqlInsMember)
+			_, errTx = oo.SqlxTxExec(tx, sqlInsAdmin)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return
 			}
 
+			//save member
+			sqlInsMeber := fmt.Sprintf(`INSERT INTO %s (dao_address,chain_id,account,join_switch) VALUES ('%s',%d,'%s',%d)`,
+				consts.TbNameMember,
+				daoAddress,
+				chainId,
+				creatorAddress,
+				1,
+			)
+			_, errTx = oo.SqlxTxExec(tx, sqlInsMeber)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
 		}
 
 		if blockData[i]["event_type"] == consts.EvSetting {
