@@ -123,6 +123,7 @@ type SignCreateDataParam struct {
 	// Sign Type:"0":CreateProposal,"1":Vote
 	SignType   string `json:"signType"`
 	Account    string `json:"account"`
+	ChainId    int    `json:"chainId"`
 	DaoAddress string `json:"daoAddress"`
 }
 

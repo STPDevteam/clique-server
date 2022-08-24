@@ -38,7 +38,8 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 	var createDaoEntity []models.EventHistoricalModel
 	sqler := oo.NewSqler().Table(consts.TbNameEventHistorical).
 		Where("event_type", consts.EvCreateDao).
-		Where("topic2", daoAddress).Select()
+		Where("topic2", daoAddress).
+		Where("chain_id", params.ChainId).Select()
 	err = oo.SqlSelect(sqler, &createDaoEntity)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)
@@ -49,7 +50,7 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 		return
 	}
 	chainIdAndTokenAddress := strings.TrimPrefix(createDaoEntity[0].Data, "0x")
-	ResChainId := chainIdAndTokenAddress[:64]
+	resChainId := chainIdAndTokenAddress[:64]
 
 	var nonceEntity []models.NonceModel
 	sqlSel := oo.NewSqler().Table(consts.TbNameNonce).Where("account", params.Account).Select()
@@ -109,6 +110,7 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 		sqlVote := oo.NewSqler().Table(consts.TbNameEventHistorical).
 			Where("event_type", consts.EvCreateProposal).
 			Where("address", daoAddress).
+			Where("chain_id", params.ChainId).
 			Where("topic2", topic2).Select()
 		err = oo.SqlSelect(sqlVote, &VoteEntity)
 		if err != nil || VoteEntity == nil || len(VoteEntity) == 0 {
@@ -133,7 +135,7 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 
 	}
 	a := rand.Intn(10000)
-	balance = fmt.Sprintf(`%d`, a) //test
+	balance = fmt.Sprintf(`%d000000000000000000`, a) //test
 
 	decBalance, _ := new(big.Int).SetString(balance, 10)
 	resBalance := fmt.Sprintf("%064s", fmt.Sprintf("%x", decBalance))
@@ -142,7 +144,7 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 	resSignType := fmt.Sprintf("%064s", params.SignType)
 	resAccount := strings.TrimPrefix(params.Account, "0x")
 
-	message := fmt.Sprintf("%s%s%s%s%s%s", resAccount, resNonce, ResChainId, resTokenAddress, resBalance, resSignType)
+	message := fmt.Sprintf("%s%s%s%s%s%s", resAccount, resNonce, resChainId, resTokenAddress, resBalance, resSignType)
 
 	signature, err := utils.SignMessage(message, svc.appConfig.SignMessagePriKey)
 	if err != nil {

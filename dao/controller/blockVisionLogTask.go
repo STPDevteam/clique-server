@@ -36,7 +36,7 @@ func (svc *Service) scheduledTask() {
 
 			var latestBlockNum int
 			resBlock, err := utils.QueryLatestBlock(url)
-			if err != nil {
+			if err != nil || resBlock.Result == "" {
 				oo.LogW("QueryLatestBlock failed. err: %v\n", err)
 				continue
 			}
