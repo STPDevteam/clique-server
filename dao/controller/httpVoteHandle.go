@@ -64,16 +64,11 @@ func httpVotesList(c *gin.Context) {
 		optionIndex, _ := utils.Hex2Int64(listEntities[indexList].Topic3)
 		amount, _ := utils.Hex2BigInt(listEntities[indexList].Data[:66])
 
-		var votes = make([]models.Votes, 0)
-		votes = append(votes, models.Votes{
+		voterList = append(voterList, models.ResVotesList{
+			ProposalId:  proposalId,
+			Voter:       voter,
 			OptionIndex: optionIndex,
 			Amount:      amount.String(),
-		})
-
-		voterList = append(voterList, models.ResVotesList{
-			ProposalId: proposalId,
-			Voter:      voter,
-			Votes:      votes,
 		})
 
 	}

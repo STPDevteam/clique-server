@@ -20,6 +20,8 @@ const (
 	TbNameProposalInfo    = "tb_proposal_info"
 	TbNameTokensImg       = "tb_tokens_img"
 	TbNameProposal        = "tb_proposal"
+	//TbNameVote            = "tb_vote"
+	//TbNameVoteVotes       = "tb_vote_votes"
 
 	EvCreateDao            = "CreateDao"
 	EvCreateProposal       = "CreateProposal"

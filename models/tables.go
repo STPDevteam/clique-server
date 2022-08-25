@@ -162,3 +162,22 @@ type ProposalModel struct {
 	StartTime  int64  `db:"start_time"`
 	EndTime    int64  `db:"end_time"`
 }
+
+//type VoteModel struct {
+//	Id         uint64 `db:"id,omitempty" sqler:"skips"`
+//	CreateTime string `db:"create_time,omitempty" sqler:"skips"`
+//	UpdateTime string `db:"update_time,omitempty" sqler:"skips"`
+//	ProposalId int    `db:"proposal_id"`
+//	ChainId    int    `db:"chain_id"`
+//	DaoAddress string `db:"dao_address"`
+//	Voter      string `db:"voter"`
+//}
+//
+//type VoteVotesModel struct {
+//	Id          uint64 `db:"id,omitempty" sqler:"skips"`
+//	CreateTime  string `db:"create_time,omitempty" sqler:"skips"`
+//	UpdateTime  string `db:"update_time,omitempty" sqler:"skips"`
+//	VoteId      int    `db:"vote_id"`
+//	OptionIndex int    `db:"option_index"`
+//	Amount      string `db:"amount"`
+//}

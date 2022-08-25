@@ -1,6 +1,8 @@
 CREATE SCHEMA IF NOT EXISTS `stp_dao_v2` DEFAULT CHARACTER SET utf8 ;
 USE `stp_dao_v2`;
 
+# SET GLOBAL TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+
 CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`event_historical_data` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -74,7 +76,7 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_dao` (
 	`twitter` VARCHAR(128),
 	`github` VARCHAR(128),
 	`discord` VARCHAR(128),
-	`update_bool` bool,
+	`update_bool` bool NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `dao_address` (`dao_address` ASC),
   INDEX `creator` (`creator` ASC)
@@ -175,7 +177,8 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_proposal_info` (
   `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `uuid` VARCHAR(36) NOT NULL,
   `content` TEXT NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  INDEX `index_uuid` (`uuid` ASC)
 );
 
 CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_tokens_img` (
@@ -208,6 +211,32 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_proposal` (
     INDEX `index_dao_address` (`dao_address` ASC),
     INDEX `index_proposalId` (`proposal_id` ASC)
 );
+
+# CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_vote` (
+#     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+#     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+#     `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+#     `proposal_id` INT NOT NULL,
+#     `chain_id` INT NOT NULL,
+#     `dao_address` VARCHAR(128) NOT NULL,
+#     `voter` VARCHAR(128) NOT NULL,
+#     PRIMARY KEY (`id`),
+#     INDEX `index_chain_id` (`chain_id` ASC),
+#     INDEX `index_dao_address` (`dao_address` ASC),
+#     INDEX `index_proposalId` (`proposal_id` ASC),
+#     INDEX `index_voter` (`voter` ASC)
+# );
+#
+# CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_vote_votes` (
+#     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+#     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+#     `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+#     `vote_id` INT NOT NULL,
+#     `option_index` INT NOT NULL,
+#     `amount` VARCHAR(128) NOT NULL,
+#     PRIMARY KEY (`id`),
+#     INDEX `index_vote_id` (`vote_id` ASC)
+# );
 
 # CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_options` (
 #   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
