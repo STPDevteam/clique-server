@@ -170,12 +170,17 @@ type ResProposalsList struct {
 
 type ResVotesListPage struct {
 	List  []ResVotesList `json:"list"`
-	Total uint64         `json:"total"`
+	Total int            `json:"total"`
 }
 
 type ResVotesList struct {
+	ProposalId int64   `json:"proposalId"`
+	Voter      string  `json:"voter"`
+	Votes      []Votes `json:"votes"`
+}
+
+type Votes struct {
 	OptionIndex int64  `json:"optionIndex"`
-	Voter       string `json:"voter"`
 	Amount      string `json:"amount"`
 }
 

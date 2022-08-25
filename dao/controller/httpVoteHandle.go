@@ -32,7 +32,7 @@ func httpVotesList(c *gin.Context) {
 	countParam, _ := strconv.Atoi(count)
 	offsetParam, _ := strconv.Atoi(offset)
 
-	var total uint64
+	var total int
 	var listEntities []models.EventHistoricalModel
 	proposalIdParam64 := utils.FixTo0x64String(proposalIdParam)
 	sqler := oo.NewSqler().Table(consts.TbNameEventHistorical).
@@ -57,24 +57,32 @@ func httpVotesList(c *gin.Context) {
 		return
 	}
 
-	var data = make([]models.ResVotesList, 0)
-	for index := range listEntities {
-		optionIndex, _ := utils.Hex2Int64(listEntities[index].Topic3)
-		voter := utils.FixTo0x40String(listEntities[index].Topic2)
-		amount, _ := utils.Hex2BigInt(listEntities[index].Data[:66])
+	var voterList = make([]models.ResVotesList, 0)
+	for indexList := range listEntities {
+		proposalId, _ := utils.Hex2Int64(listEntities[indexList].Topic1)
+		voter := utils.FixTo0x40String(listEntities[indexList].Topic2)
+		optionIndex, _ := utils.Hex2Int64(listEntities[indexList].Topic3)
+		amount, _ := utils.Hex2BigInt(listEntities[indexList].Data[:66])
 
-		data = append(data, models.ResVotesList{
+		var votes = make([]models.Votes, 0)
+		votes = append(votes, models.Votes{
 			OptionIndex: optionIndex,
-			Voter:       voter,
 			Amount:      amount.String(),
 		})
+
+		voterList = append(voterList, models.ResVotesList{
+			ProposalId: proposalId,
+			Voter:      voter,
+			Votes:      votes,
+		})
+
 	}
 
 	c.JSON(http.StatusOK, models.Response{
 		Code:    http.StatusOK,
 		Message: "ok",
 		Data: models.ResVotesListPage{
-			List:  data,
+			List:  voterList,
 			Total: total,
 		},
 	})

@@ -105,13 +105,11 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 		balance = res.Result.Value
 
 	} else if params.SignType == "1" {
-		topic2 := utils.FixTo0x64String(params.Account)
 		var VoteEntity []models.EventHistoricalModel
 		sqlVote := oo.NewSqler().Table(consts.TbNameEventHistorical).
 			Where("event_type", consts.EvCreateProposal).
-			Where("address", daoAddress).
-			Where("chain_id", params.ChainId).
-			Where("topic2", topic2).Select()
+			Where("address", params.DaoAddress).
+			Where("chain_id", params.ChainId).Select()
 		err = oo.SqlSelect(sqlVote, &VoteEntity)
 		if err != nil || VoteEntity == nil || len(VoteEntity) == 0 {
 			oo.LogW("SQL err: %v", err)
