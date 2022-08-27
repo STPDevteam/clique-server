@@ -8,6 +8,7 @@ import (
 	"stp_dao_v2/consts"
 	"stp_dao_v2/models"
 	"strconv"
+	"time"
 )
 
 // @Summary query Dao list
@@ -78,12 +79,58 @@ func httpDaoList(c *gin.Context) {
 	var listModel = make([]models.ResDaoList, 0)
 	for index := range daoListEntity {
 
-		var proposals uint64
-		sqlProposal := oo.NewSqler().Table(consts.TbNameEventHistorical).
-			Where("event_type", consts.EvCreateProposal).
-			Where("address", daoListEntity[index].DaoAddress).
-			Where("chain_id", daoListEntity[index].ChainId).Count()
-		err = oo.SqlGet(sqlProposal, &proposals)
+		var totalProposals uint64
+		sqlTotal := oo.NewSqler().Table(consts.TbNameProposal).
+			Where("chain_id", daoListEntity[index].ChainId).
+			Where("dao_address", daoListEntity[index].DaoAddress).Count()
+		err = oo.SqlGet(sqlTotal, &totalProposals)
+		if err != nil {
+			oo.LogW("SQL err: %v", err)
+			c.JSON(http.StatusInternalServerError, models.Response{
+				Code:    500,
+				Message: "Something went wrong, Please try again later.",
+			})
+			return
+		}
+
+		var activeProposals uint64
+		var now = time.Now().Unix()
+		sqlActive := oo.NewSqler().Table(consts.TbNameProposal).
+			Where("chain_id", daoListEntity[index].ChainId).
+			Where("dao_address", daoListEntity[index].DaoAddress).
+			Where("start_time", "<=", now).
+			Where("end_time", ">=", now).Count()
+		err = oo.SqlGet(sqlActive, &activeProposals)
+		if err != nil {
+			oo.LogW("SQL err: %v", err)
+			c.JSON(http.StatusInternalServerError, models.Response{
+				Code:    500,
+				Message: "Something went wrong, Please try again later.",
+			})
+			return
+		}
+
+		var soonProposals uint64
+		sqlSoon := oo.NewSqler().Table(consts.TbNameProposal).
+			Where("chain_id", daoListEntity[index].ChainId).
+			Where("dao_address", daoListEntity[index].DaoAddress).
+			Where("start_time", ">=", now).Count()
+		err = oo.SqlGet(sqlSoon, &soonProposals)
+		if err != nil {
+			oo.LogW("SQL err: %v", err)
+			c.JSON(http.StatusInternalServerError, models.Response{
+				Code:    500,
+				Message: "Something went wrong, Please try again later.",
+			})
+			return
+		}
+
+		var closedProposals uint64
+		sqlClosed := oo.NewSqler().Table(consts.TbNameProposal).
+			Where("chain_id", daoListEntity[index].ChainId).
+			Where("dao_address", daoListEntity[index].DaoAddress).
+			Where("end_time", "<=", now).Count()
+		err = oo.SqlGet(sqlClosed, &closedProposals)
 		if err != nil {
 			oo.LogW("SQL err: %v", err)
 			c.JSON(http.StatusInternalServerError, models.Response{
@@ -135,13 +182,16 @@ func httpDaoList(c *gin.Context) {
 		}
 
 		listModel = append(listModel, models.ResDaoList{
-			DaoLogo:    daoListEntity[index].DaoLogo,
-			DaoName:    daoListEntity[index].DaoName,
-			DaoAddress: daoListEntity[index].DaoAddress,
-			ChainId:    daoListEntity[index].ChainId,
-			Proposals:  proposals,
-			Members:    members,
-			JoinSwitch: joinSwitch,
+			DaoLogo:         daoListEntity[index].DaoLogo,
+			DaoName:         daoListEntity[index].DaoName,
+			DaoAddress:      daoListEntity[index].DaoAddress,
+			ChainId:         daoListEntity[index].ChainId,
+			TotalProposals:  totalProposals,
+			ActiveProposals: activeProposals,
+			SoonProposals:   soonProposals,
+			ClosedProposals: closedProposals,
+			Members:         members,
+			JoinSwitch:      joinSwitch,
 		})
 	}
 

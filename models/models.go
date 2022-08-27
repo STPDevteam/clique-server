@@ -111,8 +111,14 @@ type ResDaoList struct {
 	DaoName    string `json:"daoName"`
 	DaoAddress string `json:"daoAddress"`
 	ChainId    int    `json:"chainId"`
-	// proposals total
-	Proposals uint64 `json:"proposals"`
+	// total proposals
+	TotalProposals uint64 `json:"totalProposals"`
+	// activity proposals
+	ActiveProposals uint64 `json:"activeProposals"`
+	// soon proposals
+	SoonProposals uint64 `json:"soonProposals"`
+	// closed proposals
+	ClosedProposals uint64 `json:"closedProposals"`
 	// members total
 	Members uint64 `json:"members"`
 	// 0:not joined Dao, 1:joined Dao,default:0
