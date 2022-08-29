@@ -1,6 +1,12 @@
 package models
 
 type JsonRPCModel struct {
+	Id      uint64      `json:"id"`
+	Jsonrpc string      `json:"jsonrpc"`
+	Result  interface{} `json:"result"`
+}
+
+type JsonRPCScanBlockModel struct {
 	Id      uint64   `json:"id"`
 	Jsonrpc string   `json:"jsonrpc"`
 	Result  []Result `json:"result"`
@@ -127,8 +133,10 @@ type ResDaoList struct {
 }
 
 type SignCreateDataParam struct {
-	// Sign Type:"0":CreateProposal,"1":Vote
-	SignType   string `json:"signType"`
+	// SignType:"0":CreateProposal,"1":Vote
+	SignType string `json:"signType"`
+	// if SignType:"1":Vote,need proposalId
+	ProposalId int    `json:"proposalId"`
 	Account    string `json:"account"`
 	ChainId    int    `json:"chainId"`
 	DaoAddress string `json:"daoAddress"`

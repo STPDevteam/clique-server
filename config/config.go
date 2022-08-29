@@ -10,6 +10,8 @@ type AppConfig struct {
 	SwaggerUrl         string   `mapstructure:"swagger_url" toml:"swagger_url"`
 	MysqlConfName      string   `mapstructure:"mysql_conf_name" toml:"mysql_conf_name"`
 	ScanInfoConfName   []string `mapstructure:"scan_info_conf_name" toml:"scan_info_conf_name"`
+	TestnetBalanceSign []int    `mapstructure:"testnet_balance_sign" toml:"testnet_balance_sign"`
+	MainnetBalanceSign []int    `mapstructure:"mainnet_balance_sign" toml:"mainnet_balance_sign"`
 }
 
 type MysqlConfig struct {

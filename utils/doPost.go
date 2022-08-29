@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func ScanBlock(currentBlock, url string) (*models.JsonRPCModel, error) {
+func ScanBlock(currentBlock, url string) (*models.JsonRPCScanBlockModel, error) {
 	body := fmt.Sprintf(`{
 		"id": 1,
 		"jsonrpc":"2.0",
@@ -20,10 +20,10 @@ func ScanBlock(currentBlock, url string) (*models.JsonRPCModel, error) {
 		}]
 	}`, currentBlock, currentBlock)
 
-	return jsonRPC(body, url)
+	return jsonRPCScanBlock(body, url)
 }
 
-func jsonRPC(body, url string) (data *models.JsonRPCModel, err error) {
+func jsonRPCScanBlock(body, url string) (data *models.JsonRPCScanBlockModel, err error) {
 	res, err := DoPost(
 		url,
 		"application/json",
@@ -212,6 +212,35 @@ func GetTokensId(url string) ([]models.TokensInfo, error) {
 
 func GetTokenImg(url string) (data *models.TokenImg, err error) {
 	res, err := DoGet(url)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(res, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+func QueryERC20Balance(to, data, url string) (*models.JsonRPCModel, error) {
+	body := fmt.Sprintf(`{
+		"id": 1,
+		"jsonrpc":"2.0",
+		"method": "eth_call",
+		"params": [{"to":"%s","data":"%s"}, "latest"]
+	}`, to, data)
+
+	return jsonRPC(body, url)
+}
+
+func jsonRPC(body, url string) (data *models.JsonRPCModel, err error) {
+	res, err := DoPost(
+		url,
+		"application/json",
+		body,
+	)
 	if err != nil {
 		return nil, err
 	}
