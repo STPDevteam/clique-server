@@ -99,11 +99,11 @@ func httpQueryAccount(c *gin.Context) {
 		})
 	}
 
-	var daosEntities []models.AdminModel
+	var superDaoEntities []models.AdminModel
 	sqlSel = oo.NewSqler().Table(consts.TbNameAdmin).
 		Where("account", params.Account).
-		Where("account_level='superAdmin' OR account_level='admin'").Select()
-	err = oo.SqlSelect(sqlSel, &daosEntities)
+		Where("account_level", consts.LevelSuperAdmin).Select()
+	err = oo.SqlSelect(sqlSel, &superDaoEntities)
 	if err != nil {
 		oo.LogW("%v", err)
 		c.JSON(http.StatusOK, models.Response{
@@ -112,11 +112,34 @@ func httpQueryAccount(c *gin.Context) {
 		})
 		return
 	}
-	var dataDaos = make([]models.ResDaos, 0)
-	for index := range daosEntities {
-		dataDaos = append(dataDaos, models.ResDaos{
-			DaoAddress: daosEntities[index].DaoAddress,
-			ChainId:    daosEntities[index].ChainId,
+	var superData = make([]models.ResDao, 0)
+	for index := range superDaoEntities {
+		superData = append(superData, models.ResDao{
+			DaoAddress:   superDaoEntities[index].DaoAddress,
+			ChainId:      superDaoEntities[index].ChainId,
+			AccountLevel: superDaoEntities[index].AccountLevel,
+		})
+	}
+
+	var adminDaoEntities []models.AdminModel
+	sqlSel = oo.NewSqler().Table(consts.TbNameAdmin).
+		Where("account", params.Account).
+		Where("account_level", consts.LevelAdmin).Select()
+	err = oo.SqlSelect(sqlSel, &adminDaoEntities)
+	if err != nil {
+		oo.LogW("%v", err)
+		c.JSON(http.StatusOK, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+	var adminData = make([]models.ResDao, 0)
+	for index := range adminDaoEntities {
+		adminData = append(adminData, models.ResDao{
+			DaoAddress:   adminDaoEntities[index].DaoAddress,
+			ChainId:      adminDaoEntities[index].ChainId,
+			AccountLevel: adminDaoEntities[index].AccountLevel,
 		})
 	}
 
@@ -131,7 +154,8 @@ func httpQueryAccount(c *gin.Context) {
 			Twitter:      entity.Twitter.String,
 			Github:       entity.Github.String,
 			MyTokens:     dataMyTokens,
-			Daos:         dataDaos,
+			SuperDao:     superData,
+			AdminDao:     adminData,
 		},
 	})
 }
@@ -174,7 +198,7 @@ func httpUpdateAccount(c *gin.Context) {
 		params.Param.Introduction,
 		params.Param.Twitter,
 		params.Param.Github,
-		params.Param.Account,
+		params.Sign.Account,
 	)
 	err = oo.SqlExec(sqler)
 	if err != nil {

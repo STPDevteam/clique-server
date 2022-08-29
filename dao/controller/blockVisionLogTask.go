@@ -50,7 +50,7 @@ func (svc *Service) scheduledTask() {
 				res, errCb := utils.ScanBlock(currentBlock, url)
 				if errCb != nil {
 					oo.LogW("ScanBlock failed. currentBlock id: %d. chainId:%d. err: %v\n", currentBlockNum, chainId, errCb)
-					break
+					return
 				}
 
 				if len(res.Result) != 0 {
@@ -88,6 +88,7 @@ func (svc *Service) scheduledTask() {
 									resTime, errTime := utils.QueryTimesTamp(currentBlock, url)
 									if errTime != nil {
 										oo.LogW("QueryTimesTamp failed. currentBlock id: %d. chainId:%s. err: %v\n", currentBlockNum, chainId, errTime)
+										return
 									}
 
 									var b = make(map[string]interface{})
@@ -318,9 +319,10 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 
 		if blockData[i]["event_type"] == consts.EvCancelProposal {
 			proposalId := utils.Hex2Dec(blockData[i]["topic1"].(string))
+			endTime := utils.Hex2Dec(blockData[i]["time_stamp"].(string))
 			sqlUp := fmt.Sprintf(`UPDATE %s SET end_time=%d WHERE proposal_id=%d`,
 				consts.TbNameProposal,
-				time.Now().Unix(),
+				endTime,
 				proposalId,
 			)
 			_, errTx = oo.SqlxTxExec(tx, sqlUp)

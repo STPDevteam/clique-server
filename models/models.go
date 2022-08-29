@@ -73,7 +73,8 @@ type ResQueryAccount struct {
 	Twitter      string        `json:"twitter"`
 	Github       string        `json:"github"`
 	MyTokens     []ResMyTokens `json:"myTokens"`
-	Daos         []ResDaos     `json:"daos"`
+	SuperDao     []ResDao      `json:"superDao"`
+	AdminDao     []ResDao      `json:"adminDao"`
 }
 
 type ResMyTokens struct {
@@ -82,9 +83,10 @@ type ResMyTokens struct {
 	Balance      string `json:"balance"`
 }
 
-type ResDaos struct {
-	DaoAddress string `json:"daoAddress"`
-	ChainId    int    `json:"chainId"`
+type ResDao struct {
+	DaoAddress   string `json:"daoAddress"`
+	ChainId      int    `json:"chainId"`
+	AccountLevel string `json:"accountLevel"`
 }
 
 type UpdateAccountWithSignParam struct {
@@ -93,7 +95,6 @@ type UpdateAccountWithSignParam struct {
 }
 
 type UpdateAccountParam struct {
-	Account      string `json:"account"`
 	AccountLogo  string `json:"accountLogo"`
 	Nickname     string `json:"nickname"`
 	Introduction string `json:"introduction"`
