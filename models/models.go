@@ -81,6 +81,7 @@ type ResQueryAccount struct {
 	MyTokens     []ResMyTokens `json:"myTokens"`
 	SuperDao     []ResDao      `json:"superDao"`
 	AdminDao     []ResDao      `json:"adminDao"`
+	Activity     []ResActivity `json:"activity"`
 }
 
 type ResMyTokens struct {
@@ -93,6 +94,15 @@ type ResDao struct {
 	DaoAddress   string `json:"daoAddress"`
 	ChainId      int    `json:"chainId"`
 	AccountLevel string `json:"accountLevel"`
+}
+
+type ResActivity struct {
+	EventType   string `json:"eventType"`
+	ChainId     int    `json:"chainId"`
+	DaoAddress  string `json:"daoAddress"`
+	ProposalId  int    `json:"proposalId"`
+	OptionIndex int    `json:"optionIndex"`
+	Amount      string `json:"amount"`
 }
 
 type UpdateAccountWithSignParam struct {

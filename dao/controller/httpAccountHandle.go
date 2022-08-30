@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"stp_dao_v2/consts"
 	"stp_dao_v2/models"
+	"stp_dao_v2/utils"
 )
 
 // @Summary account info
@@ -40,8 +41,8 @@ func httpQueryAccount(c *gin.Context) {
 	}
 
 	var counts int
-	sqler := oo.NewSqler().Table(consts.TbNameAccount).Where("account", params.Account).Count()
-	err = oo.SqlGet(sqler, &counts)
+	sqlCount := oo.NewSqler().Table(consts.TbNameAccount).Where("account", params.Account).Count()
+	err = oo.SqlGet(sqlCount, &counts)
 	if err != nil {
 		oo.LogW("%v", err)
 		c.JSON(http.StatusOK, models.Response{
@@ -112,9 +113,9 @@ func httpQueryAccount(c *gin.Context) {
 		})
 		return
 	}
-	var superData = make([]models.ResDao, 0)
+	var dataSuper = make([]models.ResDao, 0)
 	for index := range superDaoEntities {
-		superData = append(superData, models.ResDao{
+		dataSuper = append(dataSuper, models.ResDao{
 			DaoAddress:   superDaoEntities[index].DaoAddress,
 			ChainId:      superDaoEntities[index].ChainId,
 			AccountLevel: superDaoEntities[index].AccountLevel,
@@ -134,13 +135,54 @@ func httpQueryAccount(c *gin.Context) {
 		})
 		return
 	}
-	var adminData = make([]models.ResDao, 0)
+	var dataAdmin = make([]models.ResDao, 0)
 	for index := range adminDaoEntities {
-		adminData = append(adminData, models.ResDao{
+		dataAdmin = append(dataAdmin, models.ResDao{
 			DaoAddress:   adminDaoEntities[index].DaoAddress,
 			ChainId:      adminDaoEntities[index].ChainId,
 			AccountLevel: adminDaoEntities[index].AccountLevel,
 		})
+	}
+
+	var activityEntities []models.EventHistoricalModel
+	account0x64 := utils.FixTo0x64String(params.Account)
+	sqlActivity := oo.NewSqler().Table(consts.TbNameEventHistorical).
+		Where("event_type='CreateProposal' OR event_type='Vote'").
+		Where("topic2", account0x64).
+		Order("time_stamp DESC").Limit(5).Offset(0).Select()
+	err = oo.SqlSelect(sqlActivity, &activityEntities)
+	if err != nil {
+		oo.LogW("%v", err)
+		c.JSON(http.StatusOK, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+	var dataActivity = make([]models.ResActivity, 0)
+	for index := range activityEntities {
+		dataIndex := activityEntities[index]
+		proposalId := utils.Hex2Dec(dataIndex.Topic1)
+		if activityEntities[index].EventType == consts.EvCreateProposal {
+			dataActivity = append(dataActivity, models.ResActivity{
+				EventType:  dataIndex.EventType,
+				ChainId:    dataIndex.ChainId,
+				DaoAddress: dataIndex.Address,
+				ProposalId: proposalId,
+			})
+		}
+		if activityEntities[index].EventType == consts.EvVote {
+			optionIndex := utils.Hex2Dec(dataIndex.Topic3)
+			amount, _ := utils.Hex2BigInt(dataIndex.Data[:66])
+			dataActivity = append(dataActivity, models.ResActivity{
+				EventType:   dataIndex.EventType,
+				ChainId:     dataIndex.ChainId,
+				DaoAddress:  dataIndex.Address,
+				ProposalId:  proposalId,
+				OptionIndex: optionIndex,
+				Amount:      amount.String(),
+			})
+		}
 	}
 
 	c.JSON(http.StatusOK, models.Response{
@@ -154,8 +196,9 @@ func httpQueryAccount(c *gin.Context) {
 			Twitter:      entity.Twitter.String,
 			Github:       entity.Github.String,
 			MyTokens:     dataMyTokens,
-			SuperDao:     superData,
-			AdminDao:     adminData,
+			SuperDao:     dataSuper,
+			AdminDao:     dataAdmin,
+			Activity:     dataActivity,
 		},
 	})
 }
