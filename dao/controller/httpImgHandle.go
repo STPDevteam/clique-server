@@ -59,7 +59,7 @@ func (svc *Service) httpUploadImg(c *gin.Context) {
 	if filetype != "image/jpeg" && filetype != "image/png" && fileHeader.Header.Get("Content-Type") != "image/svg+xml" {
 		c.JSON(http.StatusBadRequest, models.Response{
 			Code:    http.StatusBadRequest,
-			Message: "The provided file format is not allowed. Please upload a JPEG or PNG image",
+			Message: "The provided file format is not allowed. Please upload a JPEG or PNG or SVG image",
 		})
 		return
 	}
