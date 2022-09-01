@@ -106,6 +106,14 @@ func saveDaoInfoAndCategory(daoInfo []interface{}, daoAddress string, chainId in
 		return
 	}
 
+	/* event setting: maybe delete the category first */
+	sqlDel := oo.NewSqler().Table(consts.TbNameDaoCategory).Where("dao_id", daoId).Delete()
+	_, err = oo.SqlxTxExec(tx, sqlDel)
+	if err != nil {
+		oo.LogW("SQL failed. err: %v\n", err)
+		return
+	}
+
 	categorySplit := strings.Split(category.(string), ",")
 	for _, categoryName := range categorySplit {
 		if categoryName == "" {

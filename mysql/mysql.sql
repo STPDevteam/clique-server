@@ -51,9 +51,13 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_nonce`(
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    `account` VARCHAR(128) NOT NULL UNIQUE,
-    `nonce` VARCHAR(128) NOT NULL,
-    PRIMARY KEY (`id`)
+    `chain_id` INT NOT NULL,
+    `account` VARCHAR(128) NOT NULL,
+    `nonce` INT NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `chain_id` (`chain_id` ASC),
+    INDEX `account` (`account` ASC),
+    UNIQUE INDEX `unique_index_chain_id_account` (`chain_id` ASC, `account` ASC)
 );
 
 CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_dao` (

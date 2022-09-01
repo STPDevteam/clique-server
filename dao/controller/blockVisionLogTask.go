@@ -289,10 +289,11 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 
 		if blockData[i]["event_type"] == consts.EvCreateProposal {
 			proposer := utils.FixTo0x40String(blockData[i]["topic2"].(string))
-			sqlIns := fmt.Sprintf(`INSERT INTO %s (account,nonce) VALUES ('%s',%d) ON DUPLICATE KEY UPDATE nonce=nonce+1`,
+			sqlIns := fmt.Sprintf(`INSERT INTO %s (account,nonce,chain_id) VALUES ('%s',%d,%d) ON DUPLICATE KEY UPDATE nonce=nonce+1`,
 				consts.TbNameNonce,
 				proposer,
 				1,
+				chainId,
 			)
 			_, errTx = oo.SqlxTxExec(tx, sqlIns)
 			if errTx != nil {
@@ -334,12 +335,14 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 
 		if blockData[i]["event_type"] == consts.EvVote {
 			voter := utils.FixTo0x40String(blockData[i]["topic2"].(string))
-			sqlIns := fmt.Sprintf(`INSERT INTO %s (account,nonce) VALUES ('%s',%d) ON DUPLICATE KEY UPDATE nonce=nonce+1`,
+			nonce := utils.Hex2Dec(blockData[i]["data"].(string)[66:130])
+			sqlUpdate := fmt.Sprintf(`UPDATE %s SET nonce=%d WHERE chain_id=%d AND account='%s'`,
 				consts.TbNameNonce,
+				nonce+1,
+				chainId,
 				voter,
-				1,
 			)
-			_, errTx = oo.SqlxTxExec(tx, sqlIns)
+			_, errTx = oo.SqlxTxExec(tx, sqlUpdate)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return

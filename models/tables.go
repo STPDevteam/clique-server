@@ -50,6 +50,7 @@ type NonceModel struct {
 	Id         uint64 `db:"id,omitempty" sqler:"skips"`
 	CreateTime string `db:"create_time,omitempty" sqler:"skips"`
 	UpdateTime string `db:"update_time,omitempty" sqler:"skips"`
+	ChainId    int    `db:"chain_id"`
 	Account    string `db:"account"`
 	Nonce      uint64 `db:"nonce"`
 }

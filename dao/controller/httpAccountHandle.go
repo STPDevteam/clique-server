@@ -163,7 +163,7 @@ func httpQueryAccount(c *gin.Context) {
 	for index := range activityEntities {
 		dataIndex := activityEntities[index]
 		proposalId := utils.Hex2Dec(dataIndex.Topic1)
-		if activityEntities[index].EventType == consts.EvCreateProposal {
+		if dataIndex.EventType == consts.EvCreateProposal {
 			dataActivity = append(dataActivity, models.ResActivity{
 				EventType:  dataIndex.EventType,
 				ChainId:    dataIndex.ChainId,
@@ -171,7 +171,7 @@ func httpQueryAccount(c *gin.Context) {
 				ProposalId: proposalId,
 			})
 		}
-		if activityEntities[index].EventType == consts.EvVote {
+		if dataIndex.EventType == consts.EvVote {
 			optionIndex := utils.Hex2Dec(dataIndex.Topic3)
 			amount, _ := utils.Hex2BigInt(dataIndex.Data[:66])
 			dataActivity = append(dataActivity, models.ResActivity{

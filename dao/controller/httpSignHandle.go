@@ -52,7 +52,9 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 	resChainId := chainIdAndTokenAddress[:64]
 
 	var nonceEntity []models.NonceModel
-	sqlSel := oo.NewSqler().Table(consts.TbNameNonce).Where("account", params.Account).Select()
+	sqlSel := oo.NewSqler().Table(consts.TbNameNonce).
+		Where("chain_id", params.ChainId).
+		Where("account", params.Account).Select()
 	err = oo.SqlSelect(sqlSel, &nonceEntity)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)
@@ -75,9 +77,8 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 	var url string
 	for indexScan := range svc.scanInfo {
 		for indexUrl := range svc.scanInfo[indexScan].ChainId {
-
 			chainId := svc.scanInfo[indexScan].ChainId[indexUrl]
-			if int64(chainId) == tokenChainId {
+			if chainId == params.ChainId {
 				url = svc.scanInfo[indexScan].ScanUrl[indexUrl]
 			}
 		}
@@ -112,8 +113,7 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 			})
 			return
 		}
-		decBalance, _ := big.NewInt(0).SetString((res.Result.(string))[2:], 16)
-		resBalance = fmt.Sprintf("%064s", fmt.Sprintf("%x", decBalance))
+		resBalance = strings.TrimPrefix(res.Result.(string), "0x")
 
 	} else if params.SignType == "1" {
 
@@ -161,8 +161,7 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 					})
 					return
 				}
-				decBalance, _ := big.NewInt(0).SetString((res.Result.(string))[2:], 16)
-				resBalance = fmt.Sprintf("%064s", fmt.Sprintf("%x", decBalance))
+				resBalance = strings.TrimPrefix(res.Result.(string), "0x")
 			}
 		}
 
