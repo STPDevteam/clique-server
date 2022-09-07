@@ -146,7 +146,7 @@ func jsonBalanceRPC(body, url string) (data *models.JsonRPCBalanceModel, err err
 	return data, nil
 }
 
-func QueryDaoInfo(tokenAddress, data, url string) (model *models.JsonRPCInfoModel, err error) {
+func QueryDaoInfo(daoAddress, data, url string) (model *models.JsonRPCInfoModel, err error) {
 	body := fmt.Sprintf(`{
 		"id": 1,
 		"jsonrpc": "2.0",
@@ -158,7 +158,7 @@ func QueryDaoInfo(tokenAddress, data, url string) (model *models.JsonRPCInfoMode
 			},
 			"latest"
    	 ]
-	}`, tokenAddress, data)
+	}`, daoAddress, data)
 	return jsonInfoRPC(body, url)
 }
 

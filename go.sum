@@ -2,6 +2,8 @@ cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMT
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 gitea.com/xorm/sqlfiddle v0.0.0-20180821085327-62ce714f951a h1:lSA0F4e9A2NcQSqGqTOXqu2aRi/XEQxDCBwM8yJtE6s=
 gitea.com/xorm/sqlfiddle v0.0.0-20180821085327-62ce714f951a/go.mod h1:EXuID2Zs0pAQhH8yz+DNjUbjppKQzKFAn28TMYPB6IU=
+github.com/0xKiwi/sol-merkle-tree-go v0.0.0-20201221015726-540cee3f3bd0 h1:v2smZnEMxWqkCk4iqeR43dWIaUhwBvJF0wVKlGW7QGw=
+github.com/0xKiwi/sol-merkle-tree-go v0.0.0-20201221015726-540cee3f3bd0/go.mod h1:DrUDgKMaQeC+T3iDtvouNaiHqx5bcotCwo2ElGiI/tc=
 github.com/Anna2024/liboo v0.0.0-20220802101715-b2539380cabb h1:OSPzR8r0weCcKKfKibYHtNessMjMyANUPWxTnL17n4E=
 github.com/Anna2024/liboo v0.0.0-20220802101715-b2539380cabb/go.mod h1:7YqipSEOI2S9l3u/k4FO+sDauxD+SmtsDA03Lce4j3M=
 github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ=

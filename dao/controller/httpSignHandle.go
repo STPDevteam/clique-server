@@ -175,7 +175,7 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 	message := fmt.Sprintf("%s%s%s%s%s%s", resAccount, resNonce, resChainId, resTokenAddress, resBalance, resSignType)
 	signature, err := utils.SignMessage(message, svc.appConfig.SignMessagePriKey)
 	if err != nil {
-		c.JSON(http.StatusOK, models.Response{
+		c.JSON(http.StatusUnauthorized, models.Response{
 			Code:    http.StatusUnauthorized,
 			Message: "Signature err",
 		})

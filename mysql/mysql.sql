@@ -81,8 +81,11 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_dao` (
 	`github` VARCHAR(128),
 	`discord` VARCHAR(128),
 	`update_bool` bool NOT NULL,
+# 	`weight` INT,
   PRIMARY KEY (`id`),
   INDEX `dao_address` (`dao_address` ASC),
+  INDEX `dao_name` (`dao_name` ASC),
+  INDEX `token_address` (`token_address` ASC),
   INDEX `creator` (`creator` ASC)
 );
 
@@ -216,6 +219,31 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_proposal` (
     INDEX `index_proposalId` (`proposal_id` ASC)
 );
 
+CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_address` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	`content` TEXT NOT NULL,
+	PRIMARY KEY (`id`),
+    INDEX `index_id` (`id` ASC)
+)AUTO_INCREMENT 1000;
+
+CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_activity` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `chain_id` INT NOT NULL,
+    `dao_address` VARCHAR(128) NOT NULL,
+    `token_chain_id` INT NOT NULL,
+    `token_address` VARCHAR(128) NOT NULL,
+    `amount` DECIMAL(65,0) UNSIGNED NOT NULL,
+    `price` VARCHAR(128) NOT NULL,
+    `start_time` INT NOT NULL,
+    `end_time` INT NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `index_id` (`id` ASC)
+);
+
 # CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_vote` (
 #     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 #     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -278,19 +306,6 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_proposal` (
 # 	`total_supply` VARCHAR(128) NOT NULL,
 # 	`transfers` INT NOT NULL,
 # 	`holders` INT NOT NULL,
-# 	PRIMARY KEY (`id`)
-# );
-#
-# CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_airdrop` (
-#   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-#   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-#   `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-# 	`network` VARCHAR(128) NOT NULL,
-# 	`token` VARCHAR(128) NOT NULL,
-# 	`airdrop_amount` VARCHAR(128) NOT NULL,
-# 	`start_time` INT NOT NULL,
-# 	`end_time` INT NOT NULL,
-# 	`airdrop_address_file` VARCHAR(128) NOT NULL,
 # 	PRIMARY KEY (`id`)
 # );
 #

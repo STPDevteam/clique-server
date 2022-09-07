@@ -59,7 +59,7 @@ func httpProposalsList(c *gin.Context) {
 	}
 	if err != nil {
 		oo.LogW("%v", err)
-		c.JSON(http.StatusOK, models.Response{
+		c.JSON(http.StatusInternalServerError, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",
 		})
@@ -119,7 +119,7 @@ func httpSaveProposal(c *gin.Context) {
 	err = oo.SqlExec(sqlIns)
 	if err != nil {
 		oo.LogW("%v", err)
-		c.JSON(http.StatusOK, models.Response{
+		c.JSON(http.StatusInternalServerError, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",
 		})
@@ -151,7 +151,7 @@ func httpQueryProposal(c *gin.Context) {
 	err := oo.SqlGet(sqlSel, &content)
 	if err != nil && err != oo.ErrNoRows {
 		oo.LogW("%v", err)
-		c.JSON(http.StatusOK, models.Response{
+		c.JSON(http.StatusInternalServerError, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",
 		})
@@ -195,7 +195,7 @@ func httpQuerySnapshot(c *gin.Context) {
 	err := oo.SqlGet(sqlSel, &blockNumber)
 	if err != nil && err != oo.ErrNoRows {
 		oo.LogW("%v", err)
-		c.JSON(http.StatusOK, models.Response{
+		c.JSON(http.StatusInternalServerError, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",
 		})

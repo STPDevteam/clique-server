@@ -23,7 +23,7 @@ func httpQueryAccount(c *gin.Context) {
 	err := c.ShouldBindJSON(&params)
 	if err != nil {
 		oo.LogW("%v", err)
-		c.JSON(http.StatusOK, models.Response{
+		c.JSON(http.StatusBadRequest, models.Response{
 			Code:    http.StatusBadRequest,
 			Message: "Invalid parameters.",
 		})
@@ -45,7 +45,7 @@ func httpQueryAccount(c *gin.Context) {
 	err = oo.SqlGet(sqlCount, &counts)
 	if err != nil {
 		oo.LogW("%v", err)
-		c.JSON(http.StatusOK, models.Response{
+		c.JSON(http.StatusInternalServerError, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",
 		})
@@ -60,7 +60,7 @@ func httpQueryAccount(c *gin.Context) {
 		err = oo.SqlExec(sqlIns)
 		if err != nil {
 			oo.LogW("%v", err)
-			c.JSON(http.StatusOK, models.Response{
+			c.JSON(http.StatusInternalServerError, models.Response{
 				Code:    500,
 				Message: "Something went wrong, Please try again later.",
 			})
@@ -73,7 +73,7 @@ func httpQueryAccount(c *gin.Context) {
 	err = oo.SqlGet(sqlSel, &entity)
 	if err != nil {
 		oo.LogW("%v", err)
-		c.JSON(http.StatusOK, models.Response{
+		c.JSON(http.StatusInternalServerError, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",
 		})
@@ -85,7 +85,7 @@ func httpQueryAccount(c *gin.Context) {
 	err = oo.SqlSelect(sqlSel, &myTokenEntities)
 	if err != nil {
 		oo.LogW("%v", err)
-		c.JSON(http.StatusOK, models.Response{
+		c.JSON(http.StatusInternalServerError, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",
 		})
@@ -107,7 +107,7 @@ func httpQueryAccount(c *gin.Context) {
 	err = oo.SqlSelect(sqlSel, &superDaoEntities)
 	if err != nil {
 		oo.LogW("%v", err)
-		c.JSON(http.StatusOK, models.Response{
+		c.JSON(http.StatusInternalServerError, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",
 		})
@@ -129,7 +129,7 @@ func httpQueryAccount(c *gin.Context) {
 	err = oo.SqlSelect(sqlSel, &adminDaoEntities)
 	if err != nil {
 		oo.LogW("%v", err)
-		c.JSON(http.StatusOK, models.Response{
+		c.JSON(http.StatusInternalServerError, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",
 		})
@@ -153,7 +153,7 @@ func httpQueryAccount(c *gin.Context) {
 	err = oo.SqlSelect(sqlActivity, &activityEntities)
 	if err != nil {
 		oo.LogW("%v", err)
-		c.JSON(http.StatusOK, models.Response{
+		c.JSON(http.StatusInternalServerError, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",
 		})

@@ -50,7 +50,7 @@ func httpVotesList(c *gin.Context) {
 	}
 	if err != nil {
 		oo.LogW("%v", err)
-		c.JSON(http.StatusOK, models.Response{
+		c.JSON(http.StatusInternalServerError, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",
 		})

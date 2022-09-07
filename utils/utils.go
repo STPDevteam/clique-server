@@ -83,3 +83,11 @@ func GenerateUuid() string {
 	//uuid := strings.Replace(uuidWithHyphen.String(), "-", "", -1)
 	return uuidWithHyphen.String()
 }
+
+func StringArrayFrom2DBytes(bytes2d [][]byte) []string {
+	stringArray := make([]string, len(bytes2d))
+	for i, bytes := range bytes2d {
+		stringArray[i] = fmt.Sprintf("%#x", bytes)
+	}
+	return stringArray
+}

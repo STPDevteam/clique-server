@@ -10,7 +10,7 @@ import (
 )
 
 func tokensImgTask() {
-	defer time.AfterFunc(time.Duration(60*60*24)*time.Second, tokensImgTask)
+	defer time.AfterFunc(time.Duration(24)*time.Hour, tokensImgTask)
 
 	var entities []models.DaoModel
 	sqlNeed := oo.NewSqler().Table(consts.TbNameDao).Select("token_chain_id,token_address")

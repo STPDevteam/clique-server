@@ -1,5 +1,10 @@
 package models
 
+import (
+	"github.com/ethereum/go-ethereum/common"
+	"math/big"
+)
+
 type JsonRPCModel struct {
 	Id      uint64      `json:"id"`
 	Jsonrpc string      `json:"jsonrpc"`
@@ -281,4 +286,30 @@ type ResSnapshot struct {
 	DaoAddress string `json:"daoAddress"`
 	ProposalId int    `json:"proposalId"`
 	Snapshot   int64  `json:"snapshot"`
+}
+
+type AirdropAddressParam struct {
+	Address []string `json:"address"`
+	Amount  []string `json:"amount"`
+}
+
+type ResAirdropId struct {
+	AirdropIdId int `json:"airdropIdId"`
+}
+
+type AirdropAddress struct {
+	Address []string `json:"address"`
+	Amount  []string `json:"amount"`
+}
+
+type AddressData struct {
+	Id      uint64
+	Amount  *big.Int
+	Address common.Address
+}
+
+type ClaimInfo struct {
+	Index  uint64   `json:"index"`
+	Amount string   `json:"amount"`
+	Proof  []string `json:"proof"`
 }

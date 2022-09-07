@@ -164,6 +164,13 @@ type ProposalModel struct {
 	EndTime    int64  `db:"end_time"`
 }
 
+type AddressModel struct {
+	Id         uint64 `db:"id,omitempty" sqler:"skips"`
+	CreateTime string `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime string `db:"update_time,omitempty" sqler:"skips"`
+	Content    string `db:"content"`
+}
+
 //type VoteModel struct {
 //	Id         uint64 `db:"id,omitempty" sqler:"skips"`
 //	CreateTime string `db:"create_time,omitempty" sqler:"skips"`
