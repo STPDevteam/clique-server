@@ -51,7 +51,7 @@ func httpSaveAirdropAddress(c *gin.Context) {
 	v["content"] = string(encoded)
 	m = append(m, v)
 
-	sqlIns := oo.NewSqler().Table(consts.TbNameAddress).Insert(m)
+	sqlIns := oo.NewSqler().Table(consts.TbNameAirdropAddress).Insert(m)
 	err = oo.SqlExec(sqlIns)
 	if err != nil {
 		oo.LogW("%v", err)
@@ -96,8 +96,8 @@ func httpClaimAirdrop(c *gin.Context) {
 	idParam := c.Query("id")
 	addressParam := c.Query("address")
 
-	var entity []models.AddressModel
-	sqlSel := oo.NewSqler().Table(consts.TbNameAddress).Where("id", idParam).Select()
+	var entity []models.AirdropAddressModel
+	sqlSel := oo.NewSqler().Table(consts.TbNameAirdropAddress).Where("id", idParam).Select()
 	err := oo.SqlSelect(sqlSel, &entity)
 	if err != nil {
 		oo.LogW("%v", err)

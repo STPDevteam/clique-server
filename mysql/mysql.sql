@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`event_historical_data` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `message_sender` VARCHAR(44) NOT NULL,#https://docs.blockvision.org/blockvision/chain-apis/ethereum/eth_gettransactionbyhash
     `event_type` VARCHAR(45) NOT NULL,
     `address` VARCHAR(44) NOT NULL,
     `topic0` VARCHAR(66) NOT NULL,
@@ -23,6 +24,7 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`event_historical_data` (
     `transaction_index` VARCHAR(66) NOT NULL,
     `chain_id` INT UNSIGNED NOT NULL,
     PRIMARY KEY (`id`),
+    INDEX `index_event_type` (`event_type` ASC),
     INDEX `index_event_type` (`event_type` ASC),
     INDEX `index_address` (`address` ASC),
     INDEX `index_topic0` (`topic0` ASC),
@@ -219,7 +221,7 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_proposal` (
     INDEX `index_proposalId` (`proposal_id` ASC)
 );
 
-CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_address` (
+CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_airdrop_address` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -232,16 +234,39 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_activity` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `title` VARCHAR(30) NOT NULL,
     `chain_id` INT NOT NULL,
     `dao_address` VARCHAR(128) NOT NULL,
-    `token_chain_id` INT NOT NULL,
+    `creator` VARCHAR(128) NOT NULL,
+    `airdrop_id` INT NOT NULL,
     `token_address` VARCHAR(128) NOT NULL,
     `amount` DECIMAL(65,0) UNSIGNED NOT NULL,
-    `price` VARCHAR(128) NOT NULL,
+    `merkle_root` VARCHAR(128) NOT NULL,
     `start_time` INT NOT NULL,
     `end_time` INT NOT NULL,
+    `price` VARCHAR(128) NOT NULL,
     PRIMARY KEY (`id`),
-    INDEX `index_id` (`id` ASC)
+    INDEX `index_id` (`id` ASC),
+    INDEX `index_creator` (`creator` ASC),
+    INDEX `index_airdropId` (`airdrop_id` ASC),
+    INDEX `index_title` (`title` ASC)
+);
+
+CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_claimed` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `chain_id` INT NOT NULL,
+    `dao_address` VARCHAR(128) NOT NULL,
+    `airdrop_id` INT NOT NULL,
+    `index` INT NOT NULL,
+    `account` VARCHAR(128) NOT NULL,
+    `amount` DECIMAL(65,0) UNSIGNED NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `index_account` (`account` ASC),
+    INDEX `index_airdrop_id` (`airdrop_id` ASC),
+    INDEX `index_chain_id` (`chain_id` ASC),
+    INDEX `index_dao_address` (`dao_address` ASC)
 );
 
 # CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_vote` (

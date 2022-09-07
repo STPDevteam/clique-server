@@ -197,7 +197,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 			daoAddress := utils.FixTo0x40String(blockData[i]["topic2"].(string))
 			var addEvent = make([]map[string]interface{}, 0)
 			// Add CreateDao Event Type
-			eventType := []string{consts.EvCreateProposal, consts.EvVote, consts.EvCancelProposal, consts.EvAdmin, consts.EvSetting, consts.EvOwnershipTransferred}
+			eventType := []string{consts.EvCreateProposal, consts.EvVote, consts.EvCancelProposal, consts.EvAdmin, consts.EvSetting, consts.EvOwnershipTransferred, consts.EvCreateAirdrop, consts.EvClaimed}
 			for eventIndex := range eventType {
 				var event = make(map[string]interface{})
 				event["event_type"] = eventType[eventIndex]
@@ -451,6 +451,51 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 				previousOwner,
 			)
 			_, errTx = oo.SqlxTxExec(tx, sqlUpDaoCreator)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+		}
+
+		if blockData[i]["event_type"] == consts.EvCreateAirdrop {
+			amount, _ := utils.Hex2BigInt(blockData[i]["data"].(string)[66:130])
+			var m = make([]map[string]interface{}, 0)
+			var v = make(map[string]interface{})
+			v["title"] = consts.EvCreateAirdrop
+			v["chain_id"] = chainId
+			v["dao_address"] = blockData[i]["address"].(string)
+			v["creator"] = utils.FixTo0x40String(blockData[i]["topic1"].(string))
+			v["airdropId"] = utils.Hex2Dec(blockData[i]["topic2"].(string))
+			v["token_address"] = utils.FixTo0x40String(blockData[i]["data"].(string)[2:66])
+			v["amount"] = amount.String()
+			v["merkle_root"] = blockData[i]["data"].(string)[130:194]
+			v["start_time"] = utils.Hex2Dec(blockData[i]["data"].(string)[194:258])
+			v["end_time"] = utils.Hex2Dec(blockData[i]["data"].(string)[258:322])
+			v["price"] = ""
+			m = append(m, v)
+
+			sqlIns := oo.NewSqler().Table(consts.TbNameActivity).Insert(m)
+			_, errTx = oo.SqlxTxExec(tx, sqlIns)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+		}
+
+		if blockData[i]["event_type"] == consts.TbNameClaimed {
+			amount, _ := utils.Hex2BigInt(blockData[i]["data"].(string)[130:194])
+			var m = make([]map[string]interface{}, 0)
+			var v = make(map[string]interface{})
+			v["chain_id"] = chainId
+			v["dao_address"] = blockData[i]["address"].(string)
+			v["airdropId"] = utils.Hex2Dec(blockData[i]["topic1"].(string))
+			v["index"] = utils.Hex2Dec(blockData[i]["data"].(string)[2:66])
+			v["account"] = utils.FixTo0x40String(blockData[i]["data"].(string)[66:130])
+			v["amount"] = amount.String()
+			m = append(m, v)
+
+			sqlIns := oo.NewSqler().Table(consts.TbNameClaimed).Insert(m)
+			_, errTx = oo.SqlxTxExec(tx, sqlIns)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return

@@ -164,11 +164,27 @@ type ProposalModel struct {
 	EndTime    int64  `db:"end_time"`
 }
 
-type AddressModel struct {
+type AirdropAddressModel struct {
 	Id         uint64 `db:"id,omitempty" sqler:"skips"`
 	CreateTime string `db:"create_time,omitempty" sqler:"skips"`
 	UpdateTime string `db:"update_time,omitempty" sqler:"skips"`
 	Content    string `db:"content"`
+}
+
+type ActivityModel struct {
+	Id           uint64 `db:"id,omitempty" sqler:"skips"`
+	CreateTime   string `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime   string `db:"update_time,omitempty" sqler:"skips"`
+	ChainId      int    `db:"chain_id"`
+	DaoAddress   string `db:"dao_address"`
+	Creator      string `db:"creator"`
+	AirdropId    int    `db:"airdrop_id"`
+	TokenAddress string `db:"token_address"`
+	Amount       string `db:"amount"`
+	MerkleRoot   string `db:"merkle_root"`
+	StartTime    int    `db:"start_time"`
+	EndTime      int    `db:"end_time"`
+	Price        string `db:"price"`
 }
 
 //type VoteModel struct {
