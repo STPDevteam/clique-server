@@ -426,7 +426,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 			amount, _ := utils.Hex2BigInt(blockData[i]["data"].(string)[66:130])
 			var m = make([]map[string]interface{}, 0)
 			var v = make(map[string]interface{})
-			v["title"] = consts.EvCreateAirdrop
+			v["types"] = consts.EvCreateAirdrop
 			v["chain_id"] = chainId
 			v["dao_address"] = blockData[i]["address"].(string)
 			v["creator"] = utils.FixTo0x40String(blockData[i]["topic1"].(string))

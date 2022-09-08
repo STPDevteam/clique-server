@@ -175,7 +175,7 @@ type ActivityModel struct {
 	Id           uint64        `db:"id,omitempty" sqler:"skips"`
 	CreateTime   string        `db:"create_time,omitempty" sqler:"skips"`
 	UpdateTime   string        `db:"update_time,omitempty" sqler:"skips"`
-	Title        string        `db:"title"`
+	Types        string        `db:"types"`
 	ChainId      int           `db:"chain_id"`
 	DaoAddress   string        `db:"dao_address"`
 	Creator      string        `db:"creator"`

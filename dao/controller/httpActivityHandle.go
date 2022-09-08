@@ -10,15 +10,15 @@ import (
 	"time"
 )
 
-// @Summary query votes list
-// @Tags votes
+// @Summary query activity list
+// @Tags activity
 // @version 0.0.1
-// @description query votes list
+// @description query activity list
 // @Produce json
 // @Param chainId query int false "chainId"
 // @Param daoAddress query string false "Dao address"
 // @Param status query int false "status:Soon:1,Open:2,Closed:3"
-// @Param title query int false "title"
+// @Param types query int false "types"
 // @Param offset query  int true "offset,page"
 // @Param count query  int true "count,page"
 // @Success 200 {object} models.ResActivityPage
@@ -29,7 +29,7 @@ func httpActivity(c *gin.Context) {
 	daoAddressParam := c.Query("daoAddress")
 	status := c.Query("status")
 	statusParam, _ := strconv.Atoi(status)
-	titleParam := c.Query("title")
+	typesParam := c.Query("types")
 	count := c.Query("count")
 	offset := c.Query("offset")
 	countParam, _ := strconv.Atoi(count)
@@ -40,8 +40,8 @@ func httpActivity(c *gin.Context) {
 	if chainIdParam != 0 && daoAddressParam != "" {
 		sqler = sqler.Where("chain_id", chainIdParam).Where("dao_address", daoAddressParam)
 	}
-	if titleParam != "" {
-		sqler = sqler.Where("title", titleParam)
+	if typesParam != "" {
+		sqler = sqler.Where("types", typesParam)
 	}
 	var now = time.Now().Unix()
 	if statusParam == 1 {
@@ -76,7 +76,7 @@ func httpActivity(c *gin.Context) {
 	for index := range listEntities {
 		dataIndex := listEntities[index]
 		data = append(data, models.ResActivityList{
-			Title:        dataIndex.Title,
+			Types:        dataIndex.Types,
 			ChainId:      dataIndex.ChainId,
 			DaoAddress:   dataIndex.DaoAddress,
 			Creator:      dataIndex.Creator,

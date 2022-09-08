@@ -320,7 +320,7 @@ type ResActivityPage struct {
 }
 
 type ResActivityList struct {
-	Title        string `json:"title"`
+	Types        string `json:"types"`
 	ChainId      int    `json:"chainId"`
 	DaoAddress   string `json:"daoAddress"`
 	Creator      string `json:"creator"`
