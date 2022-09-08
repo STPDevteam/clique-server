@@ -18,7 +18,7 @@ import (
 // @Param chainId query int false "chainId"
 // @Param daoAddress query string false "Dao address"
 // @Param status query int false "status:Soon:1,Open:2,Closed:3"
-// @Param types query int false "types"
+// @Param types query string false "types:Airdrop,PublicSale"
 // @Param offset query  int true "offset,page"
 // @Param count query  int true "count,page"
 // @Success 200 {object} models.ResActivityPage

@@ -21,7 +21,7 @@ import (
 // @version 0.0.1
 // @description save airdrop address
 // @Produce json
-// @Param request body models.AirdropAddressParam true "request"
+// @Param request body models.AirdropAddressTitleParam true "request"
 // @Success 200 {object} models.ResAirdropId
 // @Router /stpdao/v2/airdrop/address [post]
 func httpSaveAirdropAddress(c *gin.Context) {
@@ -100,7 +100,7 @@ func httpClaimAirdrop(c *gin.Context) {
 	var entity []models.AirdropAddressModel
 	sqlSel := oo.NewSqler().Table(consts.TbNameAirdropAddress).Where("id", idParam).Select()
 	err := oo.SqlSelect(sqlSel, &entity)
-	if err != nil {
+	if err != nil || len(entity[0].Content) == 0 {
 		oo.LogW("%v", err)
 		c.JSON(http.StatusInternalServerError, models.Response{
 			Code:    500,
@@ -200,6 +200,7 @@ func httpClaimAirdrop(c *gin.Context) {
 		Code:    http.StatusOK,
 		Message: "ok",
 		Data: models.ClaimInfo{
+			Title:  entity[0].Title,
 			Index:  claimInfo.Index,
 			Amount: claimInfo.Amount,
 			Proof:  claimInfo.Proof,

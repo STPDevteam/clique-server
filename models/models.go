@@ -309,6 +309,7 @@ type AddressData struct {
 }
 
 type ClaimInfo struct {
+	Title  string   `json:"title"`
 	Index  uint64   `json:"index"`
 	Amount string   `json:"amount"`
 	Proof  []string `json:"proof"`
