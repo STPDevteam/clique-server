@@ -168,6 +168,7 @@ type AirdropAddressModel struct {
 	Id         uint64 `db:"id,omitempty" sqler:"skips"`
 	CreateTime string `db:"create_time,omitempty" sqler:"skips"`
 	UpdateTime string `db:"update_time,omitempty" sqler:"skips"`
+	Title      string `db:"title"`
 	Content    string `db:"content"`
 }
 

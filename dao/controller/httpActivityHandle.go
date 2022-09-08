@@ -75,7 +75,21 @@ func httpActivity(c *gin.Context) {
 	var data = make([]models.ResActivityList, 0)
 	for index := range listEntities {
 		dataIndex := listEntities[index]
+
+		var title string
+		sqlSel := oo.NewSqler().Table(consts.TbNameAirdropAddress).Where("id", dataIndex.ActivityId).Select("title")
+		err = oo.SqlGet(sqlSel, &title)
+		if err != nil {
+			oo.LogW("%v", err)
+			c.JSON(http.StatusInternalServerError, models.Response{
+				Code:    500,
+				Message: "Something went wrong, Please try again later.",
+			})
+			return
+		}
+
 		data = append(data, models.ResActivityList{
+			Title:        title,
 			Types:        dataIndex.Types,
 			ChainId:      dataIndex.ChainId,
 			DaoAddress:   dataIndex.DaoAddress,

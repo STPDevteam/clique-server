@@ -288,18 +288,18 @@ type ResSnapshot struct {
 	Snapshot   int64  `json:"snapshot"`
 }
 
-type AirdropAddressParam struct {
+type AirdropAddressTitleParam struct {
+	Title string              `json:"title"`
+	Array AirdropAddressArray `json:"array"`
+}
+
+type AirdropAddressArray struct {
 	Address []string `json:"address"`
 	Amount  []string `json:"amount"`
 }
 
 type ResAirdropId struct {
 	AirdropIdId int `json:"airdropIdId"`
-}
-
-type AirdropAddress struct {
-	Address []string `json:"address"`
-	Amount  []string `json:"amount"`
 }
 
 type AddressData struct {
@@ -320,6 +320,7 @@ type ResActivityPage struct {
 }
 
 type ResActivityList struct {
+	Title        string `json:"title"`
 	Types        string `json:"types"`
 	ChainId      int    `json:"chainId"`
 	DaoAddress   string `json:"daoAddress"`

@@ -25,9 +25,9 @@ import (
 // @Success 200 {object} models.ResAirdropId
 // @Router /stpdao/v2/airdrop/address [post]
 func httpSaveAirdropAddress(c *gin.Context) {
-	var params models.AirdropAddressParam
+	var params models.AirdropAddressTitleParam
 	err := c.ShouldBindJSON(&params)
-	if err != nil || len(params.Address) != len(params.Amount) {
+	if err != nil || len(params.Array.Address) != len(params.Array.Amount) {
 		oo.LogW("%v", err)
 		c.JSON(http.StatusBadRequest, models.Response{
 			Code:    http.StatusBadRequest,
@@ -36,7 +36,7 @@ func httpSaveAirdropAddress(c *gin.Context) {
 		return
 	}
 
-	encoded, err := json.Marshal(params)
+	encoded, err := json.Marshal(params.Array)
 	if err != nil {
 		oo.LogW("%v", err)
 		c.JSON(http.StatusBadRequest, models.Response{
@@ -48,6 +48,7 @@ func httpSaveAirdropAddress(c *gin.Context) {
 
 	var m = make([]map[string]interface{}, 0)
 	var v = make(map[string]interface{})
+	v["title"] = params.Title
 	v["content"] = string(encoded)
 	m = append(m, v)
 
@@ -108,7 +109,7 @@ func httpClaimAirdrop(c *gin.Context) {
 		return
 	}
 
-	var data models.AirdropAddress
+	var data models.AirdropAddressArray
 	err = json.Unmarshal([]byte(entity[0].Content), &data)
 	if err != nil {
 		oo.LogW("%v", err)
