@@ -172,19 +172,21 @@ type AirdropAddressModel struct {
 }
 
 type ActivityModel struct {
-	Id           uint64 `db:"id,omitempty" sqler:"skips"`
-	CreateTime   string `db:"create_time,omitempty" sqler:"skips"`
-	UpdateTime   string `db:"update_time,omitempty" sqler:"skips"`
-	ChainId      int    `db:"chain_id"`
-	DaoAddress   string `db:"dao_address"`
-	Creator      string `db:"creator"`
-	AirdropId    int    `db:"airdrop_id"`
-	TokenAddress string `db:"token_address"`
-	Amount       string `db:"amount"`
-	MerkleRoot   string `db:"merkle_root"`
-	StartTime    int    `db:"start_time"`
-	EndTime      int    `db:"end_time"`
-	Price        string `db:"price"`
+	Id           uint64        `db:"id,omitempty" sqler:"skips"`
+	CreateTime   string        `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime   string        `db:"update_time,omitempty" sqler:"skips"`
+	Title        string        `db:"title"`
+	ChainId      int           `db:"chain_id"`
+	DaoAddress   string        `db:"dao_address"`
+	Creator      string        `db:"creator"`
+	ActivityId   int           `db:"activity_id"`
+	TokenAddress string        `db:"token_address"`
+	Amount       string        `db:"amount"`
+	MerkleRoot   string        `db:"merkle_root"`
+	StartTime    int64         `db:"start_time"`
+	EndTime      int64         `db:"end_time"`
+	Price        string        `db:"price"`
+	Weight       sql.NullInt64 `db:"weight"`
 }
 
 type ClaimedModel struct {

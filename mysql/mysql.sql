@@ -238,18 +238,22 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_activity` (
     `chain_id` INT NOT NULL,
     `dao_address` VARCHAR(128) NOT NULL,
     `creator` VARCHAR(128) NOT NULL,
-    `airdrop_id` INT NOT NULL,
+    `activity_id` INT NOT NULL,
     `token_address` VARCHAR(128) NOT NULL,
     `amount` DECIMAL(65,0) UNSIGNED NOT NULL,
     `merkle_root` VARCHAR(128) NOT NULL,
     `start_time` INT NOT NULL,
     `end_time` INT NOT NULL,
     `price` VARCHAR(128) NOT NULL,
+    `weight` INT,
     PRIMARY KEY (`id`),
     INDEX `index_id` (`id` ASC),
-    INDEX `index_creator` (`creator` ASC),
-    INDEX `index_airdropId` (`airdrop_id` ASC),
-    INDEX `index_title` (`title` ASC)
+    INDEX `index_airdropId` (`activity_id` ASC),
+    INDEX `index_title` (`title` ASC),
+    INDEX `index_chain_id` (`chain_id` ASC),
+    INDEX `index_dao_address` (`dao_address` ASC),
+    INDEX `index_start_time` (`start_time` ASC),
+    INDEX `index_end_time` (`end_time` ASC)
 );
 
 CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_claimed` (

@@ -313,3 +313,21 @@ type ClaimInfo struct {
 	Amount string   `json:"amount"`
 	Proof  []string `json:"proof"`
 }
+
+type ResActivityPage struct {
+	List  []ResActivityList `json:"list"`
+	Total uint64            `json:"total"`
+}
+
+type ResActivityList struct {
+	Title        string `json:"title"`
+	ChainId      int    `json:"chainId"`
+	DaoAddress   string `json:"daoAddress"`
+	Creator      string `json:"creator"`
+	ActivityId   int    `json:"activityId"`
+	TokenAddress string `json:"tokenAddress"`
+	Amount       string `json:"amount"`
+	StartTime    int64  `json:"startTime"`
+	EndTime      int64  `json:"endTime"`
+	Price        string `json:"price"`
+}

@@ -105,6 +105,10 @@ func (svc *Service) Start(ctx *cli.Context) error {
 		r9.POST("/address", httpSaveAirdropAddress)
 		r9.GET("/proof", httpClaimAirdrop)
 	}
+	r10 := router.Group(path.Join(basePath, "/activity"))
+	{
+		r10.GET("/list", httpActivity)
+	}
 
 	url := ginSwagger.URL(svc.appConfig.SwaggerUrl)
 	router.GET(path.Join(basePath, "/swagger/*any"), ginSwagger.WrapHandler(swaggerFiles.Handler, url))
