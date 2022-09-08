@@ -50,18 +50,6 @@ type Balance struct {
 	Value string `json:"Value"`
 }
 
-type JsonRPCInfoModel struct {
-	Id      uint64 `json:"id"`
-	Jsonrpc string `json:"jsonrpc"`
-	Result  string `json:"result"`
-}
-
-type BlockNumber struct {
-	Jsonrpc string `json:"jsonrpc"`
-	Id      int    `json:"id"`
-	Result  string `json:"result"`
-}
-
 type Response struct {
 	Code    int         `json:"code"`
 	Data    interface{} `json:"data"`

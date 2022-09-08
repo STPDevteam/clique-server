@@ -41,7 +41,7 @@ func jsonRPCScanBlock(body, url string) (data *models.JsonRPCScanBlockModel, err
 	return data, nil
 }
 
-func QueryLatestBlock(url string) (*models.BlockNumber, error) {
+func QueryLatestBlock(url string) (*models.JsonRPCModel, error) {
 	body := fmt.Sprintf(`{
 		"id": 1,
 		"jsonrpc":"2.0",
@@ -49,25 +49,7 @@ func QueryLatestBlock(url string) (*models.BlockNumber, error) {
 		"params":[]
 	}`)
 
-	return jsonRPCBlock(body, url)
-}
-
-func jsonRPCBlock(body, url string) (data *models.BlockNumber, err error) {
-	res, err := DoPost(
-		url,
-		"application/json",
-		body,
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	err = json.Unmarshal(res, &data)
-	if err != nil {
-		return nil, err
-	}
-
-	return data, nil
+	return jsonRPC(body, url) //
 }
 
 func QueryTimesTamp(block, url string) (model *models.JsonRPCTimesTampModel, err error) {
@@ -146,7 +128,7 @@ func jsonBalanceRPC(body, url string) (data *models.JsonRPCBalanceModel, err err
 	return data, nil
 }
 
-func QueryDaoInfo(daoAddress, data, url string) (model *models.JsonRPCInfoModel, err error) {
+func QueryDaoInfo(daoAddress, data, url string) (model *models.JsonRPCModel, err error) {
 	body := fmt.Sprintf(`{
 		"id": 1,
 		"jsonrpc": "2.0",
@@ -159,25 +141,7 @@ func QueryDaoInfo(daoAddress, data, url string) (model *models.JsonRPCInfoModel,
 			"latest"
    	 ]
 	}`, daoAddress, data)
-	return jsonInfoRPC(body, url)
-}
-
-func jsonInfoRPC(body, url string) (data *models.JsonRPCInfoModel, err error) {
-	res, err := DoPost(
-		url,
-		"application/json",
-		body,
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	err = json.Unmarshal(res, &data)
-	if err != nil {
-		return nil, err
-	}
-
-	return data, nil
+	return jsonRPC(body, url)
 }
 
 func DoPost(url string, contentType string, body string) (res []byte, err error) {

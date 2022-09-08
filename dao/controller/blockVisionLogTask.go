@@ -40,7 +40,7 @@ func (svc *Service) scheduledTask() {
 				oo.LogW("QueryLatestBlock failed. err: %v\n", err)
 				continue
 			}
-			latestBlockNum = utils.Hex2Dec(resBlock.Result)
+			latestBlockNum = utils.Hex2Dec(resBlock.Result.(string))
 
 			latestBlockNum = int(math.Min(float64(latestBlockNum-svc.appConfig.DelayedBlockNumber), float64(currentBlockNum+svc.appConfig.BlockNumberPerReq)))
 			for ; currentBlockNum <= latestBlockNum; currentBlockNum++ {

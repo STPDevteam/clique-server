@@ -38,7 +38,7 @@ func (svc *Service) updateDaoInfoTask() {
 							return
 						}
 
-						if len(res.Result) != 0 {
+						if len(res.Result.(string)) != 0 {
 							var outputParameters []string
 							outputParameters = append(outputParameters, "string")
 							outputParameters = append(outputParameters, "string")
@@ -49,7 +49,7 @@ func (svc *Service) updateDaoInfoTask() {
 							outputParameters = append(outputParameters, "string")
 							outputParameters = append(outputParameters, "string")
 
-							daoInfo, errDe := utils.Decode(outputParameters, strings.TrimPrefix(res.Result, "0x"))
+							daoInfo, errDe := utils.Decode(outputParameters, strings.TrimPrefix(res.Result.(string), "0x"))
 							if errDe != nil {
 								oo.LogW("Decode failed. chainId:%d. err: %v\n", chainId, errDe)
 								return
