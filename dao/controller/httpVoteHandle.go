@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"stp_dao_v2/consts"
 	"stp_dao_v2/models"
-	"stp_dao_v2/utils"
 	"strconv"
 )
 
@@ -33,13 +32,11 @@ func httpVotesList(c *gin.Context) {
 	offsetParam, _ := strconv.Atoi(offset)
 
 	var total int
-	var listEntities []models.EventHistoricalModel
-	proposalIdParam64 := utils.FixTo0x64String(proposalIdParam)
-	sqler := oo.NewSqler().Table(consts.TbNameEventHistorical).
-		Where("event_type", consts.EvVote).
-		Where("address", daoAddressParam).
-		Where("topic1", proposalIdParam64).
-		Where("chain_id", chainIdParam)
+	var listEntities []models.VoteModel
+	sqler := oo.NewSqler().Table(consts.TbNameVote).
+		Where("chain_id", chainIdParam).
+		Where("dao_address", daoAddressParam).
+		Where("proposal_id", proposalIdParam)
 	sqlCopy := *sqler
 	sqlStr := sqlCopy.Count()
 	err := oo.SqlGet(sqlStr, &total)
@@ -57,18 +54,14 @@ func httpVotesList(c *gin.Context) {
 		return
 	}
 
-	var voterList = make([]models.ResVotesList, 0)
-	for indexList := range listEntities {
-		proposalId, _ := utils.Hex2Int64(listEntities[indexList].Topic1)
-		voter := utils.FixTo0x40String(listEntities[indexList].Topic2)
-		optionIndex, _ := utils.Hex2Int64(listEntities[indexList].Topic3)
-		amount, _ := utils.Hex2BigInt(listEntities[indexList].Data[:66])
-
-		voterList = append(voterList, models.ResVotesList{
-			ProposalId:  proposalId,
-			Voter:       voter,
-			OptionIndex: optionIndex,
-			Amount:      amount.String(),
+	var data = make([]models.ResVotesList, 0)
+	for index := range listEntities {
+		dataIndex := listEntities[index]
+		data = append(data, models.ResVotesList{
+			ProposalId:  dataIndex.ProposalId,
+			Voter:       dataIndex.Voter,
+			OptionIndex: dataIndex.OptionIndex,
+			Amount:      dataIndex.Amount,
 		})
 
 	}
@@ -77,7 +70,7 @@ func httpVotesList(c *gin.Context) {
 		Code:    http.StatusOK,
 		Message: "ok",
 		Data: models.ResVotesListPage{
-			List:  voterList,
+			List:  data,
 			Total: total,
 		},
 	})

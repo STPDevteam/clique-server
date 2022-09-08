@@ -204,9 +204,9 @@ type ResVotesListPage struct {
 }
 
 type ResVotesList struct {
-	ProposalId  int64  `json:"proposalId"`
+	ProposalId  int    `json:"proposalId"`
 	Voter       string `json:"voter"`
-	OptionIndex int64  `json:"optionIndex"`
+	OptionIndex int    `json:"optionIndex"`
 	Amount      string `json:"amount"`
 }
 
