@@ -187,21 +187,27 @@ type ActivityModel struct {
 	Price        string `db:"price"`
 }
 
-//type VoteModel struct {
-//	Id         uint64 `db:"id,omitempty" sqler:"skips"`
-//	CreateTime string `db:"create_time,omitempty" sqler:"skips"`
-//	UpdateTime string `db:"update_time,omitempty" sqler:"skips"`
-//	ProposalId int    `db:"proposal_id"`
-//	ChainId    int    `db:"chain_id"`
-//	DaoAddress string `db:"dao_address"`
-//	Voter      string `db:"voter"`
-//}
-//
-//type VoteVotesModel struct {
-//	Id          uint64 `db:"id,omitempty" sqler:"skips"`
-//	CreateTime  string `db:"create_time,omitempty" sqler:"skips"`
-//	UpdateTime  string `db:"update_time,omitempty" sqler:"skips"`
-//	VoteId      int    `db:"vote_id"`
-//	OptionIndex int    `db:"option_index"`
-//	Amount      string `db:"amount"`
-//}
+type ClaimedModel struct {
+	Id         uint64 `db:"id,omitempty" sqler:"skips"`
+	CreateTime string `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime string `db:"update_time,omitempty" sqler:"skips"`
+	ChainId    int    `db:"chain_id"`
+	DaoAddress string `db:"dao_address"`
+	AirdropId  int    `db:"airdrop_id"`
+	Index      int    `db:"index"`
+	Account    string `db:"account"`
+	Amount     string `db:"amount"`
+}
+
+type VoteModel struct {
+	Id          uint64 `db:"id,omitempty" sqler:"skips"`
+	CreateTime  string `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime  string `db:"update_time,omitempty" sqler:"skips"`
+	ChainId     int    `db:"chain_id"`
+	DaoAddress  string `db:"dao_address"`
+	ProposalId  int    `db:"proposal_id"`
+	Voter       string `db:"voter"`
+	OptionIndex int    `db:"option_index"`
+	Amount      string `db:"amount"`
+	Nonce       int    `db:"nonce"`
+}

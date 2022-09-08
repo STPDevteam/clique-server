@@ -349,58 +349,23 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 				return
 			}
 
-			//daoAddress := blockData[i]["address"].(string)
-			//proposalId := utils.Hex2Dec(blockData[i]["topic1"].(string))
-			//var count int
-			//sqlCount := oo.NewSqler().Table(consts.TbNameVote).
-			//	Where("proposal_id", proposalId).
-			//	Where("chain_id", chainId).
-			//	Where("dao_address", daoAddress).
-			//	Where("voter", voter).Count()
-			//err := oo.SqlGet(sqlCount, &count)
-			//if err != nil {
-			//	oo.LogW("SQL err: %v", err)
-			//	return
-			//}
-			//if count == 0 {
-			//	sqlVote := fmt.Sprintf(`INSERT INTO %s (proposal_id,chain_id,dao_address,voter) VALUES (%d,%d,'%s','%s')`,
-			//		consts.TbNameVote,
-			//		proposalId,
-			//		chainId,
-			//		daoAddress,
-			//		voter,
-			//	)
-			//	_, errTx = oo.SqlxTxExec(tx, sqlVote)
-			//	if errTx != nil {
-			//		oo.LogW("SQL err: %v", errTx)
-			//		return
-			//	}
-			//}
-			//var voteId int
-			//sqlVoteId := oo.NewSqler().Table(consts.TbNameVote).
-			//	Where("proposal_id", proposalId).
-			//	Where("chain_id", chainId).
-			//	Where("dao_address", daoAddress).
-			//	Where("voter", voter).Select("id")
-			//err = oo.SqlGet(sqlVoteId, &voteId)
-			//if err != nil {
-			//	oo.LogW("SQL err: %v", err)
-			//	return
-			//}
-			//optionIndex, _ := utils.Hex2Int64(blockData[i]["topic3"].(string))
-			//amount, _ := utils.Hex2BigInt(blockData[i]["data"].(string)[:66])
-			//sqlVotes := fmt.Sprintf(`INSERT INTO %s (vote_id,option_index,amount) VALUES (%d,%d,'%s')`,
-			//	consts.TbNameVoteVotes,
-			//	voteId,
-			//	optionIndex,
-			//	amount.String(),
-			//)
-			//_, errTx = oo.SqlxTxExec(tx, sqlVotes)
-			//if errTx != nil {
-			//	oo.LogW("SQL err: %v", errTx)
-			//	return
-			//}
-
+			amount, _ := utils.Hex2BigInt(blockData[i]["data"].(string)[:66])
+			var m = make([]map[string]interface{}, 0)
+			var v = make(map[string]interface{})
+			v["chain_id"] = chainId
+			v["dao_address"] = blockData[i]["address"].(string)
+			v["proposal_id"] = utils.Hex2Dec(blockData[i]["topic1"].(string))
+			v["voter"] = voter
+			v["option_index"] = utils.Hex2Dec(blockData[i]["topic3"].(string))
+			v["amount"] = amount.String()
+			v["nonce"] = nonce
+			m = append(m, v)
+			sqlIns := oo.NewSqler().Table(consts.TbNameVote).Insert(m)
+			_, errTx = oo.SqlxTxExec(tx, sqlIns)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
 		}
 
 		if blockData[i]["event_type"] == consts.EvAdmin {
@@ -473,7 +438,6 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 			v["end_time"] = utils.Hex2Dec(blockData[i]["data"].(string)[258:322])
 			v["price"] = ""
 			m = append(m, v)
-
 			sqlIns := oo.NewSqler().Table(consts.TbNameActivity).Insert(m)
 			_, errTx = oo.SqlxTxExec(tx, sqlIns)
 			if errTx != nil {
@@ -493,7 +457,6 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 			v["account"] = utils.FixTo0x40String(blockData[i]["data"].(string)[66:130])
 			v["amount"] = amount.String()
 			m = append(m, v)
-
 			sqlIns := oo.NewSqler().Table(consts.TbNameClaimed).Insert(m)
 			_, errTx = oo.SqlxTxExec(tx, sqlIns)
 			if errTx != nil {

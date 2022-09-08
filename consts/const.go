@@ -23,8 +23,7 @@ const (
 	TbNameAirdropAddress  = "tb_airdrop_address"
 	TbNameActivity        = "tb_activity"
 	TbNameClaimed         = "tb_claimed"
-	//TbNameVote            = "tb_vote"
-	//TbNameVoteVotes       = "tb_vote_votes"
+	TbNameVote            = "tb_vote"
 
 	EvCreateDao            = "CreateDao"
 	EvCreateProposal       = "CreateProposal"

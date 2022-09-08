@@ -269,31 +269,23 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_claimed` (
     INDEX `index_dao_address` (`dao_address` ASC)
 );
 
-# CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_vote` (
-#     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-#     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-#     `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-#     `proposal_id` INT NOT NULL,
-#     `chain_id` INT NOT NULL,
-#     `dao_address` VARCHAR(128) NOT NULL,
-#     `voter` VARCHAR(128) NOT NULL,
-#     PRIMARY KEY (`id`),
-#     INDEX `index_chain_id` (`chain_id` ASC),
-#     INDEX `index_dao_address` (`dao_address` ASC),
-#     INDEX `index_proposalId` (`proposal_id` ASC),
-#     INDEX `index_voter` (`voter` ASC)
-# );
-#
-# CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_vote_votes` (
-#     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-#     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-#     `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-#     `vote_id` INT NOT NULL,
-#     `option_index` INT NOT NULL,
-#     `amount` VARCHAR(128) NOT NULL,
-#     PRIMARY KEY (`id`),
-#     INDEX `index_vote_id` (`vote_id` ASC)
-# );
+CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_vote` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `chain_id` INT NOT NULL,
+    `dao_address` VARCHAR(128) NOT NULL,
+    `proposal_id` INT NOT NULL,
+    `voter` VARCHAR(128) NOT NULL,
+    `option_index` INT NOT NULL,
+    `amount` DECIMAL(65,0) UNSIGNED NOT NULL,
+    `nonce` INT NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `index_chain_id` (`chain_id` ASC),
+    INDEX `index_dao_address` (`dao_address` ASC),
+    INDEX `index_proposal_id` (`proposal_id` ASC),
+    INDEX `index_voter` (`voter` ASC)
+);
 
 # CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_options` (
 #   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
