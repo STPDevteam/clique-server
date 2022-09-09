@@ -430,7 +430,8 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 		}
 
 		if blockData[i]["event_type"] == consts.EvCreateAirdrop {
-			amount, _ := utils.Hex2BigInt(blockData[i]["data"].(string)[66:130])
+			amount, _ := utils.Hex2BigInt(fmt.Sprintf("0x%s", blockData[i]["data"].(string)[66:130]))
+			publishTime, _ := utils.Hex2Int64(blockData[i]["time_stamp"].(string))
 			var m = make([]map[string]interface{}, 0)
 			var v = make(map[string]interface{})
 			v["types"] = consts.TypesNameAirdrop
@@ -443,6 +444,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 			v["merkle_root"] = blockData[i]["data"].(string)[130:194]
 			v["start_time"] = utils.Hex2Dec(blockData[i]["data"].(string)[194:258])
 			v["end_time"] = utils.Hex2Dec(blockData[i]["data"].(string)[258:322])
+			v["publish_time"] = publishTime
 			v["price"] = ""
 			m = append(m, v)
 			sqlIns := oo.NewSqler().Table(consts.TbNameActivity).Insert(m)
@@ -453,14 +455,14 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 			}
 		}
 
-		if blockData[i]["event_type"] == consts.TbNameClaimed {
-			amount, _ := utils.Hex2BigInt(blockData[i]["data"].(string)[130:194])
+		if blockData[i]["event_type"] == consts.EvClaimed {
+			amount, _ := utils.Hex2BigInt(fmt.Sprintf("0x%s", blockData[i]["data"].(string)[130:194]))
 			var m = make([]map[string]interface{}, 0)
 			var v = make(map[string]interface{})
 			v["chain_id"] = chainId
 			v["dao_address"] = blockData[i]["address"].(string)
-			v["airdropId"] = utils.Hex2Dec(blockData[i]["topic1"].(string))
-			v["index"] = utils.Hex2Dec(blockData[i]["data"].(string)[2:66])
+			v["airdrop_id"] = utils.Hex2Dec(blockData[i]["topic1"].(string))
+			v["index"] = utils.Hex2Dec(blockData[i]["data"].(string)[:66])
 			v["account"] = utils.FixTo0x40String(blockData[i]["data"].(string)[66:130])
 			v["amount"] = amount.String()
 			m = append(m, v)

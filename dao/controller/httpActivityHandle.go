@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"encoding/json"
 	oo "github.com/Anna2024/liboo"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -76,9 +77,9 @@ func httpActivity(c *gin.Context) {
 	for index := range listEntities {
 		dataIndex := listEntities[index]
 
-		var title string
-		sqlSel := oo.NewSqler().Table(consts.TbNameAirdropAddress).Where("id", dataIndex.ActivityId).Select("title")
-		err = oo.SqlGet(sqlSel, &title)
+		var entity []models.AirdropAddressModel
+		sqlSel := oo.NewSqler().Table(consts.TbNameAirdropAddress).Where("id", dataIndex.ActivityId).Select()
+		err = oo.SqlSelect(sqlSel, &entity)
 		if err != nil {
 			oo.LogW("%v", err)
 			c.JSON(http.StatusInternalServerError, models.Response{
@@ -88,18 +89,51 @@ func httpActivity(c *gin.Context) {
 			return
 		}
 
+		var content models.AirdropAddressArray
+		err = json.Unmarshal([]byte(entity[0].Content), &content)
+		if err != nil {
+			oo.LogW("%v", err)
+			c.JSON(http.StatusInternalServerError, models.Response{
+				Code:    500,
+				Message: "Json Unmarshal Failed.",
+			})
+			return
+		}
+
+		var claimedCount int
+		sqlSel = oo.NewSqler().Table(consts.TbNameClaimed).Where("airdrop_id", dataIndex.ActivityId).Count()
+		err = oo.SqlGet(sqlSel, &claimedCount)
+		if err != nil {
+			oo.LogW("%v", err)
+			c.JSON(http.StatusInternalServerError, models.Response{
+				Code:    500,
+				Message: "Something went wrong, Please try again later.",
+			})
+			return
+		}
+
+		var claimedPercentage float64
+		if len(content.Address) == 0 {
+			claimedPercentage = 0
+		} else {
+			claimedPercentage = float64(claimedCount) / float64(len(content.Address))
+		}
+
 		data = append(data, models.ResActivityList{
-			Title:        title,
-			Types:        dataIndex.Types,
-			ChainId:      dataIndex.ChainId,
-			DaoAddress:   dataIndex.DaoAddress,
-			Creator:      dataIndex.Creator,
-			ActivityId:   dataIndex.ActivityId,
-			TokenAddress: dataIndex.TokenAddress,
-			Amount:       dataIndex.Amount,
-			StartTime:    dataIndex.StartTime,
-			EndTime:      dataIndex.EndTime,
-			Price:        dataIndex.Price,
+			Title:             entity[0].Title,
+			Types:             dataIndex.Types,
+			ChainId:           dataIndex.ChainId,
+			DaoAddress:        dataIndex.DaoAddress,
+			Creator:           dataIndex.Creator,
+			ActivityId:        dataIndex.ActivityId,
+			TokenAddress:      dataIndex.TokenAddress,
+			Amount:            dataIndex.Amount,
+			StartTime:         dataIndex.StartTime,
+			EndTime:           dataIndex.EndTime,
+			PublishTime:       dataIndex.PublishTime,
+			Price:             dataIndex.Price,
+			AirdropNumber:     len(content.Address),
+			ClaimedPercentage: claimedPercentage,
 		})
 	}
 

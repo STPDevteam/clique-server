@@ -187,6 +187,7 @@ type ActivityModel struct {
 	MerkleRoot   string        `db:"merkle_root"`
 	StartTime    int64         `db:"start_time"`
 	EndTime      int64         `db:"end_time"`
+	PublishTime  int64         `db:"publish_time"`
 	Price        string        `db:"price"`
 	Weight       sql.NullInt64 `db:"weight"`
 }

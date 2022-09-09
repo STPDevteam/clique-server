@@ -32,6 +32,9 @@ func TestCheckPersonalSign(t *testing.T) {
 }
 
 func TestSignMessage(t *testing.T) {
+	var f float64
+	f = float64(1) / float64(3)
+	fmt.Println(f)
 	uuid := GenerateUuid()
 	fmt.Println(uuid)
 

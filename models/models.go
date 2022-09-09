@@ -307,10 +307,18 @@ type AddressData struct {
 }
 
 type ClaimInfo struct {
-	Title  string   `json:"title"`
 	Index  uint64   `json:"index"`
 	Amount string   `json:"amount"`
 	Proof  []string `json:"proof"`
+}
+
+type ResProof struct {
+	AirdropTotalAmount string   `json:"airdropTotalAmount"`
+	AirdropNumber      int      `json:"airdropNumber"`
+	Title              string   `json:"title"`
+	Index              uint64   `json:"index"`
+	Amount             string   `json:"amount"`
+	Proof              []string `json:"proof"`
 }
 
 type ResActivityPage struct {
@@ -319,15 +327,18 @@ type ResActivityPage struct {
 }
 
 type ResActivityList struct {
-	Title        string `json:"title"`
-	Types        string `json:"types"`
-	ChainId      int    `json:"chainId"`
-	DaoAddress   string `json:"daoAddress"`
-	Creator      string `json:"creator"`
-	ActivityId   int    `json:"activityId"`
-	TokenAddress string `json:"tokenAddress"`
-	Amount       string `json:"amount"`
-	StartTime    int64  `json:"startTime"`
-	EndTime      int64  `json:"endTime"`
-	Price        string `json:"price"`
+	Title             string  `json:"title"`
+	Types             string  `json:"types"`
+	ChainId           int     `json:"chainId"`
+	DaoAddress        string  `json:"daoAddress"`
+	Creator           string  `json:"creator"`
+	ActivityId        int     `json:"activityId"`
+	TokenAddress      string  `json:"tokenAddress"`
+	Amount            string  `json:"amount"`
+	StartTime         int64   `json:"startTime"`
+	EndTime           int64   `json:"endTime"`
+	PublishTime       int64   `json:"publishTime"`
+	Price             string  `json:"price"`
+	AirdropNumber     int     `json:"airdropNumber"`
+	ClaimedPercentage float64 `json:"claimedPercentage"`
 }

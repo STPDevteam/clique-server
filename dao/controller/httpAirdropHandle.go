@@ -91,7 +91,7 @@ func httpSaveAirdropAddress(c *gin.Context) {
 // @Produce json
 // @Param address query string true "address"
 // @Param id query int true "id"
-// @Success 200 {object} models.ClaimInfo
+// @Success 200 {object} models.ResProof
 // @Router /stpdao/v2/airdrop/proof [get]
 func httpClaimAirdrop(c *gin.Context) {
 	idParam := c.Query("id")
@@ -120,6 +120,7 @@ func httpClaimAirdrop(c *gin.Context) {
 		return
 	}
 
+	var totalAmount = new(big.Int)
 	var addressLength = len(data.Address)
 	var addressData = make([]models.AddressData, addressLength)
 	for index := 0; index < addressLength; index++ {
@@ -137,6 +138,8 @@ func httpClaimAirdrop(c *gin.Context) {
 			Amount:  amount,
 			Address: common.HexToAddress(data.Address[index]),
 		}
+
+		totalAmount.Add(totalAmount, amount)
 	}
 
 	var nodes = make([][]byte, addressLength)
@@ -199,11 +202,13 @@ func httpClaimAirdrop(c *gin.Context) {
 	c.JSON(http.StatusOK, models.Response{
 		Code:    http.StatusOK,
 		Message: "ok",
-		Data: models.ClaimInfo{
-			Title:  entity[0].Title,
-			Index:  claimInfo.Index,
-			Amount: claimInfo.Amount,
-			Proof:  claimInfo.Proof,
+		Data: models.ResProof{
+			AirdropTotalAmount: totalAmount.String(),
+			AirdropNumber:      addressLength,
+			Title:              entity[0].Title,
+			Index:              claimInfo.Index,
+			Amount:             claimInfo.Amount,
+			Proof:              claimInfo.Proof,
 		},
 	})
 }

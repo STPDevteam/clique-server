@@ -54,6 +54,8 @@ func (svc *Service) Start(ctx *cli.Context) error {
 	go svc.updateDaoInfoTask()
 	go tokensImgTask()
 
+	//updateOnlineData()
+
 	router := gin.Default()
 	router.Use(utils.Cors())
 
