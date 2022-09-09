@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`event_historical_data` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    `message_sender` VARCHAR(44) NOT NULL,#https://docs.blockvision.org/blockvision/chain-apis/ethereum/eth_gettransactionbyhash
+    `message_sender` VARCHAR(44) NOT NULL,
     `event_type` VARCHAR(45) NOT NULL,
     `address` VARCHAR(44) NOT NULL,
     `topic0` VARCHAR(66) NOT NULL,

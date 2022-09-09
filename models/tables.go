@@ -6,6 +6,7 @@ type EventHistoricalModel struct {
 	Id               uint64 `db:"id,omitempty" sqler:"skips"`
 	CreateTime       string `db:"create_time,omitempty" sqler:"skips"`
 	UpdateTime       string `db:"update_time,omitempty" sqler:"skips"`
+	MessageSender    string `db:"message_sender"`
 	EventType        string `db:"event_type"`
 	Address          string `db:"address"`
 	Topic0           string `db:"topic0"`

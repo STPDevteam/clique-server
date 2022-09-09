@@ -91,7 +91,14 @@ func (svc *Service) scheduledTask() {
 										return
 									}
 
+									resFrom, errFrom := utils.GetTransactionByHashFrom(res.Result[i].TransactionHash, url)
+									if errFrom != nil {
+										oo.LogW("GetTransactionByHashFrom failed. currentBlock id: %d. chainId:%s. err: %v\n", currentBlockNum, chainId, errFrom)
+										return
+									}
+
 									var b = make(map[string]interface{})
+									b["message_sender"] = resFrom.Result.From
 									b["event_type"] = eventType
 									b["address"] = res.Result[i].Address
 									b["topic0"] = topic0

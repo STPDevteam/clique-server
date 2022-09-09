@@ -83,6 +83,36 @@ func jsonTimesTampRPC(body, url string) (data *models.JsonRPCTimesTampModel, err
 	return data, nil
 }
 
+func GetTransactionByHashFrom(hash, url string) (model *models.JsonRPCTransactionByHashModel, err error) {
+	body := fmt.Sprintf(`{
+		"jsonrpc": "2.0",
+		"method": "eth_getTransactionByHash",
+		"params": [
+			"%s"
+		],
+		"id": 1
+	}`, hash)
+	return jsonTransactionByHashRPC(body, url)
+}
+
+func jsonTransactionByHashRPC(body, url string) (data *models.JsonRPCTransactionByHashModel, err error) {
+	res, err := DoPost(
+		url,
+		"application/json",
+		body,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(res, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
 func QueryBalance(tokenAddress, accountAddress, url string) (model *models.JsonRPCBalanceModel, err error) {
 	body := fmt.Sprintf(`{
 		"id": 1,

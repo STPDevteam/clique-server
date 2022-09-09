@@ -40,6 +40,16 @@ type GetBlockByNumber struct {
 	GasUsed   string `json:"gasUsed"`
 }
 
+type JsonRPCTransactionByHashModel struct {
+	Id      uint64 `json:"id"`
+	Jsonrpc string `json:"jsonrpc"`
+	Result  From   `json:"result"`
+}
+
+type From struct {
+	From string `json:"from"`
+}
+
 type JsonRPCBalanceModel struct {
 	Id      uint64  `json:"id"`
 	Jsonrpc string  `json:"jsonrpc"`
