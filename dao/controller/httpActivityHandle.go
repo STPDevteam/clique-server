@@ -65,7 +65,7 @@ func httpActivity(c *gin.Context) {
 		err = oo.SqlSelect(sqlStr, &listEntities)
 	}
 	if err != nil {
-		oo.LogW("%v", err)
+		oo.LogW("SQL err: %v", err)
 		c.JSON(http.StatusInternalServerError, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",
@@ -81,7 +81,7 @@ func httpActivity(c *gin.Context) {
 		sqlSel := oo.NewSqler().Table(consts.TbNameAirdropAddress).Where("id", dataIndex.ActivityId).Select()
 		err = oo.SqlSelect(sqlSel, &entity)
 		if err != nil {
-			oo.LogW("%v", err)
+			oo.LogW("SQL err: %v", err)
 			c.JSON(http.StatusInternalServerError, models.Response{
 				Code:    500,
 				Message: "Something went wrong, Please try again later.",
@@ -104,7 +104,7 @@ func httpActivity(c *gin.Context) {
 		sqlSel = oo.NewSqler().Table(consts.TbNameClaimed).Where("airdrop_id", dataIndex.ActivityId).Count()
 		err = oo.SqlGet(sqlSel, &claimedCount)
 		if err != nil {
-			oo.LogW("%v", err)
+			oo.LogW("SQL err: %v", err)
 			c.JSON(http.StatusInternalServerError, models.Response{
 				Code:    500,
 				Message: "Something went wrong, Please try again later.",

@@ -46,7 +46,7 @@ func httpVotesList(c *gin.Context) {
 		err = oo.SqlSelect(sqlStr, &listEntities)
 	}
 	if err != nil {
-		oo.LogW("%v", err)
+		oo.LogW("SQL err: %v", err)
 		c.JSON(http.StatusInternalServerError, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",

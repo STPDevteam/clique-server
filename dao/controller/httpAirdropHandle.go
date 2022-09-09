@@ -55,7 +55,7 @@ func httpSaveAirdropAddress(c *gin.Context) {
 	sqlIns := oo.NewSqler().Table(consts.TbNameAirdropAddress).Insert(m)
 	err = oo.SqlExec(sqlIns)
 	if err != nil {
-		oo.LogW("%v", err)
+		oo.LogW("SQL err: %v", err)
 		c.JSON(http.StatusInternalServerError, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",
@@ -67,7 +67,7 @@ func httpSaveAirdropAddress(c *gin.Context) {
 	sqlSel := fmt.Sprintf(`SELECT LAST_INSERT_ID()`)
 	err = oo.SqlGet(sqlSel, &airdropId)
 	if err != nil {
-		oo.LogW("%v", err)
+		oo.LogW("SQL err: %v", err)
 		c.JSON(http.StatusInternalServerError, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",
@@ -101,7 +101,7 @@ func httpClaimAirdrop(c *gin.Context) {
 	sqlSel := oo.NewSqler().Table(consts.TbNameAirdropAddress).Where("id", idParam).Select()
 	err := oo.SqlSelect(sqlSel, &entity)
 	if err != nil || len(entity[0].Content) == 0 {
-		oo.LogW("%v", err)
+		oo.LogW("SQL err: %v", err)
 		c.JSON(http.StatusInternalServerError, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",

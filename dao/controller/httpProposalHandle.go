@@ -58,7 +58,7 @@ func httpProposalsList(c *gin.Context) {
 		err = oo.SqlSelect(sqlStr, &listEntities)
 	}
 	if err != nil {
-		oo.LogW("%v", err)
+		oo.LogW("SQL err: %v", err)
 		c.JSON(http.StatusInternalServerError, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",
@@ -118,7 +118,7 @@ func httpSaveProposal(c *gin.Context) {
 	sqlIns := oo.NewSqler().Table(consts.TbNameProposalInfo).Insert(m)
 	err = oo.SqlExec(sqlIns)
 	if err != nil {
-		oo.LogW("%v", err)
+		oo.LogW("SQL err: %v", err)
 		c.JSON(http.StatusInternalServerError, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",
@@ -150,7 +150,7 @@ func httpQueryProposal(c *gin.Context) {
 	sqlSel := oo.NewSqler().Table(consts.TbNameProposalInfo).Where("uuid", uuidParams).Select("content")
 	err := oo.SqlGet(sqlSel, &content)
 	if err != nil && err != oo.ErrNoRows {
-		oo.LogW("%v", err)
+		oo.LogW("SQL err: %v", err)
 		c.JSON(http.StatusInternalServerError, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",
@@ -194,7 +194,7 @@ func httpQuerySnapshot(c *gin.Context) {
 		Where("topic1", proposalId0x64).Select("block_number")
 	err := oo.SqlGet(sqlSel, &blockNumber)
 	if err != nil && err != oo.ErrNoRows {
-		oo.LogW("%v", err)
+		oo.LogW("SQL err: %v", err)
 		c.JSON(http.StatusInternalServerError, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",

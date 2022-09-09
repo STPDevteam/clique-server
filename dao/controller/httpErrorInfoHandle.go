@@ -39,7 +39,7 @@ func httpErrorInfo(c *gin.Context) {
 	sqlIns := oo.NewSqler().Table(consts.TbNameErrorInfo).Insert(m)
 	err = oo.SqlExec(sqlIns)
 	if err != nil {
-		oo.LogW("%v", err)
+		oo.LogW("SQL err: %v", err)
 		c.JSON(http.StatusInternalServerError, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",
