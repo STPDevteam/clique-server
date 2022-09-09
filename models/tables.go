@@ -199,7 +199,7 @@ type ClaimedModel struct {
 	ChainId    int    `db:"chain_id"`
 	DaoAddress string `db:"dao_address"`
 	AirdropId  int    `db:"airdrop_id"`
-	Index      int    `db:"index"`
+	IndexId    int    `db:"index_id"`
 	Account    string `db:"account"`
 	Amount     string `db:"amount"`
 }

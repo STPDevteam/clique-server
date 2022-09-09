@@ -265,7 +265,7 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_claimed` (
     `chain_id` INT NOT NULL,
     `dao_address` VARCHAR(128) NOT NULL,
     `airdrop_id` INT NOT NULL,
-    `index` INT NOT NULL,
+    `index_id` INT NOT NULL,
     `account` VARCHAR(128) NOT NULL,
     `amount` DECIMAL(65,0) UNSIGNED NOT NULL,
     PRIMARY KEY (`id`),

@@ -462,7 +462,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 			v["chain_id"] = chainId
 			v["dao_address"] = blockData[i]["address"].(string)
 			v["airdrop_id"] = utils.Hex2Dec(blockData[i]["topic1"].(string))
-			v["index"] = utils.Hex2Dec(blockData[i]["data"].(string)[:66])
+			v["index_id"] = utils.Hex2Dec(blockData[i]["data"].(string)[:66])
 			v["account"] = utils.FixTo0x40String(blockData[i]["data"].(string)[66:130])
 			v["amount"] = amount.String()
 			m = append(m, v)
