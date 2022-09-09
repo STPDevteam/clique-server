@@ -192,8 +192,11 @@ func httpClaimAirdrop(c *gin.Context) {
 		c.JSON(http.StatusOK, models.Response{
 			Code:    http.StatusOK,
 			Message: "ok",
-			Data: models.ClaimInfo{
-				Amount: "",
+			Data: models.ResProof{
+				AirdropTotalAmount: totalAmount.String(),
+				AirdropNumber:      addressLength,
+				Title:              entity[0].Title,
+				Amount:             "",
 			},
 		})
 		return

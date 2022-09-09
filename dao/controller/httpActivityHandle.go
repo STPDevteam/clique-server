@@ -61,7 +61,7 @@ func httpActivity(c *gin.Context) {
 	err := oo.SqlGet(sqlStr, &total)
 	if err == nil {
 		sqlCopy = *sqler
-		sqlStr = sqlCopy.Order("start_time DESC").Limit(countParam).Offset(offsetParam).Select()
+		sqlStr = sqlCopy.Order("start_time DESC,publish_time DESC").Limit(countParam).Offset(offsetParam).Select()
 		err = oo.SqlSelect(sqlStr, &listEntities)
 	}
 	if err != nil {
