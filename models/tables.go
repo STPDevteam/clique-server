@@ -216,3 +216,26 @@ type VoteModel struct {
 	Amount      string `db:"amount"`
 	Nonce       int    `db:"nonce"`
 }
+
+type NotificationModel struct {
+	Id               uint64 `db:"id,omitempty" sqler:"skips"`
+	CreateTime       string `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime       string `db:"update_time,omitempty" sqler:"skips"`
+	ChainId          int    `db:"chain_id"`
+	DaoAddress       string `db:"dao_address"`
+	Types            string `db:"types"`
+	ActivityId       int    `db:"activity_id"`
+	TokenAddress     string `db:"token_address"`
+	DaoLogo          string `db:"dao_logo"`
+	NotificationTime int64  `db:"notification_time"`
+	UpdateBool       bool   `db:"update_bool"`
+}
+
+type NotificationAccountModel struct {
+	Id             uint64 `db:"id,omitempty" sqler:"skips"`
+	CreateTime     string `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime     string `db:"update_time,omitempty" sqler:"skips"`
+	NotificationId int    `db:"notification_id"`
+	Account        string `db:"account"`
+	AlreadyRead    bool   `db:"already_read"`
+}

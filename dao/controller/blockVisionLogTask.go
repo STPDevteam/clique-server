@@ -296,6 +296,10 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 
 		if blockData[i]["event_type"] == consts.EvCreateProposal {
 			proposer := utils.FixTo0x40String(blockData[i]["topic2"].(string))
+			daoAddress := blockData[i]["address"].(string)
+			proposalId := utils.Hex2Dec(blockData[i]["topic1"].(string))
+			startTime := utils.Hex2Dec(blockData[i]["data"].(string)[66:130])
+			endTime := utils.Hex2Dec(blockData[i]["data"].(string)[130:194])
 			sqlIns := fmt.Sprintf(`INSERT INTO %s (account,nonce,chain_id) VALUES ('%s',%d,%d) ON DUPLICATE KEY UPDATE nonce=nonce+1`,
 				consts.TbNameNonce,
 				proposer,
@@ -311,11 +315,11 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 			var m = make([]map[string]interface{}, 0)
 			var v = make(map[string]interface{})
 			v["chain_id"] = chainId
-			v["dao_address"] = blockData[i]["address"].(string)
-			v["proposal_id"] = utils.Hex2Dec(blockData[i]["topic1"].(string))
-			v["proposer"] = utils.FixTo0x40String(blockData[i]["topic2"].(string))
-			v["start_time"] = utils.Hex2Dec(blockData[i]["data"].(string)[66:130])
-			v["end_time"] = utils.Hex2Dec(blockData[i]["data"].(string)[130:194])
+			v["dao_address"] = daoAddress
+			v["proposal_id"] = proposalId
+			v["proposer"] = proposer
+			v["start_time"] = startTime
+			v["end_time"] = endTime
 			m = append(m, v)
 			sqlIns = oo.NewSqler().Table(consts.TbNameProposal).Insert(m)
 			_, errTx = oo.SqlxTxExec(tx, sqlIns)
@@ -323,15 +327,38 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 				oo.LogW("SQL err: %v", errTx)
 				return
 			}
+
+			//for notification
+			var notificationData = make([]map[string]interface{}, 0)
+			var values = make(map[string]interface{})
+			values["chain_id"] = chainId
+			values["dao_address"] = daoAddress
+			values["types"] = consts.TypesNameProposal
+			values["activity_id"] = proposalId
+			values["token_address"] = ""
+			values["dao_logo"] = ""
+			values["notification_time"] = startTime
+			values["update_bool"] = true
+			notificationData = append(notificationData, values)
+			sqlIns = oo.NewSqler().Table(consts.TbNameNotification).Insert(notificationData)
+			_, errTx = oo.SqlxTxExec(tx, sqlIns)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+
 		}
 
 		if blockData[i]["event_type"] == consts.EvCancelProposal {
 			proposalId := utils.Hex2Dec(blockData[i]["topic1"].(string))
 			endTime := utils.Hex2Dec(blockData[i]["time_stamp"].(string))
-			sqlUp := fmt.Sprintf(`UPDATE %s SET end_time=%d WHERE proposal_id=%d`,
+			daoAddress := blockData[i]["address"].(string)
+			sqlUp := fmt.Sprintf(`UPDATE %s SET end_time=%d WHERE proposal_id=%d AND chain_id=%d AND dao_address='%s'`,
 				consts.TbNameProposal,
 				endTime,
 				proposalId,
+				chainId,
+				daoAddress,
 			)
 			_, errTx = oo.SqlxTxExec(tx, sqlUp)
 			if errTx != nil {
@@ -431,23 +458,45 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 
 		if blockData[i]["event_type"] == consts.EvCreateAirdrop {
 			amount, _ := utils.Hex2BigInt(fmt.Sprintf("0x%s", blockData[i]["data"].(string)[66:130]))
-			publishTime, _ := utils.Hex2Int64(blockData[i]["time_stamp"].(string))
+			daoAddress := blockData[i]["address"].(string)
+			activityId := utils.Hex2Dec(blockData[i]["topic2"].(string))
+			tokenAddress := utils.FixTo0x40String(blockData[i]["data"].(string)[2:66])
+			startTime := utils.Hex2Dec(blockData[i]["data"].(string)[194:258])
 			var m = make([]map[string]interface{}, 0)
 			var v = make(map[string]interface{})
 			v["types"] = consts.TypesNameAirdrop
 			v["chain_id"] = chainId
-			v["dao_address"] = blockData[i]["address"].(string)
+			v["dao_address"] = daoAddress
 			v["creator"] = utils.FixTo0x40String(blockData[i]["topic1"].(string))
-			v["activity_id"] = utils.Hex2Dec(blockData[i]["topic2"].(string))
-			v["token_address"] = utils.FixTo0x40String(blockData[i]["data"].(string)[2:66])
+			v["activity_id"] = activityId
+			v["token_address"] = tokenAddress
 			v["amount"] = amount.String()
 			v["merkle_root"] = blockData[i]["data"].(string)[130:194]
-			v["start_time"] = utils.Hex2Dec(blockData[i]["data"].(string)[194:258])
+			v["start_time"] = startTime
 			v["end_time"] = utils.Hex2Dec(blockData[i]["data"].(string)[258:322])
-			v["publish_time"] = publishTime
+			v["publish_time"] = utils.Hex2Dec(blockData[i]["time_stamp"].(string))
 			v["price"] = ""
 			m = append(m, v)
 			sqlIns := oo.NewSqler().Table(consts.TbNameActivity).Insert(m)
+			_, errTx = oo.SqlxTxExec(tx, sqlIns)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+
+			//for notification
+			var notificationData = make([]map[string]interface{}, 0)
+			var values = make(map[string]interface{})
+			values["chain_id"] = chainId
+			values["dao_address"] = daoAddress
+			values["types"] = consts.TypesNameAirdrop
+			values["activity_id"] = activityId
+			values["token_address"] = tokenAddress
+			values["dao_logo"] = ""
+			values["notification_time"] = startTime
+			values["update_bool"] = true
+			notificationData = append(notificationData, values)
+			sqlIns = oo.NewSqler().Table(consts.TbNameNotification).Insert(notificationData)
 			_, errTx = oo.SqlxTxExec(tx, sqlIns)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)

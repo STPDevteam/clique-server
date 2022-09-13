@@ -1,7 +1,7 @@
 CREATE SCHEMA IF NOT EXISTS `stp_dao_v2` DEFAULT CHARACTER SET utf8 ;
 USE `stp_dao_v2`;
 
-# SET GLOBAL TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+SET GLOBAL TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
 
 CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`event_historical_data` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -291,6 +291,36 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_vote` (
     INDEX `index_dao_address` (`dao_address` ASC),
     INDEX `index_proposal_id` (`proposal_id` ASC),
     INDEX `index_voter` (`voter` ASC)
+);
+
+CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_notification` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `chain_id` INT NOT NULL,
+    `dao_address` VARCHAR(128) NOT NULL,
+    `types` VARCHAR(30) NOT NULL,
+    `activity_id` INT NOT NULL,
+    `token_address` VARCHAR(128) NOT NULL,
+    `dao_logo` VARCHAR(500) NOT NULL,
+    `notification_time` INT NOT NULL,
+    `update_bool` bool NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `index_id` (`id` ASC),
+    INDEX `index_chain_id` (`chain_id` ASC),
+    INDEX `index_dao_address` (`dao_address` ASC)
+);
+
+CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_notification_account` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `notification_id` INT NOT NULL,
+    `account` VARCHAR(128) NOT NULL,
+    `already_read` bool NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `index_notification_id` (`notification_id` ASC),
+    INDEX `index_account` (`account` ASC)
 );
 
 # CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_options` (

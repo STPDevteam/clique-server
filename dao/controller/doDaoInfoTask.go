@@ -92,15 +92,15 @@ func saveDaoInfoAndCategory(daoInfo []interface{}, daoAddress string, chainId in
 		daoAddress,
 		chainId,
 	)
-	_, err := oo.SqlxTxExec(tx, sqlIns)
-	if err != nil {
-		oo.LogW("SQL failed. err: %v\n", err)
+	_, errTx = oo.SqlxTxExec(tx, sqlIns)
+	if errTx != nil {
+		oo.LogW("SQL failed. err: %v\n", errTx)
 		return
 	}
 
 	var daoId int
 	sqlSelDId := oo.NewSqler().Table(consts.TbNameDao).Where("dao_address", daoAddress).Where("chain_id", chainId).Select("id")
-	err = oo.SqlGet(sqlSelDId, &daoId)
+	err := oo.SqlGet(sqlSelDId, &daoId)
 	if err != nil {
 		oo.LogW("SQL failed. err: %v\n", err)
 		return
@@ -108,9 +108,9 @@ func saveDaoInfoAndCategory(daoInfo []interface{}, daoAddress string, chainId in
 
 	/* event setting: maybe delete the category first */
 	sqlDel := oo.NewSqler().Table(consts.TbNameDaoCategory).Where("dao_id", daoId).Delete()
-	_, err = oo.SqlxTxExec(tx, sqlDel)
-	if err != nil {
-		oo.LogW("SQL failed. err: %v\n", err)
+	_, errTx = oo.SqlxTxExec(tx, sqlDel)
+	if errTx != nil {
+		oo.LogW("SQL failed. err: %v\n", errTx)
 		return
 	}
 
@@ -142,9 +142,9 @@ func saveDaoInfoAndCategory(daoInfo []interface{}, daoAddress string, chainId in
 			daoId,
 			categoryId,
 		)
-		_, err = oo.SqlxTxExec(tx, sqlInsCategory)
-		if err != nil {
-			oo.LogW("SQL failed. err: %v\n", err)
+		_, errTx = oo.SqlxTxExec(tx, sqlInsCategory)
+		if errTx != nil {
+			oo.LogW("SQL failed. err: %v\n", errTx)
 			return
 		}
 	}
