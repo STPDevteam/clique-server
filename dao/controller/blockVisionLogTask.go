@@ -338,7 +338,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 			values["token_address"] = ""
 			values["dao_logo"] = ""
 			values["notification_time"] = startTime
-			values["update_bool"] = true
+			values["update_bool"] = 1
 			notificationData = append(notificationData, values)
 			sqlIns = oo.NewSqler().Table(consts.TbNameNotification).Insert(notificationData)
 			_, errTx = oo.SqlxTxExec(tx, sqlIns)
@@ -494,7 +494,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 			values["token_address"] = tokenAddress
 			values["dao_logo"] = ""
 			values["notification_time"] = startTime
-			values["update_bool"] = true
+			values["update_bool"] = 1
 			notificationData = append(notificationData, values)
 			sqlIns = oo.NewSqler().Table(consts.TbNameNotification).Insert(notificationData)
 			_, errTx = oo.SqlxTxExec(tx, sqlIns)

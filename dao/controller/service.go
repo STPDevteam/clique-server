@@ -53,6 +53,7 @@ func (svc *Service) Start(ctx *cli.Context) error {
 	go svc.scheduledTask()
 	go svc.updateDaoInfoTask()
 	go tokensImgTask()
+	go updateNotification()
 
 	//updateOnlineData()
 
@@ -110,6 +111,11 @@ func (svc *Service) Start(ctx *cli.Context) error {
 	r10 := router.Group(path.Join(basePath, "/activity"))
 	{
 		r10.GET("/list", httpActivity)
+	}
+	r11 := router.Group(path.Join(basePath, "/notification"))
+	{
+		r11.GET("/list", httpNotificationList)
+		r11.POST("/read", httpNotificationRead)
 	}
 
 	url := ginSwagger.URL(svc.appConfig.SwaggerUrl)

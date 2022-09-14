@@ -342,3 +342,29 @@ type ResActivityList struct {
 	AirdropNumber     int     `json:"airdropNumber"`
 	ClaimedPercentage float64 `json:"claimedPercentage"`
 }
+
+type ResNotificationPage struct {
+	List  []ResNotification `json:"list"`
+	Total uint64            `json:"total"`
+}
+
+type ResNotification struct {
+	ChainId          int    `json:"chainId"`
+	DaoAddress       string `json:"daoAddress"`
+	Types            string `json:"types"`
+	ActivityId       int    `json:"activityId"`
+	TokenAddress     string `json:"tokenAddress"`
+	DaoLogo          string `json:"daoLogo"`
+	NotificationTime int64  `json:"notificationTime"`
+	NotificationId   int    `json:"notificationId"`
+	Account          string `json:"account"`
+	// true:have read
+	AlreadyRead bool `json:"alreadyRead"`
+}
+
+type NotificationReadParam struct {
+	NotificationId int    `json:"notificationId"`
+	Account        string `json:"account"`
+	// read all:true
+	ReadAll bool `json:"readAll"`
+}
