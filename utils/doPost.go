@@ -49,7 +49,7 @@ func QueryLatestBlock(url string) (*models.JsonRPCModel, error) {
 		"params":[]
 	}`)
 
-	return jsonRPC(body, url) //
+	return jsonRPC(body, url)
 }
 
 func QueryTimesTamp(block, url string) (model *models.JsonRPCTimesTampModel, err error) {
@@ -174,8 +174,52 @@ func QueryDaoInfo(daoAddress, data, url string) (model *models.JsonRPCModel, err
 	return jsonRPC(body, url)
 }
 
+func QueryERC20Balance(to, data, url string) (*models.JsonRPCModel, error) {
+	body := fmt.Sprintf(`{
+		"id": 1,
+		"jsonrpc":"2.0",
+		"method": "eth_call",
+		"params": [{"to":"%s","data":"%s"}, "latest"]
+	}`, to, data)
+
+	return jsonRPC(body, url)
+}
+
+func jsonRPC(body, url string) (data *models.JsonRPCModel, err error) {
+	res, err := DoPost(
+		url,
+		"application/json",
+		body,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(res, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
 func DoPost(url string, contentType string, body string) (res []byte, err error) {
 	resp, err := http.Post(url, contentType, strings.NewReader(body))
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return bodyBytes, nil
+}
+
+func DoGet(url string) (res []byte, err error) {
+	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
 	}
@@ -216,48 +260,4 @@ func GetTokenImg(url string) (data *models.TokenImg, err error) {
 	}
 
 	return data, nil
-}
-
-func QueryERC20Balance(to, data, url string) (*models.JsonRPCModel, error) {
-	body := fmt.Sprintf(`{
-		"id": 1,
-		"jsonrpc":"2.0",
-		"method": "eth_call",
-		"params": [{"to":"%s","data":"%s"}, "latest"]
-	}`, to, data)
-
-	return jsonRPC(body, url)
-}
-
-func jsonRPC(body, url string) (data *models.JsonRPCModel, err error) {
-	res, err := DoPost(
-		url,
-		"application/json",
-		body,
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	err = json.Unmarshal(res, &data)
-	if err != nil {
-		return nil, err
-	}
-
-	return data, nil
-}
-
-func DoGet(url string) (res []byte, err error) {
-	resp, err := http.Get(url)
-	if err != nil {
-		return nil, err
-	}
-
-	defer resp.Body.Close()
-	bodyBytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	return bodyBytes, nil
 }
