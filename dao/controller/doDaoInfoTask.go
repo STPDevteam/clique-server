@@ -32,7 +32,7 @@ func (svc *Service) updateDaoInfoTask() {
 					chainId := svc.scanInfo[indexScan].ChainId[indexUrl]
 
 					if chainId == entities[index].ChainId {
-						res, errQ := utils.QueryDaoInfo(entities[index].DaoAddress, data, url)
+						res, errQ := utils.QueryMethodEthCall(entities[index].DaoAddress, data, url)
 						if errQ != nil {
 							oo.LogW("QueryDaoInfo failed. chainId:%d. err: %v\n", chainId, errQ)
 							return
@@ -70,28 +70,18 @@ func saveDaoInfoAndCategory(daoInfo []interface{}, daoAddress string, chainId in
 	}
 	defer oo.CloseSqlxTx(tx, &errTx)
 
-	daoName := daoInfo[0]
-	handle := daoInfo[1]
 	category := daoInfo[2]
-	description := daoInfo[3]
-	twitter := daoInfo[4]
-	github := daoInfo[5]
-	discord := daoInfo[6]
-	daoLogo := daoInfo[7]
 
-	sqlIns := fmt.Sprintf(`UPDATE %s SET dao_logo='%s',dao_name='%s',handle='%s',description='%s',twitter='%s',github='%s',discord='%s',update_bool=%t WHERE dao_address='%s' AND chain_id=%d`,
-		consts.TbNameDao,
-		daoLogo,
-		daoName,
-		handle,
-		description,
-		twitter,
-		github,
-		discord,
-		false,
-		daoAddress,
-		chainId,
-	)
+	var v = make(map[string]interface{})
+	v["dao_logo"] = daoInfo[7]
+	v["dao_name"] = daoInfo[0]
+	v["handle"] = daoInfo[1]
+	v["description"] = daoInfo[3]
+	v["twitter"] = daoInfo[4]
+	v["github"] = daoInfo[5]
+	v["discord"] = daoInfo[6]
+	v["update_bool"] = 0
+	sqlIns := oo.NewSqler().Table(consts.TbNameDao).Where("dao_address", daoAddress).Where("chain_id", chainId).Update(v)
 	_, errTx = oo.SqlxTxExec(tx, sqlIns)
 	if errTx != nil {
 		oo.LogW("SQL failed. err: %v\n", errTx)
