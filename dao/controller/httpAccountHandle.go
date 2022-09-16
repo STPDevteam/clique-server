@@ -234,15 +234,13 @@ func httpUpdateAccount(c *gin.Context) {
 	}
 
 	//maybe error: account_logo=""
-	sqler := fmt.Sprintf(`UPDATE %s SET account_logo='%s',nickname='%s',introduction='%s',twitter='%s',github='%s' WHERE account='%s'`,
-		consts.TbNameAccount,
-		params.Param.AccountLogo,
-		params.Param.Nickname,
-		params.Param.Introduction,
-		params.Param.Twitter,
-		params.Param.Github,
-		params.Sign.Account,
-	)
+	var v = make(map[string]interface{})
+	v["account_logo"] = params.Param.AccountLogo
+	v["nickname"] = params.Param.Nickname
+	v["introduction"] = params.Param.Introduction
+	v["twitter"] = params.Param.Twitter
+	v["github"] = params.Param.Github
+	sqler := oo.NewSqler().Table(consts.TbNameAccount).Where("account", params.Sign.Account).Update(v)
 	err = oo.SqlExec(sqler)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)

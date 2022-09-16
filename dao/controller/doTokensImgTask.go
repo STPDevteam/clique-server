@@ -6,6 +6,7 @@ import (
 	"stp_dao_v2/consts"
 	"stp_dao_v2/models"
 	"stp_dao_v2/utils"
+	"strings"
 	"time"
 )
 
@@ -72,13 +73,14 @@ func tokensImgTask() {
 
 				var sqlStr string
 				if count == 0 {
-					sqlStr = fmt.Sprintf(`INSERT INTO %s (token_chain_id,token_address,thumb,small,large) VALUES (%d,'%s','%s','%s','%s')`,
+					sqlStr = fmt.Sprintf(`INSERT INTO %s (token_chain_id,token_address,thumb,small,large,own_img) VALUES (%d,'%s','%s','%s','%s','%s')`,
 						consts.TbNameTokensImg,
 						tokenChainId,
 						tokenAddress,
 						resImg.Image.Thumb,
 						resImg.Image.Small,
 						resImg.Image.Large,
+						"",
 					)
 				} else if count == 1 {
 					sqlStr = fmt.Sprintf(`UPDATE %s SET thumb='%s',small='%s',large='%s' WHERE token_chain_id=%d AND token_address='%s'`,
@@ -101,4 +103,60 @@ func tokensImgTask() {
 		time.Sleep(time.Duration(1) * time.Second)
 	}
 
+}
+
+func ownTokensImgSave(contract, tokenAddress, url string, chainId int) error {
+	const paramsDataPrefix = "0x9a39728f000000000000000000000000"
+	data := fmt.Sprintf("%s%s", paramsDataPrefix, strings.TrimPrefix(tokenAddress, "0x"))
+
+	res, err := utils.QueryMethodEthCall(contract, data, url)
+	if err != nil {
+		oo.LogW("QueryMethodEthCall failed. chainId:%d. err: %v\n", chainId, err)
+		return err
+	}
+
+	var outputParameters []string
+	outputParameters = append(outputParameters, "string")
+	tokenImgUrl, err := utils.Decode(outputParameters, strings.TrimPrefix(res.Result.(string), "0x"))
+	if err != nil {
+		oo.LogW("Decode failed. err: %v\n", err)
+		return err
+	}
+
+	var count int
+	sqlSel := oo.NewSqler().Table(consts.TbNameTokensImg).
+		Where("token_chain_id", chainId).
+		Where("token_address", tokenAddress).Count()
+	err = oo.SqlGet(sqlSel, &count)
+	if err != nil {
+		oo.LogW("SQL failed error: %v", err)
+		return err
+	}
+
+	var sqlStr string
+	if count == 0 {
+		sqlStr = fmt.Sprintf(`INSERT INTO %s (token_chain_id,token_address,thumb,small,large,own_img) VALUES (%d,'%s','%s','%s','%s','%s')`,
+			consts.TbNameTokensImg,
+			chainId,
+			tokenAddress,
+			"",
+			"",
+			"",
+			tokenImgUrl[0],
+		)
+	} else if count == 1 {
+		sqlStr = fmt.Sprintf(`UPDATE %s SET own_img='%s' WHERE token_chain_id=%d AND token_address='%s'`,
+			consts.TbNameNotificationAccount,
+			tokenImgUrl[0],
+			chainId,
+			tokenAddress,
+		)
+	}
+	err = oo.SqlExec(sqlStr)
+	if err != nil {
+		oo.LogW("SQL failed. err: %v\n", err)
+		return err
+	}
+
+	return nil
 }

@@ -151,6 +151,7 @@ type TokensImgModel struct {
 	Thumb        string `db:"thumb"`
 	Small        string `db:"small"`
 	Large        string `db:"large"`
+	OwnImg       string `db:"own_img"`
 }
 
 type ProposalModel struct {

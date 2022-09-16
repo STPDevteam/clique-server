@@ -277,6 +277,7 @@ type ResTokenImg struct {
 	Thumb        string `json:"thumb"`
 	Small        string `json:"small"`
 	Large        string `json:"large"`
+	OwnImg       string `json:"ownImg"`
 }
 
 type ResSnapshot struct {

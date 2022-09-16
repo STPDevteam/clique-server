@@ -122,7 +122,7 @@ func (svc *Service) scheduledTask() {
 						}
 					}
 				}
-				save(blockData, currentBlockNum, chainId)
+				save(blockData, currentBlockNum, chainId, url)
 			}
 		}
 	}
@@ -150,7 +150,7 @@ func needSaveEvent(chainId int) ([]models.ScanTaskModel, int, bool, error) {
 	return needEvent, min, true, nil
 }
 
-func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
+func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url string) {
 	tx, errTx := oo.NewSqlxTx()
 	if errTx != nil {
 		oo.LogW("SQL err: %v", errTx)
@@ -196,6 +196,12 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 			_, errTx = oo.SqlxTxExec(tx, sqlIns)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+
+			errTx = ownTokensImgSave(blockData[i]["address"].(string), tokenAddress, url, chainId)
+			if errTx != nil {
+				oo.LogW("ownTokensImgSave err: %v", errTx)
 				return
 			}
 		}
@@ -534,9 +540,9 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 				Where("token_address", tokenAddress).
 				Where("holder_address", to).
 				Where("chain_id", chainId).Select()
-			err := oo.SqlSelect(sqlTo, &entityTo)
-			if err != nil {
-				oo.LogW("SQL err: %v", err)
+			errTx := oo.SqlSelect(sqlTo, &entityTo)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
 				return
 			}
 			var toBaseAmount = new(big.Int)
@@ -565,9 +571,9 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 					Where("token_address", tokenAddress).
 					Where("holder_address", from).
 					Where("chain_id", chainId).Select()
-				err = oo.SqlSelect(sqlFrom, &entityFrom)
-				if err != nil {
-					oo.LogW("SQL err: %v", err)
+				errTx = oo.SqlSelect(sqlFrom, &entityFrom)
+				if errTx != nil {
+					oo.LogW("SQL err: %v", errTx)
 					return
 				}
 				fromBaseAmount, _ := utils.Dec2BigInt(entityFrom[0].Balance)
@@ -592,9 +598,9 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int) {
 					Where("token_address", tokenAddress).
 					Where("holder_address", consts.ZeroAddress0x40).
 					Where("chain_id", chainId).Select()
-				err = oo.SqlSelect(sqlFrom, &entityZero)
-				if err != nil {
-					oo.LogW("SQL err: %v", err)
+				errTx = oo.SqlSelect(sqlFrom, &entityZero)
+				if errTx != nil {
+					oo.LogW("SQL err: %v", errTx)
 					return
 				}
 				var zeroBaseAmount = new(big.Int)

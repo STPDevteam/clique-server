@@ -200,6 +200,7 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_tokens_img` (
     `thumb` VARCHAR(300) NOT NULL,
     `small` VARCHAR(300) NOT NULL,
     `large` VARCHAR(300) NOT NULL,
+    `own_img` VARCHAR(300) NOT NULL,
     PRIMARY KEY (`id`),
     INDEX `index_chain_id` (`token_chain_id` ASC),
     INDEX `index_token_address` (`token_address` ASC),

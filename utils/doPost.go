@@ -158,23 +158,7 @@ func jsonBalanceRPC(body, url string) (data *models.JsonRPCBalanceModel, err err
 	return data, nil
 }
 
-func QueryDaoInfo(daoAddress, data, url string) (model *models.JsonRPCModel, err error) {
-	body := fmt.Sprintf(`{
-		"id": 1,
-		"jsonrpc": "2.0",
-		"method": "eth_call",
-		"params": [
-			{
-				"to": "%s",
-				"data": "%s"
-			},
-			"latest"
-   	 ]
-	}`, daoAddress, data)
-	return jsonRPC(body, url)
-}
-
-func QueryERC20Balance(to, data, url string) (*models.JsonRPCModel, error) {
+func QueryMethodEthCall(to, data, url string) (*models.JsonRPCModel, error) {
 	body := fmt.Sprintf(`{
 		"id": 1,
 		"jsonrpc":"2.0",

@@ -105,7 +105,7 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 		//}
 		//balance = res.Result.Value
 		data := fmt.Sprintf("%s%s", paramsDataPrefix, strings.TrimPrefix(params.Account, "0x"))
-		res, errQb := utils.QueryERC20Balance(tokenAddress, data, url)
+		res, errQb := utils.QueryMethodEthCall(tokenAddress, data, url)
 		if errQb != nil || res.Result == nil || res.Result == "0x" {
 			c.JSON(http.StatusInternalServerError, models.Response{
 				Code:    500,
@@ -153,7 +153,7 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 		for _, testChainId := range svc.appConfig.TestnetBalanceSign {
 			if params.ChainId == testChainId {
 				data := fmt.Sprintf("%s%s", paramsDataPrefix, strings.TrimPrefix(params.Account, "0x"))
-				res, errQb := utils.QueryERC20Balance(tokenAddress, data, url)
+				res, errQb := utils.QueryMethodEthCall(tokenAddress, data, url)
 				if errQb != nil || res.Result == nil || res.Result == "0x" {
 					c.JSON(http.StatusInternalServerError, models.Response{
 						Code:    500,

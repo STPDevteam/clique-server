@@ -149,6 +149,7 @@ func httpTokenImg(c *gin.Context) {
 			Thumb:        entity[0].Thumb,
 			Small:        entity[0].Small,
 			Large:        entity[0].Large,
+			OwnImg:       entity[0].OwnImg,
 		},
 	})
 
