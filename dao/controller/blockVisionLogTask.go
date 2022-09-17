@@ -318,12 +318,19 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 				return
 			}
 
+			//
+			proposalTitle, errTx := proposalInfo(daoAddress, blockData[i]["topic1"].(string), url)
+			if errTx != nil {
+				oo.LogW("proposalInfo func err: %v", errTx)
+				return
+			}
+
 			var m = make([]map[string]interface{}, 0)
 			var v = make(map[string]interface{})
 			v["chain_id"] = chainId
 			v["dao_address"] = daoAddress
 			v["proposal_id"] = proposalId
-			v["title"] = "proposal title" //fix
+			v["title"] = proposalTitle
 			v["proposer"] = proposer
 			v["start_time"] = startTime
 			v["end_time"] = endTime
@@ -637,4 +644,31 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			}
 		}
 	}
+}
+
+func proposalInfo(daoAddress, proposalId, url string) (string, error) {
+	const dataPrefix = "0x013cf08b"
+	data := fmt.Sprintf("%s%s", dataPrefix, strings.TrimPrefix(proposalId, "0x"))
+	res, err := utils.QueryMethodEthCall(daoAddress, data, url)
+	if err != nil {
+		oo.LogW("QueryMethodEthCall err: %v", err)
+		return "", err
+	}
+
+	var outputParameters []string
+	outputParameters = append(outputParameters, "bool")
+	outputParameters = append(outputParameters, "address")
+	outputParameters = append(outputParameters, "string")
+	outputParameters = append(outputParameters, "string")
+	outputParameters = append(outputParameters, "string")
+	outputParameters = append(outputParameters, "uint256")
+	outputParameters = append(outputParameters, "uint256")
+	outputParameters = append(outputParameters, "uint8")
+
+	proposal, err := utils.Decode(outputParameters, strings.TrimPrefix(res.Result.(string), "0x"))
+	if err != nil {
+		oo.LogW("Decode failed. err: %v\n", err)
+		return "", err
+	}
+	return proposal[2].(string), nil
 }

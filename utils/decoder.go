@@ -64,6 +64,32 @@ func Decode(outputParameters []string, input string) (result []interface{}, err 
 				}
 				result = append(result, data)
 				inputIndex += 64
+			} else if outputParameter == "bool" {
+				if len(input) < inputIndex+64 {
+					err = errors.New("invalid data")
+					break
+				}
+				var b int
+				b = Hex2Dec(input[inputIndex : inputIndex+64])
+				var data bool
+				if b == 0 {
+					data = false
+				} else if b == 1 {
+					data = true
+				}
+
+				result = append(result, data)
+				inputIndex += 64
+			} else if outputParameter == "uint8" {
+				if len(input) < inputIndex+64 {
+					err = errors.New("invalid data")
+					break
+				}
+				var data int
+				data = Hex2Dec(input[inputIndex : inputIndex+64])
+
+				result = append(result, data)
+				inputIndex += 64
 			} else {
 				err = errors.New(fmt.Sprintf("unsupported %s data", outputParameter))
 				break
