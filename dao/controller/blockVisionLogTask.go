@@ -201,7 +201,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 
 			errTx = ownTokensImgSave(blockData[i]["address"].(string), tokenAddress, url, chainId)
 			if errTx != nil {
-				oo.LogW("ownTokensImgSave err: %v", errTx)
+				oo.LogW("ownTokensImgSave func err: %v", errTx)
 				return
 			}
 		}
@@ -323,6 +323,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			v["chain_id"] = chainId
 			v["dao_address"] = daoAddress
 			v["proposal_id"] = proposalId
+			v["title"] = "proposal title" //fix
 			v["proposer"] = proposer
 			v["start_time"] = startTime
 			v["end_time"] = endTime
@@ -339,10 +340,11 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			var values = make(map[string]interface{})
 			values["chain_id"] = chainId
 			values["dao_address"] = daoAddress
-			values["types"] = consts.TypesNameProposal
+			values["types"] = consts.TypesNameNewProposal
 			values["activity_id"] = proposalId
-			values["token_address"] = ""
 			values["dao_logo"] = ""
+			values["dao_name"] = ""
+			values["activity_name"] = ""
 			values["notification_time"] = startTime
 			values["update_bool"] = 1
 			notificationData = append(notificationData, values)
@@ -353,6 +355,15 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 				return
 			}
 
+			//
+			var weight = make(map[string]interface{})
+			weight["weight"] = proposalId + 1
+			sqlUp = oo.NewSqler().Table(consts.TbNameDao).Where("chain_id", chainId).Where("dao_address", daoAddress).Update(weight)
+			_, errTx = oo.SqlxTxExec(tx, sqlUp)
+			if errTx != nil {
+				oo.LogW("SQL err: %v\n", errTx)
+				return
+			}
 		}
 
 		if blockData[i]["event_type"] == consts.EvCancelProposal {
@@ -497,8 +508,9 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			values["dao_address"] = daoAddress
 			values["types"] = consts.TypesNameAirdrop
 			values["activity_id"] = activityId
-			values["token_address"] = tokenAddress
 			values["dao_logo"] = ""
+			values["dao_name"] = ""
+			values["activity_name"] = ""
 			values["notification_time"] = startTime
 			values["update_bool"] = 1
 			notificationData = append(notificationData, values)

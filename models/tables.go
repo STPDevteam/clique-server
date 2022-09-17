@@ -67,26 +67,27 @@ type MemberModel struct {
 }
 
 type DaoModel struct {
-	Id                uint64 `db:"id,omitempty" sqler:"skips"`
-	CreateTime        string `db:"create_time,omitempty" sqler:"skips"`
-	UpdateTime        string `db:"update_time,omitempty" sqler:"skips"`
-	DaoLogo           string `db:"dao_logo"`
-	DaoName           string `db:"dao_name"`
-	DaoAddress        string `db:"dao_address"`
-	Creator           string `db:"creator"`
-	Handle            string `db:"handle"`
-	Description       string `db:"description"`
-	ChainId           int    `db:"chain_id"`
-	TokenChainId      int    `db:"token_chain_id"`
-	TokenAddress      string `db:"token_address"`
-	ProposalThreshold string `db:"proposal_threshold"`
-	VotingQuorum      string `db:"voting_quorum"`
-	VotingPeriod      int    `db:"voting_period"`
-	VotingType        string `db:"voting_type"`
-	Twitter           string `db:"twitter"`
-	Github            string `db:"github"`
-	Discord           string `db:"discord"`
-	UpdateBool        bool   `db:"update_bool"`
+	Id                uint64        `db:"id,omitempty" sqler:"skips"`
+	CreateTime        string        `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime        string        `db:"update_time,omitempty" sqler:"skips"`
+	DaoLogo           string        `db:"dao_logo"`
+	DaoName           string        `db:"dao_name"`
+	DaoAddress        string        `db:"dao_address"`
+	Creator           string        `db:"creator"`
+	Handle            string        `db:"handle"`
+	Description       string        `db:"description"`
+	ChainId           int           `db:"chain_id"`
+	TokenChainId      int           `db:"token_chain_id"`
+	TokenAddress      string        `db:"token_address"`
+	ProposalThreshold string        `db:"proposal_threshold"`
+	VotingQuorum      string        `db:"voting_quorum"`
+	VotingPeriod      int           `db:"voting_period"`
+	VotingType        string        `db:"voting_type"`
+	Twitter           string        `db:"twitter"`
+	Github            string        `db:"github"`
+	Discord           string        `db:"discord"`
+	UpdateBool        bool          `db:"update_bool"`
+	Weight            sql.NullInt64 `db:"weight"`
 }
 
 type CategoryModel struct {
@@ -161,6 +162,7 @@ type ProposalModel struct {
 	ProposalId int    `db:"proposal_id"`
 	ChainId    int    `db:"chain_id"`
 	DaoAddress string `db:"dao_address"`
+	Title      string `db:"title"`
 	Proposer   string `db:"proposer"`
 	StartTime  int64  `db:"start_time"`
 	EndTime    int64  `db:"end_time"`
@@ -225,18 +227,20 @@ type NotificationModel struct {
 	ChainId          int    `db:"chain_id"`
 	DaoAddress       string `db:"dao_address"`
 	Types            string `db:"types"`
-	ActivityId       int    `db:"activity_id"`
-	TokenAddress     string `db:"token_address"`
 	DaoLogo          string `db:"dao_logo"`
+	DaoName          string `db:"dao_name"`
+	ActivityId       int    `db:"activity_id"`
+	ActivityName     string `db:"activity_name"`
 	NotificationTime int64  `db:"notification_time"`
 	UpdateBool       bool   `db:"update_bool"`
 }
 
 type NotificationAccountModel struct {
-	Id             uint64 `db:"id,omitempty" sqler:"skips"`
-	CreateTime     string `db:"create_time,omitempty" sqler:"skips"`
-	UpdateTime     string `db:"update_time,omitempty" sqler:"skips"`
-	NotificationId int    `db:"notification_id"`
-	Account        string `db:"account"`
-	AlreadyRead    bool   `db:"already_read"`
+	Id               uint64 `db:"id,omitempty" sqler:"skips"`
+	CreateTime       string `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime       string `db:"update_time,omitempty" sqler:"skips"`
+	NotificationId   int    `db:"notification_id"`
+	Account          string `db:"account"`
+	AlreadyRead      bool   `db:"already_read"`
+	NotificationTime int64  `db:"notification_time"`
 }

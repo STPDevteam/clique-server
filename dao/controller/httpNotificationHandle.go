@@ -36,7 +36,7 @@ func httpNotificationList(c *gin.Context) {
 	err := oo.SqlGet(sqlStr, &total)
 	if err == nil {
 		sqlCopy = *sqler
-		sqlStr = sqlCopy.Order("create_time DESC").Limit(countParam).Offset(offsetParam).Select()
+		sqlStr = sqlCopy.Order("notification_time DESC").Limit(countParam).Offset(offsetParam).Select()
 		err = oo.SqlSelect(sqlStr, &accountEntities)
 	}
 	if err != nil {
@@ -63,17 +63,37 @@ func httpNotificationList(c *gin.Context) {
 		}
 
 		dataIndex := notificationEntities[0]
+
+		var info = make([]models.NotificationInfo, 0)
+		if dataIndex.Types == consts.TypesNameNewProposal {
+			info = append(info, models.NotificationInfo{
+				ChainId:      dataIndex.ChainId,
+				DaoAddress:   dataIndex.DaoAddress,
+				DaoLogo:      dataIndex.DaoLogo,
+				DaoName:      dataIndex.DaoName,
+				ProposalId:   dataIndex.ActivityId,
+				ProposalName: dataIndex.ActivityName,
+			})
+		} else if dataIndex.Types == consts.TypesNameAirdrop {
+			info = append(info, models.NotificationInfo{
+				ChainId:      dataIndex.ChainId,
+				DaoAddress:   dataIndex.DaoAddress,
+				DaoLogo:      dataIndex.DaoLogo,
+				DaoName:      dataIndex.DaoName,
+				ActivityId:   dataIndex.ActivityId,
+				ActivityName: dataIndex.ActivityName,
+			})
+		} else if dataIndex.Types == consts.TypesNamePublicSale {
+
+		}
+
 		data = append(data, models.ResNotification{
-			ChainId:          dataIndex.ChainId,
-			DaoAddress:       dataIndex.DaoAddress,
-			Types:            dataIndex.Types,
-			ActivityId:       dataIndex.ActivityId,
-			TokenAddress:     dataIndex.TokenAddress,
-			DaoLogo:          dataIndex.DaoLogo,
-			NotificationTime: dataIndex.NotificationTime,
-			NotificationId:   accountEntities[index].NotificationId,
 			Account:          accountEntities[index].Account,
 			AlreadyRead:      accountEntities[index].AlreadyRead,
+			NotificationId:   accountEntities[index].NotificationId,
+			NotificationTime: dataIndex.NotificationTime,
+			Types:            dataIndex.Types,
+			Info:             info[0],
 		})
 	}
 

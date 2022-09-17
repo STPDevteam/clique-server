@@ -43,9 +43,9 @@ const (
 	LevelAdmin      = "admin"
 	LevelNoRole     = "noRole"
 
-	TypesNameAirdrop    = "Airdrop"
-	TypesNamePublicSale = "PublicSale" // notification
-	TypesNameProposal   = "Proposal"
+	TypesNameAirdrop     = "Airdrop"
+	TypesNamePublicSale  = "PublicSale" // notification
+	TypesNameNewProposal = "NewProposal"
 
 	MaxValue        = 0x7fffffff
 	ZeroAddress0x64 = "0x0000000000000000000000000000000000000000000000000000000000000000"

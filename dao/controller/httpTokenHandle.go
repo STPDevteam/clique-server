@@ -45,7 +45,7 @@ func httpTokenList(c *gin.Context) {
 	err := oo.SqlGet(sqlStr, &total)
 	if err == nil {
 		sqlCopy = *sqlSel
-		sqlStr = sqlCopy.Limit(countParam).Offset(offsetParam).Select()
+		sqlStr = sqlCopy.Order("create_time DESC").Limit(countParam).Offset(offsetParam).Select()
 		err = oo.SqlSelect(sqlStr, &listEntities)
 	}
 	if err != nil {

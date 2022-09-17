@@ -20,47 +20,62 @@ func updateNotification() {
 
 	var entities []models.NotificationModel
 	sqlSel := oo.NewSqler().Table(consts.TbNameNotification).Where("update_bool", 1).Select()
-	err := oo.SqlSelect(sqlSel, &entities)
-	if err != nil {
-		oo.LogW("query SQL notification failed. err:%v", err)
+	errTx = oo.SqlSelect(sqlSel, &entities)
+	if errTx != nil {
+		oo.LogW("query SQL notification failed. err:%v", errTx)
 		return
 	}
 
 	if len(entities) != 0 {
 		for index := range entities {
-			var daoLogo string
+			var daoEntity []models.DaoModel
 			sqlSel = oo.NewSqler().Table(consts.TbNameDao).
 				Where("chain_id", entities[index].ChainId).
-				Where("dao_address", entities[index].DaoAddress).Select("dao_logo")
-			err = oo.SqlGet(sqlSel, &daoLogo)
-			if err != nil {
-				oo.LogW("query SQL dao_logo failed. err:%v", err)
+				Where("dao_address", entities[index].DaoAddress).Select()
+			errTx = oo.SqlSelect(sqlSel, &daoEntity)
+			if errTx != nil {
+				oo.LogW("SQL err:%v", errTx)
 				return
 			}
 
-			sqlUp := fmt.Sprintf(`UPDATE %s SET dao_logo='%s',update_bool=%t WHERE chain_id=%d AND dao_address='%s' AND update_bool=%t`,
-				consts.TbNameNotification,
-				daoLogo,
-				false,
-				entities[index].ChainId,
-				entities[index].DaoAddress,
-				true,
-			)
+			var sqlStr, activityName string
+			if entities[index].Types == consts.TypesNameNewProposal {
+				sqlStr = oo.NewSqler().Table(consts.TbNameProposal).
+					Where("chain_id", entities[index].ChainId).
+					Where("dao_address", entities[index].DaoAddress).
+					Where("proposal_id", entities[index].ActivityId).Select("title")
+			} else if entities[index].Types == consts.TypesNameAirdrop {
+				sqlStr = oo.NewSqler().Table(consts.TbNameAirdropAddress).Where("id", entities[index].ActivityId).Select("title")
+			}
+			errTx = oo.SqlGet(sqlStr, &activityName)
+			if errTx != nil {
+				oo.LogW("SQL err:%v", errTx)
+				return
+			}
+
+			var info = make(map[string]interface{})
+			info["dao_logo"] = daoEntity[0].DaoLogo
+			info["dao_name"] = daoEntity[0].DaoName
+			info["activity_name"] = activityName
+			info["update_bool"] = 0
+			sqlUp := oo.NewSqler().Table(consts.TbNameNotification).
+				Where("chain_id", entities[index].ChainId).
+				Where("dao_address", entities[index].DaoAddress).Update(info)
 			_, errTx = oo.SqlxTxExec(tx, sqlUp)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return
 			}
 
-			if entities[index].Types == consts.TypesNameProposal {
+			if entities[index].Types == consts.TypesNameNewProposal {
 				var accountMember []string
 				sqlSel = oo.NewSqler().Table(consts.TbNameMember).
 					Where("chain_id", entities[index].ChainId).
 					Where("dao_address", entities[index].DaoAddress).
 					Where("join_switch", 1).Select("account")
-				err = oo.SqlSelect(sqlSel, &accountMember)
-				if err != nil {
-					oo.LogW("query SQL account failed. err:%v", err)
+				errTx = oo.SqlSelect(sqlSel, &accountMember)
+				if errTx != nil {
+					oo.LogW("SQL err:%v", errTx)
 					return
 				}
 				var accountAdmin []string
@@ -68,9 +83,9 @@ func updateNotification() {
 					Where("chain_id", entities[index].ChainId).
 					Where("dao_address", entities[index].DaoAddress).
 					Where("account_level", consts.LevelAdmin).Select("account")
-				err = oo.SqlSelect(sqlSel, &accountAdmin)
-				if err != nil {
-					oo.LogW("query SQL account failed. err:%v", err)
+				errTx = oo.SqlSelect(sqlSel, &accountAdmin)
+				if errTx != nil {
+					oo.LogW("SQL err:%v", errTx)
 					return
 				}
 
@@ -87,18 +102,19 @@ func updateNotification() {
 					sqlSel = oo.NewSqler().Table(consts.TbNameNotificationAccount).
 						Where("notification_id", entities[index].Id).
 						Where("account", account).Count()
-					err = oo.SqlGet(sqlSel, &count)
-					if err != nil {
-						oo.LogW("SQL err: %v\n", err)
+					errTx = oo.SqlGet(sqlSel, &count)
+					if errTx != nil {
+						oo.LogW("SQL err: %v\n", errTx)
 						return
 					}
 
 					if count == 0 {
-						sqlIns := fmt.Sprintf(`INSERT INTO %s (notification_id,account,already_read) VALUES (%d,'%s',%t)`,
+						sqlIns := fmt.Sprintf(`INSERT INTO %s (notification_id,account,already_read,notification_time) VALUES (%d,'%s',%t,%d)`,
 							consts.TbNameNotificationAccount,
 							entities[index].Id,
 							account,
 							false,
+							entities[index].NotificationTime,
 						)
 						_, errTx = oo.SqlxTxExec(tx, sqlIns)
 						if errTx != nil {
@@ -111,18 +127,18 @@ func updateNotification() {
 			}
 
 			if entities[index].Types == consts.TypesNameAirdrop {
-				var entity []models.AirdropAddressModel
+				var addressEntity []models.AirdropAddressModel
 				sqlSel = oo.NewSqler().Table(consts.TbNameAirdropAddress).Where("id", entities[index].ActivityId).Select()
-				err = oo.SqlSelect(sqlSel, &entity)
-				if err != nil {
-					oo.LogW("query SQL account failed. err:%v", err)
+				errTx = oo.SqlSelect(sqlSel, &addressEntity)
+				if errTx != nil {
+					oo.LogW("SQL err:%v", errTx)
 					return
 				}
 
 				var data models.AirdropAddressArray
-				err = json.Unmarshal([]byte(entity[0].Content), &data)
-				if err != nil {
-					oo.LogW("Json Unmarshal err:%v", err)
+				errTx = json.Unmarshal([]byte(addressEntity[0].Content), &data)
+				if errTx != nil {
+					oo.LogW("Json Unmarshal err:%v", errTx)
 					return
 				}
 
@@ -133,12 +149,13 @@ func updateNotification() {
 						v["notification_id"] = entities[index].Id
 						v["account"] = account
 						v["already_read"] = false
+						v["notification_time"] = entities[index].NotificationTime
 						m = append(m, v)
 					}
 					sqlIns := oo.NewSqler().Table(consts.TbNameNotificationAccount).InsertBatch(m)
-					err = oo.SqlExec(sqlIns)
-					if err != nil {
-						oo.LogW("SQL err: %v", err)
+					errTx = oo.SqlExec(sqlIns)
+					if errTx != nil {
+						oo.LogW("SQL err: %v", errTx)
 						return
 					}
 				}

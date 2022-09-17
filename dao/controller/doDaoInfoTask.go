@@ -90,9 +90,9 @@ func saveDaoInfoAndCategory(daoInfo []interface{}, daoAddress string, chainId in
 
 	var daoId int
 	sqlSelDId := oo.NewSqler().Table(consts.TbNameDao).Where("dao_address", daoAddress).Where("chain_id", chainId).Select("id")
-	err := oo.SqlGet(sqlSelDId, &daoId)
-	if err != nil {
-		oo.LogW("SQL failed. err: %v\n", err)
+	errTx = oo.SqlGet(sqlSelDId, &daoId)
+	if errTx != nil {
+		oo.LogW("SQL err: %v\n", errTx)
 		return
 	}
 
@@ -100,7 +100,7 @@ func saveDaoInfoAndCategory(daoInfo []interface{}, daoAddress string, chainId in
 	sqlDel := oo.NewSqler().Table(consts.TbNameDaoCategory).Where("dao_id", daoId).Delete()
 	_, errTx = oo.SqlxTxExec(tx, sqlDel)
 	if errTx != nil {
-		oo.LogW("SQL failed. err: %v\n", errTx)
+		oo.LogW("SQL err: %v\n", errTx)
 		return
 	}
 
@@ -113,17 +113,17 @@ func saveDaoInfoAndCategory(daoInfo []interface{}, daoAddress string, chainId in
 			consts.TbNameCategory,
 			categoryName,
 		)
-		err = oo.SqlExec(sqlUP)
-		if err != nil {
-			oo.LogW("SQL failed. err: %v\n", err)
+		errTx = oo.SqlExec(sqlUP)
+		if errTx != nil {
+			oo.LogW("SQL err: %v\n", errTx)
 			return
 		}
 
 		var categoryId int
 		sqlSelCId := oo.NewSqler().Table(consts.TbNameCategory).Where("category_name", categoryName).Select("id")
-		err = oo.SqlGet(sqlSelCId, &categoryId)
-		if err != nil {
-			oo.LogW("SQL failed. err: %v\n", err)
+		errTx = oo.SqlGet(sqlSelCId, &categoryId)
+		if errTx != nil {
+			oo.LogW("SQL err: %v\n", errTx)
 			return
 		}
 

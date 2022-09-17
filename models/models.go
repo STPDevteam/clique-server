@@ -350,17 +350,23 @@ type ResNotificationPage struct {
 }
 
 type ResNotification struct {
-	ChainId          int    `json:"chainId"`
-	DaoAddress       string `json:"daoAddress"`
-	Types            string `json:"types"`
-	ActivityId       int    `json:"activityId"`
-	TokenAddress     string `json:"tokenAddress"`
-	DaoLogo          string `json:"daoLogo"`
-	NotificationTime int64  `json:"notificationTime"`
-	NotificationId   int    `json:"notificationId"`
-	Account          string `json:"account"`
-	// true:have read
-	AlreadyRead bool `json:"alreadyRead"`
+	Account          string           `json:"account"`
+	AlreadyRead      bool             `json:"alreadyRead"` // true:have read
+	NotificationId   int              `json:"notificationId"`
+	NotificationTime int64            `json:"notificationTime"`
+	Types            string           `json:"types"`
+	Info             NotificationInfo `json:"info"`
+}
+
+type NotificationInfo struct {
+	ChainId      int    `json:"chainId"`
+	DaoAddress   string `json:"daoAddress"`
+	DaoLogo      string `json:"daoLogo"`
+	DaoName      string `json:"daoName"`
+	ProposalId   int    `json:"proposalId"`   // NewProposal
+	ProposalName string `json:"proposalName"` // NewProposal
+	ActivityId   int    `json:"activityId"`   // Airdrop
+	ActivityName string `json:"activityName"` // Airdrop
 }
 
 type NotificationReadParam struct {
