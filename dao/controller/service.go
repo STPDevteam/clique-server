@@ -116,6 +116,7 @@ func (svc *Service) Start(ctx *cli.Context) error {
 	{
 		r11.GET("/list", httpNotificationList)
 		r11.POST("/read", httpNotificationRead)
+		r11.GET("/unread/total", httpNotificationUnreadTotal)
 	}
 
 	url := ginSwagger.URL(svc.appConfig.SwaggerUrl)

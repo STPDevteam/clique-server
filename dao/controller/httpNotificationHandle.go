@@ -48,6 +48,18 @@ func httpNotificationList(c *gin.Context) {
 		return
 	}
 
+	var unreadTotal int
+	sqlCount := oo.NewSqler().Table(consts.TbNameNotificationAccount).Where("account", accountParam).Where("already_read", 0).Count()
+	err = oo.SqlGet(sqlCount, &unreadTotal)
+	if err != nil {
+		oo.LogW("SQL err: %v", err)
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+
 	var data = make([]models.ResNotification, 0)
 	for index := range accountEntities {
 		var notificationEntities []models.NotificationModel
@@ -101,8 +113,9 @@ func httpNotificationList(c *gin.Context) {
 		Code:    http.StatusOK,
 		Message: "ok",
 		Data: models.ResNotificationPage{
-			List:  data,
-			Total: total,
+			List:        data,
+			Total:       total,
+			UnreadTotal: unreadTotal,
 		},
 	})
 }
@@ -157,6 +170,38 @@ func httpNotificationRead(c *gin.Context) {
 		Message: "ok",
 		Data: models.ResResult{
 			Success: true,
+		},
+	})
+}
+
+// @Summary notification unread total
+// @Tags notification
+// @version 0.0.1
+// @description notification unread total
+// @Produce json
+// @Param account query string true "account address"
+// @Success 200 {object} models.ResNotificationPage
+// @Router /stpdao/v2/notification/unread/total [get]
+func httpNotificationUnreadTotal(c *gin.Context) {
+	accountParam := c.Query("account")
+
+	var unreadTotal int
+	sqlCount := oo.NewSqler().Table(consts.TbNameNotificationAccount).Where("account", accountParam).Where("already_read", 0).Count()
+	err := oo.SqlGet(sqlCount, &unreadTotal)
+	if err != nil {
+		oo.LogW("SQL err: %v", err)
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, models.Response{
+		Code:    http.StatusOK,
+		Message: "ok",
+		Data: models.ResNotificationUnreadTotal{
+			UnreadTotal: unreadTotal,
 		},
 	})
 }

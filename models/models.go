@@ -345,8 +345,9 @@ type ResActivityList struct {
 }
 
 type ResNotificationPage struct {
-	List  []ResNotification `json:"list"`
-	Total uint64            `json:"total"`
+	List        []ResNotification `json:"list"`
+	Total       uint64            `json:"total"`
+	UnreadTotal int               `json:"unreadTotal"`
 }
 
 type ResNotification struct {
@@ -354,7 +355,7 @@ type ResNotification struct {
 	AlreadyRead      bool             `json:"alreadyRead"` // true:have read
 	NotificationId   int              `json:"notificationId"`
 	NotificationTime int64            `json:"notificationTime"`
-	Types            string           `json:"types"`
+	Types            string           `json:"types"` //Airdrop PublicSale NewProposal ReserveToken
 	Info             NotificationInfo `json:"info"`
 }
 
@@ -374,4 +375,8 @@ type NotificationReadParam struct {
 	Account        string `json:"account"`
 	// read all:true
 	ReadAll bool `json:"readAll"`
+}
+
+type ResNotificationUnreadTotal struct {
+	UnreadTotal int `json:"unreadTotal"`
 }
