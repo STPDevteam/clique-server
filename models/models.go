@@ -368,6 +368,7 @@ type NotificationInfo struct {
 	ProposalName string `json:"proposalName"` // NewProposal
 	ActivityId   int    `json:"activityId"`   // Airdrop
 	ActivityName string `json:"activityName"` // Airdrop
+	//StartTime    int64  `json:"startTime"`
 }
 
 type NotificationReadParam struct {

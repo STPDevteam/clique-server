@@ -221,18 +221,18 @@ type VoteModel struct {
 }
 
 type NotificationModel struct {
-	Id               uint64 `db:"id,omitempty" sqler:"skips"`
-	CreateTime       string `db:"create_time,omitempty" sqler:"skips"`
-	UpdateTime       string `db:"update_time,omitempty" sqler:"skips"`
-	ChainId          int    `db:"chain_id"`
-	DaoAddress       string `db:"dao_address"`
-	Types            string `db:"types"`
-	DaoLogo          string `db:"dao_logo"`
-	DaoName          string `db:"dao_name"`
-	ActivityId       int    `db:"activity_id"`
-	ActivityName     string `db:"activity_name"`
-	NotificationTime int64  `db:"notification_time"`
-	UpdateBool       bool   `db:"update_bool"`
+	Id           uint64 `db:"id,omitempty" sqler:"skips"`
+	CreateTime   string `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime   string `db:"update_time,omitempty" sqler:"skips"`
+	ChainId      int    `db:"chain_id"`
+	DaoAddress   string `db:"dao_address"`
+	Types        string `db:"types"`
+	DaoLogo      string `db:"dao_logo"`
+	DaoName      string `db:"dao_name"`
+	ActivityId   int    `db:"activity_id"`
+	ActivityName string `db:"activity_name"`
+	StartTime    int64  `db:"start_time"`
+	UpdateBool   bool   `db:"update_bool"`
 }
 
 type NotificationAccountModel struct {

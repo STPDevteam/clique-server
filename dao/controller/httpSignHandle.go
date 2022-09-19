@@ -195,3 +195,7 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 		},
 	})
 }
+
+func (svc *Service) httpDaoHandleSign(c *gin.Context) {
+
+}

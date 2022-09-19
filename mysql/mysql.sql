@@ -307,7 +307,7 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_notification` (
     `dao_logo` VARCHAR(500) NOT NULL,
     `dao_name` VARCHAR(30) NOT NULL,
     `activity_name` VARCHAR(300) NOT NULL,
-    `notification_time` INT NOT NULL,
+    `start_time` INT NOT NULL,
     `update_bool` bool NOT NULL,
     PRIMARY KEY (`id`),
     INDEX `index_id` (`id` ASC),

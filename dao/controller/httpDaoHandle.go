@@ -16,6 +16,8 @@ import (
 // @version 0.0.1
 // @description query Dao list
 // @Produce json
+// @Param customizeOrderProposal query string false "customizeOrderProposal: ASC"
+// @Param customizeOrderCreateTime query string false "customizeOrderCreateTime: ASC"
 // @Param order query string false "account address"
 // @Param account query string false "account address"
 // @Param keyword query  string false "query keyword:Dao name,Dao address,Token address"
@@ -32,11 +34,27 @@ func httpDaoList(c *gin.Context) {
 	count := c.Query("count")
 	offsetParam, _ := strconv.Atoi(offset)
 	countParam, _ := strconv.Atoi(count)
+	customizeOrderProposalParam := c.Query("customizeOrderProposal")
+	customizeOrderCreateTimeParam := c.Query("customizeOrderCreateTime")
+
+	var orderStr string
+	if customizeOrderProposalParam == "ASC" && customizeOrderCreateTimeParam == "" {
+		orderStr = "ORDER BY weight ASC,create_time DESC"
+	}
+	if customizeOrderCreateTimeParam == "ASC" && customizeOrderProposalParam == "" {
+		orderStr = "ORDER BY create_time ASC,weight DESC"
+	}
+	if customizeOrderProposalParam == "ASC" && customizeOrderCreateTimeParam == "ASC" {
+		orderStr = "ORDER BY weight ASC,create_time ASC"
+	}
+	if customizeOrderProposalParam == "" && customizeOrderCreateTimeParam == "" {
+		orderStr = "ORDER BY weight DESC,create_time DESC"
+	}
 
 	var sqlCount, sqlSel, sqlWhere, sqlOrderLimit, sqlSubquery string
 	sqlCount = fmt.Sprintf(`SELECT COUNT(*) FROM %s `, consts.TbNameDao)
 	sqlSel = fmt.Sprintf(`SELECT * FROM %s `, consts.TbNameDao)
-	sqlOrderLimit = fmt.Sprintf(`ORDER BY weight DESC,create_time DESC Limit %d,%d `, offsetParam, countParam)
+	sqlOrderLimit = fmt.Sprintf(`%s Limit %d,%d `, orderStr, offsetParam, countParam)
 	if keywordParam != "" {
 		sqlWhere = fmt.Sprintf(`WHERE (dao_address='%s' OR token_address='%s' OR dao_name LIKE '%%%s%%') `, keywordParam, keywordParam, keywordParam)
 	}

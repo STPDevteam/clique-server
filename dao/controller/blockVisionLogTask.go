@@ -318,7 +318,6 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 				return
 			}
 
-			//
 			proposalTitle, errTx := proposalInfo(daoAddress, blockData[i]["topic1"].(string), url)
 			if errTx != nil {
 				oo.LogW("proposalInfo func err: %v", errTx)
@@ -352,7 +351,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			values["dao_logo"] = ""
 			values["dao_name"] = ""
 			values["activity_name"] = ""
-			values["notification_time"] = startTime
+			values["start_time"] = startTime
 			values["update_bool"] = 1
 			notificationData = append(notificationData, values)
 			sqlIns = oo.NewSqler().Table(consts.TbNameNotification).Insert(notificationData)
@@ -362,7 +361,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 				return
 			}
 
-			//
+			// for dao order with proposal total
 			var weight = make(map[string]interface{})
 			weight["weight"] = proposalId + 1
 			sqlUp = oo.NewSqler().Table(consts.TbNameDao).Where("chain_id", chainId).Where("dao_address", daoAddress).Update(weight)
@@ -518,7 +517,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			values["dao_logo"] = ""
 			values["dao_name"] = ""
 			values["activity_name"] = ""
-			values["notification_time"] = startTime
+			values["start_time"] = startTime
 			values["update_bool"] = 1
 			notificationData = append(notificationData, values)
 			sqlIns = oo.NewSqler().Table(consts.TbNameNotification).Insert(notificationData)

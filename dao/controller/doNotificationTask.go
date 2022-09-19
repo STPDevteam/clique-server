@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
 	oo "github.com/Anna2024/liboo"
 	"stp_dao_v2/consts"
 	"stp_dao_v2/models"
@@ -11,6 +10,7 @@ import (
 
 func updateNotification() {
 	defer time.AfterFunc(time.Duration(60)*time.Second, updateNotification)
+	var nowTime = time.Now().Unix()
 
 	tx, errTx := oo.NewSqlxTx()
 	if errTx != nil {
@@ -109,13 +109,14 @@ func updateNotification() {
 					}
 
 					if count == 0 {
-						sqlIns := fmt.Sprintf(`INSERT INTO %s (notification_id,account,already_read,notification_time) VALUES (%d,'%s',%t,%d)`,
-							consts.TbNameNotificationAccount,
-							entities[index].Id,
-							account,
-							false,
-							entities[index].NotificationTime,
-						)
+						var m = make([]map[string]interface{}, 0)
+						var v = make(map[string]interface{})
+						v["notification_id"] = entities[index].Id
+						v["account"] = account
+						v["already_read"] = false
+						v["notification_time"] = nowTime
+						m = append(m, v)
+						sqlIns := oo.NewSqler().Table(consts.TbNameNotificationAccount).Insert(m)
 						_, errTx = oo.SqlxTxExec(tx, sqlIns)
 						if errTx != nil {
 							oo.LogW("SQL err: %v\n", errTx)
@@ -149,11 +150,11 @@ func updateNotification() {
 						v["notification_id"] = entities[index].Id
 						v["account"] = account
 						v["already_read"] = false
-						v["notification_time"] = entities[index].NotificationTime
+						v["notification_time"] = nowTime
 						m = append(m, v)
 					}
 					sqlIns := oo.NewSqler().Table(consts.TbNameNotificationAccount).InsertBatch(m)
-					errTx = oo.SqlExec(sqlIns)
+					_, errTx = oo.SqlxTxExec(tx, sqlIns)
 					if errTx != nil {
 						oo.LogW("SQL err: %v", errTx)
 						return
