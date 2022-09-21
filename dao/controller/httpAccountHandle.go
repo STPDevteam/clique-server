@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	oo "github.com/Anna2024/liboo"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -30,15 +29,15 @@ func httpQueryAccount(c *gin.Context) {
 		return
 	}
 
-	//if !checkLogin(&params) {
-	//	oo.LogD("SignData err not auth")
-	//	c.JSON(http.StatusUnauthorized, models.Response{
-	//		Code:    http.StatusUnauthorized,
-	//		Data:    models.ResResult{Success: false},
-	//		Message: "SignData err not auth",
-	//	})
-	//	return
-	//}
+	if !checkLogin(&params) {
+		oo.LogD("SignData err not auth")
+		c.JSON(http.StatusUnauthorized, models.Response{
+			Code:    http.StatusUnauthorized,
+			Data:    models.ResResult{Success: false},
+			Message: "SignData err not auth",
+		})
+		return
+	}
 
 	var counts int
 	sqlCount := oo.NewSqler().Table(consts.TbNameAccount).Where("account", params.Account).Count()
@@ -53,10 +52,11 @@ func httpQueryAccount(c *gin.Context) {
 	}
 
 	if counts == 0 {
-		sqlIns := fmt.Sprintf(`INSERT INTO %s (account) VALUES ('%s')`,
-			consts.TbNameAccount,
-			params.Account,
-		)
+		var m = make([]map[string]interface{}, 0)
+		var v = make(map[string]interface{})
+		v["account"] = params.Account
+		m = append(m, v)
+		sqlIns := oo.NewSqler().Table(consts.TbNameAccount).Insert(m)
 		err = oo.SqlExec(sqlIns)
 		if err != nil {
 			oo.LogW("SQL err: %v", err)

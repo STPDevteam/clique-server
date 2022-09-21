@@ -394,3 +394,9 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_handle_lock` (
 # 	`sale_description` VARCHAR(200),
 # 	PRIMARY KEY (`id`)
 # );
+
+INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
+('CreateDao','0x61f623d4bD01233651bB13f0055A8C09641a9121',27739495,'0x',80001),
+('CreateERC20','0x61f623d4bD01233651bB13f0055A8C09641a9121',27739495,'0x',80001),
+('CreateDao','0x2389324477762D2307b454579B10e9118F0C568F',7455361,'0x',5),
+('CreateERC20','0x2389324477762D2307b454579B10e9118F0C568F',7455361,'0x',5);
