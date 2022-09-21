@@ -137,7 +137,7 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_admin` (
 INDEX `dao_address` (`dao_address` ASC),
 INDEX `account` (`account` ASC),
 INDEX `chain_id` (`chain_id` ASC),
-UNIQUE INDEX `unique_index_chain_id_dao_address_account` (`chain_id` ASC, `dao_address` ASC, `account` ASC),
+UNIQUE INDEX `unique_index_chain_id_dao_address_account_account_level` (`chain_id` ASC, `dao_address` ASC, `account` ASC, account_level ASC),
 PRIMARY KEY (`id`)
 );
 
