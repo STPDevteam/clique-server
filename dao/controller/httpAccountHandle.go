@@ -30,15 +30,15 @@ func httpQueryAccount(c *gin.Context) {
 		return
 	}
 
-	if !checkLogin(&params) {
-		oo.LogD("SignData err not auth")
-		c.JSON(http.StatusUnauthorized, models.Response{
-			Code:    http.StatusUnauthorized,
-			Data:    models.ResResult{Success: false},
-			Message: "SignData err not auth",
-		})
-		return
-	}
+	//if !checkLogin(&params) {
+	//	oo.LogD("SignData err not auth")
+	//	c.JSON(http.StatusUnauthorized, models.Response{
+	//		Code:    http.StatusUnauthorized,
+	//		Data:    models.ResResult{Success: false},
+	//		Message: "SignData err not auth",
+	//	})
+	//	return
+	//}
 
 	var counts int
 	sqlCount := oo.NewSqler().Table(consts.TbNameAccount).Where("account", params.Account).Count()
@@ -100,32 +100,32 @@ func httpQueryAccount(c *gin.Context) {
 		})
 	}
 
-	var superDaoEntities []models.AdminModel
-	sqlSel = oo.NewSqler().Table(consts.TbNameAdmin).
-		Where("account", params.Account).
-		Where("account_level", consts.LevelSuperAdmin).Select()
-	err = oo.SqlSelect(sqlSel, &superDaoEntities)
-	if err != nil {
-		oo.LogW("SQL err: %v", err)
-		c.JSON(http.StatusInternalServerError, models.Response{
-			Code:    500,
-			Message: "Something went wrong, Please try again later.",
-		})
-		return
-	}
-	var dataSuper = make([]models.ResDao, 0)
-	for index := range superDaoEntities {
-		dataSuper = append(dataSuper, models.ResDao{
-			DaoAddress:   superDaoEntities[index].DaoAddress,
-			ChainId:      superDaoEntities[index].ChainId,
-			AccountLevel: superDaoEntities[index].AccountLevel,
-		})
-	}
+	//var superDaoEntities []models.AdminModel
+	//sqlSel = oo.NewSqler().Table(consts.TbNameAdmin).
+	//	Where("account", params.Account).
+	//	Where("account_level", consts.LevelSuperAdmin).Select()
+	//err = oo.SqlSelect(sqlSel, &superDaoEntities)
+	//if err != nil {
+	//	oo.LogW("SQL err: %v", err)
+	//	c.JSON(http.StatusInternalServerError, models.Response{
+	//		Code:    500,
+	//		Message: "Something went wrong, Please try again later.",
+	//	})
+	//	return
+	//}
+	//var dataSuper = make([]models.ResDao, 0)
+	//for index := range superDaoEntities {
+	//	dataSuper = append(dataSuper, models.ResDao{
+	//		DaoAddress:   superDaoEntities[index].DaoAddress,
+	//		ChainId:      superDaoEntities[index].ChainId,
+	//		AccountLevel: superDaoEntities[index].AccountLevel,
+	//	})
+	//}
 
 	var adminDaoEntities []models.AdminModel
 	sqlSel = oo.NewSqler().Table(consts.TbNameAdmin).
 		Where("account", params.Account).
-		Where("account_level", consts.LevelAdmin).Select()
+		Where("account_level='superAdmin' OR account_level='admin'").Select()
 	err = oo.SqlSelect(sqlSel, &adminDaoEntities)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)
@@ -141,6 +141,26 @@ func httpQueryAccount(c *gin.Context) {
 			DaoAddress:   adminDaoEntities[index].DaoAddress,
 			ChainId:      adminDaoEntities[index].ChainId,
 			AccountLevel: adminDaoEntities[index].AccountLevel,
+		})
+	}
+
+	var memberEntities []models.MemberModel
+	sqlSel = oo.NewSqler().Table(consts.TbNameMember).Where("account", params.Account).Where("join_switch", 1).Select()
+	err = oo.SqlSelect(sqlSel, &memberEntities)
+	if err != nil {
+		oo.LogW("SQL err: %v", err)
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+	var dataMember = make([]models.ResDao, 0)
+	for index := range memberEntities {
+		dataMember = append(dataMember, models.ResDao{
+			DaoAddress:   memberEntities[index].DaoAddress,
+			ChainId:      memberEntities[index].ChainId,
+			AccountLevel: consts.LevelMember,
 		})
 	}
 
@@ -196,8 +216,8 @@ func httpQueryAccount(c *gin.Context) {
 			Twitter:      entity.Twitter.String,
 			Github:       entity.Github.String,
 			MyTokens:     dataMyTokens,
-			SuperDao:     dataSuper,
 			AdminDao:     dataAdmin,
+			MemberDao:    dataMember,
 			Activity:     dataActivity,
 		},
 	})

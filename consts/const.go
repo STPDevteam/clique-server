@@ -26,6 +26,7 @@ const (
 	TbNameVote                = "tb_vote"
 	TbNameNotification        = "tb_notification"
 	TbNameNotificationAccount = "tb_notification_account"
+	TbNameHandleLock          = "tb_handle_lock"
 
 	EvCreateDao            = "CreateDao"
 	EvCreateProposal       = "CreateProposal"
@@ -41,6 +42,7 @@ const (
 
 	LevelSuperAdmin = "superAdmin"
 	LevelAdmin      = "admin"
+	LevelMember     = "member"
 	LevelNoRole     = "noRole"
 
 	TypesNameAirdrop      = "Airdrop"
@@ -49,6 +51,7 @@ const (
 	TypesNameReserveToken = "ReserveToken"
 
 	MaxValue        = 0x7fffffff
+	MaxIntUnsigned  = 4294967295
 	ZeroAddress0x64 = "0x0000000000000000000000000000000000000000000000000000000000000000"
 	ZeroAddress0x40 = "0x0000000000000000000000000000000000000000"
 
@@ -57,8 +60,8 @@ const (
 
 func EventTypes(event string) string {
 	var (
-		//CreateDAO(address indexed creator, address indexed daoAddress, uint256 chainId, address tokenAddress)
-		createDao = utils.Keccak256("CreateDAO(address,address,uint256,address)")
+		//CreateDAO(uint256 indexed handler, address indexed creator, address indexed daoAddress, uint256 chainId, address tokenAddress)
+		createDao = utils.Keccak256("CreateDAO(uint256,address,address,uint256,address)")
 		//CreateProposal(uint256 indexed proposalId, address indexed proposer, uint256 nonce, uint256 startTime, uint256 endTime)
 		createProposal = utils.Keccak256("CreateProposal(uint256,address,uint256,uint256,uint256)")
 		//CancelProposal(uint256 indexed proposalId)

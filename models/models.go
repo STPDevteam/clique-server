@@ -82,8 +82,8 @@ type ResQueryAccount struct {
 	Twitter      string        `json:"twitter"`
 	Github       string        `json:"github"`
 	MyTokens     []ResMyTokens `json:"myTokens"`
-	SuperDao     []ResDao      `json:"superDao"`
 	AdminDao     []ResDao      `json:"adminDao"`
+	MemberDao    []ResDao      `json:"memberDao"`
 	Activity     []ResActivity `json:"activity"`
 }
 
@@ -380,4 +380,16 @@ type NotificationReadParam struct {
 
 type ResNotificationUnreadTotal struct {
 	UnreadTotal int `json:"unreadTotal"`
+}
+
+type SignDaoHandleParam struct {
+	Account string `json:"account"`
+	ChainId int    `json:"chainId"`
+	Handle  string `json:"handle"`
+}
+
+type ResSignDaoHandleData struct {
+	Signature string `json:"signature"`
+	Account   string `json:"account"`
+	ChainId   int    `json:"chainId"`
 }

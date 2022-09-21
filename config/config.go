@@ -23,6 +23,7 @@ type MysqlConfig struct {
 }
 
 type ScanInfoConfig struct {
-	ChainId []int    `mapstructure:"chain_id" toml:"chain_id"`
-	ScanUrl []string `mapstructure:"scan_url" toml:"scan_url"`
+	ChainId         []int    `mapstructure:"chain_id" toml:"chain_id"`
+	ScanUrl         []string `mapstructure:"scan_url" toml:"scan_url"`
+	HandleLockBlock []int    `mapstructure:"handle_lock_block" toml:"handle_lock_block"`
 }

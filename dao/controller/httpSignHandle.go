@@ -196,6 +196,176 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 	})
 }
 
-func (svc *Service) httpDaoHandleSign(c *gin.Context) {
+// @Summary sign lock dao handle
+// @Tags sign
+// @version 0.0.1
+// @description sign lock dao handle
+// @Produce json
+// @Param request body models.SignDaoHandleParam true "request"
+// @Success 200 {object} models.ResSignDaoHandleData
+// @Router /stpdao/v2/sign/lock/handle [post]
+func (svc *Service) httpLockDaoHandleSign(c *gin.Context) {
+	var params models.SignDaoHandleParam
+	err := c.ShouldBindJSON(&params)
+	if err != nil {
+		oo.LogW("%v", err)
+		c.JSON(http.StatusBadRequest, models.Response{
+			Code:    http.StatusBadRequest,
+			Message: "Invalid parameters.",
+		})
+		return
+	}
+
+	resAccount := strings.TrimPrefix(params.Account, "0x")
+	resChainId := fmt.Sprintf("%064x", params.ChainId)
+	resHandle := utils.Keccak256(params.Handle)
+
+	var resBlock string
+	var latestBlockNum int
+	for indexScan := range svc.scanInfo {
+		for indexUrl := range svc.scanInfo[indexScan].ChainId {
+			url := svc.scanInfo[indexScan].ScanUrl[indexUrl]
+			chainId := svc.scanInfo[indexScan].ChainId[indexUrl]
+			if chainId == params.ChainId {
+				res, err := utils.QueryLatestBlock(url)
+				if err != nil || res.Result.(string) == "" {
+					oo.LogW("QueryLatestBlock err: %v", err)
+					c.JSON(http.StatusInternalServerError, models.Response{
+						Code:    500,
+						Message: "Something went wrong, Please try again later.",
+					})
+					return
+				}
+				latestBlockNum = utils.Hex2Dec(res.Result.(string)) + svc.scanInfo[indexScan].HandleLockBlock[indexUrl]
+				resBlock = fmt.Sprintf("%064x", latestBlockNum)
+				break
+			}
+		}
+	}
+
+	var count int
+	sqlSel := oo.NewSqler().Table(consts.TbNameHandleLock).Where("handle", params.Handle).Where("lock_block", ">", latestBlockNum).Count()
+	err = oo.SqlGet(sqlSel, &count)
+	if err != nil {
+		oo.LogW("SQL err: %v", err)
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+	if count != 0 {
+		c.JSON(http.StatusBadRequest, models.Response{
+			Code:    http.StatusBadRequest,
+			Message: "handle existed",
+		})
+		return
+	} else {
+		var m = make([]map[string]interface{}, 0)
+		var v = make(map[string]interface{})
+		v["handle"] = params.Handle
+		v["handle_keccak"] = resHandle
+		v["lock_block"] = latestBlockNum
+		m = append(m, v)
+		sqlIns := oo.NewSqler().Table(consts.TbNameHandleLock).Insert(m)
+		err = oo.SqlExec(sqlIns)
+		if err != nil {
+			oo.LogW("SQL err: %v", err)
+			c.JSON(http.StatusInternalServerError, models.Response{
+				Code:    500,
+				Message: "Something went wrong, Please try again later.",
+			})
+			return
+		}
+	}
+
+	message := fmt.Sprintf("%s%s%s%s", resAccount, resChainId, resBlock, resHandle)
+	signature, err := utils.SignMessage(message, svc.appConfig.SignMessagePriKey)
+	if err != nil {
+		oo.LogW("SignMessage err: %v", err)
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Code:    500,
+			Message: "Signature err",
+		})
+		return
+	}
+	signature = fmt.Sprintf("0x%s", signature)
+
+	c.JSON(http.StatusOK, models.Response{
+		Code:    http.StatusOK,
+		Message: "ok",
+		Data: models.ResSignDaoHandleData{
+			Signature: signature,
+			Account:   params.Account,
+			ChainId:   params.ChainId,
+		},
+	})
+
+}
+
+// @Summary sign query dao handle
+// @Tags sign
+// @version 0.0.1
+// @description sign query dao handle
+// @Produce json
+// @Param handle query string true "handle"
+// @Param chainId query string true "chainId"
+// @Success 200 {object} models.ResResult
+// @Router /stpdao/v2/sign/query/handle [get]
+func (svc *Service) httpQueryDaoHandle(c *gin.Context) {
+	handleParam := c.Query("handle")
+	chainId := c.Query("chainId")
+	chainIdParam, _ := strconv.Atoi(chainId)
+
+	var latestBlockNum int
+	for indexScan := range svc.scanInfo {
+		for indexUrl := range svc.scanInfo[indexScan].ChainId {
+			url := svc.scanInfo[indexScan].ScanUrl[indexUrl]
+			if svc.scanInfo[indexScan].ChainId[indexUrl] == chainIdParam {
+				res, err := utils.QueryLatestBlock(url)
+				if err != nil || res.Result.(string) == "" {
+					oo.LogW("QueryLatestBlock err: %v", err)
+					c.JSON(http.StatusInternalServerError, models.Response{
+						Code:    500,
+						Message: "Something went wrong, Please try again later.",
+					})
+					return
+				}
+				latestBlockNum = utils.Hex2Dec(res.Result.(string)) + svc.scanInfo[indexScan].HandleLockBlock[indexUrl]
+				break
+			}
+		}
+	}
+
+	var count int
+	sqlSel := oo.NewSqler().Table(consts.TbNameHandleLock).Where("handle", handleParam).Where("lock_block", ">", latestBlockNum).Count()
+	err := oo.SqlGet(sqlSel, &count)
+	if err != nil {
+		oo.LogW("SQL err: %v", err)
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+
+	if count != 0 {
+		c.JSON(http.StatusOK, models.Response{
+			Code:    http.StatusOK,
+			Message: "ok",
+			Data: models.ResResult{
+				Success: false,
+			},
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, models.Response{
+		Code:    http.StatusOK,
+		Message: "ok",
+		Data: models.ResResult{
+			Success: true,
+		},
+	})
 
 }

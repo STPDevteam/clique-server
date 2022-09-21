@@ -207,7 +207,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 		}
 
 		if blockData[i]["event_type"] == consts.EvCreateDao {
-			daoAddress := utils.FixTo0x40String(blockData[i]["topic2"].(string))
+			daoAddress := utils.FixTo0x40String(blockData[i]["topic3"].(string))
 			var addEvent = make([]map[string]interface{}, 0)
 			// Add CreateDao Event Type
 			eventType := []string{consts.EvCreateProposal, consts.EvVote, consts.EvCancelProposal, consts.EvAdmin, consts.EvSetting, consts.EvOwnershipTransferred, consts.EvCreateAirdrop, consts.EvClaimed}
@@ -227,37 +227,39 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 				return
 			}
 
-			//save dao
-			creatorAddress := utils.FixTo0x40String(blockData[i]["topic1"].(string))
+			// save dao
+			creatorAddress := utils.FixTo0x40String(blockData[i]["topic2"].(string))
 			tokenAddress := utils.FixTo0x40String(blockData[i]["data"].(string)[66:130])
 			tokenChainId, _ := utils.Hex2Int64(blockData[i]["data"].(string)[:66])
-			sqlInsDao := fmt.Sprintf(`INSERT INTO %s (dao_logo,dao_name,dao_address,creator,handle,description,chain_id,token_chain_id,token_address,proposal_threshold,voting_quorum,voting_period,voting_type,twitter,github,discord,update_bool) VALUES ('%s','%s','%s','%s','%s','%s',%d,%d,'%s',%d,%d,%d,'%s','%s','%s','%s',%t)`,
-				consts.TbNameDao,
-				"",
-				"",
-				daoAddress,
-				creatorAddress,
-				"",
-				"",
-				chainId,
-				tokenChainId,
-				tokenAddress,
-				0,
-				0,
-				0,
-				"",
-				"",
-				"",
-				"",
-				false,
-			)
+
+			var daoMap = make([]map[string]interface{}, 0)
+			var daoValues = make(map[string]interface{})
+			daoValues["dao_logo"] = ""
+			daoValues["dao_name"] = ""
+			daoValues["dao_address"] = daoAddress
+			daoValues["creator"] = creatorAddress
+			daoValues["handle"] = ""
+			daoValues["description"] = ""
+			daoValues["chain_id"] = chainId
+			daoValues["token_chain_id"] = tokenChainId
+			daoValues["token_address"] = tokenAddress
+			daoValues["proposal_threshold"] = 0
+			daoValues["voting_quorum"] = 0
+			daoValues["voting_period"] = 0
+			daoValues["voting_type"] = ""
+			daoValues["twitter"] = ""
+			daoValues["github"] = ""
+			daoValues["discord"] = ""
+			daoValues["update_bool"] = 0
+			daoMap = append(daoMap, daoValues)
+			sqlInsDao := oo.NewSqler().Table(consts.TbNameDao).Insert(daoMap)
 			_, errTx = oo.SqlxTxExec(tx, sqlInsDao)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return
 			}
 
-			//save superAdmin
+			// save superAdmin
 			sqlInsAdmin := fmt.Sprintf(`INSERT INTO %s (dao_address,chain_id,account,account_level) VALUES ('%s',%d,'%s','%s')`,
 				consts.TbNameAdmin,
 				daoAddress,
@@ -271,7 +273,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 				return
 			}
 
-			//save member
+			// save member
 			sqlInsMember := fmt.Sprintf(`INSERT INTO %s (dao_address,chain_id,account,join_switch) VALUES ('%s',%d,'%s',%d)`,
 				consts.TbNameMember,
 				daoAddress,
@@ -280,6 +282,17 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 				1,
 			)
 			_, errTx = oo.SqlxTxExec(tx, sqlInsMember)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+
+			// update handle lock
+			handleKeccak := strings.TrimPrefix(blockData[i]["topic1"].(string), "0x")
+			var daoHandle = make(map[string]interface{})
+			daoHandle["lock_block"] = consts.MaxIntUnsigned
+			sqlUpDaoHandle := oo.NewSqler().Table(consts.TbNameHandleLock).Where("handle_keccak", handleKeccak).Update(daoHandle)
+			_, errTx = oo.SqlxTxExec(tx, sqlUpDaoHandle)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return

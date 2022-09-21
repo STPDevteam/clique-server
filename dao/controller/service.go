@@ -88,7 +88,8 @@ func (svc *Service) Start(ctx *cli.Context) error {
 	r5 := router.Group(path.Join(basePath, "/sign"))
 	{
 		r5.POST("/create", svc.httpCreateSign)
-		r5.POST("/dao/handle", svc.httpDaoHandleSign)
+		r5.POST("/lock/handle", svc.httpLockDaoHandleSign)
+		r5.GET("/query/handle", svc.httpQueryDaoHandle)
 	}
 	r6 := router.Group(path.Join(basePath, "/account"))
 	{

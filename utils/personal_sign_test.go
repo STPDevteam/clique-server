@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"github.com/ethereum/go-ethereum/common"
 	"testing"
 )
 
@@ -32,6 +33,8 @@ func TestCheckPersonalSign(t *testing.T) {
 }
 
 func TestSignMessage(t *testing.T) {
+	fmt.Println(Keccak256("1"))
+	fmt.Println(fmt.Sprintf("%x", common.LeftPadBytes([]byte("params.Handle"), 32)))
 	var f float64
 	f = float64(1) / float64(3)
 	fmt.Println(f)

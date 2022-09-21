@@ -328,6 +328,18 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_notification_account` (
     INDEX `index_account` (`account` ASC)
 );
 
+CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_handle_lock` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `handle` VARCHAR(30) NOT NULL,
+    `handle_keccak` VARCHAR(66) NOT NULL,
+    `lock_block` INT UNSIGNED NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `index_handle` (`handle` ASC),
+    INDEX `index_lock_block` (`lock_block` ASC)
+);
+
 # CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_options` (
 #   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 #   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
