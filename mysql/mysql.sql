@@ -80,9 +80,10 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_dao` (
     `voting_quorum` DECIMAL(65,0) UNSIGNED NOT NULL,
     `voting_period` INT NOT NULL,
     `voting_type` VARCHAR(128) NOT NULL,
-	`twitter` VARCHAR(128),
-	`github` VARCHAR(128),
-	`discord` VARCHAR(128),
+	`twitter` VARCHAR(256),
+	`github` VARCHAR(256),
+	`discord` VARCHAR(256),
+	`website` VARCHAR(256),
 	`update_bool` bool NOT NULL,
 	`weight` INT,
   PRIMARY KEY (`id`),
@@ -335,68 +336,19 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_handle_lock` (
     `handle` VARCHAR(30) NOT NULL,
     `handle_keccak` VARCHAR(66) NOT NULL,
     `lock_block` INT UNSIGNED NOT NULL,
+    `chain_id` INT NOT NULL,
+    `account` VARCHAR(66) NOT NULL,
     PRIMARY KEY (`id`),
     INDEX `index_handle` (`handle` ASC),
-    INDEX `index_lock_block` (`lock_block` ASC)
+    INDEX `index_lock_block` (`lock_block` ASC),
+    INDEX `index_chain_id` (`chain_id` ASC),
+    INDEX `index_account` (`account` ASC)
 );
 
-# CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_options` (
-#   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-#   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-#   `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-# 	`proposal_id` INT NOT NULL,
-# 	`voting_options` VARCHAR(128) NOT NULL,
-# 	INDEX `proposal_id` (`proposal_id` ASC),
-# 	PRIMARY KEY (`id`)
-# );
-#
-# CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_voting_records` (
-#   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-#   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-#   `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-# 	`dao_id` INT NOT NULL,
-# 	`proposal_id` INT NOT NULL,
-# 	`option_id` INT NOT NULL,
-# 	`account` VARCHAR(128) NOT NULL,
-# 	`votes` DECIMAL(65,0) UNSIGNED NOT NULL,
-# 	INDEX `dao_id` (`dao_id` ASC),
-# 	INDEX `proposal_id` (`proposal_id` ASC),
-# 	INDEX `option_id` (`option_id` ASC),
-# 	PRIMARY KEY (`id`)
-# );
-#
-# CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_token_list` (
-#   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-#   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-#   `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-# 	`token_logo` VARCHAR(128) NOT NULL,
-# 	`token` VARCHAR(128) NOT NULL,
-# 	`network` VARCHAR(128) NOT NULL,
-# 	`contract` VARCHAR(128) NOT NULL,
-# 	`total_supply` VARCHAR(128) NOT NULL,
-# 	`transfers` INT NOT NULL,
-# 	`holders` INT NOT NULL,
-# 	PRIMARY KEY (`id`)
-# );
-#
-# CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_sale` (
-#   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-#   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-#   `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-# 	`token` VARCHAR(128) NOT NULL,
-# 	`network` VARCHAR(128) NOT NULL,
-# 	`receiving_tokens` VARCHAR(128) NOT NULL,
-# 	`offering_amount` DECIMAL(65,0) UNSIGNED NOT NULL,
-# 	`price` DECIMAL(65,0) UNSIGNED NOT NULL,
-# 	`pledge_limit` VARCHAR(128),
-# 	`start_time` INT NOT NULL,
-# 	`end_time` INT NOT NULL,
-# 	`sale_description` VARCHAR(200),
-# 	PRIMARY KEY (`id`)
-# );
-
 INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
-('CreateDao','0x61f623d4bD01233651bB13f0055A8C09641a9121',27739495,'0x',80001),
-('CreateERC20','0x61f623d4bD01233651bB13f0055A8C09641a9121',27739495,'0x',80001),
-('CreateDao','0x2389324477762D2307b454579B10e9118F0C568F',7455361,'0x',5),
-('CreateERC20','0x2389324477762D2307b454579B10e9118F0C568F',7455361,'0x',5);
+('CreateDao','0xC89A29a36FC727995070e6C1822AC6cdBBd124FB',28218426,'0x',80001),
+('CreateERC20','0xC89A29a36FC727995070e6C1822AC6cdBBd124FB',28218426,'0x',80001),
+('CreateDao','0xeb3BFAB3777c2c1C30DBc989554B735B04098593',7633053,'0x',5),
+('CreateERC20','0xeb3BFAB3777c2c1C30DBc989554B735B04098593',7633053,'0x',5);
+
+INSERT INTO tb_category (category_name) VALUES ('Social'),('Protocol'),('NFT'),('Metaverse'),('Gaming'),('Dapp'),('Other');

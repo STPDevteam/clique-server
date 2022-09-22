@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"stp_dao_v2/consts"
 	"stp_dao_v2/models"
-	"stp_dao_v2/utils"
 )
 
 // @Summary account info
@@ -14,11 +13,11 @@ import (
 // @version 0.0.1
 // @description account info
 // @Produce json
-// @Param request body models.SignData true "request"
+// @Param request body models.AccountParam true "request"
 // @Success 200 {object} models.ResQueryAccount
 // @Router /stpdao/v2/account/query [post]
 func httpQueryAccount(c *gin.Context) {
-	var params models.SignData
+	var params models.AccountParam
 	err := c.ShouldBindJSON(&params)
 	if err != nil {
 		oo.LogW("%v", err)
@@ -29,15 +28,15 @@ func httpQueryAccount(c *gin.Context) {
 		return
 	}
 
-	if !checkLogin(&params) {
-		oo.LogD("SignData err not auth")
-		c.JSON(http.StatusUnauthorized, models.Response{
-			Code:    http.StatusUnauthorized,
-			Data:    models.ResResult{Success: false},
-			Message: "SignData err not auth",
-		})
-		return
-	}
+	//if !checkLogin(&params) {
+	//	oo.LogD("SignData err not auth")
+	//	c.JSON(http.StatusUnauthorized, models.Response{
+	//		Code:    http.StatusUnauthorized,
+	//		Data:    models.ResResult{Success: false},
+	//		Message: "SignData err not auth",
+	//	})
+	//	return
+	//}
 
 	var counts int
 	sqlCount := oo.NewSqler().Table(consts.TbNameAccount).Where("account", params.Account).Count()
@@ -80,31 +79,9 @@ func httpQueryAccount(c *gin.Context) {
 		return
 	}
 
-	var myTokenEntities []models.HolderDataModel
-	sqlSel = oo.NewSqler().Table(consts.TbNameHolderData).Where("holder_address", params.Account).Select()
-	err = oo.SqlSelect(sqlSel, &myTokenEntities)
-	if err != nil {
-		oo.LogW("SQL err: %v", err)
-		c.JSON(http.StatusInternalServerError, models.Response{
-			Code:    500,
-			Message: "Something went wrong, Please try again later.",
-		})
-		return
-	}
-	var dataMyTokens = make([]models.ResMyTokens, 0)
-	for index := range myTokenEntities {
-		dataMyTokens = append(dataMyTokens, models.ResMyTokens{
-			TokenAddress: myTokenEntities[index].TokenAddress,
-			ChainId:      myTokenEntities[index].ChainId,
-			Balance:      myTokenEntities[index].Balance,
-		})
-	}
-
-	//var superDaoEntities []models.AdminModel
-	//sqlSel = oo.NewSqler().Table(consts.TbNameAdmin).
-	//	Where("account", params.Account).
-	//	Where("account_level", consts.LevelSuperAdmin).Select()
-	//err = oo.SqlSelect(sqlSel, &superDaoEntities)
+	//var myTokenEntities []models.HolderDataModel
+	//sqlSel = oo.NewSqler().Table(consts.TbNameHolderData).Where("holder_address", params.Account).Select()
+	//err = oo.SqlSelect(sqlSel, &myTokenEntities)
 	//if err != nil {
 	//	oo.LogW("SQL err: %v", err)
 	//	c.JSON(http.StatusInternalServerError, models.Response{
@@ -113,12 +90,12 @@ func httpQueryAccount(c *gin.Context) {
 	//	})
 	//	return
 	//}
-	//var dataSuper = make([]models.ResDao, 0)
-	//for index := range superDaoEntities {
-	//	dataSuper = append(dataSuper, models.ResDao{
-	//		DaoAddress:   superDaoEntities[index].DaoAddress,
-	//		ChainId:      superDaoEntities[index].ChainId,
-	//		AccountLevel: superDaoEntities[index].AccountLevel,
+	//var dataMyTokens = make([]models.ResMyTokens, 0)
+	//for index := range myTokenEntities {
+	//	dataMyTokens = append(dataMyTokens, models.ResMyTokens{
+	//		TokenAddress: myTokenEntities[index].TokenAddress,
+	//		ChainId:      myTokenEntities[index].ChainId,
+	//		Balance:      myTokenEntities[index].Balance,
 	//	})
 	//}
 
@@ -137,10 +114,23 @@ func httpQueryAccount(c *gin.Context) {
 	}
 	var dataAdmin = make([]models.ResDao, 0)
 	for index := range adminDaoEntities {
+		var daoEntity []models.DaoModel
+		sqlSel = oo.NewSqler().Table(consts.TbNameDao).Where("chain_id", adminDaoEntities[index].ChainId).Where("dao_address", adminDaoEntities[index].DaoAddress).Select()
+		err = oo.SqlSelect(sqlSel, &daoEntity)
+		if err != nil {
+			oo.LogW("SQL err: %v", err)
+			c.JSON(http.StatusInternalServerError, models.Response{
+				Code:    500,
+				Message: "Something went wrong, Please try again later.",
+			})
+			return
+		}
 		dataAdmin = append(dataAdmin, models.ResDao{
 			DaoAddress:   adminDaoEntities[index].DaoAddress,
 			ChainId:      adminDaoEntities[index].ChainId,
 			AccountLevel: adminDaoEntities[index].AccountLevel,
+			DaoName:      daoEntity[0].DaoName,
+			DaoLogo:      daoEntity[0].DaoLogo,
 		})
 	}
 
@@ -157,53 +147,66 @@ func httpQueryAccount(c *gin.Context) {
 	}
 	var dataMember = make([]models.ResDao, 0)
 	for index := range memberEntities {
+		var daoEntity []models.DaoModel
+		sqlSel = oo.NewSqler().Table(consts.TbNameDao).Where("chain_id", memberEntities[index].ChainId).Where("dao_address", memberEntities[index].DaoAddress).Select()
+		err = oo.SqlSelect(sqlSel, &daoEntity)
+		if err != nil {
+			oo.LogW("SQL err: %v", err)
+			c.JSON(http.StatusInternalServerError, models.Response{
+				Code:    500,
+				Message: "Something went wrong, Please try again later.",
+			})
+			return
+		}
 		dataMember = append(dataMember, models.ResDao{
 			DaoAddress:   memberEntities[index].DaoAddress,
 			ChainId:      memberEntities[index].ChainId,
 			AccountLevel: consts.LevelMember,
+			DaoName:      daoEntity[0].DaoName,
+			DaoLogo:      daoEntity[0].DaoLogo,
 		})
 	}
 
-	var activityEntities []models.EventHistoricalModel
-	account0x64 := utils.FixTo0x64String(params.Account)
-	sqlActivity := oo.NewSqler().Table(consts.TbNameEventHistorical).
-		Where("event_type='CreateProposal' OR event_type='Vote'").
-		Where("topic2", account0x64).
-		Order("time_stamp DESC").Limit(5).Offset(0).Select()
-	err = oo.SqlSelect(sqlActivity, &activityEntities)
-	if err != nil {
-		oo.LogW("SQL err: %v", err)
-		c.JSON(http.StatusInternalServerError, models.Response{
-			Code:    500,
-			Message: "Something went wrong, Please try again later.",
-		})
-		return
-	}
-	var dataActivity = make([]models.ResActivity, 0)
-	for index := range activityEntities {
-		dataIndex := activityEntities[index]
-		proposalId := utils.Hex2Dec(dataIndex.Topic1)
-		if dataIndex.EventType == consts.EvCreateProposal {
-			dataActivity = append(dataActivity, models.ResActivity{
-				EventType:  dataIndex.EventType,
-				ChainId:    dataIndex.ChainId,
-				DaoAddress: dataIndex.Address,
-				ProposalId: proposalId,
-			})
-		}
-		if dataIndex.EventType == consts.EvVote {
-			optionIndex := utils.Hex2Dec(dataIndex.Topic3)
-			amount, _ := utils.Hex2BigInt(dataIndex.Data[:66])
-			dataActivity = append(dataActivity, models.ResActivity{
-				EventType:   dataIndex.EventType,
-				ChainId:     dataIndex.ChainId,
-				DaoAddress:  dataIndex.Address,
-				ProposalId:  proposalId,
-				OptionIndex: optionIndex,
-				Amount:      amount.String(),
-			})
-		}
-	}
+	//var activityEntities []models.EventHistoricalModel
+	//account0x64 := utils.FixTo0x64String(params.Account)
+	//sqlActivity := oo.NewSqler().Table(consts.TbNameEventHistorical).
+	//	Where("event_type='CreateProposal' OR event_type='Vote'").
+	//	Where("topic2", account0x64).
+	//	Order("time_stamp DESC").Limit(5).Offset(0).Select()
+	//err = oo.SqlSelect(sqlActivity, &activityEntities)
+	//if err != nil {
+	//	oo.LogW("SQL err: %v", err)
+	//	c.JSON(http.StatusInternalServerError, models.Response{
+	//		Code:    500,
+	//		Message: "Something went wrong, Please try again later.",
+	//	})
+	//	return
+	//}
+	//var dataActivity = make([]models.ResActivity, 0)
+	//for index := range activityEntities {
+	//	dataIndex := activityEntities[index]
+	//	proposalId := utils.Hex2Dec(dataIndex.Topic1)
+	//	if dataIndex.EventType == consts.EvCreateProposal {
+	//		dataActivity = append(dataActivity, models.ResActivity{
+	//			EventType:  dataIndex.EventType,
+	//			ChainId:    dataIndex.ChainId,
+	//			DaoAddress: dataIndex.Address,
+	//			ProposalId: proposalId,
+	//		})
+	//	}
+	//	if dataIndex.EventType == consts.EvVote {
+	//		optionIndex := utils.Hex2Dec(dataIndex.Topic3)
+	//		amount, _ := utils.Hex2BigInt(dataIndex.Data[:66])
+	//		dataActivity = append(dataActivity, models.ResActivity{
+	//			EventType:   dataIndex.EventType,
+	//			ChainId:     dataIndex.ChainId,
+	//			DaoAddress:  dataIndex.Address,
+	//			ProposalId:  proposalId,
+	//			OptionIndex: optionIndex,
+	//			Amount:      amount.String(),
+	//		})
+	//	}
+	//}
 
 	c.JSON(http.StatusOK, models.Response{
 		Code:    http.StatusOK,
@@ -215,10 +218,10 @@ func httpQueryAccount(c *gin.Context) {
 			Introduction: entity.Introduction.String,
 			Twitter:      entity.Twitter.String,
 			Github:       entity.Github.String,
-			MyTokens:     dataMyTokens,
-			AdminDao:     dataAdmin,
-			MemberDao:    dataMember,
-			Activity:     dataActivity,
+			//MyTokens:     dataMyTokens,
+			AdminDao:  dataAdmin,
+			MemberDao: dataMember,
+			//Activity:  dataActivity,
 		},
 	})
 }

@@ -86,6 +86,7 @@ type DaoModel struct {
 	Twitter           string        `db:"twitter"`
 	Github            string        `db:"github"`
 	Discord           string        `db:"discord"`
+	Website           string        `db:"website"`
 	UpdateBool        bool          `db:"update_bool"`
 	Weight            sql.NullInt64 `db:"weight"`
 }
@@ -243,4 +244,15 @@ type NotificationAccountModel struct {
 	Account          string `db:"account"`
 	AlreadyRead      bool   `db:"already_read"`
 	NotificationTime int64  `db:"notification_time"`
+}
+
+type HandleLockModel struct {
+	Id           uint64 `db:"id,omitempty" sqler:"skips"`
+	CreateTime   string `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime   string `db:"update_time,omitempty" sqler:"skips"`
+	Handle       string `db:"handle"`
+	HandleKeccak string `db:"handle_keccak"`
+	LockBlock    int    `db:"lock_block"`
+	ChainId      int    `db:"chain_id"`
+	Account      string `db:"account"`
 }

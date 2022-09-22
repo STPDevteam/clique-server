@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	oo "github.com/Anna2024/liboo"
+	"math"
 	"stp_dao_v2/consts"
 	"stp_dao_v2/models"
 	"stp_dao_v2/utils"
@@ -48,6 +49,7 @@ func (svc *Service) updateDaoInfoTask() {
 							outputParameters = append(outputParameters, "string")
 							outputParameters = append(outputParameters, "string")
 							outputParameters = append(outputParameters, "string")
+							outputParameters = append(outputParameters, "string")
 
 							daoInfo, errDe := utils.Decode(outputParameters, strings.TrimPrefix(res.Result.(string), "0x"))
 							if errDe != nil {
@@ -77,9 +79,10 @@ func saveDaoInfoAndCategory(daoInfo []interface{}, daoAddress string, chainId in
 	v["dao_name"] = daoInfo[0]
 	v["handle"] = daoInfo[1]
 	v["description"] = daoInfo[3]
-	v["twitter"] = daoInfo[4]
-	v["github"] = daoInfo[5]
-	v["discord"] = daoInfo[6]
+	v["twitter"] = daoInfo[4].(string)[:int(math.Min(float64(len(daoInfo[4].(string))), 256))]
+	v["github"] = daoInfo[5].(string)[:int(math.Min(float64(len(daoInfo[5].(string))), 256))]
+	v["discord"] = daoInfo[6].(string)[:int(math.Min(float64(len(daoInfo[6].(string))), 256))]
+	v["website"] = daoInfo[8].(string)[:int(math.Min(float64(len(daoInfo[8].(string))), 256))]
 	v["update_bool"] = 0
 	sqlIns := oo.NewSqler().Table(consts.TbNameDao).Where("dao_address", daoAddress).Where("chain_id", chainId).Update(v)
 	_, errTx = oo.SqlxTxExec(tx, sqlIns)

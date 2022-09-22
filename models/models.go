@@ -75,28 +75,30 @@ type ResUploadImgPath struct {
 }
 
 type ResQueryAccount struct {
-	Account      string        `json:"account"`
-	AccountLogo  string        `json:"accountLogo"`
-	Nickname     string        `json:"nickname"`
-	Introduction string        `json:"introduction"`
-	Twitter      string        `json:"twitter"`
-	Github       string        `json:"github"`
-	MyTokens     []ResMyTokens `json:"myTokens"`
-	AdminDao     []ResDao      `json:"adminDao"`
-	MemberDao    []ResDao      `json:"memberDao"`
-	Activity     []ResActivity `json:"activity"`
+	Account      string `json:"account"`
+	AccountLogo  string `json:"accountLogo"`
+	Nickname     string `json:"nickname"`
+	Introduction string `json:"introduction"`
+	Twitter      string `json:"twitter"`
+	Github       string `json:"github"`
+	//MyTokens     []ResMyTokens `json:"myTokens"`
+	AdminDao  []ResDao `json:"adminDao"`
+	MemberDao []ResDao `json:"memberDao"`
+	//Activity  []ResActivity `json:"activity"`
 }
 
-type ResMyTokens struct {
-	TokenAddress string `json:"tokenAddress"`
-	ChainId      int    `json:"chainId"`
-	Balance      string `json:"balance"`
-}
+//type ResMyTokens struct {
+//	TokenAddress string `json:"tokenAddress"`
+//	ChainId      int    `json:"chainId"`
+//	Balance      string `json:"balance"`
+//}
 
 type ResDao struct {
 	DaoAddress   string `json:"daoAddress"`
 	ChainId      int    `json:"chainId"`
 	AccountLevel string `json:"accountLevel"`
+	DaoName      string `json:"daoName"`
+	DaoLogo      string `json:"daoLogo"`
 }
 
 type ResActivity struct {
@@ -224,6 +226,10 @@ type ResTokenList struct {
 type SignData struct {
 	Account   string `json:"account" validate:"eth_addr"`              // personal_sign address,0x
 	Signature string `json:"signature" validate:"len=130,hexadecimal"` // personal_sign sign result,no 0x
+}
+
+type AccountParam struct {
+	Account string `json:"account"`
 }
 
 type ResDaoInfo struct {
@@ -389,7 +395,8 @@ type SignDaoHandleParam struct {
 }
 
 type ResSignDaoHandleData struct {
-	Signature string `json:"signature"`
-	Account   string `json:"account"`
-	ChainId   int    `json:"chainId"`
+	Signature    string `json:"signature"`
+	Account      string `json:"account"`
+	ChainId      int    `json:"chainId"`
+	LockBlockNum int    `json:"lockBlockNum"`
 }

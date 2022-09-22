@@ -250,6 +250,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			daoValues["twitter"] = ""
 			daoValues["github"] = ""
 			daoValues["discord"] = ""
+			daoValues["website"] = ""
 			daoValues["update_bool"] = 0
 			daoMap = append(daoMap, daoValues)
 			sqlInsDao := oo.NewSqler().Table(consts.TbNameDao).Insert(daoMap)
@@ -342,7 +343,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			v["chain_id"] = chainId
 			v["dao_address"] = daoAddress
 			v["proposal_id"] = proposalId
-			v["title"] = proposalTitle
+			v["title"] = proposalTitle[:int(math.Min(float64(len(proposalTitle)), 300))]
 			v["proposer"] = proposer
 			v["start_time"] = startTime
 			v["end_time"] = endTime
@@ -656,6 +657,16 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			}
 		}
 	}
+
+	sqlDel := oo.NewSqler().Table(consts.TbNameHandleLock).
+		Where("lock_block", "<", currentBlockNum).
+		Where("chain_id", chainId).Delete()
+	err := oo.SqlExec(sqlDel)
+	if err != nil {
+		oo.LogW("SQL err: %v", err)
+		return
+	}
+
 }
 
 func proposalInfo(daoAddress, proposalId, url string) (string, error) {

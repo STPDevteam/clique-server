@@ -37,7 +37,7 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 	var createDaoEntity []models.EventHistoricalModel
 	sqler := oo.NewSqler().Table(consts.TbNameEventHistorical).
 		Where("event_type", consts.EvCreateDao).
-		Where("topic2", daoAddress).
+		Where("topic3", daoAddress).
 		Where("chain_id", params.ChainId).Select()
 	err = oo.SqlSelect(sqler, &createDaoEntity)
 	if err != nil {
@@ -216,6 +216,8 @@ func (svc *Service) httpLockDaoHandleSign(c *gin.Context) {
 		return
 	}
 
+	params.Handle = strings.Replace(params.Handle, " ", "", -1)
+
 	resAccount := strings.TrimPrefix(params.Account, "0x")
 	resChainId := fmt.Sprintf("%064x", params.ChainId)
 	resHandle := utils.Keccak256(params.Handle)
@@ -244,7 +246,7 @@ func (svc *Service) httpLockDaoHandleSign(c *gin.Context) {
 	}
 
 	var count int
-	sqlSel := oo.NewSqler().Table(consts.TbNameHandleLock).Where("handle", params.Handle).Where("lock_block", ">", latestBlockNum).Count()
+	sqlSel := oo.NewSqler().Table(consts.TbNameHandleLock).Where("handle", params.Handle).Count()
 	err = oo.SqlGet(sqlSel, &count)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)
@@ -255,17 +257,62 @@ func (svc *Service) httpLockDaoHandleSign(c *gin.Context) {
 		return
 	}
 	if count != 0 {
-		c.JSON(http.StatusBadRequest, models.Response{
-			Code:    http.StatusBadRequest,
-			Message: "handle existed",
-		})
-		return
+		var handleEntity []models.HandleLockModel
+		sqlSel = oo.NewSqler().Table(consts.TbNameHandleLock).
+			Where("handle", params.Handle).Where("account", params.Account).Where("chain_id", params.ChainId).
+			Where("lock_block", "!=", consts.MaxIntUnsigned).Select()
+		err = oo.SqlSelect(sqlSel, &handleEntity)
+		if err != nil {
+			oo.LogW("SQL err: %v", err)
+			c.JSON(http.StatusInternalServerError, models.Response{
+				Code:    500,
+				Message: "Something went wrong, Please try again later.",
+			})
+			return
+		}
+		if len(handleEntity) == 0 {
+			c.JSON(http.StatusOK, models.Response{
+				Code:    200,
+				Message: "handle locked or existed",
+			})
+			return
+		} else {
+			resOldAccount := strings.TrimPrefix(handleEntity[0].Account, "0x")
+			resOldChainId := fmt.Sprintf("%064x", handleEntity[0].ChainId)
+			resOldBlock := fmt.Sprintf("%064x", handleEntity[0].LockBlock)
+
+			messageOld := fmt.Sprintf("%s%s%s%s", resOldAccount, resOldChainId, resOldBlock, handleEntity[0].HandleKeccak)
+			signatureOld, err := utils.SignMessage(messageOld, svc.appConfig.SignMessagePriKey)
+			if err != nil {
+				oo.LogW("SignMessage err: %v", err)
+				c.JSON(http.StatusInternalServerError, models.Response{
+					Code:    500,
+					Message: "Signature err",
+				})
+				return
+			}
+			signatureOld = fmt.Sprintf("0x%s", signatureOld)
+			c.JSON(http.StatusOK, models.Response{
+				Code:    http.StatusOK,
+				Message: "ok",
+				Data: models.ResSignDaoHandleData{
+					Signature:    signatureOld,
+					Account:      handleEntity[0].Account,
+					ChainId:      handleEntity[0].ChainId,
+					LockBlockNum: handleEntity[0].LockBlock,
+				},
+			})
+			return
+		}
+
 	} else {
 		var m = make([]map[string]interface{}, 0)
 		var v = make(map[string]interface{})
 		v["handle"] = params.Handle
 		v["handle_keccak"] = resHandle
 		v["lock_block"] = latestBlockNum
+		v["chain_id"] = params.ChainId
+		v["account"] = params.Account
 		m = append(m, v)
 		sqlIns := oo.NewSqler().Table(consts.TbNameHandleLock).Insert(m)
 		err = oo.SqlExec(sqlIns)
@@ -295,9 +342,10 @@ func (svc *Service) httpLockDaoHandleSign(c *gin.Context) {
 		Code:    http.StatusOK,
 		Message: "ok",
 		Data: models.ResSignDaoHandleData{
-			Signature: signature,
-			Account:   params.Account,
-			ChainId:   params.ChainId,
+			Signature:    signature,
+			Account:      params.Account,
+			ChainId:      params.ChainId,
+			LockBlockNum: latestBlockNum,
 		},
 	})
 
@@ -309,36 +357,18 @@ func (svc *Service) httpLockDaoHandleSign(c *gin.Context) {
 // @description sign query dao handle
 // @Produce json
 // @Param handle query string true "handle"
-// @Param chainId query string true "chainId"
+// @Param chainId query int true "chainId"
+// @Param account query string true "account"
 // @Success 200 {object} models.ResResult
 // @Router /stpdao/v2/sign/query/handle [get]
 func (svc *Service) httpQueryDaoHandle(c *gin.Context) {
 	handleParam := c.Query("handle")
 	chainId := c.Query("chainId")
 	chainIdParam, _ := strconv.Atoi(chainId)
-
-	var latestBlockNum int
-	for indexScan := range svc.scanInfo {
-		for indexUrl := range svc.scanInfo[indexScan].ChainId {
-			url := svc.scanInfo[indexScan].ScanUrl[indexUrl]
-			if svc.scanInfo[indexScan].ChainId[indexUrl] == chainIdParam {
-				res, err := utils.QueryLatestBlock(url)
-				if err != nil || res.Result.(string) == "" {
-					oo.LogW("QueryLatestBlock err: %v", err)
-					c.JSON(http.StatusInternalServerError, models.Response{
-						Code:    500,
-						Message: "Something went wrong, Please try again later.",
-					})
-					return
-				}
-				latestBlockNum = utils.Hex2Dec(res.Result.(string)) + svc.scanInfo[indexScan].HandleLockBlock[indexUrl]
-				break
-			}
-		}
-	}
+	accountParam := c.Query("account")
 
 	var count int
-	sqlSel := oo.NewSqler().Table(consts.TbNameHandleLock).Where("handle", handleParam).Where("lock_block", ">", latestBlockNum).Count()
+	sqlSel := oo.NewSqler().Table(consts.TbNameHandleLock).Where("handle", handleParam).Count()
 	err := oo.SqlGet(sqlSel, &count)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)
@@ -350,14 +380,31 @@ func (svc *Service) httpQueryDaoHandle(c *gin.Context) {
 	}
 
 	if count != 0 {
-		c.JSON(http.StatusOK, models.Response{
-			Code:    http.StatusOK,
-			Message: "ok",
-			Data: models.ResResult{
-				Success: false,
-			},
-		})
-		return
+		var countOwn int
+		sqlSel = oo.NewSqler().Table(consts.TbNameHandleLock).
+			Where("account", accountParam).
+			Where("chain_id", chainIdParam).
+			Where("handle", handleParam).
+			Where("lock_block", "!=", consts.MaxIntUnsigned).Count()
+		err = oo.SqlGet(sqlSel, &countOwn)
+		if err != nil {
+			oo.LogW("SQL err: %v", err)
+			c.JSON(http.StatusInternalServerError, models.Response{
+				Code:    500,
+				Message: "Something went wrong, Please try again later.",
+			})
+			return
+		}
+		if countOwn == 0 {
+			c.JSON(http.StatusOK, models.Response{
+				Code:    http.StatusOK,
+				Message: "ok",
+				Data: models.ResResult{
+					Success: false,
+				},
+			})
+			return
+		}
 	}
 
 	c.JSON(http.StatusOK, models.Response{
