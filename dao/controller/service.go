@@ -55,8 +55,6 @@ func (svc *Service) Start(ctx *cli.Context) error {
 	go tokensImgTask()
 	go updateNotification()
 
-	//updateOnlineData()
-
 	router := gin.Default()
 	router.Use(utils.Cors())
 

@@ -460,7 +460,7 @@ func httpDaoAdmins(c *gin.Context) {
 	sqlSel := oo.NewSqler().Table(consts.TbNameAdmin).
 		Where("dao_address", daoAddressParam).
 		Where("chain_id", chainIdParam).
-		Where("account_level='superAdmin' OR account_level='admin'").Order("account_level DESC").Select()
+		Where("account_level='superAdmin' OR account_level='admin'").Distinct().Select("account")
 	err := oo.SqlSelect(sqlSel, &adminEntities)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)
@@ -474,8 +474,8 @@ func httpDaoAdmins(c *gin.Context) {
 	var data = make([]models.ResAdminsList, 0)
 	for index := range adminEntities {
 		data = append(data, models.ResAdminsList{
-			Account:      adminEntities[index].Account,
-			AccountLevel: adminEntities[index].AccountLevel,
+			Account: adminEntities[index].Account,
+			//AccountLevel: adminEntities[index].AccountLevel,
 		})
 	}
 

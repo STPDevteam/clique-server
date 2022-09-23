@@ -17,12 +17,12 @@ func Keccak256(str string) string {
 	return hex.EncodeToString(hash)
 }
 
-func Hex2Dec(hex string) int {
+func Hex2Dec(hex string) (int, error) {
 	n, err := strconv.ParseUint(strings.TrimPrefix(hex, "0x"), 16, 32)
 	if err != nil {
-		fmt.Println(err)
+		return 0, err
 	}
-	return int(n)
+	return int(n), nil
 }
 
 func Hex2Int64(hex string) (dec int64, err error) {

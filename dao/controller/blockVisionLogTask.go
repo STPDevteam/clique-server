@@ -40,7 +40,7 @@ func (svc *Service) scheduledTask() {
 				oo.LogW("QueryLatestBlock failed. err: %v\n", err)
 				continue
 			}
-			latestBlockNum = utils.Hex2Dec(resBlock.Result.(string))
+			latestBlockNum, _ = utils.Hex2Dec(resBlock.Result.(string))
 
 			latestBlockNum = int(math.Min(float64(latestBlockNum-svc.appConfig.DelayedBlockNumber), float64(currentBlockNum+svc.appConfig.BlockNumberPerReq)))
 			for ; currentBlockNum <= latestBlockNum; currentBlockNum++ {
@@ -317,9 +317,9 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 		if blockData[i]["event_type"] == consts.EvCreateProposal {
 			proposer := utils.FixTo0x40String(blockData[i]["topic2"].(string))
 			daoAddress := blockData[i]["address"].(string)
-			proposalId := utils.Hex2Dec(blockData[i]["topic1"].(string))
-			startTime := utils.Hex2Dec(blockData[i]["data"].(string)[66:130])
-			endTime := utils.Hex2Dec(blockData[i]["data"].(string)[130:194])
+			proposalId, _ := utils.Hex2Dec(blockData[i]["topic1"].(string))
+			startTime, _ := utils.Hex2Dec(blockData[i]["data"].(string)[66:130])
+			endTime, _ := utils.Hex2Dec(blockData[i]["data"].(string)[130:194])
 			sqlIns := fmt.Sprintf(`INSERT INTO %s (account,nonce,chain_id) VALUES ('%s',%d,%d) ON DUPLICATE KEY UPDATE nonce=nonce+1`,
 				consts.TbNameNonce,
 				proposer,
@@ -387,8 +387,8 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 		}
 
 		if blockData[i]["event_type"] == consts.EvCancelProposal {
-			proposalId := utils.Hex2Dec(blockData[i]["topic1"].(string))
-			endTime := utils.Hex2Dec(blockData[i]["time_stamp"].(string))
+			proposalId, _ := utils.Hex2Dec(blockData[i]["topic1"].(string))
+			endTime, _ := utils.Hex2Dec(blockData[i]["time_stamp"].(string))
 			daoAddress := blockData[i]["address"].(string)
 			sqlUp := fmt.Sprintf(`UPDATE %s SET end_time=%d WHERE proposal_id=%d AND chain_id=%d AND dao_address='%s'`,
 				consts.TbNameProposal,
@@ -406,7 +406,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 
 		if blockData[i]["event_type"] == consts.EvVote {
 			voter := utils.FixTo0x40String(blockData[i]["topic2"].(string))
-			nonce := utils.Hex2Dec(blockData[i]["data"].(string)[66:130])
+			nonce, _ := utils.Hex2Dec(blockData[i]["data"].(string)[66:130])
 			sqlUpdate := fmt.Sprintf(`INSERT INTO %s (account,nonce,chain_id) VALUES ('%s',%d,%d) ON DUPLICATE KEY UPDATE nonce=%d`,
 				consts.TbNameNonce,
 				voter,
@@ -425,9 +425,9 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			var v = make(map[string]interface{})
 			v["chain_id"] = chainId
 			v["dao_address"] = blockData[i]["address"].(string)
-			v["proposal_id"] = utils.Hex2Dec(blockData[i]["topic1"].(string))
+			v["proposal_id"], _ = utils.Hex2Dec(blockData[i]["topic1"].(string))
 			v["voter"] = voter
-			v["option_index"] = utils.Hex2Dec(blockData[i]["topic3"].(string))
+			v["option_index"], _ = utils.Hex2Dec(blockData[i]["topic3"].(string))
 			v["amount"] = amount.String()
 			v["nonce"] = nonce
 			m = append(m, v)
@@ -442,7 +442,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 		if blockData[i]["event_type"] == consts.EvAdmin {
 			daoAddress := blockData[i]["address"].(string)
 			account := utils.FixTo0x40String(blockData[i]["topic1"].(string))
-			enable := utils.Hex2Dec(blockData[i]["data"].(string))
+			enable, _ := utils.Hex2Dec(blockData[i]["data"].(string))
 			var accountLevel string
 			if enable == 0 {
 				accountLevel = consts.LevelNoRole
@@ -467,18 +467,37 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			daoAddress := blockData[i]["address"].(string)
 			previousOwner := utils.FixTo0x40String(blockData[i]["topic1"].(string))
 			newOwner := utils.FixTo0x40String(blockData[i]["topic2"].(string))
-			sqlUpSuperAdmin := fmt.Sprintf(`UPDATE %s SET account='%s' WHERE dao_address='%s' AND chain_id=%d AND account='%s'`,
+			sqlUpSuperAdmin := fmt.Sprintf(`UPDATE %s SET account='%s' WHERE dao_address='%s' AND chain_id=%d AND account='%s' AND account_level='%s'`,
 				consts.TbNameAdmin,
 				newOwner,
 				daoAddress,
 				chainId,
 				previousOwner,
+				consts.LevelSuperAdmin,
 			)
 			_, errTx = oo.SqlxTxExec(tx, sqlUpSuperAdmin)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return
 			}
+			var count int
+			sqlSel := oo.NewSqler().Table(consts.TbNameAdmin).Where("chain_id", chainId).Where("dao_address", daoAddress).
+				Where("account", newOwner).Where("account_level", consts.LevelAdmin).Count()
+			errTx = oo.SqlGet(sqlSel, &count)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+			if count == 1 {
+				sqlDel := oo.NewSqler().Table(consts.TbNameAdmin).Where("chain_id", chainId).Where("dao_address", daoAddress).
+					Where("account", newOwner).Where("account_level", consts.LevelAdmin).Delete()
+				errTx = oo.SqlExec(sqlDel)
+				if errTx != nil {
+					oo.LogW("SQL err: %v", errTx)
+					return
+				}
+			}
+
 			sqlUpDaoCreator := fmt.Sprintf(`UPDATE %s SET creator='%s' WHERE dao_address='%s' AND chain_id=%d AND creator='%s'`,
 				consts.TbNameDao,
 				newOwner,
@@ -496,9 +515,9 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 		if blockData[i]["event_type"] == consts.EvCreateAirdrop {
 			amount, _ := utils.Hex2BigInt(fmt.Sprintf("0x%s", blockData[i]["data"].(string)[66:130]))
 			daoAddress := blockData[i]["address"].(string)
-			activityId := utils.Hex2Dec(blockData[i]["topic2"].(string))
+			activityId, _ := utils.Hex2Dec(blockData[i]["topic2"].(string))
 			tokenAddress := utils.FixTo0x40String(blockData[i]["data"].(string)[2:66])
-			startTime := utils.Hex2Dec(blockData[i]["data"].(string)[194:258])
+			startTime, _ := utils.Hex2Dec(blockData[i]["data"].(string)[194:258])
 			var m = make([]map[string]interface{}, 0)
 			var v = make(map[string]interface{})
 			v["types"] = consts.TypesNameAirdrop
@@ -510,8 +529,8 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			v["amount"] = amount.String()
 			v["merkle_root"] = blockData[i]["data"].(string)[130:194]
 			v["start_time"] = startTime
-			v["end_time"] = utils.Hex2Dec(blockData[i]["data"].(string)[258:322])
-			v["publish_time"] = utils.Hex2Dec(blockData[i]["time_stamp"].(string))
+			v["end_time"], _ = utils.Hex2Dec(blockData[i]["data"].(string)[258:322])
+			v["publish_time"], _ = utils.Hex2Dec(blockData[i]["time_stamp"].(string))
 			v["price"] = ""
 			m = append(m, v)
 			sqlIns := oo.NewSqler().Table(consts.TbNameActivity).Insert(m)
@@ -548,8 +567,8 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			var v = make(map[string]interface{})
 			v["chain_id"] = chainId
 			v["dao_address"] = blockData[i]["address"].(string)
-			v["airdrop_id"] = utils.Hex2Dec(blockData[i]["topic1"].(string))
-			v["index_id"] = utils.Hex2Dec(blockData[i]["data"].(string)[:66])
+			v["airdrop_id"], _ = utils.Hex2Dec(blockData[i]["topic1"].(string))
+			v["index_id"], _ = utils.Hex2Dec(blockData[i]["data"].(string)[:66])
 			v["account"] = utils.FixTo0x40String(blockData[i]["data"].(string)[66:130])
 			v["amount"] = amount.String()
 			m = append(m, v)

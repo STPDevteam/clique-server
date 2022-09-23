@@ -113,7 +113,7 @@ func updateNotification() {
 						var v = make(map[string]interface{})
 						v["notification_id"] = entities[index].Id
 						v["account"] = account
-						v["already_read"] = false
+						v["already_read"] = 0
 						v["notification_time"] = nowTime
 						m = append(m, v)
 						sqlIns := oo.NewSqler().Table(consts.TbNameNotificationAccount).Insert(m)
@@ -149,7 +149,7 @@ func updateNotification() {
 						var v = make(map[string]interface{})
 						v["notification_id"] = entities[index].Id
 						v["account"] = account
-						v["already_read"] = false
+						v["already_read"] = 0
 						v["notification_time"] = nowTime
 						m = append(m, v)
 					}

@@ -70,7 +70,7 @@ func Decode(outputParameters []string, input string) (result []interface{}, err 
 					break
 				}
 				var b int
-				b = Hex2Dec(input[inputIndex : inputIndex+64])
+				b, _ = Hex2Dec(input[inputIndex : inputIndex+64])
 				var data bool
 				if b == 0 {
 					data = false
@@ -86,7 +86,7 @@ func Decode(outputParameters []string, input string) (result []interface{}, err 
 					break
 				}
 				var data int
-				data = Hex2Dec(input[inputIndex : inputIndex+64])
+				data, _ = Hex2Dec(input[inputIndex : inputIndex+64])
 
 				result = append(result, data)
 				inputIndex += 64

@@ -4,7 +4,7 @@ USE `stp_dao_v2`;
 SET GLOBAL TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
 SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
 
-CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`event_historical_data` (
+CREATE TABLE `event_historical_data` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`event_historical_data` (
     INDEX `index_block_number` (`block_number` ASC),
     INDEX `index_chain_id` (`chain_id` ASC));
 
-CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`scan_task` (
+CREATE TABLE `scan_task` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`scan_task` (
     INDEX `index_chain_id` (`chain_id` ASC));
 
 
-CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_nonce`(
+CREATE TABLE `tb_nonce`(
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_nonce`(
     UNIQUE INDEX `unique_index_chain_id_account` (`chain_id` ASC, `account` ASC)
 );
 
-CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_dao` (
+CREATE TABLE `tb_dao` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,	
   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,	
   `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,	
@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_dao` (
   INDEX `creator` (`creator` ASC)
 );
 
-CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_category`(
+CREATE TABLE `tb_category`(
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_category`(
     PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_dao_category`(
+CREATE TABLE `tb_dao_category`(
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_dao_category`(
     PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_member` (
+CREATE TABLE `tb_member` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -127,7 +127,7 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_member` (
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_admin` (
+CREATE TABLE `tb_admin` (
 `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -142,7 +142,7 @@ UNIQUE INDEX `unique_index_chain_id_dao_address_account_account_level` (`chain_i
 PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_holder_data` (
+CREATE TABLE `tb_holder_data` (
  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
  `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
  `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -158,7 +158,7 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_holder_data` (
  INDEX `index_balance` (`balance` DESC)
 );
 
-CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`error_info` (
+CREATE TABLE `error_info` (
 `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -169,7 +169,7 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`error_info` (
 PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_account` (
+CREATE TABLE `tb_account` (
 `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -182,7 +182,7 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_account` (
 PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_proposal_info` (
+CREATE TABLE `tb_proposal_info` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -192,7 +192,7 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_proposal_info` (
   INDEX `index_uuid` (`uuid` ASC)
 );
 
-CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_tokens_img` (
+CREATE TABLE `tb_tokens_img` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -208,7 +208,7 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_tokens_img` (
     UNIQUE INDEX `unique_index_token_chain_id_token_address` (`token_chain_id` ASC, `token_address` ASC)
 );
 
-CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_proposal` (
+CREATE TABLE `tb_proposal` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -225,7 +225,7 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_proposal` (
     INDEX `index_proposalId` (`proposal_id` ASC)
 );
 
-CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_airdrop_address` (
+CREATE TABLE `tb_airdrop_address` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -235,7 +235,7 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_airdrop_address` (
     INDEX `index_id` (`id` ASC)
 )AUTO_INCREMENT 1000;
 
-CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_activity` (
+CREATE TABLE `tb_activity` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -262,7 +262,7 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_activity` (
     INDEX `index_end_time` (`end_time` ASC)
 );
 
-CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_claimed` (
+CREATE TABLE `tb_claimed` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -279,7 +279,7 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_claimed` (
     INDEX `index_dao_address` (`dao_address` ASC)
 );
 
-CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_vote` (
+CREATE TABLE `tb_vote` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -297,7 +297,7 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_vote` (
     INDEX `index_voter` (`voter` ASC)
 );
 
-CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_notification` (
+CREATE TABLE `tb_notification` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -316,7 +316,7 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_notification` (
     INDEX `index_dao_address` (`dao_address` ASC)
 );
 
-CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_notification_account` (
+CREATE TABLE `tb_notification_account` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -329,7 +329,7 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_notification_account` (
     INDEX `index_account` (`account` ASC)
 );
 
-CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_handle_lock` (
+CREATE TABLE `tb_handle_lock` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -346,9 +346,9 @@ CREATE TABLE IF NOT EXISTS `stp_dao_v2`.`tb_handle_lock` (
 );
 
 INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
-('CreateDao','0xC89A29a36FC727995070e6C1822AC6cdBBd124FB',28218426,'0x',80001),
-('CreateERC20','0xC89A29a36FC727995070e6C1822AC6cdBBd124FB',28218426,'0x',80001),
-('CreateDao','0xeb3BFAB3777c2c1C30DBc989554B735B04098593',7633053,'0x',5),
-('CreateERC20','0xeb3BFAB3777c2c1C30DBc989554B735B04098593',7633053,'0x',5);
+('CreateDao','0x0ac366978B0560bf12824d8A3a4B34B2C87ab385',28246055,'0x',80001),
+('CreateERC20','0x0ac366978B0560bf12824d8A3a4B34B2C87ab385',28246055,'0x',80001),
+('CreateDao','0x8E4BF15cc6fC3901aed9fFD07fb6A1211e3593ef',7642600,'0x',5),
+('CreateERC20','0x8E4BF15cc6fC3901aed9fFD07fb6A1211e3593ef',7642600,'0x',5);
 
 INSERT INTO tb_category (category_name) VALUES ('Social'),('Protocol'),('NFT'),('Metaverse'),('Gaming'),('Dapp'),('Other');

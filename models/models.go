@@ -239,8 +239,8 @@ type ResDaoInfo struct {
 }
 
 type ResAdminsList struct {
-	Account      string `json:"account"`
-	AccountLevel string `json:"accountLevel"`
+	Account string `json:"account"`
+	//AccountLevel string `json:"accountLevel"`
 }
 
 type ErrorInfoParam struct {

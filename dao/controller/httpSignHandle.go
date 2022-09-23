@@ -78,8 +78,9 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 	for indexScan := range svc.scanInfo {
 		for indexUrl := range svc.scanInfo[indexScan].ChainId {
 			chainId := svc.scanInfo[indexScan].ChainId[indexUrl]
-			if chainId == params.ChainId {
+			if chainId == int(tokenChainId) {
 				url = svc.scanInfo[indexScan].ScanUrl[indexUrl]
+				break
 			}
 		}
 	}
@@ -94,16 +95,6 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 	var resBalance string
 	const paramsDataPrefix = "0x70a08231000000000000000000000000"
 	if params.SignType == "0" {
-		//res, errQ := utils.QueryBalance(tokenAddress, params.Account, url)
-		//if errQ != nil {
-		//	oo.LogW("DoPost err: %v", errQ)
-		//	c.JSON(http.StatusInternalServerError, models.Response{
-		//		Code:    500,
-		//		Message: "Something went wrong, Please try again later.",
-		//	})
-		//	return
-		//}
-		//balance = res.Result.Value
 		data := fmt.Sprintf("%s%s", paramsDataPrefix, strings.TrimPrefix(params.Account, "0x"))
 		res, errQb := utils.QueryMethodEthCall(tokenAddress, data, url)
 		if errQb != nil || res.Result == nil || res.Result == "0x" {
@@ -238,7 +229,8 @@ func (svc *Service) httpLockDaoHandleSign(c *gin.Context) {
 					})
 					return
 				}
-				latestBlockNum = utils.Hex2Dec(res.Result.(string)) + svc.scanInfo[indexScan].HandleLockBlock[indexUrl]
+				resResultBlock, _ := utils.Hex2Dec(res.Result.(string))
+				latestBlockNum = resResultBlock + svc.scanInfo[indexScan].HandleLockBlock[indexUrl]
 				resBlock = fmt.Sprintf("%064x", latestBlockNum)
 				break
 			}
