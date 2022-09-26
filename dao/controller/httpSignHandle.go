@@ -208,11 +208,7 @@ func (svc *Service) httpLockDaoHandleSign(c *gin.Context) {
 		return
 	}
 	params.Handle = strings.Replace(params.Handle, " ", "", -1)
-	r, err := regexp.Compile("^[0-9a-z_]*$")
-	if err != nil {
-		oo.LogW("")
-		return
-	}
+	r, _ := regexp.Compile("^[0-9a-z_]*$")
 	if !r.MatchString(params.Handle) {
 		c.JSON(http.StatusBadRequest, models.Response{
 			Code:    http.StatusBadRequest,

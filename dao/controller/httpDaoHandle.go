@@ -39,16 +39,16 @@ func httpDaoList(c *gin.Context) {
 
 	var orderStr string
 	if customizeOrderProposalParam == "ASC" && customizeOrderCreateTimeParam == "" {
-		orderStr = "ORDER BY weight ASC,create_time DESC"
+		orderStr = "ORDER BY approve DESC,weight ASC,create_time DESC"
 	}
 	if customizeOrderCreateTimeParam == "ASC" && customizeOrderProposalParam == "" {
-		orderStr = "ORDER BY create_time ASC,weight DESC"
+		orderStr = "ORDER BY approve DESC,create_time ASC,weight DESC"
 	}
 	if customizeOrderProposalParam == "ASC" && customizeOrderCreateTimeParam == "ASC" {
-		orderStr = "ORDER BY weight ASC,create_time ASC"
+		orderStr = "ORDER BY approve DESC,weight ASC,create_time ASC"
 	}
 	if customizeOrderProposalParam == "" && customizeOrderCreateTimeParam == "" {
-		orderStr = "ORDER BY weight DESC,create_time DESC"
+		orderStr = "ORDER BY approve DESC,weight DESC,create_time DESC"
 	}
 
 	var sqlCount, sqlSel, sqlWhere, sqlOrderLimit, sqlSubquery string
@@ -205,6 +205,7 @@ func httpDaoList(c *gin.Context) {
 			DaoName:         daoListEntity[index].DaoName,
 			DaoAddress:      daoListEntity[index].DaoAddress,
 			ChainId:         daoListEntity[index].ChainId,
+			Approve:         daoListEntity[index].Approve,
 			TotalProposals:  totalProposals,
 			ActiveProposals: activeProposals,
 			SoonProposals:   soonProposals,
@@ -432,12 +433,26 @@ func httpDaoInfo(c *gin.Context) {
 		}
 	}
 
+	var approve bool
+	sqlSel := oo.NewSqler().Table(consts.TbNameDao).Where("chain_id", chainIdParam).
+		Where("dao_address", daoAddressParam).Select("approve")
+	err = oo.SqlGet(sqlSel, &approve)
+	if err != nil {
+		oo.LogW("SQL err: %v", err)
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, models.Response{
 		Code:    http.StatusOK,
 		Message: "ok",
 		Data: models.ResDaoInfo{
 			Members:    members,
 			JoinSwitch: joinSwitch,
+			Approve:    approve,
 		},
 	})
 }

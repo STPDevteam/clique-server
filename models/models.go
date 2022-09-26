@@ -133,6 +133,8 @@ type ResDaoList struct {
 	DaoName    string `json:"daoName"`
 	DaoAddress string `json:"daoAddress"`
 	ChainId    int    `json:"chainId"`
+	// approve:true,not approve:false
+	Approve bool `json:"approve"`
 	// total proposals
 	TotalProposals uint64 `json:"totalProposals"`
 	// activity proposals
@@ -236,6 +238,8 @@ type ResDaoInfo struct {
 	Members uint64 `json:"members"`
 	// 0:not joined Dao, 1:joined Dao,default:0
 	JoinSwitch int `json:"joinSwitch"`
+	// approve:true,not approve:false
+	Approve bool `json:"approve"`
 }
 
 type ResAdminsList struct {

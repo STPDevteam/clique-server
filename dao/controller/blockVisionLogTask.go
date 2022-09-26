@@ -252,6 +252,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			daoValues["discord"] = ""
 			daoValues["website"] = ""
 			daoValues["update_bool"] = 0
+			daoValues["approve"] = 0
 			daoMap = append(daoMap, daoValues)
 			sqlInsDao := oo.NewSqler().Table(consts.TbNameDao).Insert(daoMap)
 			_, errTx = oo.SqlxTxExec(tx, sqlInsDao)

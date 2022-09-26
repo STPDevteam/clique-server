@@ -86,6 +86,7 @@ CREATE TABLE `tb_dao` (
 	`website` VARCHAR(256),
 	`update_bool` bool NOT NULL,
 	`weight` INT,
+	`approve` bool NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `dao_address` (`dao_address` ASC),
   INDEX `dao_name` (`dao_name` ASC),

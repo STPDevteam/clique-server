@@ -89,6 +89,7 @@ type DaoModel struct {
 	Website           string        `db:"website"`
 	UpdateBool        bool          `db:"update_bool"`
 	Weight            sql.NullInt64 `db:"weight"`
+	Approve           bool          `db:"approve"`
 }
 
 type CategoryModel struct {
