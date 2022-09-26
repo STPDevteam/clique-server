@@ -41,7 +41,7 @@ func TestSignMessage(t *testing.T) {
 	uuid := GenerateUuid()
 	fmt.Println(uuid)
 
-	a := Hex2Dec("4000000000000000000000000000000000000000000000000000000000000000")
+	a, _ := Hex2Dec("4000000000000000000000000000000000000000000000000000000000000000")
 	fmt.Println(a)
 	to, err := Hex2BigInt("0x0")
 	str := to.String()

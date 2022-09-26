@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"math/big"
 	"net/http"
+	"regexp"
 	"stp_dao_v2/consts"
 	"stp_dao_v2/models"
 	"stp_dao_v2/utils"
@@ -206,8 +207,19 @@ func (svc *Service) httpLockDaoHandleSign(c *gin.Context) {
 		})
 		return
 	}
-
 	params.Handle = strings.Replace(params.Handle, " ", "", -1)
+	r, err := regexp.Compile("^[0-9a-z_]*$")
+	if err != nil {
+		oo.LogW("")
+		return
+	}
+	if !r.MatchString(params.Handle) {
+		c.JSON(http.StatusBadRequest, models.Response{
+			Code:    http.StatusBadRequest,
+			Message: "Handle Invalid parameters.",
+		})
+		return
+	}
 
 	resAccount := strings.TrimPrefix(params.Account, "0x")
 	resChainId := fmt.Sprintf("%064x", params.ChainId)

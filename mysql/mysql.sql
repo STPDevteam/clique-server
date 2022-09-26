@@ -1,5 +1,5 @@
-CREATE SCHEMA IF NOT EXISTS `stp_dao_v2` DEFAULT CHARACTER SET utf8 ;
-USE `stp_dao_v2`;
+CREATE SCHEMA IF NOT EXISTS `stp_dao_v2_dev` DEFAULT CHARACTER SET utf8 ;
+USE `stp_dao_v2_dev`;
 
 SET GLOBAL TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
 SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
@@ -345,10 +345,18 @@ CREATE TABLE `tb_handle_lock` (
     INDEX `index_account` (`account` ASC)
 );
 
+# dev
 INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
 ('CreateDao','0x0ac366978B0560bf12824d8A3a4B34B2C87ab385',28246055,'0x',80001),
 ('CreateERC20','0x0ac366978B0560bf12824d8A3a4B34B2C87ab385',28246055,'0x',80001),
 ('CreateDao','0x8E4BF15cc6fC3901aed9fFD07fb6A1211e3593ef',7642600,'0x',5),
 ('CreateERC20','0x8E4BF15cc6fC3901aed9fFD07fb6A1211e3593ef',7642600,'0x',5);
+
+# test
+# INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
+# ('CreateDao','0x86D7841c28b11a144BaC1e57A7362141081B2422',28252159,'0x',80001),
+# ('CreateERC20','0x86D7841c28b11a144BaC1e57A7362141081B2422',28252159,'0x',80001),
+# ('CreateDao','0x75e4b5644eA842817155f960600b3cC3194D14C2',7644735,'0x',5),
+# ('CreateERC20','0x75e4b5644eA842817155f960600b3cC3194D14C2',7644735,'0x',5);
 
 INSERT INTO tb_category (category_name) VALUES ('Social'),('Protocol'),('NFT'),('Metaverse'),('Gaming'),('Dapp'),('Other');
