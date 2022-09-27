@@ -107,6 +107,7 @@ func (svc *Service) Start(ctx *cli.Context) error {
 	{
 		r9.POST("/address", httpSaveAirdropAddress)
 		r9.GET("/proof", httpClaimAirdrop)
+		r9.POST("/create", httpCreateAirdrop)
 	}
 	r10 := router.Group(path.Join(basePath, "/activity"))
 	{

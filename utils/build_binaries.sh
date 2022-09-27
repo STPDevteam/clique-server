@@ -1,7 +1,7 @@
 #!/bin/sh
 
 MAIN_FILES=(dao/main.go)
-BIN_NAMES=(stpdaov2_test)
+BIN_NAMES=(stpdaov2_dev)
 ROOT_DIR="$(git rev-parse --show-toplevel)"
 BIN_DIR=$ROOT_DIR/bin
 

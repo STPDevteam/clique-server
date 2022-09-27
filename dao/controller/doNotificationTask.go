@@ -45,7 +45,7 @@ func updateNotification() {
 					Where("dao_address", entities[index].DaoAddress).
 					Where("proposal_id", entities[index].ActivityId).Select("title")
 			} else if entities[index].Types == consts.TypesNameAirdrop {
-				sqlStr = oo.NewSqler().Table(consts.TbNameAirdropAddress).Where("id", entities[index].ActivityId).Select("title")
+				sqlStr = oo.NewSqler().Table(consts.TbNameAirdrop).Where("id", entities[index].ActivityId).Select("title")
 			}
 			errTx = oo.SqlGet(sqlStr, &activityName)
 			if errTx != nil {
@@ -129,7 +129,7 @@ func updateNotification() {
 
 			if entities[index].Types == consts.TypesNameAirdrop {
 				var addressEntity []models.AirdropAddressModel
-				sqlSel = oo.NewSqler().Table(consts.TbNameAirdropAddress).Where("id", entities[index].ActivityId).Select()
+				sqlSel = oo.NewSqler().Table(consts.TbNameAirdrop).Where("id", entities[index].ActivityId).Select()
 				errTx = oo.SqlSelect(sqlSel, &addressEntity)
 				if errTx != nil {
 					oo.LogW("SQL err:%v", errTx)

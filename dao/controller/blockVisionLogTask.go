@@ -155,7 +155,16 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 	if errTx != nil {
 		oo.LogW("SQL err: %v", errTx)
 	}
-	defer oo.CloseSqlxTx(tx, &errTx)
+	defer func() {
+		oo.CloseSqlxTx(tx, &errTx)
+		sqlDel := oo.NewSqler().Table(consts.TbNameHandleLock).
+			Where("lock_block", "<", currentBlockNum).
+			Where("chain_id", chainId).Delete()
+		err := oo.SqlExec(sqlDel)
+		if err != nil {
+			oo.LogW("SQL err: %v", err)
+		}
+	}()
 
 	if len(blockData) != 0 {
 		sqlIns := oo.NewSqler().Table(consts.TbNameEventHistorical).InsertBatch(blockData)
@@ -481,23 +490,23 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 				oo.LogW("SQL err: %v", errTx)
 				return
 			}
-			var count int
-			sqlSel := oo.NewSqler().Table(consts.TbNameAdmin).Where("chain_id", chainId).Where("dao_address", daoAddress).
-				Where("account", newOwner).Where("account_level", consts.LevelAdmin).Count()
-			errTx = oo.SqlGet(sqlSel, &count)
-			if errTx != nil {
-				oo.LogW("SQL err: %v", errTx)
-				return
-			}
-			if count == 1 {
-				sqlDel := oo.NewSqler().Table(consts.TbNameAdmin).Where("chain_id", chainId).Where("dao_address", daoAddress).
-					Where("account", newOwner).Where("account_level", consts.LevelAdmin).Delete()
-				errTx = oo.SqlExec(sqlDel)
-				if errTx != nil {
-					oo.LogW("SQL err: %v", errTx)
-					return
-				}
-			}
+			//var count int
+			//sqlSel := oo.NewSqler().Table(consts.TbNameAdmin).Where("chain_id", chainId).Where("dao_address", daoAddress).
+			//	Where("account", newOwner).Where("account_level", consts.LevelAdmin).Count()
+			//errTx = oo.SqlGet(sqlSel, &count)
+			//if errTx != nil {
+			//	oo.LogW("SQL err: %v", errTx)
+			//	return
+			//}
+			//if count == 1 {
+			//	sqlDel := oo.NewSqler().Table(consts.TbNameAdmin).Where("chain_id", chainId).Where("dao_address", daoAddress).
+			//		Where("account", newOwner).Where("account_level", consts.LevelAdmin).Delete()
+			//	errTx = oo.SqlExec(sqlDel)
+			//	if errTx != nil {
+			//		oo.LogW("SQL err: %v", errTx)
+			//		return
+			//	}
+			//}
 
 			sqlUpDaoCreator := fmt.Sprintf(`UPDATE %s SET creator='%s' WHERE dao_address='%s' AND chain_id=%d AND creator='%s'`,
 				consts.TbNameDao,
@@ -678,15 +687,6 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 		}
 	}
 
-	sqlDel := oo.NewSqler().Table(consts.TbNameHandleLock).
-		Where("lock_block", "<", currentBlockNum).
-		Where("chain_id", chainId).Delete()
-	err := oo.SqlExec(sqlDel)
-	if err != nil {
-		oo.LogW("SQL err: %v", err)
-		return
-	}
-
 }
 
 func proposalInfo(daoAddress, proposalId, url string) (string, error) {
@@ -704,6 +704,7 @@ func proposalInfo(daoAddress, proposalId, url string) (string, error) {
 	outputParameters = append(outputParameters, "string")
 	outputParameters = append(outputParameters, "string")
 	outputParameters = append(outputParameters, "string")
+	outputParameters = append(outputParameters, "uint256")
 	outputParameters = append(outputParameters, "uint256")
 	outputParameters = append(outputParameters, "uint256")
 	outputParameters = append(outputParameters, "uint8")

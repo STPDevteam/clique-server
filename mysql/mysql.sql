@@ -1,5 +1,5 @@
-CREATE SCHEMA IF NOT EXISTS `stp_dao_v2_dev` DEFAULT CHARACTER SET utf8 ;
-USE `stp_dao_v2_dev`;
+CREATE SCHEMA IF NOT EXISTS `stp_dao_v2` DEFAULT CHARACTER SET utf8 ;
+USE `stp_dao_v2`;
 
 SET GLOBAL TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
 SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
@@ -226,14 +226,29 @@ CREATE TABLE `tb_proposal` (
     INDEX `index_proposalId` (`proposal_id` ASC)
 );
 
-CREATE TABLE `tb_airdrop_address` (
+CREATE TABLE `tb_airdrop` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `chain_id` INT NOT NULL,
+    `dao_address` VARCHAR(128) NOT NULL,
     `title` VARCHAR(500) NOT NULL,
-	`content` TEXT NOT NULL,
+	`airdrop_address` TEXT NOT NULL,
+	`description` TEXT NOT NULL,
+	`collect_information` VARCHAR(300) NOT NULL,
+	`token_chain_id` INT NOT NULL,
+	`token_address` VARCHAR(128) NOT NULL,
+	`max_airdrop_amount` DECIMAL(65,0) UNSIGNED NOT NULL,
+    `start_time` INT NOT NULL,
+    `end_time` INT NOT NULL,
+    `airdrop_start_time` INT NOT NULL,
+    `airdrop_end_time` INT NOT NULL,
 	PRIMARY KEY (`id`),
-    INDEX `index_id` (`id` ASC)
+    INDEX `index_id` (`id` ASC),
+    INDEX `index_chain_id` (`chain_id` ASC),
+    INDEX `index_dao_address` (`dao_address` ASC),
+    INDEX `index_token_chain_id` (`token_chain_id` ASC),
+    INDEX `index_token_address` (`token_address` ASC)
 )AUTO_INCREMENT 1000;
 
 CREATE TABLE `tb_activity` (
@@ -348,10 +363,10 @@ CREATE TABLE `tb_handle_lock` (
 
 # dev
 INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
-('CreateDao','0x0ac366978B0560bf12824d8A3a4B34B2C87ab385',28246055,'0x',80001),
-('CreateERC20','0x0ac366978B0560bf12824d8A3a4B34B2C87ab385',28246055,'0x',80001),
-('CreateDao','0x8E4BF15cc6fC3901aed9fFD07fb6A1211e3593ef',7642600,'0x',5),
-('CreateERC20','0x8E4BF15cc6fC3901aed9fFD07fb6A1211e3593ef',7642600,'0x',5);
+('CreateDao','0x18Be998c31815d1C3d1dde881801112D9ee81532',28315453,'0x',80001),
+('CreateERC20','0x18Be998c31815d1C3d1dde881801112D9ee81532',28315453,'0x',80001),
+('CreateDao','0x93e7A03239d62CC24D84A7A216E81FB2aDbC7D9b',7666402,'0x',5),
+('CreateERC20','0x93e7A03239d62CC24D84A7A216E81FB2aDbC7D9b',7666402,'0x',5);
 
 # test
 # INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES

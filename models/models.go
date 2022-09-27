@@ -404,3 +404,29 @@ type ResSignDaoHandleData struct {
 	ChainId      int    `json:"chainId"`
 	LockBlockNum int    `json:"lockBlockNum"`
 }
+
+type CreateAirdropParam struct {
+	ChainId            int                    `json:"chainId"`
+	DaoAddress         string                 `json:"daoAddress"`
+	Title              string                 `json:"title"`
+	Description        string                 `json:"description"`
+	CollectInformation CollectInformationInfo `json:"collectInformation"`
+	TokenChainId       int                    `json:"tokenChainId"`
+	TokenAddress       string                 `json:"tokenAddress"`
+	MaxAirdropAmount   string                 `json:"maxAirdropAmount"`
+	StartTime          uint64                 `json:"startTime"`
+	EndTime            uint64                 `json:"endTime"`
+	AirdropStartTime   uint64                 `json:"airdropStartTime"`
+	AirdropEndTime     uint64                 `json:"airdropEndTime"`
+}
+
+type CollectInformationInfo struct {
+	// demand: Option / Require
+	Twitter  string `json:"twitter,omitempty"`
+	Telegram string `json:"telegram,omitempty"`
+	Email    string `json:"email,omitempty"`
+	TxId     string `json:"txId,omitempty"`
+	// if Other not null, OtherNeed : Option / Require
+	Other     string `json:"other,omitempty"`
+	OtherNeed string `json:"otherNeed,omitempty"`
+}

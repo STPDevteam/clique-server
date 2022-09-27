@@ -78,7 +78,7 @@ func httpActivity(c *gin.Context) {
 		dataIndex := listEntities[index]
 
 		var entity []models.AirdropAddressModel
-		sqlSel := oo.NewSqler().Table(consts.TbNameAirdropAddress).Where("id", dataIndex.ActivityId).Select()
+		sqlSel := oo.NewSqler().Table(consts.TbNameAirdrop).Where("id", dataIndex.ActivityId).Select()
 		err = oo.SqlSelect(sqlSel, &entity)
 		if err != nil {
 			oo.LogW("SQL err: %v", err)

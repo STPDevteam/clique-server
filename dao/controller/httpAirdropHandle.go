@@ -52,7 +52,7 @@ func httpSaveAirdropAddress(c *gin.Context) {
 	v["content"] = string(encoded)
 	m = append(m, v)
 
-	sqlIns := oo.NewSqler().Table(consts.TbNameAirdropAddress).Insert(m)
+	sqlIns := oo.NewSqler().Table(consts.TbNameAirdrop).Insert(m)
 	err = oo.SqlExec(sqlIns)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)
@@ -63,8 +63,90 @@ func httpSaveAirdropAddress(c *gin.Context) {
 		return
 	}
 
+	c.JSON(http.StatusOK, models.Response{
+		Code:    http.StatusOK,
+		Message: "ok",
+	})
+}
+
+// @Summary create airdrop
+// @Tags Airdrop
+// @version 0.0.1
+// @description create airdrop
+// @Produce json
+// @Param request body models.CreateAirdropParam true "request"
+// @Success 200 {object} models.ResAirdropId
+// @Router /stpdao/v2/airdrop/create [post]
+func httpCreateAirdrop(c *gin.Context) {
+	var params models.CreateAirdropParam
+	err := c.ShouldBindJSON(&params)
+	if err != nil {
+		oo.LogW("%v", err)
+		c.JSON(http.StatusBadRequest, models.Response{
+			Code:    http.StatusBadRequest,
+			Message: "Invalid parameters.",
+		})
+		return
+	}
+
+	var approve bool
+	sqlSel := oo.NewSqler().Table(consts.TbNameDao).Where("chain_id", params.ChainId).Where("dao_address", params.DaoAddress).Select("approve")
+	err = oo.SqlGet(sqlSel, &approve)
+	if err != nil {
+		oo.LogW("SQL err: %v", err)
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+	if !approve {
+		c.JSON(http.StatusOK, models.Response{
+			Code:    http.StatusOK,
+			Message: "not approved",
+		})
+		return
+	}
+
+	encoded, err := json.Marshal(params.CollectInformation)
+	if err != nil {
+		oo.LogW("json.Marshal %v", err)
+		c.JSON(http.StatusBadRequest, models.Response{
+			Code:    http.StatusBadRequest,
+			Message: "Json Marshal Failed.",
+		})
+		return
+	}
+
+	var m = make([]map[string]interface{}, 0)
+	var v = make(map[string]interface{})
+	v["chain_id"] = params.ChainId
+	v["dao_address"] = params.DaoAddress
+	v["title"] = params.Title
+	v["airdrop_address"] = ""
+	v["description"] = params.Description
+	v["collect_information"] = string(encoded)
+	v["token_chain_id"] = params.TokenChainId
+	v["token_address"] = params.TokenAddress
+	v["max_airdrop_amount"] = params.MaxAirdropAmount
+	v["start_time"] = params.StartTime
+	v["end_time"] = params.EndTime
+	v["airdrop_start_time"] = params.AirdropStartTime
+	v["airdrop_end_time"] = params.AirdropEndTime
+	m = append(m, v)
+	sqlIn := oo.NewSqler().Table(consts.TbNameAirdrop).Insert(m)
+	err = oo.SqlExec(sqlIn)
+	if err != nil {
+		oo.LogW("SQL err: %v", err)
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+
 	var airdropId int
-	sqlSel := fmt.Sprintf(`SELECT LAST_INSERT_ID()`)
+	sqlSel = fmt.Sprintf(`SELECT LAST_INSERT_ID()`)
 	err = oo.SqlGet(sqlSel, &airdropId)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)
@@ -82,6 +164,7 @@ func httpSaveAirdropAddress(c *gin.Context) {
 			AirdropIdId: airdropId,
 		},
 	})
+
 }
 
 // @Summary claim airdrop address
@@ -98,7 +181,7 @@ func httpClaimAirdrop(c *gin.Context) {
 	addressParam := c.Query("address")
 
 	var entity []models.AirdropAddressModel
-	sqlSel := oo.NewSqler().Table(consts.TbNameAirdropAddress).Where("id", idParam).Select()
+	sqlSel := oo.NewSqler().Table(consts.TbNameAirdrop).Where("id", idParam).Select()
 	err := oo.SqlSelect(sqlSel, &entity)
 	if err != nil || len(entity[0].Content) == 0 {
 		oo.LogW("SQL err: %v", err)

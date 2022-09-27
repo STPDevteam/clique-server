@@ -20,7 +20,7 @@ const (
 	TbNameProposalInfo        = "tb_proposal_info"
 	TbNameTokensImg           = "tb_tokens_img"
 	TbNameProposal            = "tb_proposal"
-	TbNameAirdropAddress      = "tb_airdrop_address"
+	TbNameAirdrop             = "tb_airdrop"
 	TbNameActivity            = "tb_activity"
 	TbNameClaimed             = "tb_claimed"
 	TbNameVote                = "tb_vote"
