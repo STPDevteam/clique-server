@@ -170,31 +170,61 @@ type ProposalModel struct {
 	EndTime    int64  `db:"end_time"`
 }
 
-type AirdropAddressModel struct {
-	Id         uint64 `db:"id,omitempty" sqler:"skips"`
-	CreateTime string `db:"create_time,omitempty" sqler:"skips"`
-	UpdateTime string `db:"update_time,omitempty" sqler:"skips"`
-	Title      string `db:"title"`
-	Content    string `db:"content"`
+type AirdropModel struct {
+	Id                 uint64 `db:"id,omitempty" sqler:"skips"`
+	CreateTime         string `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime         string `db:"update_time,omitempty" sqler:"skips"`
+	Creator            string `db:"creator"`
+	ChainId            int    `db:"chain_id"`
+	DaoAddress         string `db:"dao_address"`
+	Title              string `db:"title"`
+	AirdropAddress     string `db:"airdrop_address"`
+	Description        string `db:"description"`
+	CollectInformation string `db:"collect_information"`
+	TokenChainId       int    `db:"token_chain_id"`
+	TokenAddress       string `db:"token_address"`
+	MaxAirdropAmount   string `db:"max_airdrop_amount"`
+	StartTime          int64  `db:"start_time"`
+	EndTime            int64  `db:"end_time"`
+	AirdropStartTime   int64  `db:"airdrop_start_time"`
+	AirdropEndTime     int64  `db:"airdrop_end_time"`
+}
+
+type AirdropUserSubmit struct {
+	Id              uint64         `db:"id,omitempty" sqler:"skips"`
+	CreateTime      string         `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime      string         `db:"update_time,omitempty" sqler:"skips"`
+	AirdropId       int            `db:"airdrop_id"`
+	Account         string         `db:"account"`
+	Twitter         sql.NullString `db:"twitter"`
+	Telegram        sql.NullString `db:"telegram"`
+	Email           sql.NullString `db:"email"`
+	TXID            sql.NullString `db:"txid"`
+	Other           sql.NullString `db:"other"`
+	DiscordUsername sql.NullString `db:"discord_username"`
 }
 
 type ActivityModel struct {
-	Id           uint64        `db:"id,omitempty" sqler:"skips"`
-	CreateTime   string        `db:"create_time,omitempty" sqler:"skips"`
-	UpdateTime   string        `db:"update_time,omitempty" sqler:"skips"`
-	Types        string        `db:"types"`
-	ChainId      int           `db:"chain_id"`
-	DaoAddress   string        `db:"dao_address"`
-	Creator      string        `db:"creator"`
-	ActivityId   int           `db:"activity_id"`
-	TokenAddress string        `db:"token_address"`
-	Amount       string        `db:"amount"`
-	MerkleRoot   string        `db:"merkle_root"`
-	StartTime    int64         `db:"start_time"`
-	EndTime      int64         `db:"end_time"`
-	PublishTime  int64         `db:"publish_time"`
-	Price        string        `db:"price"`
-	Weight       sql.NullInt64 `db:"weight"`
+	Id               uint64        `db:"id,omitempty" sqler:"skips"`
+	CreateTime       string        `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime       string        `db:"update_time,omitempty" sqler:"skips"`
+	Types            string        `db:"types"`
+	ChainId          int           `db:"chain_id"`
+	DaoAddress       string        `db:"dao_address"`
+	Creator          string        `db:"creator"`
+	ActivityId       int           `db:"activity_id"`
+	TokenChainId     int           `db:"token_chain_id"`
+	TokenAddress     string        `db:"token_address"`
+	StakingAmount    string        `db:"staking_amount"`
+	AirdropAmount    string        `db:"airdrop_amount"`
+	MerkleRoot       string        `db:"merkle_root"`
+	StartTime        int64         `db:"start_time"`
+	EndTime          int64         `db:"end_time"`
+	AirdropStartTime int64         `db:"airdrop_start_time"`
+	AirdropEndTime   int64         `db:"airdrop_end_time"`
+	PublishTime      int64         `db:"publish_time"`
+	Price            string        `db:"price"`
+	Weight           sql.NullInt64 `db:"weight"`
 }
 
 type ClaimedModel struct {

@@ -31,6 +31,15 @@ func CheckSignMessageTimestamp(message string) bool {
 	return true
 }
 
+func CheckAdminSignMessageTimestamp(timestamp int64) bool {
+	now := time.Now().Unix()
+	if timestamp < now {
+		return false
+	}
+
+	return true
+}
+
 func eip191MessageHash(message string) common.Hash {
 	buf := []byte(message)
 	msg := fmt.Sprintf("\x19Ethereum Signed Message:\n%d%s", len(buf), buf)

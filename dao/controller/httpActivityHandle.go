@@ -18,7 +18,7 @@ import (
 // @Produce json
 // @Param chainId query int false "chainId"
 // @Param daoAddress query string false "Dao address"
-// @Param status query int false "status:Soon:1,Open:2,Closed:3"
+// @Param status query string false "status:Soon→Open→Ended→Airdrop→Closed"
 // @Param types query string false "types:Airdrop,PublicSale"
 // @Param offset query  int true "offset,page"
 // @Param count query  int true "count,page"
@@ -28,8 +28,7 @@ func httpActivity(c *gin.Context) {
 	chainId := c.Query("chainId")
 	chainIdParam, _ := strconv.Atoi(chainId)
 	daoAddressParam := c.Query("daoAddress")
-	status := c.Query("status")
-	statusParam, _ := strconv.Atoi(status)
+	statusParam := c.Query("status")
 	typesParam := c.Query("types")
 	count := c.Query("count")
 	offset := c.Query("offset")
@@ -45,14 +44,20 @@ func httpActivity(c *gin.Context) {
 		sqler = sqler.Where("types", typesParam)
 	}
 	var now = time.Now().Unix()
-	if statusParam == 1 {
+	if statusParam == "Soon" {
 		sqler = sqler.Where("start_time", ">=", now)
 	}
-	if statusParam == 2 {
+	if statusParam == "Open" {
 		sqler = sqler.Where("end_time", ">=", now).Where("start_time", "<=", now)
 	}
-	if statusParam == 3 {
-		sqler = sqler.Where("end_time", "<=", now)
+	if statusParam == "Ended" {
+		sqler = sqler.Where("end_time", "<=", now).Where("airdrop_start_time", ">=", now)
+	}
+	if statusParam == "Airdrop" {
+		sqler = sqler.Where("airdrop_start_time", "<=", now).Where("airdrop_end_time", ">=", now)
+	}
+	if statusParam == "Closed" {
+		sqler = sqler.Where("airdrop_end_time", "<=", now)
 	}
 
 	var total uint64
@@ -77,7 +82,7 @@ func httpActivity(c *gin.Context) {
 	for index := range listEntities {
 		dataIndex := listEntities[index]
 
-		var entity []models.AirdropAddressModel
+		var entity []models.AirdropModel
 		sqlSel := oo.NewSqler().Table(consts.TbNameAirdrop).Where("id", dataIndex.ActivityId).Select()
 		err = oo.SqlSelect(sqlSel, &entity)
 		if err != nil {
@@ -89,15 +94,17 @@ func httpActivity(c *gin.Context) {
 			return
 		}
 
-		var content models.AirdropAddressArray
-		err = json.Unmarshal([]byte(entity[0].Content), &content)
-		if err != nil {
-			oo.LogW("%v", err)
-			c.JSON(http.StatusInternalServerError, models.Response{
-				Code:    500,
-				Message: "Json Unmarshal Failed.",
-			})
-			return
+		var addressArray models.AirdropAddressArray
+		if len(entity[0].AirdropAddress) != 0 {
+			err = json.Unmarshal([]byte(entity[0].AirdropAddress), &addressArray)
+			if err != nil {
+				oo.LogW("%v", err)
+				c.JSON(http.StatusInternalServerError, models.Response{
+					Code:    500,
+					Message: "Json Unmarshal Failed.",
+				})
+				return
+			}
 		}
 
 		var claimedCount int
@@ -113,10 +120,10 @@ func httpActivity(c *gin.Context) {
 		}
 
 		var claimedPercentage float64
-		if len(content.Address) == 0 {
+		if len(addressArray.Address) == 0 {
 			claimedPercentage = 0
 		} else {
-			claimedPercentage = float64(claimedCount) / float64(len(content.Address))
+			claimedPercentage = float64(claimedCount) / float64(len(addressArray.Address))
 		}
 
 		data = append(data, models.ResActivityList{
@@ -126,13 +133,14 @@ func httpActivity(c *gin.Context) {
 			DaoAddress:        dataIndex.DaoAddress,
 			Creator:           dataIndex.Creator,
 			ActivityId:        dataIndex.ActivityId,
+			TokenChainId:      dataIndex.TokenChainId,
 			TokenAddress:      dataIndex.TokenAddress,
-			Amount:            dataIndex.Amount,
+			StakingAmount:     dataIndex.StakingAmount,
 			StartTime:         dataIndex.StartTime,
 			EndTime:           dataIndex.EndTime,
 			PublishTime:       dataIndex.PublishTime,
 			Price:             dataIndex.Price,
-			AirdropNumber:     len(content.Address),
+			AirdropNumber:     len(addressArray.Address),
 			ClaimedPercentage: claimedPercentage,
 		})
 	}

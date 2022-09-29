@@ -38,29 +38,25 @@ func updateNotification() {
 				return
 			}
 
-			var sqlStr, activityName string
-			if entities[index].Types == consts.TypesNameNewProposal {
-				sqlStr = oo.NewSqler().Table(consts.TbNameProposal).
-					Where("chain_id", entities[index].ChainId).
-					Where("dao_address", entities[index].DaoAddress).
-					Where("proposal_id", entities[index].ActivityId).Select("title")
-			} else if entities[index].Types == consts.TypesNameAirdrop {
-				sqlStr = oo.NewSqler().Table(consts.TbNameAirdrop).Where("id", entities[index].ActivityId).Select("title")
-			}
-			errTx = oo.SqlGet(sqlStr, &activityName)
-			if errTx != nil {
-				oo.LogW("SQL err:%v", errTx)
-				return
-			}
-
+			var sqlUp string
 			var info = make(map[string]interface{})
 			info["dao_logo"] = daoEntity[0].DaoLogo
 			info["dao_name"] = daoEntity[0].DaoName
-			info["activity_name"] = activityName
 			info["update_bool"] = 0
-			sqlUp := oo.NewSqler().Table(consts.TbNameNotification).
-				Where("chain_id", entities[index].ChainId).
-				Where("dao_address", entities[index].DaoAddress).Update(info)
+			if entities[index].Types == consts.TypesNameNewProposal {
+				sqlUp = oo.NewSqler().Table(consts.TbNameNotification).
+					Where("chain_id", entities[index].ChainId).
+					Where("dao_address", entities[index].DaoAddress).
+					Where("types", consts.TypesNameNewProposal).
+					Where("update_bool", 1).Update(info)
+			} else if entities[index].Types == consts.TypesNameAirdrop {
+				sqlUp = oo.NewSqler().Table(consts.TbNameNotification).
+					Where("chain_id", entities[index].ChainId).
+					Where("dao_address", entities[index].DaoAddress).
+					Where("types", consts.TypesNameAirdrop).
+					Where("activity_id", entities[index].ActivityId).
+					Where("update_bool", 1).Update(info)
+			}
 			_, errTx = oo.SqlxTxExec(tx, sqlUp)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
@@ -128,7 +124,7 @@ func updateNotification() {
 			}
 
 			if entities[index].Types == consts.TypesNameAirdrop {
-				var addressEntity []models.AirdropAddressModel
+				var addressEntity []models.AirdropModel
 				sqlSel = oo.NewSqler().Table(consts.TbNameAirdrop).Where("id", entities[index].ActivityId).Select()
 				errTx = oo.SqlSelect(sqlSel, &addressEntity)
 				if errTx != nil {
@@ -137,7 +133,7 @@ func updateNotification() {
 				}
 
 				var data models.AirdropAddressArray
-				errTx = json.Unmarshal([]byte(addressEntity[0].Content), &data)
+				errTx = json.Unmarshal([]byte(addressEntity[0].AirdropAddress), &data)
 				if errTx != nil {
 					oo.LogW("Json Unmarshal err:%v", errTx)
 					return

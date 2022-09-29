@@ -219,7 +219,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			daoAddress := utils.FixTo0x40String(blockData[i]["topic3"].(string))
 			var addEvent = make([]map[string]interface{}, 0)
 			// Add CreateDao Event Type
-			eventType := []string{consts.EvCreateProposal, consts.EvVote, consts.EvCancelProposal, consts.EvAdmin, consts.EvSetting, consts.EvOwnershipTransferred, consts.EvCreateAirdrop, consts.EvClaimed}
+			eventType := []string{consts.EvCreateProposal, consts.EvVote, consts.EvCancelProposal, consts.EvAdmin, consts.EvSetting, consts.EvOwnershipTransferred}
 			for eventIndex := range eventType {
 				var event = make(map[string]interface{})
 				event["event_type"] = eventType[eventIndex]
@@ -311,7 +311,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 		}
 
 		if blockData[i]["event_type"] == consts.EvSetting {
-			sqlUp := fmt.Sprintf(`UPDATE %s SET update_bool=%t WHERE dao_address='%s' AND chain_id=%d`,
+			sqlUp = fmt.Sprintf(`UPDATE %s SET update_bool=%t WHERE dao_address='%s' AND chain_id=%d`,
 				consts.TbNameDao,
 				true,
 				blockData[i]["address"].(string),
@@ -353,7 +353,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			v["chain_id"] = chainId
 			v["dao_address"] = daoAddress
 			v["proposal_id"] = proposalId
-			v["title"] = proposalTitle[:int(math.Min(float64(len(proposalTitle)), 300))]
+			v["title"] = proposalTitle[:int(math.Min(float64(len(proposalTitle)), 500))]
 			v["proposer"] = proposer
 			v["start_time"] = startTime
 			v["end_time"] = endTime
@@ -374,7 +374,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			values["activity_id"] = proposalId
 			values["dao_logo"] = ""
 			values["dao_name"] = ""
-			values["activity_name"] = ""
+			values["activity_name"] = proposalTitle[:int(math.Min(float64(len(proposalTitle)), 500))]
 			values["start_time"] = startTime
 			values["update_bool"] = 1
 			notificationData = append(notificationData, values)
@@ -523,23 +523,37 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 		}
 
 		if blockData[i]["event_type"] == consts.EvCreateAirdrop {
-			amount, _ := utils.Hex2BigInt(fmt.Sprintf("0x%s", blockData[i]["data"].(string)[66:130]))
-			daoAddress := blockData[i]["address"].(string)
-			activityId, _ := utils.Hex2Dec(blockData[i]["topic2"].(string))
+			creator := utils.FixTo0x40String(blockData[i]["topic1"].(string))
+			airdropId, _ := utils.Hex2Dec(blockData[i]["topic2"].(string))
 			tokenAddress := utils.FixTo0x40String(blockData[i]["data"].(string)[2:66])
-			startTime, _ := utils.Hex2Dec(blockData[i]["data"].(string)[194:258])
+			stakingAmount, _ := utils.Hex2BigInt(fmt.Sprintf("0x%s", blockData[i]["data"].(string)[66:130]))
+			startTime, _ := utils.Hex2Dec(blockData[i]["data"].(string)[130:194])
+			endTime, _ := utils.Hex2Dec(blockData[i]["data"].(string)[194:258])
+
+			var airdropEntity []models.AirdropModel
+			sqlSel := oo.NewSqler().Table(consts.TbNameAirdrop).Where("id", airdropId).Select()
+			errTx = oo.SqlSelect(sqlSel, &airdropEntity)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+
 			var m = make([]map[string]interface{}, 0)
 			var v = make(map[string]interface{})
 			v["types"] = consts.TypesNameAirdrop
 			v["chain_id"] = chainId
-			v["dao_address"] = daoAddress
-			v["creator"] = utils.FixTo0x40String(blockData[i]["topic1"].(string))
-			v["activity_id"] = activityId
+			v["dao_address"] = airdropEntity[0].DaoAddress
+			v["creator"] = creator
+			v["activity_id"] = airdropId
+			v["token_chain_id"] = airdropEntity[0].TokenChainId
 			v["token_address"] = tokenAddress
-			v["amount"] = amount.String()
-			v["merkle_root"] = blockData[i]["data"].(string)[130:194]
+			v["staking_amount"] = stakingAmount.String()
+			v["airdrop_amount"] = 0
+			v["merkle_root"] = ""
 			v["start_time"] = startTime
-			v["end_time"], _ = utils.Hex2Dec(blockData[i]["data"].(string)[258:322])
+			v["end_time"] = endTime
+			v["airdrop_start_time"] = airdropEntity[0].AirdropStartTime
+			v["airdrop_end_time"] = airdropEntity[0].AirdropEndTime
 			v["publish_time"], _ = utils.Hex2Dec(blockData[i]["time_stamp"].(string))
 			v["price"] = ""
 			m = append(m, v)
@@ -550,20 +564,44 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 				return
 			}
 
+		}
+
+		if blockData[i]["event_type"] == consts.EvSettleAirdrop {
+			airdropId, _ := utils.Hex2Dec(blockData[i]["topic1"].(string))
+			airdropAmount, _ := utils.Hex2BigInt(blockData[i]["data"].(string)[:66])
+
+			var set = make(map[string]interface{})
+			set["airdrop_amount"] = airdropAmount
+			set["merkle_root"] = blockData[i]["data"].(string)[66:130]
+			sqlUp = oo.NewSqler().Table(consts.TbNameActivity).Where("activity_id", airdropId).Update(set)
+			_, errTx = oo.SqlxTxExec(tx, sqlUp)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+
+			var airdropEntity []models.AirdropModel
+			sqlSel := oo.NewSqler().Table(consts.TbNameAirdrop).Where("id", airdropId).Select()
+			errTx = oo.SqlSelect(sqlSel, &airdropEntity)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+
 			//for notification
 			var notificationData = make([]map[string]interface{}, 0)
 			var values = make(map[string]interface{})
 			values["chain_id"] = chainId
-			values["dao_address"] = daoAddress
+			values["dao_address"] = airdropEntity[0].DaoAddress
 			values["types"] = consts.TypesNameAirdrop
-			values["activity_id"] = activityId
+			values["activity_id"] = airdropId
 			values["dao_logo"] = ""
 			values["dao_name"] = ""
-			values["activity_name"] = ""
-			values["start_time"] = startTime
+			values["activity_name"] = airdropEntity[0].Title
+			values["start_time"] = airdropEntity[0].AirdropStartTime
 			values["update_bool"] = 1
 			notificationData = append(notificationData, values)
-			sqlIns = oo.NewSqler().Table(consts.TbNameNotification).Insert(notificationData)
+			sqlIns := oo.NewSqler().Table(consts.TbNameNotification).Insert(notificationData)
 			_, errTx = oo.SqlxTxExec(tx, sqlIns)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
@@ -572,12 +610,22 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 		}
 
 		if blockData[i]["event_type"] == consts.EvClaimed {
+			airdropId, _ := utils.Hex2Dec(blockData[i]["topic1"].(string))
 			amount, _ := utils.Hex2BigInt(fmt.Sprintf("0x%s", blockData[i]["data"].(string)[130:194]))
+
+			var daoAddress string
+			sqlSel := oo.NewSqler().Table(consts.TbNameAirdrop).Where("id", airdropId).Select("dao_address")
+			errTx = oo.SqlGet(sqlSel, &daoAddress)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+
 			var m = make([]map[string]interface{}, 0)
 			var v = make(map[string]interface{})
 			v["chain_id"] = chainId
-			v["dao_address"] = blockData[i]["address"].(string)
-			v["airdrop_id"], _ = utils.Hex2Dec(blockData[i]["topic1"].(string))
+			v["dao_address"] = daoAddress
+			v["airdrop_id"] = airdropId
 			v["index_id"], _ = utils.Hex2Dec(blockData[i]["data"].(string)[:66])
 			v["account"] = utils.FixTo0x40String(blockData[i]["data"].(string)[66:130])
 			v["amount"] = amount.String()

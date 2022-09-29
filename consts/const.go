@@ -21,6 +21,7 @@ const (
 	TbNameTokensImg           = "tb_tokens_img"
 	TbNameProposal            = "tb_proposal"
 	TbNameAirdrop             = "tb_airdrop"
+	TbNameAirdropUserSubmit   = "tb_airdrop_user_submit"
 	TbNameActivity            = "tb_activity"
 	TbNameClaimed             = "tb_claimed"
 	TbNameVote                = "tb_vote"
@@ -38,6 +39,7 @@ const (
 	EvCreateERC20          = "CreateERC20"
 	EvTransfer             = "Transfer"
 	EvCreateAirdrop        = "CreateAirdrop"
+	EvSettleAirdrop        = "SettleAirdrop"
 	EvClaimed              = "Claimed"
 
 	LevelSuperAdmin = "superAdmin"
@@ -74,8 +76,11 @@ func EventTypes(event string) string {
 		setting = utils.Keccak256("Setting(uint256)")
 		//OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
 		ownershipTransferred = utils.Keccak256("OwnershipTransferred(address,address)")
-		//CreateAirdrop(address indexed creator, uint256 indexed airdropId, address token, uint256 amount, bytes32 merkleRoot, uint256 startTime, uint256 endTime)
-		createAirdrop = utils.Keccak256("CreateAirdrop(address,uint256,address,uint256,bytes32,uint256,uint256)")
+
+		//CreateAirdrop(address indexed creator, uint256 indexed airdropId, address token, uint256 amount, uint256 startTime, uint256 endTime)
+		createAirdrop = utils.Keccak256("CreateAirdrop(address,uint256,address,uint256,uint256,uint256)")
+		//SettleAirdrop(uint256 indexed airdropId, uint256 amount, bytes32 merkleTreeRoot)
+		settleAirdrop = utils.Keccak256("SettleAirdrop(uint256,uint256,bytes32)")
 		//Claimed(uint256 indexed airdropId, uint256 index, address account, uint256 amount)
 		claimed = utils.Keccak256("Claimed(uint256,uint256,address,uint256)")
 
@@ -114,6 +119,9 @@ func EventTypes(event string) string {
 		break
 	case createAirdrop:
 		event = EvCreateAirdrop
+		break
+	case settleAirdrop:
+		event = EvSettleAirdrop
 		break
 	case claimed:
 		event = EvClaimed
