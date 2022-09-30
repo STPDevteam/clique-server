@@ -262,6 +262,7 @@ func httpSaveUserInformation(c *gin.Context) {
 				Success: false,
 			},
 		})
+		return
 	}
 
 	var m = make([]map[string]interface{}, 0)

@@ -541,7 +541,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			var m = make([]map[string]interface{}, 0)
 			var v = make(map[string]interface{})
 			v["types"] = consts.TypesNameAirdrop
-			v["chain_id"] = chainId
+			v["chain_id"] = airdropEntity[0].ChainId
 			v["dao_address"] = airdropEntity[0].DaoAddress
 			v["creator"] = creator
 			v["activity_id"] = airdropId
