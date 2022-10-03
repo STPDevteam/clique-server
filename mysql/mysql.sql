@@ -253,6 +253,18 @@ CREATE TABLE `tb_airdrop` (
     INDEX `index_token_address` (`token_address` ASC)
 )AUTO_INCREMENT 1000;
 
+CREATE TABLE `tb_airdrop_prepare` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `airdrop_id` INT NOT NULL,
+    `root` VARCHAR(128) NOT NULL,
+    `prepare_address` TEXT NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `index_airdrop_id` (`airdrop_id` ASC),
+    INDEX `index_root` (`root` ASC)
+);
+
 CREATE TABLE `tb_airdrop_user_submit`(
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

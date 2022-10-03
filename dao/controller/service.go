@@ -9,7 +9,6 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/urfave/cli"
-	"log"
 	"os"
 	"path"
 	"path/filepath"
@@ -212,14 +211,14 @@ func checkAirdropAdminAndTimestamp(sign *models.AirdropAdminSignData) (ret bool)
 		return false
 	}
 
-	if data.Type == "airdrop2" {
-		root, err := merkelTreeRoot(sign.Array)
-		log.Println(fmt.Sprintf("Tree Root: %#x\n", root))
-		if err != nil || string(root) != data.Root {
-			oo.LogD("signMessage err rootMe:%v.root:%v", fmt.Sprintf("Tree Root: %#x\n", root), data.Root)
-			return false
-		}
-	}
+	//if data.Type == "airdrop2" {
+	//	root, err := merkelTreeRoot(sign.Array)
+	//	log.Println(fmt.Sprintf("rootStr: %s", root))
+	//	if err != nil || root != data.Root {
+	//		oo.LogD("signMessage err rootMe:%v.root:%v", root, data.Root)
+	//		return false
+	//	}
+	//}
 
 	var count int
 	var sqlSql string

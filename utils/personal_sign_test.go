@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"github.com/ethereum/go-ethereum/common"
+	"stp_dao_v2/models"
 	"testing"
 )
 
@@ -33,6 +34,15 @@ func TestCheckPersonalSign(t *testing.T) {
 }
 
 func TestSignMessage(t *testing.T) {
+	var addr []string
+	var amt []string
+	addr = append(addr, "0x18041866663b077bB6BF2bAFFAeA2451a2472eD7", "0x5718D9C95D15a766E9DdE6579D7B93Eaa88a26b8")
+	amt = append(amt, "1000000000000000000", "1000000000000000000")
+	data := models.AirdropAddressArray{
+		Address: addr,
+		Amount:  amt,
+	}
+	fmt.Println(data)
 	fmt.Println(Keccak256("1"))
 	fmt.Println(fmt.Sprintf("%x", common.LeftPadBytes([]byte("params.Handle"), 32)))
 	var f float64

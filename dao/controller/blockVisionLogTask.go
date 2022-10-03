@@ -569,10 +569,28 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 		if blockData[i]["event_type"] == consts.EvSettleAirdrop {
 			airdropId, _ := utils.Hex2Dec(blockData[i]["topic1"].(string))
 			airdropAmount, _ := utils.Hex2BigInt(blockData[i]["data"].(string)[:66])
+			merkleRoot := fmt.Sprintf("0x%s", blockData[i]["data"].(string)[66:130])
+
+			var prepareAddress string
+			sqlSel := oo.NewSqler().Table(consts.TbNameAirdropPrepare).Where("airdrop_id", airdropId).
+				Where("root", merkleRoot).Select("prepare_address")
+			errTx = oo.SqlGet(sqlSel, &prepareAddress)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+			var v = make(map[string]interface{})
+			v["airdrop_address"] = prepareAddress
+			sqlUp = oo.NewSqler().Table(consts.TbNameAirdrop).Where("id", airdropId).Update(v)
+			errTx = oo.SqlExec(sqlUp)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
 
 			var set = make(map[string]interface{})
 			set["airdrop_amount"] = airdropAmount
-			set["merkle_root"] = blockData[i]["data"].(string)[66:130]
+			set["merkle_root"] = merkleRoot
 			sqlUp = oo.NewSqler().Table(consts.TbNameActivity).Where("activity_id", airdropId).Update(set)
 			_, errTx = oo.SqlxTxExec(tx, sqlUp)
 			if errTx != nil {
@@ -581,7 +599,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			}
 
 			var airdropEntity []models.AirdropModel
-			sqlSel := oo.NewSqler().Table(consts.TbNameAirdrop).Where("id", airdropId).Select()
+			sqlSel = oo.NewSqler().Table(consts.TbNameAirdrop).Where("id", airdropId).Select()
 			errTx = oo.SqlSelect(sqlSel, &airdropEntity)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)

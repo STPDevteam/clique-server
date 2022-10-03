@@ -21,6 +21,7 @@ const (
 	TbNameTokensImg           = "tb_tokens_img"
 	TbNameProposal            = "tb_proposal"
 	TbNameAirdrop             = "tb_airdrop"
+	TbNameAirdropPrepare      = "tb_airdrop_prepare"
 	TbNameAirdropUserSubmit   = "tb_airdrop_user_submit"
 	TbNameActivity            = "tb_activity"
 	TbNameClaimed             = "tb_claimed"

@@ -190,6 +190,15 @@ type AirdropModel struct {
 	AirdropEndTime     int64  `db:"airdrop_end_time"`
 }
 
+type AirdropPrepareModel struct {
+	Id             uint64 `db:"id,omitempty" sqler:"skips"`
+	CreateTime     string `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime     string `db:"update_time,omitempty" sqler:"skips"`
+	AirdropId      int    `db:"airdrop_id"`
+	Root           string `db:"root"`
+	PrepareAddress string `db:"prepare_address"`
+}
+
 type AirdropUserSubmit struct {
 	Id         uint64 `db:"id,omitempty" sqler:"skips"`
 	CreateTime string `db:"create_time,omitempty" sqler:"skips"`

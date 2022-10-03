@@ -412,7 +412,7 @@ func httpDownloadUserInformation(c *gin.Context) {
 // @description save airdrop address
 // @Produce json
 // @Param request body models.AirdropAdminSignData true "request"
-// @Success 200 {object} models.Response
+// @Success 200 {object} models.ResTreeRoot
 // @Router /stpdao/v2/airdrop/address [post]
 func httpSaveAirdropAddress(c *gin.Context) {
 	var params models.AirdropAdminSignData
@@ -446,9 +446,23 @@ func httpSaveAirdropAddress(c *gin.Context) {
 		return
 	}
 
+	root, err := merkelTreeRoot(params.Array)
+	if err != nil {
+		oo.LogW("merkelTreeRoot err: %v", err)
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+
+	var m = make([]map[string]interface{}, 0)
 	var v = make(map[string]interface{})
-	v["airdrop_address"] = string(encoded)
-	sqlUp := oo.NewSqler().Table(consts.TbNameAirdrop).Where("id", params.AirdropId).Update(v)
+	v["airdrop_id"] = params.AirdropId
+	v["root"] = root
+	v["prepare_address"] = string(encoded)
+	m = append(m, v)
+	sqlUp := oo.NewSqler().Table(consts.TbNameAirdropPrepare).Insert(m)
 	err = oo.SqlExec(sqlUp)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)
@@ -462,6 +476,9 @@ func httpSaveAirdropAddress(c *gin.Context) {
 	c.JSON(http.StatusOK, models.Response{
 		Code:    http.StatusOK,
 		Message: "ok",
+		Data: models.ResTreeRoot{
+			Root: root,
+		},
 	})
 }
 

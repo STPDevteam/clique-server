@@ -235,7 +235,7 @@ type AirdropAdminSignData struct {
 	DaoAddress string              `json:"daoAddress"`                               // airdrop1:need DaoAddress
 	AirdropId  int64               `json:"airdropId"`                                // airdrop2/airdropDownload:need AirdropId
 	Account    string              `json:"account" validate:"eth_addr"`              // personal_sign address,0x
-	Message    string              `json:"message"`                                  //{"expired":1244,"root": "","type":"airdrop1/airdrop2"}
+	Message    string              `json:"message"`                                  //{"expired":1244,"root": "","type":"airdrop1/airdrop2/airdropDownload"}
 	Signature  string              `json:"signature" validate:"len=130,hexadecimal"` // personal_sign sign result,no 0x
 	Array      AirdropAddressArray `json:"array"`                                    // airdrop2:need Array
 }
@@ -459,4 +459,8 @@ type UserInformationParam struct {
 	AirdropId  int64  `json:"airdropId"`
 	Account    string `json:"account"`
 	UserSubmit string `json:"userSubmit"`
+}
+
+type ResTreeRoot struct {
+	Root string `json:"root"`
 }

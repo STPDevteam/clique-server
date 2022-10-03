@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	solTree "github.com/0xKiwi/sol-merkle-tree-go"
 	oo "github.com/Anna2024/liboo"
 	"github.com/ethereum/go-ethereum/common"
@@ -10,14 +11,14 @@ import (
 	"stp_dao_v2/utils"
 )
 
-func merkelTreeRoot(data models.AirdropAddressArray) ([]byte, error) {
+func merkelTreeRoot(data models.AirdropAddressArray) (string, error) {
 	var addressLength = len(data.Address)
 	var addressData = make([]models.AddressData, addressLength)
 	for index := 0; index < addressLength; index++ {
 		amount, err := utils.Dec2BigInt(data.Amount[index])
 		if err != nil {
 			oo.LogW("%v", err)
-			return nil, err
+			return "", err
 		}
 		addressData[index] = models.AddressData{
 			Id:      uint64(index),
@@ -44,8 +45,8 @@ func merkelTreeRoot(data models.AirdropAddressArray) ([]byte, error) {
 	merkleTree, err := solTree.GenerateTreeFromHashedItems(nodes)
 	if err != nil {
 		oo.LogW("%v", err)
-		return nil, err
+		return "", err
 	}
-
-	return merkleTree.Root(), nil
+	rootStr := fmt.Sprintf("%#x", merkleTree.Root())
+	return rootStr, nil
 }
