@@ -11,8 +11,6 @@ import (
 )
 
 func merkelTreeRoot(data models.AirdropAddressArray) ([]byte, error) {
-
-	var totalAmount = new(big.Int)
 	var addressLength = len(data.Address)
 	var addressData = make([]models.AddressData, addressLength)
 	for index := 0; index < addressLength; index++ {
@@ -27,7 +25,6 @@ func merkelTreeRoot(data models.AirdropAddressArray) ([]byte, error) {
 			Address: common.HexToAddress(data.Address[index]),
 		}
 
-		totalAmount.Add(totalAmount, amount)
 	}
 
 	var nodes = make([][]byte, addressLength)

@@ -191,17 +191,13 @@ type AirdropModel struct {
 }
 
 type AirdropUserSubmit struct {
-	Id              uint64         `db:"id,omitempty" sqler:"skips"`
-	CreateTime      string         `db:"create_time,omitempty" sqler:"skips"`
-	UpdateTime      string         `db:"update_time,omitempty" sqler:"skips"`
-	AirdropId       int            `db:"airdrop_id"`
-	Account         string         `db:"account"`
-	Twitter         sql.NullString `db:"twitter"`
-	Telegram        sql.NullString `db:"telegram"`
-	Email           sql.NullString `db:"email"`
-	TXID            sql.NullString `db:"txid"`
-	Other           sql.NullString `db:"other"`
-	DiscordUsername sql.NullString `db:"discord_username"`
+	Id         uint64 `db:"id,omitempty" sqler:"skips"`
+	CreateTime string `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime string `db:"update_time,omitempty" sqler:"skips"`
+	AirdropId  int    `db:"airdrop_id"`
+	Account    string `db:"account"`
+	SubmitInfo string `db:"submit_info"`
+	Timestamp  int64  `db:"timestamp"`
 }
 
 type ActivityModel struct {

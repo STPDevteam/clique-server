@@ -527,8 +527,8 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			airdropId, _ := utils.Hex2Dec(blockData[i]["topic2"].(string))
 			tokenAddress := utils.FixTo0x40String(blockData[i]["data"].(string)[2:66])
 			stakingAmount, _ := utils.Hex2BigInt(fmt.Sprintf("0x%s", blockData[i]["data"].(string)[66:130]))
-			startTime, _ := utils.Hex2Dec(blockData[i]["data"].(string)[130:194])
-			endTime, _ := utils.Hex2Dec(blockData[i]["data"].(string)[194:258])
+			airdropStartTime, _ := utils.Hex2Dec(blockData[i]["data"].(string)[130:194])
+			airdropEndTime, _ := utils.Hex2Dec(blockData[i]["data"].(string)[194:258])
 
 			var airdropEntity []models.AirdropModel
 			sqlSel := oo.NewSqler().Table(consts.TbNameAirdrop).Where("id", airdropId).Select()
@@ -550,10 +550,10 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			v["staking_amount"] = stakingAmount.String()
 			v["airdrop_amount"] = 0
 			v["merkle_root"] = ""
-			v["start_time"] = startTime
-			v["end_time"] = endTime
-			v["airdrop_start_time"] = airdropEntity[0].AirdropStartTime
-			v["airdrop_end_time"] = airdropEntity[0].AirdropEndTime
+			v["start_time"] = airdropEntity[0].StartTime
+			v["end_time"] = airdropEntity[0].EndTime
+			v["airdrop_start_time"] = airdropStartTime
+			v["airdrop_end_time"] = airdropEndTime
 			v["publish_time"], _ = utils.Hex2Dec(blockData[i]["time_stamp"].(string))
 			v["price"] = ""
 			m = append(m, v)
@@ -591,7 +591,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			//for notification
 			var notificationData = make([]map[string]interface{}, 0)
 			var values = make(map[string]interface{})
-			values["chain_id"] = chainId
+			values["chain_id"] = airdropEntity[0].ChainId
 			values["dao_address"] = airdropEntity[0].DaoAddress
 			values["types"] = consts.TypesNameAirdrop
 			values["activity_id"] = airdropId

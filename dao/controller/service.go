@@ -9,6 +9,7 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/urfave/cli"
+	"log"
 	"os"
 	"path"
 	"path/filepath"
@@ -109,7 +110,7 @@ func (svc *Service) Start(ctx *cli.Context) error {
 		r9.POST("/create", svc.httpCreateAirdrop)
 		r9.GET("/collect", httpCollectInformation)
 		r9.POST("/save/user", httpSaveUserInformation)
-		r9.GET("/user/download", httpDownloadUserInformation)
+		r9.POST("/user/download", httpDownloadUserInformation)
 		r9.POST("/address", httpSaveAirdropAddress)
 		r9.GET("/proof", httpClaimAirdrop)
 	}
@@ -202,16 +203,20 @@ func checkAirdropAdminAndTimestamp(sign *models.AirdropAdminSignData) (ret bool)
 	var data models.AdminMessage
 	err := json.Unmarshal([]byte(sign.Message), &data)
 	if err != nil {
+		oo.LogD("signMessage Unmarshal err %v", errSign)
 		return false
 	}
 
 	if !utils.CheckAdminSignMessageTimestamp(data.Expired) {
+		oo.LogD("signMessage CheckAdminSignMessageTimestamp err %v", errSign)
 		return false
 	}
 
 	if data.Type == "airdrop2" {
 		root, err := merkelTreeRoot(sign.Array)
-		if err != nil || strings.TrimPrefix(string(root), "0x") != data.Root {
+		log.Println(fmt.Sprintf("Tree Root: %#x\n", root))
+		if err != nil || string(root) != data.Root {
+			oo.LogD("signMessage err rootMe:%v.root:%v", fmt.Sprintf("Tree Root: %#x\n", root), data.Root)
 			return false
 		}
 	}
@@ -221,10 +226,11 @@ func checkAirdropAdminAndTimestamp(sign *models.AirdropAdminSignData) (ret bool)
 	if data.Type == "airdrop1" {
 		sqlSql = oo.NewSqler().Table(consts.TbNameAdmin).Where("chain_id", sign.ChainId).Where("dao_address", sign.DaoAddress).
 			Where("account", sign.Account).Where("account_level='superAdmin' OR account_level='admin'").Count()
-	} else if data.Type == "airdrop2" {
+	} else if data.Type == "airdrop2" || data.Type == "airdropDownload" {
 		sqlSql = oo.NewSqler().Table(consts.TbNameAirdrop).Where("id", sign.AirdropId).Where("creator", sign.Account).Count()
 	}
 	err = oo.SqlGet(sqlSql, &count)
+	oo.LogD("count:%v", count)
 	if err != nil || count == 0 {
 		return false
 	}

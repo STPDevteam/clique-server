@@ -66,7 +66,7 @@ func httpActivity(c *gin.Context) {
 	err := oo.SqlGet(sqlStr, &total)
 	if err == nil {
 		sqlCopy = *sqler
-		sqlStr = sqlCopy.Order("start_time DESC,publish_time DESC").Limit(countParam).Offset(offsetParam).Select()
+		sqlStr = sqlCopy.Order("publish_time DESC").Limit(countParam).Offset(offsetParam).Select()
 		err = oo.SqlSelect(sqlStr, &listEntities)
 	}
 	if err != nil {
@@ -138,6 +138,8 @@ func httpActivity(c *gin.Context) {
 			StakingAmount:     dataIndex.StakingAmount,
 			StartTime:         dataIndex.StartTime,
 			EndTime:           dataIndex.EndTime,
+			AirdropStartTime:  dataIndex.AirdropStartTime,
+			AirdropEndTime:    dataIndex.AirdropEndTime,
 			PublishTime:       dataIndex.PublishTime,
 			Price:             dataIndex.Price,
 			AirdropNumber:     len(addressArray.Address),

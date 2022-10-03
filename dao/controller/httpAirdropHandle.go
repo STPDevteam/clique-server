@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	solTree "github.com/0xKiwi/sol-merkle-tree-go"
@@ -9,9 +8,9 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/gin-gonic/gin"
+	"log"
 	"math/big"
 	"net/http"
-	"os"
 	"stp_dao_v2/consts"
 	"stp_dao_v2/models"
 	"stp_dao_v2/utils"
@@ -158,7 +157,7 @@ func (svc *Service) httpCreateAirdrop(c *gin.Context) {
 // @description airdrop need collect information
 // @Produce json
 // @Param id query int true "id"
-// @Success 200 {object} models.CollectInformationInfo
+// @Success 200 {object} models.ResAirdropInfo
 // @Router /stpdao/v2/airdrop/collect [get]
 func httpCollectInformation(c *gin.Context) {
 	idParam := c.Query("id")
@@ -175,7 +174,7 @@ func httpCollectInformation(c *gin.Context) {
 		return
 	}
 
-	var data models.CollectInformationInfo
+	var data []models.CollectInfo
 	err = json.Unmarshal([]byte(entity[0].CollectInformation), &data)
 	if err != nil {
 		oo.LogW("json.Unmarshal %v", err)
@@ -244,7 +243,7 @@ func httpSaveUserInformation(c *gin.Context) {
 	}
 
 	var endTime int64
-	sqlSel := oo.NewSqler().Table(consts.TbNameAirdrop).Select("end_time")
+	sqlSel := oo.NewSqler().Table(consts.TbNameAirdrop).Where("id", params.AirdropId).Select("end_time")
 	err = oo.SqlGet(sqlSel, &endTime)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)
@@ -265,19 +264,35 @@ func httpSaveUserInformation(c *gin.Context) {
 		return
 	}
 
+	var count int
+	sqlSel = oo.NewSqler().Table(consts.TbNameAirdropUserSubmit).Where("airdrop_id", params.AirdropId).
+		Where("account", params.Account).Count()
+	err = oo.SqlGet(sqlSel, &count)
+	if err != nil {
+		oo.LogW("SQL err: %v", err)
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+
 	var m = make([]map[string]interface{}, 0)
 	var v = make(map[string]interface{})
 	v["airdrop_id"] = params.AirdropId
 	v["account"] = params.Account
-	v["twitter"] = params.Twitter
-	v["telegram"] = params.Telegram
-	v["email"] = params.Email
-	v["txid"] = params.TXID
-	v["other"] = params.Other
-	v["discord_username"] = params.DiscordUsername
+	v["submit_info"] = params.UserSubmit
+	v["timestamp"] = time.Now().Unix()
 	m = append(m, v)
-	sqlIns := oo.NewSqler().Table(consts.TbNameAirdropUserSubmit).Insert(m)
-	err = oo.SqlExec(sqlIns)
+
+	var sqlInsUp string
+	if count == 0 {
+		sqlInsUp = oo.NewSqler().Table(consts.TbNameAirdropUserSubmit).Insert(m)
+	} else {
+		sqlInsUp = oo.NewSqler().Table(consts.TbNameAirdropUserSubmit).Where("airdrop_id", params.AirdropId).
+			Where("account", params.Account).Update(v)
+	}
+	err = oo.SqlExec(sqlInsUp)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)
 		c.JSON(http.StatusInternalServerError, models.Response{
@@ -302,14 +317,33 @@ func httpSaveUserInformation(c *gin.Context) {
 // @version 0.0.1
 // @description airdrop download user information
 // @Produce json
-// @Param id query int true "id"
-// @Router /stpdao/v2/airdrop/user/download [get]
+// @Param request body models.AirdropAdminSignData true "request"
+// @Router /stpdao/v2/airdrop/user/download [post]
 func httpDownloadUserInformation(c *gin.Context) {
-	idParam := c.Query("id")
+	var params models.AirdropAdminSignData
+	err := c.ShouldBindJSON(&params)
+	if err != nil {
+		oo.LogW("%v", err)
+		c.JSON(http.StatusBadRequest, models.Response{
+			Code:    http.StatusBadRequest,
+			Message: "Invalid parameters.",
+		})
+		return
+	}
+
+	if !checkAirdropAdminAndTimestamp(&params) {
+		oo.LogD("SignData err not auth")
+		c.JSON(http.StatusUnauthorized, models.Response{
+			Code:    http.StatusUnauthorized,
+			Data:    models.ResResult{Success: false},
+			Message: "SignData err not auth",
+		})
+		return
+	}
 
 	var userEntities []models.AirdropUserSubmit
-	sqlSel := oo.NewSqler().Table(consts.TbNameAirdropUserSubmit).Where("airdrop_id", idParam).Select()
-	err := oo.SqlSelect(sqlSel, &userEntities)
+	sqlSel := oo.NewSqler().Table(consts.TbNameAirdropUserSubmit).Where("airdrop_id", params.AirdropId).Select()
+	err = oo.SqlSelect(sqlSel, &userEntities)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)
 		c.JSON(http.StatusInternalServerError, models.Response{
@@ -320,7 +354,7 @@ func httpDownloadUserInformation(c *gin.Context) {
 	}
 
 	var airdropEntity []models.AirdropModel
-	sqlSel = oo.NewSqler().Table(consts.TbNameAirdrop).Where("id", idParam).Select()
+	sqlSel = oo.NewSqler().Table(consts.TbNameAirdrop).Where("id", params.AirdropId).Select()
 	err = oo.SqlSelect(sqlSel, &airdropEntity)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)
@@ -331,7 +365,7 @@ func httpDownloadUserInformation(c *gin.Context) {
 		return
 	}
 
-	var data models.CollectInformationInfo
+	var data []models.CollectInfo
 	err = json.Unmarshal([]byte(airdropEntity[0].CollectInformation), &data)
 	if err != nil {
 		oo.LogW("json.Unmarshal %v", err)
@@ -342,67 +376,34 @@ func httpDownloadUserInformation(c *gin.Context) {
 		return
 	}
 
-	if airdropEntity[0].EndTime <= time.Now().Unix() {
-		err = os.MkdirAll("./file", os.ModePerm)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, models.Response{
-				Code:    http.StatusInternalServerError,
-				Message: "Something went wrong, Please try again later.",
-			})
-			return
-		}
-
-		fileName := fmt.Sprintf("airdrop_users_%d.csv", time.Now().Unix())
-		path := fmt.Sprintf("./file/%s", fileName)
-		f, err := os.Create(path)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, models.Response{
-				Code:    http.StatusInternalServerError,
-				Message: "Something went wrong, Please try again later.",
-			})
-			return
-		}
-		defer f.Close()
-
-		writer := csv.NewWriter(f)
-		writer.Write([]string{"account", "discord", "twitter", "telegram", "email", "TXID", data.Other})
-
-		var allArray = make([][]string, 0)
-		for index := range userEntities {
-			var array = make([]string, 0)
-			u := userEntities[index]
-			array = append(array, u.Account, u.DiscordUsername.String, u.Twitter.String, u.Telegram.String, u.Email.String, u.TXID.String, u.Other.String)
-			allArray = append(allArray, array)
-		}
-		writer.WriteAll(allArray)
-		writer.Flush()
-
-		if err = writer.Error(); err != nil {
-			oo.LogW("error writing csv:", err)
-			c.JSON(http.StatusInternalServerError, models.Response{
-				Code:    http.StatusInternalServerError,
-				Message: "Something went wrong, Please try again later.",
-			})
-			return
-		}
-
-		file, err := os.Open(path)
-		if err != nil {
-			oo.LogW("file open err:", err)
-			c.JSON(http.StatusInternalServerError, models.Response{
-				Code:    http.StatusInternalServerError,
-				Message: "Something went wrong, Please try again later.",
-			})
-			return
-		}
-		defer file.Close()
-
-		c.Header("Content-Type", "application/octet-stream")
-		c.Header("Content-Disposition", "attachment; filename="+fileName)
-		c.Header("Content-Transfer-Encoding", "binary")
-		c.File(path)
-
+	var headerArray []string
+	for headerIndex := range data {
+		headerArray = append(headerArray, data[headerIndex].Name)
 	}
+
+	var recordArray []string
+	for index := range userEntities {
+		var array = make([]string, 0)
+
+		var userInfo map[string]string
+		err = json.Unmarshal([]byte(userEntities[index].SubmitInfo), &userInfo)
+		if err != nil {
+			oo.LogW("json.Unmarshal userInfo:%v err:%v", userEntities[index].Account, err)
+		}
+		for i := range data {
+			array = append(array, userInfo[data[i].Name])
+		}
+
+		recordArray = append(recordArray, strings.Join(array, ","))
+	}
+
+	c.Header("Content-Disposition", "attachment; filename="+fmt.Sprintf("%s_%d%s", "airdrop_user", time.Now().Unix(), ".csv"))
+	c.Header("Content-Type", "text/csv; charset=utf-8")
+	c.Writer.WriteString(
+		fmt.Sprintf("%s \n", strings.Join(headerArray, ",")) +
+			strings.Join(recordArray, " \n"),
+	)
+
 }
 
 // @Summary save airdrop address
@@ -531,7 +532,7 @@ func httpClaimAirdrop(c *gin.Context) {
 				common.LeftPadBytes(model.Amount.Bytes(), 32)...,
 			)...,
 		)
-
+		log.Println(fmt.Sprintf("packed: %#x\n", packed))
 		nodes[index] = crypto.Keccak256(packed)
 	}
 
@@ -540,6 +541,7 @@ func httpClaimAirdrop(c *gin.Context) {
 		addrToProof map[string]models.ClaimInfo
 	)
 	merkleTree, err = solTree.GenerateTreeFromHashedItems(nodes)
+	log.Println(fmt.Sprintf("Tree Root: %#x\n", merkleTree.Root()))
 	if err != nil {
 		oo.LogW("%v", err)
 		c.JSON(http.StatusInternalServerError, models.Response{

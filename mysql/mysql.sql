@@ -1,5 +1,5 @@
-CREATE SCHEMA IF NOT EXISTS `stp_dao_v2_dev` DEFAULT CHARACTER SET utf8 ;
-USE `stp_dao_v2_dev`;
+CREATE SCHEMA IF NOT EXISTS `stp_dao_v2_test` DEFAULT CHARACTER SET utf8 ;
+USE `stp_dao_v2_test`;
 
 SET GLOBAL TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
 SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
@@ -236,7 +236,7 @@ CREATE TABLE `tb_airdrop` (
     `title` VARCHAR(500) NOT NULL,
 	`airdrop_address` TEXT NOT NULL,
 	`description` TEXT NOT NULL,
-	`collect_information` VARCHAR(300) NOT NULL,
+	`collect_information` TEXT NOT NULL,
 	`token_chain_id` INT NOT NULL,
 	`token_address` VARCHAR(128) NOT NULL,
 	`max_airdrop_amount` DECIMAL(65,0) UNSIGNED NOT NULL,
@@ -259,12 +259,8 @@ CREATE TABLE `tb_airdrop_user_submit`(
     `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `airdrop_id` INT NOT NULL,
     `account` VARCHAR(128) NOT NULL,
-    `twitter` VARCHAR(128),
-    `telegram` VARCHAR(128),
-    `email` VARCHAR(128),
-    `txid` VARCHAR(128),
-    `other` VARCHAR(128),
-    `discord_username` VARCHAR(128) NOT NULL,
+    `submit_info` TEXT NOT NULL,
+    `timestamp` INT NOT NULL,
     PRIMARY KEY (`id`),
     INDEX `index_id` (`id` ASC),
     INDEX `index_airdrop_id` (`airdrop_id` ASC),
@@ -386,23 +382,23 @@ CREATE TABLE `tb_handle_lock` (
 );
 
 # dev
-INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
-('CreateDao','0x18Be998c31815d1C3d1dde881801112D9ee81532',28315453,'0x',80001),
-('CreateERC20','0x18Be998c31815d1C3d1dde881801112D9ee81532',28315453,'0x',80001),
-('CreateAirdrop','0x83D32D4618A8798112B0F6390b558761B8881348',28350844,'0x',80001),
-('SettleAirdrop','0x83D32D4618A8798112B0F6390b558761B8881348',28350844,'0x',80001),
-('Claimed','0x83D32D4618A8798112B0F6390b558761B8881348',28350844,'0x',80001),
-('CreateDao','0x93e7A03239d62CC24D84A7A216E81FB2aDbC7D9b',7666402,'0x',5),
-('CreateERC20','0x93e7A03239d62CC24D84A7A216E81FB2aDbC7D9b',7666402,'0x',5),
-('CreateAirdrop','0x4a9e8EeBd7e3d928E494A3ef43baD56838FB2Bf3',7678702,'0x',5),
-('SettleAirdrop','0x4a9e8EeBd7e3d928E494A3ef43baD56838FB2Bf3',7678702,'0x',5),
-('Claimed','0x4a9e8EeBd7e3d928E494A3ef43baD56838FB2Bf3',7678702,'0x',5);
+# INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
+# ('CreateDao','0x18Be998c31815d1C3d1dde881801112D9ee81532',28315453,'0x',80001),
+# ('CreateERC20','0x18Be998c31815d1C3d1dde881801112D9ee81532',28315453,'0x',80001),
+# ('CreateAirdrop','0x83D32D4618A8798112B0F6390b558761B8881348',28350844,'0x',80001),
+# ('SettleAirdrop','0x83D32D4618A8798112B0F6390b558761B8881348',28350844,'0x',80001),
+# ('Claimed','0x83D32D4618A8798112B0F6390b558761B8881348',28350844,'0x',80001),
+# ('CreateDao','0x93e7A03239d62CC24D84A7A216E81FB2aDbC7D9b',7666402,'0x',5),
+# ('CreateERC20','0x93e7A03239d62CC24D84A7A216E81FB2aDbC7D9b',7666402,'0x',5),
+# ('CreateAirdrop','0x4a9e8EeBd7e3d928E494A3ef43baD56838FB2Bf3',7678702,'0x',5),
+# ('SettleAirdrop','0x4a9e8EeBd7e3d928E494A3ef43baD56838FB2Bf3',7678702,'0x',5),
+# ('Claimed','0x4a9e8EeBd7e3d928E494A3ef43baD56838FB2Bf3',7678702,'0x',5);
 
 # test
-# INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
-# ('CreateDao','0x86D7841c28b11a144BaC1e57A7362141081B2422',28252159,'0x',80001),
-# ('CreateERC20','0x86D7841c28b11a144BaC1e57A7362141081B2422',28252159,'0x',80001),
-# ('CreateDao','0x75e4b5644eA842817155f960600b3cC3194D14C2',7644735,'0x',5),
-# ('CreateERC20','0x75e4b5644eA842817155f960600b3cC3194D14C2',7644735,'0x',5);
+INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
+('CreateDao','0x75e4b5644eA842817155f960600b3cC3194D14C2',28366954,'0x',80001),
+('CreateERC20','0x75e4b5644eA842817155f960600b3cC3194D14C2',28366954,'0x',80001),
+('CreateDao','0xd02C1CC76Cfb5b793f3a792B7BA74c53161e9e01',7684278,'0x',5),
+('CreateERC20','0xd02C1CC76Cfb5b793f3a792B7BA74c53161e9e01',7684278,'0x',5);
 
 INSERT INTO tb_category (category_name) VALUES ('Social'),('Protocol'),('NFT'),('Metaverse'),('Gaming'),('Dapp'),('Other');

@@ -233,7 +233,7 @@ type SignData struct {
 type AirdropAdminSignData struct {
 	ChainId    int                 `json:"chainId"`                                  // airdrop1:need ChainId
 	DaoAddress string              `json:"daoAddress"`                               // airdrop1:need DaoAddress
-	AirdropId  int64               `json:"airdropId"`                                // airdrop2:need AirdropId
+	AirdropId  int64               `json:"airdropId"`                                // airdrop2/airdropDownload:need AirdropId
 	Account    string              `json:"account" validate:"eth_addr"`              // personal_sign address,0x
 	Message    string              `json:"message"`                                  //{"expired":1244,"root": "","type":"airdrop1/airdrop2"}
 	Signature  string              `json:"signature" validate:"len=130,hexadecimal"` // personal_sign sign result,no 0x
@@ -361,6 +361,8 @@ type ResActivityList struct {
 	StakingAmount     string  `json:"stakingAmount"`
 	StartTime         int64   `json:"startTime"`
 	EndTime           int64   `json:"endTime"`
+	AirdropStartTime  int64   `json:"airdropStartTime"`
+	AirdropEndTime    int64   `json:"airdropEndTime"`
 	PublishTime       int64   `json:"publishTime"`
 	Price             string  `json:"price"`
 	AirdropNumber     int     `json:"airdropNumber"`
@@ -419,53 +421,42 @@ type ResSignDaoHandleData struct {
 }
 
 type CreateAirdropParam struct {
-	Title              string                 `json:"title"`
-	Description        string                 `json:"description"`
-	CollectInformation CollectInformationInfo `json:"collectInformation"`
-	TokenChainId       int                    `json:"tokenChainId"`
-	TokenAddress       string                 `json:"tokenAddress"`
-	MaxAirdropAmount   string                 `json:"maxAirdropAmount"`
-	StartTime          uint64                 `json:"startTime"`
-	EndTime            uint64                 `json:"endTime"`
-	AirdropStartTime   uint64                 `json:"airdropStartTime"`
-	AirdropEndTime     uint64                 `json:"airdropEndTime"`
-	Sign               AirdropAdminSignData   `json:"sign"`
+	Title              string               `json:"title"`
+	Description        string               `json:"description"`
+	CollectInformation []CollectInfo        `json:"collectInformation"`
+	TokenChainId       int                  `json:"tokenChainId"`
+	TokenAddress       string               `json:"tokenAddress"`
+	MaxAirdropAmount   string               `json:"maxAirdropAmount"`
+	StartTime          uint64               `json:"startTime"`
+	EndTime            uint64               `json:"endTime"`
+	AirdropStartTime   uint64               `json:"airdropStartTime"`
+	AirdropEndTime     uint64               `json:"airdropEndTime"`
+	Sign               AirdropAdminSignData `json:"sign"`
 }
 
-type CollectInformationInfo struct {
-	// demand: Option / Require
-	Twitter  string `json:"twitter,omitempty"`
-	Telegram string `json:"telegram,omitempty"`
-	Email    string `json:"email,omitempty"`
-	TXID     string `json:"txId,omitempty"`
-	// if Other not null, OtherNeed : Option / Require
-	Other     string `json:"other,omitempty"`
-	OtherNeed string `json:"otherNeed,omitempty"`
+type CollectInfo struct {
+	Name     string `json:"name"`
+	Required bool   `json:"required"`
 }
 
 type ResAirdropInfo struct {
-	Creator          string                 `json:"creator"`
-	ChainId          int                    `json:"chainId"`
-	DaoAddress       string                 `json:"daoAddress"`
-	Title            string                 `json:"title"`
-	Description      string                 `json:"description"`
-	TokenChainId     int                    `json:"tokenChainId"`
-	TokenAddress     string                 `json:"tokenAddress"`
-	StartTime        int64                  `json:"startTime"`
-	EndTime          int64                  `json:"endTime"`
-	AirdropStartTime int64                  `json:"airdropStartTime"`
-	AirdropEndTime   int64                  `json:"airdropEndTime"`
-	AddressNum       int                    `json:"addressNum"`
-	Collect          CollectInformationInfo `json:"collect"`
+	Creator          string        `json:"creator"`
+	ChainId          int           `json:"chainId"`
+	DaoAddress       string        `json:"daoAddress"`
+	Title            string        `json:"title"`
+	Description      string        `json:"description"`
+	TokenChainId     int           `json:"tokenChainId"`
+	TokenAddress     string        `json:"tokenAddress"`
+	StartTime        int64         `json:"startTime"`
+	EndTime          int64         `json:"endTime"`
+	AirdropStartTime int64         `json:"airdropStartTime"`
+	AirdropEndTime   int64         `json:"airdropEndTime"`
+	AddressNum       int           `json:"addressNum"`
+	Collect          []CollectInfo `json:"collect"`
 }
 
 type UserInformationParam struct {
-	AirdropId       int64  `json:"airdropId"`
-	Account         string `json:"account"`
-	Twitter         string `json:"twitter,omitempty"`
-	Telegram        string `json:"telegram,omitempty"`
-	Email           string `json:"email,omitempty"`
-	TXID            string `json:"txId,omitempty"`
-	Other           string `json:"other,omitempty"`
-	DiscordUsername string `json:"discordUsername"`
+	AirdropId  int64  `json:"airdropId"`
+	Account    string `json:"account"`
+	UserSubmit string `json:"userSubmit"`
 }
