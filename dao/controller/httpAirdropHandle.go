@@ -377,6 +377,7 @@ func httpDownloadUserInformation(c *gin.Context) {
 	}
 
 	var headerArray []string
+	headerArray = append(headerArray, "account")
 	for headerIndex := range data {
 		headerArray = append(headerArray, data[headerIndex].Name)
 	}
@@ -390,8 +391,8 @@ func httpDownloadUserInformation(c *gin.Context) {
 		if err != nil {
 			oo.LogW("json.Unmarshal userInfo:%v err:%v", userEntities[index].Account, err)
 		}
-		for i := range data {
-			array = append(array, userInfo[data[i].Name])
+		for i := range headerArray {
+			array = append(array, userInfo[headerArray[i]])
 		}
 
 		recordArray = append(recordArray, strings.Join(array, ","))
