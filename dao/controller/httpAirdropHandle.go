@@ -498,7 +498,7 @@ func httpClaimAirdrop(c *gin.Context) {
 	var entity []models.AirdropModel
 	sqlSel := oo.NewSqler().Table(consts.TbNameAirdrop).Where("id", idParam).Select()
 	err := oo.SqlSelect(sqlSel, &entity)
-	if err != nil || len(entity[0].AirdropAddress) == 0 {
+	if err != nil {
 		oo.LogW("SQL err: %v", err)
 		c.JSON(http.StatusInternalServerError, models.Response{
 			Code:    500,
@@ -506,11 +506,18 @@ func httpClaimAirdrop(c *gin.Context) {
 		})
 		return
 	}
+	if entity[0].AirdropStartTime > time.Now().Unix() || len(entity[0].AirdropAddress) == 0 {
+		c.JSON(http.StatusBadRequest, models.Response{
+			Code:    400,
+			Message: "Can't claim airdrop now.",
+		})
+		return
+	}
 
 	var data models.AirdropAddressArray
 	err = json.Unmarshal([]byte(entity[0].AirdropAddress), &data)
 	if err != nil {
-		oo.LogW("%v", err)
+		oo.LogW("Json Unmarshal %v", err)
 		c.JSON(http.StatusInternalServerError, models.Response{
 			Code:    500,
 			Message: "Json Unmarshal Failed.",
