@@ -200,6 +200,18 @@ func httpCollectInformation(c *gin.Context) {
 		addressNum = len(addressArray.Address)
 	}
 
+	var collectCount int
+	sqlSel = oo.NewSqler().Table(consts.TbNameAirdropUserSubmit).Where("airdrop_id", idParam).Count()
+	err = oo.SqlGet(sqlSel, &collectCount)
+	if err != nil {
+		oo.LogW("SQL err: %v", err)
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, models.Response{
 		Code:    http.StatusOK,
 		Message: "ok",
@@ -216,6 +228,7 @@ func httpCollectInformation(c *gin.Context) {
 			AirdropStartTime: entity[0].AirdropStartTime,
 			AirdropEndTime:   entity[0].AirdropEndTime,
 			AddressNum:       addressNum,
+			CollectCount:     collectCount,
 			Collect:          data,
 		},
 	})
@@ -481,6 +494,91 @@ func httpSaveAirdropAddress(c *gin.Context) {
 			Root: root,
 		},
 	})
+}
+
+// @Summary upload airdrop address list
+// @Tags Airdrop
+// @version 0.0.1
+// @description upload airdrop address list
+// @Produce json
+// @Param airdropId query int true "airdropId"
+// @Success 200 {object} models.ResUploadAddressList
+// @Router /stpdao/v2/airdrop/address/list [get]
+func httpAirdropAddressList(c *gin.Context) {
+	airdropIdParam := c.Query("airdropId")
+
+	var entity []models.AirdropModel
+	sqlSel := oo.NewSqler().Table(consts.TbNameAirdrop).Where("id", airdropIdParam).Select()
+	err := oo.SqlSelect(sqlSel, &entity)
+	if err != nil {
+		oo.LogW("SQL err: %v", err)
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+
+	var data models.AirdropAddressArray
+	if len(entity[0].AirdropAddress) != 0 {
+		err = json.Unmarshal([]byte(entity[0].AirdropAddress), &data)
+		if err != nil {
+			oo.LogW("Json Unmarshal %v", err)
+			c.JSON(http.StatusInternalServerError, models.Response{
+				Code:    500,
+				Message: "Json Unmarshal Failed.",
+			})
+			return
+		}
+	} else {
+		var entities []models.AirdropPrepareModel
+		sqlSel = oo.NewSqler().Table(consts.TbNameAirdropPrepare).Order("create_time DESC").Where("airdrop_id", airdropIdParam).Select()
+		err = oo.SqlSelect(sqlSel, &entities)
+		if err != nil {
+			oo.LogW("SQL err: %v", err)
+			c.JSON(http.StatusInternalServerError, models.Response{
+				Code:    500,
+				Message: "Something went wrong, Please try again later.",
+			})
+			return
+		}
+
+		if len(entities) == 0 {
+			c.JSON(http.StatusOK, models.Response{
+				Code:    http.StatusOK,
+				Message: "ok",
+			})
+			return
+		}
+
+		if len(entities[0].PrepareAddress) != 0 {
+			err = json.Unmarshal([]byte(entities[0].PrepareAddress), &data)
+			if err != nil {
+				oo.LogW("Json Unmarshal %v", err)
+				c.JSON(http.StatusInternalServerError, models.Response{
+					Code:    500,
+					Message: "Json Unmarshal Failed.",
+				})
+				return
+			}
+		}
+
+	}
+
+	var list []models.ResUploadAddressList
+	for i := range data.Address {
+		list = append(list, models.ResUploadAddressList{
+			Address: data.Address[i],
+			Amount:  data.Amount[i],
+		})
+	}
+
+	c.JSON(http.StatusOK, models.Response{
+		Code:    http.StatusOK,
+		Message: "ok",
+		Data:    list,
+	})
+
 }
 
 // @Summary claim airdrop address

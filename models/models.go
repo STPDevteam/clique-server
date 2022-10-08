@@ -452,6 +452,7 @@ type ResAirdropInfo struct {
 	AirdropStartTime int64         `json:"airdropStartTime"`
 	AirdropEndTime   int64         `json:"airdropEndTime"`
 	AddressNum       int           `json:"addressNum"`
+	CollectCount     int           `json:"collectCount"`
 	Collect          []CollectInfo `json:"collect"`
 }
 
@@ -463,4 +464,9 @@ type UserInformationParam struct {
 
 type ResTreeRoot struct {
 	Root string `json:"root"`
+}
+
+type ResUploadAddressList struct {
+	Address string `json:"address"`
+	Amount  string `json:"amount"`
 }
