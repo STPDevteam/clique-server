@@ -97,6 +97,19 @@ func (svc *Service) scheduledTask() {
 										return
 									}
 
+									//var eventCount int
+									//sqlSel := oo.NewSqler().Table(consts.TbNameEventHistorical).
+									//	Where("chain_id", chainId).Where("transaction_hash", res.Result[i].TransactionHash).
+									//	Where("log_index", res.Result[i].LogIndex).Count()
+									//err = oo.SqlGet(sqlSel, &eventCount)
+									//if err != nil {
+									//	oo.LogW("query event_historical_data SQL err: %v", err)
+									//	return
+									//}
+									//if eventCount != 0 {
+									//	continue
+									//}
+
 									var b = make(map[string]interface{})
 									b["message_sender"] = resFrom.Result.From
 									b["event_type"] = eventType
@@ -342,9 +355,10 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 				return
 			}
 
-			proposalTitle, errTx := proposalInfo(daoAddress, blockData[i]["topic1"].(string), url)
-			if errTx != nil {
-				oo.LogW("proposalInfo func err: %v", errTx)
+			proposalTitle, err := proposalInfo(daoAddress, blockData[i]["topic1"].(string), url)
+			if err != nil {
+				oo.LogW("proposalInfo func err: %v", err)
+				errTx = err
 				return
 			}
 
@@ -400,7 +414,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			proposalId, _ := utils.Hex2Dec(blockData[i]["topic1"].(string))
 			endTime, _ := utils.Hex2Dec(blockData[i]["time_stamp"].(string))
 			daoAddress := blockData[i]["address"].(string)
-			sqlUp := fmt.Sprintf(`UPDATE %s SET end_time=%d WHERE proposal_id=%d AND chain_id=%d AND dao_address='%s'`,
+			sqlUp = fmt.Sprintf(`UPDATE %s SET end_time=%d WHERE proposal_id=%d AND chain_id=%d AND dao_address='%s'`,
 				consts.TbNameProposal,
 				endTime,
 				proposalId,
@@ -667,7 +681,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 				Where("token_address", tokenAddress).
 				Where("holder_address", to).
 				Where("chain_id", chainId).Select()
-			errTx := oo.SqlSelect(sqlTo, &entityTo)
+			errTx = oo.SqlSelect(sqlTo, &entityTo)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return
@@ -678,16 +692,18 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			} else {
 				toBaseAmount, _ = utils.Dec2BigInt(entityTo[0].Balance)
 			}
-			amount.Add(amount, toBaseAmount)
+			var toAmount = new(big.Int).Add(amount, toBaseAmount)
 			sqlInsTo := fmt.Sprintf(`REPLACE INTO %s (token_address,holder_address,balance,chain_id) VALUES ('%s','%s','%s',%d)`,
 				consts.TbNameHolderData,
 				tokenAddress,
 				to,
-				amount.String(),
+				toAmount.String(),
 				chainId,
 			)
 			_, errTx = oo.SqlxTxExec(tx, sqlInsTo)
 			if errTx != nil {
+				oo.LogW("hash: %v", blockData[i]["transaction_hash"].(string))
+				oo.LogW("sqlInsTo sqler: %v", sqlInsTo)
 				oo.LogW("SQL err: %v", errTx)
 				return
 			}
@@ -700,20 +716,24 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 					Where("chain_id", chainId).Select()
 				errTx = oo.SqlSelect(sqlFrom, &entityFrom)
 				if errTx != nil {
+					oo.LogW("hash: %v", blockData[i]["transaction_hash"].(string))
+					oo.LogW("sqlFrom sqler: %v", sqlFrom)
 					oo.LogW("SQL err: %v", errTx)
 					return
 				}
 				fromBaseAmount, _ := utils.Dec2BigInt(entityFrom[0].Balance)
-				amount.Sub(fromBaseAmount, amount)
+				var fromAmount = new(big.Int).Sub(fromBaseAmount, amount)
 				sqlInsFrom := fmt.Sprintf(`UPDATE %s SET balance='%s' WHERE token_address='%s' AND holder_address='%s' AND chain_id=%d`,
 					consts.TbNameHolderData,
-					amount.String(),
+					fromAmount.String(),
 					tokenAddress,
 					from,
 					chainId,
 				)
 				_, errTx = oo.SqlxTxExec(tx, sqlInsFrom)
 				if errTx != nil {
+					oo.LogW("hash: %v", blockData[i]["transaction_hash"].(string))
+					oo.LogW("sqlInsFrom sqler: %v", sqlInsFrom)
 					oo.LogW("SQL err: %v", errTx)
 					return
 				}
@@ -736,16 +756,18 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 				} else {
 					zeroBaseAmount, _ = utils.Dec2BigInt(entityZero[0].Balance)
 				}
-				amount.Add(amount, zeroBaseAmount)
+				var zeroAmount = new(big.Int).Add(amount, zeroBaseAmount)
 				sqlInsZero := fmt.Sprintf(`REPLACE INTO %s (token_address,holder_address,balance,chain_id) VALUES ('%s','%s','%s',%d)`,
 					consts.TbNameHolderData,
 					tokenAddress,
 					consts.ZeroAddress0x40,
-					amount.String(),
+					zeroAmount.String(),
 					chainId,
 				)
 				_, errTx = oo.SqlxTxExec(tx, sqlInsZero)
 				if errTx != nil {
+					oo.LogW("hash: %v", blockData[i]["transaction_hash"].(string))
+					oo.LogW("sqlInsZero sqler: %v", sqlInsZero)
 					oo.LogW("SQL err: %v", errTx)
 					return
 				}
