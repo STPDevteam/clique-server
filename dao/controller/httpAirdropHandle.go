@@ -9,6 +9,7 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/gin-gonic/gin"
 	"log"
+	"math"
 	"math/big"
 	"net/http"
 	"stp_dao_v2/consts"
@@ -89,7 +90,7 @@ func (svc *Service) httpCreateAirdrop(c *gin.Context) {
 	v["creator"] = params.Sign.Account
 	v["chain_id"] = params.Sign.ChainId
 	v["dao_address"] = params.Sign.DaoAddress
-	v["title"] = params.Title
+	v["title"] = params.Title[:int(math.Min(float64(len(params.Title)), 500))]
 	v["airdrop_address"] = ""
 	v["description"] = params.Description
 	v["collect_information"] = string(encoded)

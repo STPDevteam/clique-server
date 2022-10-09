@@ -97,18 +97,18 @@ func (svc *Service) scheduledTask() {
 										return
 									}
 
-									//var eventCount int
-									//sqlSel := oo.NewSqler().Table(consts.TbNameEventHistorical).
-									//	Where("chain_id", chainId).Where("transaction_hash", res.Result[i].TransactionHash).
-									//	Where("log_index", res.Result[i].LogIndex).Count()
-									//err = oo.SqlGet(sqlSel, &eventCount)
-									//if err != nil {
-									//	oo.LogW("query event_historical_data SQL err: %v", err)
-									//	return
-									//}
-									//if eventCount != 0 {
-									//	continue
-									//}
+									var eventCount int
+									sqlSel := oo.NewSqler().Table(consts.TbNameEventHistorical).
+										Where("chain_id", chainId).Where("transaction_hash", res.Result[i].TransactionHash).
+										Where("log_index", res.Result[i].LogIndex).Count()
+									err = oo.SqlGet(sqlSel, &eventCount)
+									if err != nil {
+										oo.LogW("query event_historical_data SQL err: %v", err)
+										return
+									}
+									if eventCount != 0 {
+										continue
+									}
 
 									var b = make(map[string]interface{})
 									b["message_sender"] = resFrom.Result.From
@@ -504,23 +504,6 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 				oo.LogW("SQL err: %v", errTx)
 				return
 			}
-			//var count int
-			//sqlSel := oo.NewSqler().Table(consts.TbNameAdmin).Where("chain_id", chainId).Where("dao_address", daoAddress).
-			//	Where("account", newOwner).Where("account_level", consts.LevelAdmin).Count()
-			//errTx = oo.SqlGet(sqlSel, &count)
-			//if errTx != nil {
-			//	oo.LogW("SQL err: %v", errTx)
-			//	return
-			//}
-			//if count == 1 {
-			//	sqlDel := oo.NewSqler().Table(consts.TbNameAdmin).Where("chain_id", chainId).Where("dao_address", daoAddress).
-			//		Where("account", newOwner).Where("account_level", consts.LevelAdmin).Delete()
-			//	errTx = oo.SqlExec(sqlDel)
-			//	if errTx != nil {
-			//		oo.LogW("SQL err: %v", errTx)
-			//		return
-			//	}
-			//}
 
 			sqlUpDaoCreator := fmt.Sprintf(`UPDATE %s SET creator='%s' WHERE dao_address='%s' AND chain_id=%d AND creator='%s'`,
 				consts.TbNameDao,
@@ -629,7 +612,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			values["activity_id"] = airdropId
 			values["dao_logo"] = ""
 			values["dao_name"] = ""
-			values["activity_name"] = airdropEntity[0].Title
+			values["activity_name"] = airdropEntity[0].Title[:int(math.Min(float64(len(airdropEntity[0].Title)), 500))]
 			values["start_time"] = airdropEntity[0].AirdropStartTime
 			values["update_bool"] = 1
 			notificationData = append(notificationData, values)

@@ -45,6 +45,7 @@ type AccountModel struct {
 	Introduction sql.NullString `db:"introduction"`
 	Twitter      sql.NullString `db:"twitter"`
 	Github       sql.NullString `db:"github"`
+	Discord      sql.NullString `db:"github"`
 }
 
 type NonceModel struct {

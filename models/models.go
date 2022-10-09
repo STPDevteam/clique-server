@@ -81,6 +81,7 @@ type ResQueryAccount struct {
 	Introduction string `json:"introduction"`
 	Twitter      string `json:"twitter"`
 	Github       string `json:"github"`
+	Discord      string `json:"discord"`
 	//MyTokens     []ResMyTokens `json:"myTokens"`
 	AdminDao  []ResDao `json:"adminDao"`
 	MemberDao []ResDao `json:"memberDao"`
@@ -121,6 +122,7 @@ type UpdateAccountParam struct {
 	Introduction string `json:"introduction"`
 	Twitter      string `json:"twitter"`
 	Github       string `json:"github"`
+	Discord      string `json:"discord"`
 }
 
 type ResDaoListPage struct {

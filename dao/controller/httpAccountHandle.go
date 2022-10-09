@@ -3,6 +3,7 @@ package controller
 import (
 	oo "github.com/Anna2024/liboo"
 	"github.com/gin-gonic/gin"
+	"math"
 	"net/http"
 	"stp_dao_v2/consts"
 	"stp_dao_v2/models"
@@ -218,6 +219,7 @@ func httpQueryAccount(c *gin.Context) {
 			Introduction: entity.Introduction.String,
 			Twitter:      entity.Twitter.String,
 			Github:       entity.Github.String,
+			Discord:      entity.Discord.String,
 			//MyTokens:     dataMyTokens,
 			AdminDao:  dataAdmin,
 			MemberDao: dataMember,
@@ -256,18 +258,18 @@ func httpUpdateAccount(c *gin.Context) {
 		return
 	}
 
-	//maybe error: account_logo=""
 	var v = make(map[string]interface{})
-	v["account_logo"] = params.Param.AccountLogo
-	v["nickname"] = params.Param.Nickname
-	v["introduction"] = params.Param.Introduction
-	v["twitter"] = params.Param.Twitter
-	v["github"] = params.Param.Github
+	v["account_logo"] = params.Param.AccountLogo[:int(math.Min(float64(len(params.Param.AccountLogo)), 128))]
+	v["nickname"] = params.Param.Nickname[:int(math.Min(float64(len(params.Param.Nickname)), 128))]
+	v["introduction"] = params.Param.Introduction[:int(math.Min(float64(len(params.Param.Introduction)), 200))]
+	v["twitter"] = params.Param.Twitter[:int(math.Min(float64(len(params.Param.Twitter)), 128))]
+	v["github"] = params.Param.Github[:int(math.Min(float64(len(params.Param.Github)), 128))]
+	v["discord"] = params.Param.Discord[:int(math.Min(float64(len(params.Param.Discord)), 128))]
 	sqler := oo.NewSqler().Table(consts.TbNameAccount).Where("account", params.Sign.Account).Update(v)
 	err = oo.SqlExec(sqler)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)
-		c.JSON(http.StatusOK, models.Response{
+		c.JSON(http.StatusInternalServerError, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",
 		})

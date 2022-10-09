@@ -3,6 +3,7 @@ package controller
 import (
 	oo "github.com/Anna2024/liboo"
 	"github.com/gin-gonic/gin"
+	"math"
 	"net/http"
 	"stp_dao_v2/consts"
 	"stp_dao_v2/models"
@@ -30,10 +31,10 @@ func httpErrorInfo(c *gin.Context) {
 
 	var m = make([]map[string]interface{}, 0)
 	var v = make(map[string]interface{})
-	v["title"] = params.Title
+	v["title"] = params.Title[:int(math.Min(float64(len(params.Title)), 512))]
 	v["content"] = params.Content
-	v["func"] = params.Func
-	v["params"] = params.Params
+	v["func"] = params.Func[:int(math.Min(float64(len(params.Func)), 128))]
+	v["params"] = params.Params[:int(math.Min(float64(len(params.Params)), 512))]
 	m = append(m, v)
 
 	sqlIns := oo.NewSqler().Table(consts.TbNameErrorInfo).Insert(m)
