@@ -33,7 +33,8 @@ CREATE TABLE `event_historical_data` (
     INDEX `index_topic2` (`topic2` ASC),
     INDEX `index_topic3` (`topic3` ASC),
     INDEX `index_block_number` (`block_number` ASC),
-    INDEX `index_chain_id` (`chain_id` ASC));
+    INDEX `index_chain_id` (`chain_id` ASC),
+    UNIQUE INDEX `unique_index_chain_id_log_index_transaction_hash` (`chain_id` ASC, `log_index` ASC, `transaction_hash` ASC));
 
 CREATE TABLE `scan_task` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -180,7 +181,32 @@ CREATE TABLE `tb_account` (
 `introduction` VARCHAR(200),
 `twitter` VARCHAR(128),
 `github` VARCHAR(128),
+`discord` VARCHAR(128),
 PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `tb_account_record`
+(
+    `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `create_time` TIMESTAMP    NOT NULL                             DEFAULT CURRENT_TIMESTAMP,
+    `update_time` TIMESTAMP    NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `creator` VARCHAR(128) NOT NULL,
+    `types` VARCHAR(30) NOT NULL,
+    `chain_id` INT NOT NULL,
+    `address` VARCHAR(128) NOT NULL,#(dao address / token address)
+    `activity_id` INT NOT NULL,#(proposal / airdrop)
+    `avatar` VARCHAR(500) NOT NULL,#(dao / token)
+    `dao_name` VARCHAR(30) NOT NULL,#(dao name)
+    `titles` VARCHAR(500) NOT NULL,#(title of proposal / token name='' / airdrop name)
+    `time` INT NOT NULL,
+    `update_bool` bool NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `index_creator` (`creator` ASC),
+    INDEX `index_types` (`types` ASC),
+    INDEX `index_chain_id` (`chain_id` ASC),
+    INDEX `index_address` (`address` ASC),
+    INDEX `index_activity_id` (`activity_id` ASC),
+    INDEX `index_update_bool` (`update_bool` ASC)
 );
 
 CREATE TABLE `tb_proposal_info` (

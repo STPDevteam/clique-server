@@ -472,3 +472,20 @@ type ResUploadAddressList struct {
 	Address string `json:"address"`
 	Amount  string `json:"amount"`
 }
+
+type ResAccountRecordPage struct {
+	List  []ResAccountRecord `json:"list"`
+	Total uint64             `json:"total"`
+}
+
+type ResAccountRecord struct {
+	Creator    string `json:"creator"`
+	Types      string `json:"types"`
+	ChainId    int    `json:"chainId"`
+	Address    string `json:"address"`
+	ActivityId int    `json:"activityId"`
+	Avatar     string `json:"avatar"`
+	DaoName    string `json:"daoName"`
+	Titles     string `json:"titles"`
+	Time       int64  `json:"time"`
+}

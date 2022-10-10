@@ -9,6 +9,7 @@ const (
 	TbNameEventHistorical     = "event_historical_data"
 	TbNameScanTask            = "scan_task"
 	TbNameAccount             = "tb_account"
+	TbNameAccountRecord       = "tb_account_record"
 	TbNameNonce               = "tb_nonce"
 	TbNameMember              = "tb_member"
 	TbNameDao                 = "tb_dao"
@@ -39,6 +40,7 @@ const (
 	EvOwnershipTransferred = "OwnershipTransferred"
 	EvCreateERC20          = "CreateERC20"
 	EvTransfer             = "Transfer"
+	EvClaimReserve         = "ClaimReserve"
 	EvCreateAirdrop        = "CreateAirdrop"
 	EvSettleAirdrop        = "SettleAirdrop"
 	EvClaimed              = "Claimed"
@@ -78,17 +80,20 @@ func EventTypes(event string) string {
 		//OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
 		ownershipTransferred = utils.Keccak256("OwnershipTransferred(address,address)")
 
+		//CreateERC20(address indexed creator, address token)
+		createERC20 = utils.Keccak256("CreateERC20(address,address)")
+		//Transfer(address indexed from, address indexed to, uint256 value);
+		transfer = utils.Keccak256("Transfer(address,address,uint256)")
+
+		//ClaimReserve(address indexed account, address indexed token, uint256 amount)
+		claimReserve = utils.Keccak256("ClaimReserve(address,address,uint256)")
+
 		//CreateAirdrop(address indexed creator, uint256 indexed airdropId, address token, uint256 amount, uint256 startTime, uint256 endTime)
 		createAirdrop = utils.Keccak256("CreateAirdrop(address,uint256,address,uint256,uint256,uint256)")
 		//SettleAirdrop(uint256 indexed airdropId, uint256 amount, bytes32 merkleTreeRoot)
 		settleAirdrop = utils.Keccak256("SettleAirdrop(uint256,uint256,bytes32)")
 		//Claimed(uint256 indexed airdropId, uint256 index, address account, uint256 amount)
 		claimed = utils.Keccak256("Claimed(uint256,uint256,address,uint256)")
-
-		//CreateERC20(address indexed creator, address token)
-		createERC20 = utils.Keccak256("CreateERC20(address,address)")
-		//Transfer(address indexed from, address indexed to, uint256 value);
-		transfer = utils.Keccak256("Transfer(address,address,uint256)")
 	)
 	switch event {
 	case createDao:
@@ -117,6 +122,9 @@ func EventTypes(event string) string {
 		break
 	case transfer:
 		event = EvTransfer
+		break
+	case claimReserve:
+		event = EvClaimReserve
 		break
 	case createAirdrop:
 		event = EvCreateAirdrop

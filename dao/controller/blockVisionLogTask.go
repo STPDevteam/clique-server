@@ -107,6 +107,7 @@ func (svc *Service) scheduledTask() {
 										return
 									}
 									if eventCount != 0 {
+										oo.LogW("event already exists")
 										continue
 									}
 
@@ -226,6 +227,52 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 				oo.LogW("ownTokensImgSave func err: %v", errTx)
 				return
 			}
+
+			// save account record
+			var recordInsert = make([]map[string]interface{}, 0)
+			var record = make(map[string]interface{})
+			record["creator"] = blockData[i]["message_sender"].(string)
+			record["types"] = consts.EvCreateERC20
+			record["chain_id"] = chainId
+			record["address"] = tokenAddress
+			record["activity_id"] = 0
+			record["avatar"] = ""
+			record["dao_name"] = ""
+			record["titles"] = ""
+			record["time"], _ = utils.Hex2Dec(blockData[i]["time_stamp"].(string))
+			record["update_bool"] = 1
+			recordInsert = append(recordInsert, record)
+			sqlInsRecord := oo.NewSqler().Table(consts.TbNameAccountRecord).Insert(recordInsert)
+			errTx = oo.SqlExec(sqlInsRecord)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+		}
+
+		if blockData[i]["event_type"] == consts.EvClaimReserve {
+			// save account record
+			account := utils.FixTo0x40String(blockData[i]["topic1"].(string))
+			tokenAddress := utils.FixTo0x40String(blockData[i]["topic2"].(string))
+			var recordInsert = make([]map[string]interface{}, 0)
+			var record = make(map[string]interface{})
+			record["creator"] = account
+			record["types"] = consts.EvClaimReserve
+			record["chain_id"] = chainId
+			record["address"] = tokenAddress
+			record["activity_id"] = 0
+			record["avatar"] = ""
+			record["dao_name"] = ""
+			record["titles"] = ""
+			record["time"], _ = utils.Hex2Dec(blockData[i]["time_stamp"].(string))
+			record["update_bool"] = 1
+			recordInsert = append(recordInsert, record)
+			sqlInsRecord := oo.NewSqler().Table(consts.TbNameAccountRecord).Insert(recordInsert)
+			errTx = oo.SqlExec(sqlInsRecord)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
 		}
 
 		if blockData[i]["event_type"] == consts.EvCreateDao {
@@ -321,6 +368,27 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 				oo.LogW("SQL err: %v", errTx)
 				return
 			}
+
+			// save account record
+			var recordInsert = make([]map[string]interface{}, 0)
+			var record = make(map[string]interface{})
+			record["creator"] = creatorAddress
+			record["types"] = consts.EvCreateDao
+			record["chain_id"] = chainId
+			record["address"] = daoAddress
+			record["activity_id"] = 0
+			record["avatar"] = ""
+			record["dao_name"] = ""
+			record["titles"] = ""
+			record["time"], _ = utils.Hex2Dec(blockData[i]["time_stamp"].(string))
+			record["update_bool"] = 1
+			recordInsert = append(recordInsert, record)
+			sqlInsRecord := oo.NewSqler().Table(consts.TbNameAccountRecord).Insert(recordInsert)
+			errTx = oo.SqlExec(sqlInsRecord)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
 		}
 
 		if blockData[i]["event_type"] == consts.EvSetting {
@@ -408,6 +476,27 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 				oo.LogW("SQL err: %v\n", errTx)
 				return
 			}
+
+			// save account record
+			var recordInsert = make([]map[string]interface{}, 0)
+			var record = make(map[string]interface{})
+			record["creator"] = proposer
+			record["types"] = consts.EvCreateProposal
+			record["chain_id"] = chainId
+			record["address"] = daoAddress
+			record["activity_id"] = proposalId
+			record["avatar"] = ""
+			record["dao_name"] = ""
+			record["titles"] = ""
+			record["time"], _ = utils.Hex2Dec(blockData[i]["time_stamp"].(string))
+			record["update_bool"] = 1
+			recordInsert = append(recordInsert, record)
+			sqlInsRecord := oo.NewSqler().Table(consts.TbNameAccountRecord).Insert(recordInsert)
+			errTx = oo.SqlExec(sqlInsRecord)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
 		}
 
 		if blockData[i]["event_type"] == consts.EvCancelProposal {
@@ -426,11 +515,34 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 				oo.LogW("SQL err: %v", errTx)
 				return
 			}
+
+			// save account record
+			var recordInsert = make([]map[string]interface{}, 0)
+			var record = make(map[string]interface{})
+			record["creator"] = blockData[i]["message_sender"].(string)
+			record["types"] = consts.EvCancelProposal
+			record["chain_id"] = chainId
+			record["address"] = daoAddress
+			record["activity_id"] = proposalId
+			record["avatar"] = ""
+			record["dao_name"] = ""
+			record["titles"] = ""
+			record["time"], _ = utils.Hex2Dec(blockData[i]["time_stamp"].(string))
+			record["update_bool"] = 1
+			recordInsert = append(recordInsert, record)
+			sqlInsRecord := oo.NewSqler().Table(consts.TbNameAccountRecord).Insert(recordInsert)
+			errTx = oo.SqlExec(sqlInsRecord)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
 		}
 
 		if blockData[i]["event_type"] == consts.EvVote {
+			proposalId, _ := utils.Hex2Dec(blockData[i]["topic1"].(string))
 			voter := utils.FixTo0x40String(blockData[i]["topic2"].(string))
 			nonce, _ := utils.Hex2Dec(blockData[i]["data"].(string)[66:130])
+			daoAddress := blockData[i]["address"].(string)
 			sqlUpdate := fmt.Sprintf(`INSERT INTO %s (account,nonce,chain_id) VALUES ('%s',%d,%d) ON DUPLICATE KEY UPDATE nonce=%d`,
 				consts.TbNameNonce,
 				voter,
@@ -448,8 +560,8 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			var m = make([]map[string]interface{}, 0)
 			var v = make(map[string]interface{})
 			v["chain_id"] = chainId
-			v["dao_address"] = blockData[i]["address"].(string)
-			v["proposal_id"], _ = utils.Hex2Dec(blockData[i]["topic1"].(string))
+			v["dao_address"] = daoAddress
+			v["proposal_id"] = proposalId
 			v["voter"] = voter
 			v["option_index"], _ = utils.Hex2Dec(blockData[i]["topic3"].(string))
 			v["amount"] = amount.String()
@@ -457,6 +569,27 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			m = append(m, v)
 			sqlIns := oo.NewSqler().Table(consts.TbNameVote).Insert(m)
 			_, errTx = oo.SqlxTxExec(tx, sqlIns)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+
+			// save account record
+			var recordInsert = make([]map[string]interface{}, 0)
+			var record = make(map[string]interface{})
+			record["creator"] = voter
+			record["types"] = consts.EvVote
+			record["chain_id"] = chainId
+			record["address"] = daoAddress
+			record["activity_id"] = proposalId
+			record["avatar"] = ""
+			record["dao_name"] = ""
+			record["titles"] = ""
+			record["time"], _ = utils.Hex2Dec(blockData[i]["time_stamp"].(string))
+			record["update_bool"] = 1
+			recordInsert = append(recordInsert, record)
+			sqlInsRecord := oo.NewSqler().Table(consts.TbNameAccountRecord).Insert(recordInsert)
+			errTx = oo.SqlExec(sqlInsRecord)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return
@@ -481,6 +614,27 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 				accountLevel,
 			)
 			_, errTx = oo.SqlxTxExec(tx, sqlIns)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+
+			// save account record
+			var recordInsert = make([]map[string]interface{}, 0)
+			var record = make(map[string]interface{})
+			record["creator"] = blockData[i]["message_sender"].(string)
+			record["types"] = consts.EvAdmin
+			record["chain_id"] = chainId
+			record["address"] = daoAddress
+			record["activity_id"] = 0
+			record["avatar"] = ""
+			record["dao_name"] = ""
+			record["titles"] = ""
+			record["time"], _ = utils.Hex2Dec(blockData[i]["time_stamp"].(string))
+			record["update_bool"] = 1
+			recordInsert = append(recordInsert, record)
+			sqlInsRecord := oo.NewSqler().Table(consts.TbNameAccountRecord).Insert(recordInsert)
+			errTx = oo.SqlExec(sqlInsRecord)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return
@@ -516,6 +670,37 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return
+			}
+
+			// save account record
+			var contractAddress string
+			sqlSel := oo.NewSqler().Table(consts.TbNameScanTask).Where("event_type", consts.EvCreateDao).
+				Where("chain_id", chainId).Select("address")
+			errTx = oo.SqlGet(sqlSel, &contractAddress)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+			if previousOwner != consts.ZeroAddress0x40 && previousOwner != strings.ToLower(contractAddress) {
+				var recordInsert = make([]map[string]interface{}, 0)
+				var record = make(map[string]interface{})
+				record["creator"] = previousOwner
+				record["types"] = consts.EvOwnershipTransferred
+				record["chain_id"] = chainId
+				record["address"] = daoAddress
+				record["activity_id"] = 0
+				record["avatar"] = ""
+				record["dao_name"] = ""
+				record["titles"] = ""
+				record["time"], _ = utils.Hex2Dec(blockData[i]["time_stamp"].(string))
+				record["update_bool"] = 1
+				recordInsert = append(recordInsert, record)
+				sqlInsRecord := oo.NewSqler().Table(consts.TbNameAccountRecord).Insert(recordInsert)
+				errTx = oo.SqlExec(sqlInsRecord)
+				if errTx != nil {
+					oo.LogW("SQL err: %v", errTx)
+					return
+				}
 			}
 		}
 
@@ -561,6 +746,26 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 				return
 			}
 
+			// save account record
+			var recordInsert = make([]map[string]interface{}, 0)
+			var record = make(map[string]interface{})
+			record["creator"] = creator
+			record["types"] = consts.EvCreateAirdrop
+			record["chain_id"] = airdropEntity[0].ChainId
+			record["address"] = airdropEntity[0].DaoAddress
+			record["activity_id"] = airdropId
+			record["avatar"] = ""
+			record["dao_name"] = ""
+			record["titles"] = ""
+			record["time"], _ = utils.Hex2Dec(blockData[i]["time_stamp"].(string))
+			record["update_bool"] = 1
+			recordInsert = append(recordInsert, record)
+			sqlInsRecord := oo.NewSqler().Table(consts.TbNameAccountRecord).Insert(recordInsert)
+			errTx = oo.SqlExec(sqlInsRecord)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
 		}
 
 		if blockData[i]["event_type"] == consts.EvSettleAirdrop {
@@ -622,15 +827,36 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 				oo.LogW("SQL err: %v", errTx)
 				return
 			}
+
+			// save account record
+			var recordInsert = make([]map[string]interface{}, 0)
+			var record = make(map[string]interface{})
+			record["creator"] = blockData[i]["message_sender"].(string)
+			record["types"] = consts.EvSettleAirdrop
+			record["chain_id"] = airdropEntity[0].ChainId
+			record["address"] = airdropEntity[0].DaoAddress
+			record["activity_id"] = airdropId
+			record["avatar"] = ""
+			record["dao_name"] = ""
+			record["titles"] = ""
+			record["time"], _ = utils.Hex2Dec(blockData[i]["time_stamp"].(string))
+			record["update_bool"] = 1
+			recordInsert = append(recordInsert, record)
+			sqlInsRecord := oo.NewSqler().Table(consts.TbNameAccountRecord).Insert(recordInsert)
+			errTx = oo.SqlExec(sqlInsRecord)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
 		}
 
 		if blockData[i]["event_type"] == consts.EvClaimed {
 			airdropId, _ := utils.Hex2Dec(blockData[i]["topic1"].(string))
 			amount, _ := utils.Hex2BigInt(fmt.Sprintf("0x%s", blockData[i]["data"].(string)[130:194]))
 
-			var daoAddress string
-			sqlSel := oo.NewSqler().Table(consts.TbNameAirdrop).Where("id", airdropId).Select("dao_address")
-			errTx = oo.SqlGet(sqlSel, &daoAddress)
+			var airdropEntity []models.AirdropModel
+			sqlSel := oo.NewSqler().Table(consts.TbNameAirdrop).Where("id", airdropId).Select()
+			errTx = oo.SqlSelect(sqlSel, &airdropEntity)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return
@@ -638,8 +864,8 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 
 			var m = make([]map[string]interface{}, 0)
 			var v = make(map[string]interface{})
-			v["chain_id"] = chainId
-			v["dao_address"] = daoAddress
+			v["chain_id"] = airdropEntity[0].ChainId
+			v["dao_address"] = airdropEntity[0].DaoAddress
 			v["airdrop_id"] = airdropId
 			v["index_id"], _ = utils.Hex2Dec(blockData[i]["data"].(string)[:66])
 			v["account"] = utils.FixTo0x40String(blockData[i]["data"].(string)[66:130])
@@ -647,6 +873,27 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			m = append(m, v)
 			sqlIns := oo.NewSqler().Table(consts.TbNameClaimed).Insert(m)
 			_, errTx = oo.SqlxTxExec(tx, sqlIns)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+
+			// save account record
+			var recordInsert = make([]map[string]interface{}, 0)
+			var record = make(map[string]interface{})
+			record["creator"] = blockData[i]["message_sender"].(string)
+			record["types"] = consts.EvClaimed
+			record["chain_id"] = airdropEntity[0].ChainId
+			record["address"] = airdropEntity[0].DaoAddress
+			record["activity_id"] = airdropId
+			record["avatar"] = ""
+			record["dao_name"] = ""
+			record["titles"] = ""
+			record["time"], _ = utils.Hex2Dec(blockData[i]["time_stamp"].(string))
+			record["update_bool"] = 1
+			recordInsert = append(recordInsert, record)
+			sqlInsRecord := oo.NewSqler().Table(consts.TbNameAccountRecord).Insert(recordInsert)
+			errTx = oo.SqlExec(sqlInsRecord)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return

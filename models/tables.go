@@ -45,7 +45,23 @@ type AccountModel struct {
 	Introduction sql.NullString `db:"introduction"`
 	Twitter      sql.NullString `db:"twitter"`
 	Github       sql.NullString `db:"github"`
-	Discord      sql.NullString `db:"github"`
+	Discord      sql.NullString `db:"discord"`
+}
+
+type AccountRecordModel struct {
+	Id         uint64 `db:"id,omitempty" sqler:"skips"`
+	CreateTime string `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime string `db:"update_time,omitempty" sqler:"skips"`
+	Creator    string `db:"creator"`
+	Types      string `db:"types"`
+	ChainId    int    `db:"chain_id"`
+	Address    string `db:"address"`
+	ActivityId int    `db:"activity_id"`
+	Avatar     string `db:"avatar"`
+	DaoName    string `db:"dao_name"`
+	Titles     string `db:"titles"`
+	Time       int64  `db:"time"`
+	UpdateBool bool   `db:"update_bool"`
 }
 
 type NonceModel struct {

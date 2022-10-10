@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"stp_dao_v2/consts"
 	"stp_dao_v2/models"
+	"strconv"
 )
 
 // @Summary account info
@@ -168,47 +169,6 @@ func httpQueryAccount(c *gin.Context) {
 		})
 	}
 
-	//var activityEntities []models.EventHistoricalModel
-	//account0x64 := utils.FixTo0x64String(params.Account)
-	//sqlActivity := oo.NewSqler().Table(consts.TbNameEventHistorical).
-	//	Where("event_type='CreateProposal' OR event_type='Vote'").
-	//	Where("topic2", account0x64).
-	//	Order("time_stamp DESC").Limit(5).Offset(0).Select()
-	//err = oo.SqlSelect(sqlActivity, &activityEntities)
-	//if err != nil {
-	//	oo.LogW("SQL err: %v", err)
-	//	c.JSON(http.StatusInternalServerError, models.Response{
-	//		Code:    500,
-	//		Message: "Something went wrong, Please try again later.",
-	//	})
-	//	return
-	//}
-	//var dataActivity = make([]models.ResActivity, 0)
-	//for index := range activityEntities {
-	//	dataIndex := activityEntities[index]
-	//	proposalId := utils.Hex2Dec(dataIndex.Topic1)
-	//	if dataIndex.EventType == consts.EvCreateProposal {
-	//		dataActivity = append(dataActivity, models.ResActivity{
-	//			EventType:  dataIndex.EventType,
-	//			ChainId:    dataIndex.ChainId,
-	//			DaoAddress: dataIndex.Address,
-	//			ProposalId: proposalId,
-	//		})
-	//	}
-	//	if dataIndex.EventType == consts.EvVote {
-	//		optionIndex := utils.Hex2Dec(dataIndex.Topic3)
-	//		amount, _ := utils.Hex2BigInt(dataIndex.Data[:66])
-	//		dataActivity = append(dataActivity, models.ResActivity{
-	//			EventType:   dataIndex.EventType,
-	//			ChainId:     dataIndex.ChainId,
-	//			DaoAddress:  dataIndex.Address,
-	//			ProposalId:  proposalId,
-	//			OptionIndex: optionIndex,
-	//			Amount:      amount.String(),
-	//		})
-	//	}
-	//}
-
 	c.JSON(http.StatusOK, models.Response{
 		Code:    http.StatusOK,
 		Message: "ok",
@@ -223,7 +183,6 @@ func httpQueryAccount(c *gin.Context) {
 			//MyTokens:     dataMyTokens,
 			AdminDao:  dataAdmin,
 			MemberDao: dataMember,
-			//Activity:  dataActivity,
 		},
 	})
 }
@@ -280,4 +239,68 @@ func httpUpdateAccount(c *gin.Context) {
 		Code:    http.StatusOK,
 		Message: "ok",
 	})
+}
+
+// @Summary account record list
+// @Tags account
+// @version 0.0.1
+// @description account record list
+// @Produce json
+// @Param account query string true "account address"
+// @Param offset query  int true "offset,page"
+// @Param count query  int true "count,page"
+// @Success 200 {object} models.ResAccountRecordPage
+// @Router /stpdao/v2/account/record [get]
+func httpQueryRecordList(c *gin.Context) {
+	accountParam := c.Query("account")
+	count := c.Query("count")
+	offset := c.Query("offset")
+	countParam, _ := strconv.Atoi(count)
+	offsetParam, _ := strconv.Atoi(offset)
+
+	var entities []models.AccountRecordModel
+	sqler := oo.NewSqler().Table(consts.TbNameAccountRecord).Where("creator", accountParam)
+
+	var total uint64
+	sqlCopy := *sqler
+	sqlStr := sqlCopy.Count()
+	err := oo.SqlGet(sqlStr, &total)
+	if err == nil {
+		sqlCopy = *sqler
+		sqlStr = sqlCopy.Order("time DESC").Limit(countParam).Offset(offsetParam).Select()
+		err = oo.SqlSelect(sqlStr, &entities)
+	}
+	if err != nil {
+		oo.LogW("SQL err: %v", err)
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+
+	var data = make([]models.ResAccountRecord, 0)
+	for index := range entities {
+		data = append(data, models.ResAccountRecord{
+			Creator:    entities[index].Creator,
+			Types:      entities[index].Types,
+			ChainId:    entities[index].ChainId,
+			Address:    entities[index].Address,
+			ActivityId: entities[index].ActivityId,
+			Avatar:     entities[index].Avatar,
+			DaoName:    entities[index].DaoName,
+			Titles:     entities[index].Titles,
+			Time:       entities[index].Time,
+		})
+	}
+
+	c.JSON(http.StatusOK, models.Response{
+		Code:    http.StatusOK,
+		Message: "ok",
+		Data: models.ResAccountRecordPage{
+			List:  data,
+			Total: total,
+		},
+	})
+
 }
