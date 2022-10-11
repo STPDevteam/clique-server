@@ -38,8 +38,13 @@ func (svc *Service) updateDaoInfoTask() {
 							oo.LogW("QueryDaoInfo failed. chainId:%d. err: %v\n", chainId, errQ)
 							return
 						}
+						val, ok := res.Result.(string)
+						if !ok {
+							oo.LogW("QueryDaoInfo failed. chainId:%d. err: %v\n", chainId, errQ)
+							return
+						}
 
-						if len(res.Result.(string)) != 0 {
+						if val != "" {
 							var outputParameters []string
 							outputParameters = append(outputParameters, "string")
 							outputParameters = append(outputParameters, "string")
@@ -51,7 +56,7 @@ func (svc *Service) updateDaoInfoTask() {
 							outputParameters = append(outputParameters, "string")
 							outputParameters = append(outputParameters, "string")
 
-							daoInfo, errDe := utils.Decode(outputParameters, strings.TrimPrefix(res.Result.(string), "0x"))
+							daoInfo, errDe := utils.Decode(outputParameters, strings.TrimPrefix(val, "0x"))
 							if errDe != nil {
 								oo.LogW("Decode failed. chainId:%d. err: %v\n", chainId, errDe)
 								return

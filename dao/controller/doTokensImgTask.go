@@ -115,10 +115,15 @@ func ownTokensImgSave(contract, tokenAddress, url string, chainId int, tx *sqlx.
 		oo.LogW("QueryMethodEthCall failed. chainId:%d. err: %v\n", chainId, err)
 		return err
 	}
+	val, ok := res.Result.(string)
+	if !ok {
+		oo.LogW("QueryMethodEthCall failed. chainId:%d. err: %v\n", chainId, err)
+		return err
+	}
 
 	var outputParameters []string
 	outputParameters = append(outputParameters, "string")
-	tokenImgUrl, err := utils.Decode(outputParameters, strings.TrimPrefix(res.Result.(string), "0x"))
+	tokenImgUrl, err := utils.Decode(outputParameters, strings.TrimPrefix(val, "0x"))
 	if err != nil {
 		oo.LogW("Decode failed. err: %v\n", err)
 		return err

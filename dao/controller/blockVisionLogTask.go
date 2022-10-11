@@ -37,11 +37,16 @@ func (svc *Service) scheduledTask() {
 
 			var latestBlockNum int
 			resBlock, err := utils.QueryLatestBlock(url)
-			if err != nil || resBlock.Result.(string) == "" {
+			if err != nil {
 				oo.LogW("QueryLatestBlock failed. err: %v\n", err)
 				continue
 			}
-			latestBlockNum, _ = utils.Hex2Dec(resBlock.Result.(string))
+			val, ok := resBlock.Result.(string)
+			if !ok {
+				oo.LogW("QueryLatestBlock failed. err: %v\n", err)
+				continue
+			}
+			latestBlockNum, _ = utils.Hex2Dec(val)
 
 			latestBlockNum = int(math.Min(float64(latestBlockNum-svc.appConfig.DelayedBlockNumber), float64(currentBlockNum+svc.appConfig.BlockNumberPerReq)))
 			for ; currentBlockNum <= latestBlockNum; currentBlockNum++ {
@@ -836,7 +841,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			var v = make(map[string]interface{})
 			v["airdrop_address"] = prepareAddress
 			sqlUp = oo.NewSqler().Table(consts.TbNameAirdrop).Where("id", airdropId).Update(v)
-			errTx = oo.SqlExec(sqlUp)
+			_, errTx = oo.SqlxTxExec(tx, sqlUp)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return
