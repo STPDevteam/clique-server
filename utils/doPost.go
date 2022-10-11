@@ -113,6 +113,36 @@ func jsonTransactionByHashRPC(body, url string) (data *models.JsonRPCTransaction
 	return data, nil
 }
 
+func ReserveToken(hash, url string) (model *models.JsonRPCReserveTokenModel, err error) {
+	body := fmt.Sprintf(`{
+		"jsonrpc": "2.0",
+		"method": "eth_getTransactionByHash",
+		"params": [
+			"%s"
+		],
+		"id": 1
+	}`, hash)
+	return jsonReserveTokenRPC(body, url)
+}
+
+func jsonReserveTokenRPC(body, url string) (data *models.JsonRPCReserveTokenModel, err error) {
+	res, err := DoPost(
+		url,
+		"application/json",
+		body,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(res, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
 func QueryBalance(tokenAddress, accountAddress, url string) (model *models.JsonRPCBalanceModel, err error) {
 	body := fmt.Sprintf(`{
 		"id": 1,
@@ -158,16 +188,17 @@ func jsonBalanceRPC(body, url string) (data *models.JsonRPCBalanceModel, err err
 	return data, nil
 }
 
-func QueryMethodEthCall(to, data, url string) (*models.JsonRPCModel, error) {
-	body := fmt.Sprintf(`{
-		"id": 1,
-		"jsonrpc":"2.0",
-		"method": "eth_call",
-		"params": [{"to":"%s","data":"%s"}, "latest"]
-	}`, to, data)
-
-	return jsonRPC(body, url)
-}
+//
+//func QueryMethodEthCall(to, data, url string) (*models.JsonRPCModel, error) {
+//	body := fmt.Sprintf(`{
+//		"id": 1,
+//		"jsonrpc":"2.0",
+//		"method": "eth_call",
+//		"params": [{"to":"%s","data":"%s"}, "latest"]
+//	}`, to, data)
+//
+//	return jsonRPC(body, url)
+//}
 
 func jsonRPC(body, url string) (data *models.JsonRPCModel, err error) {
 	res, err := DoPost(
@@ -244,4 +275,33 @@ func GetTokenImg(url string) (data *models.TokenImg, err error) {
 	}
 
 	return data, nil
+}
+
+func GetV1LastBlockNumber(url string) (data *models.V1LastBlockNumber, err error) {
+	res, err := DoGet(url)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(res, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+func QueryMethodEthCallByTag(to, data, url, tag string) (*models.JsonRPCModel, error) {
+	body := fmt.Sprintf(`{
+		"id": 1,
+		"jsonrpc":"2.0",
+		"method": "eth_call",
+		"params": [{"to":"%s","data":"%s"}, "%s"]
+	}`, to, data, tag)
+
+	return jsonRPC(body, url)
+}
+
+func QueryMethodEthCall(to, data, url string) (*models.JsonRPCModel, error) {
+	return QueryMethodEthCallByTag(to, data, url, "latest")
 }

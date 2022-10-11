@@ -108,44 +108,36 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 		resBalance = strings.TrimPrefix(res.Result.(string), "0x")
 
 	} else if params.SignType == "1" {
-
-		for _, mainChainId := range svc.appConfig.MainnetBalanceSign {
-			if params.ChainId == mainChainId {
-				var VoteEntity []models.EventHistoricalModel
-				proposalId := utils.FixTo0x64String(fmt.Sprintf(`%x`, params.ProposalId))
-				sqlVote := oo.NewSqler().Table(consts.TbNameEventHistorical).
-					Where("event_type", consts.EvCreateProposal).
-					Where("address", params.DaoAddress).
-					Where("chain_id", params.ChainId).
-					Where("topic1", proposalId).Select()
-				err = oo.SqlSelect(sqlVote, &VoteEntity)
-				if err != nil || VoteEntity == nil || len(VoteEntity) == 0 {
-					oo.LogW("SQL err: %v", err)
-					c.JSON(http.StatusInternalServerError, models.Response{
-						Code:    500,
-						Message: "Something went wrong, Please try again later.",
-					})
-					return
-				}
-				blockNumber, _ := strconv.ParseInt(VoteEntity[0].BlockNumber, 16, 64)
-				res, errQ := utils.QuerySpecifyBalance(tokenAddress, params.Account, url, blockNumber)
-				if errQ != nil {
-					oo.LogW("DoPost err: %v", errQ)
-					c.JSON(http.StatusInternalServerError, models.Response{
-						Code:    500,
-						Message: "Something went wrong, Please try again later.",
-					})
-					return
-				}
-				decBalance, _ := new(big.Int).SetString(res.Result.Value, 10)
-				resBalance = fmt.Sprintf("%064s", fmt.Sprintf("%x", decBalance))
-			}
+		var voteEntity models.EventHistoricalModel
+		proposalId := utils.FixTo0x64String(fmt.Sprintf(`%x`, params.ProposalId))
+		sqlVote := oo.NewSqler().Table(consts.TbNameEventHistorical).
+			Where("event_type", consts.EvCreateProposal).
+			Where("address", params.DaoAddress).
+			Where("chain_id", params.ChainId).
+			Where("topic1", proposalId).Select()
+		err = oo.SqlGet(sqlVote, &voteEntity)
+		if err != nil {
+			oo.LogW("SQL err: %v", err)
+			c.JSON(http.StatusInternalServerError, models.Response{
+				Code:    500,
+				Message: "Something went wrong, Please try again later.",
+			})
+			return
 		}
 
+		var success = false
 		for _, testChainId := range svc.appConfig.TestnetBalanceSign {
 			if params.ChainId == testChainId {
+				url = consts.GetAnkrArchive(params.ChainId)
+				if url == "" {
+					c.JSON(http.StatusInternalServerError, models.Response{
+						Code:    500,
+						Message: "Unsupported token.",
+					})
+					return
+				}
 				data := fmt.Sprintf("%s%s", paramsDataPrefix, strings.TrimPrefix(params.Account, "0x"))
-				res, errQb := utils.QueryMethodEthCall(tokenAddress, data, url)
+				res, errQb := utils.QueryMethodEthCallByTag(tokenAddress, data, url, voteEntity.BlockNumber)
 				if errQb != nil || res.Result == nil || res.Result == "0x" {
 					c.JSON(http.StatusInternalServerError, models.Response{
 						Code:    500,
@@ -154,7 +146,24 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 					return
 				}
 				resBalance = strings.TrimPrefix(res.Result.(string), "0x")
+				success = true
+				break
 			}
+		}
+
+		if !success {
+			blockNumber, _ := strconv.ParseInt(voteEntity.BlockNumber, 16, 64)
+			res, errQ := utils.QuerySpecifyBalance(tokenAddress, params.Account, url, blockNumber)
+			if errQ != nil {
+				oo.LogW("DoPost err: %v", errQ)
+				c.JSON(http.StatusInternalServerError, models.Response{
+					Code:    500,
+					Message: "Something went wrong, Please try again later.",
+				})
+				return
+			}
+			decBalance, _ := new(big.Int).SetString(res.Result.Value, 10)
+			resBalance = fmt.Sprintf("%064s", fmt.Sprintf("%x", decBalance))
 		}
 
 	}

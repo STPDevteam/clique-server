@@ -73,8 +73,11 @@ func httpProposalsList(c *gin.Context) {
 			DaoAddress: daoAddressParam,
 			ProposalId: listEntities[index].ProposalId,
 			Proposer:   listEntities[index].Proposer,
+			Title:      listEntities[index].Title,
+			ContentV1:  listEntities[index].ContentV1,
 			StartTime:  listEntities[index].StartTime,
 			EndTime:    listEntities[index].EndTime,
+			Version:    listEntities[index].Version,
 		})
 	}
 

@@ -94,6 +94,8 @@ func EventTypes(event string) string {
 		settleAirdrop = utils.Keccak256("SettleAirdrop(uint256,uint256,bytes32)")
 		//Claimed(uint256 indexed airdropId, uint256 index, address account, uint256 amount)
 		claimed = utils.Keccak256("Claimed(uint256,uint256,address,uint256)")
+
+		//event CreateProposal(uint indexed id, address indexed from, address indexed to, uint amount, uint startTime, uint endTime, address daoToken);
 	)
 	switch event {
 	case createDao:
@@ -140,4 +142,17 @@ func EventTypes(event string) string {
 		break
 	}
 	return event
+}
+
+func GetAnkrArchive(chainId int) string {
+	if chainId == 80001 {
+		return "https://rpc.ankr.com/polygon_mumbai"
+	}
+	if chainId == 137 {
+		return "https://rpc.ankr.com/polygon"
+	}
+	if chainId == 5 {
+		return "https://rpc.ankr.com/eth_goerli"
+	}
+	return ""
 }

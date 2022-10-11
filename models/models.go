@@ -50,6 +50,16 @@ type From struct {
 	From string `json:"from"`
 }
 
+type JsonRPCReserveTokenModel struct {
+	Id      uint64 `json:"id"`
+	Jsonrpc string `json:"jsonrpc"`
+	Result  Input  `json:"result"`
+}
+
+type Input struct {
+	Input string `json:"input"`
+}
+
 type JsonRPCBalanceModel struct {
 	Id      uint64  `json:"id"`
 	Jsonrpc string  `json:"jsonrpc"`
@@ -198,8 +208,11 @@ type ResProposalsList struct {
 	DaoAddress string `json:"daoAddress"`
 	ProposalId int    `json:"proposalId"`
 	Proposer   string `json:"proposer"`
+	Title      string `json:"title"`
+	ContentV1  string `json:"contentV1"`
 	StartTime  int64  `json:"startTime"`
 	EndTime    int64  `json:"endTime"`
+	Version    string `json:"version"`
 }
 
 type ResVotesListPage struct {
@@ -304,6 +317,12 @@ type TokenImg struct {
 	} `json:"image"`
 }
 
+type V1LastBlockNumber struct {
+	Code int    `json:"code"`
+	Data int    `json:"data"`
+	Msg  string `json:"msg"`
+}
+
 type ResTokenImg struct {
 	TokenChainId int    `json:"tokenChainId"`
 	TokenAddress string `json:"tokenAddress"`
@@ -389,6 +408,7 @@ type ResNotification struct {
 type NotificationInfo struct {
 	ChainId      int    `json:"chainId"`
 	DaoAddress   string `json:"daoAddress"`
+	TokenAddress string `json:"tokenAddress"` // ReserveToken
 	DaoLogo      string `json:"daoLogo"`
 	DaoName      string `json:"daoName"`
 	ProposalId   int    `json:"proposalId"`   // NewProposal

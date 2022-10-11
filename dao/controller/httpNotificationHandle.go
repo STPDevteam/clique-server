@@ -85,7 +85,6 @@ func httpNotificationList(c *gin.Context) {
 				DaoName:      dataIndex.DaoName,
 				ProposalId:   dataIndex.ActivityId,
 				ProposalName: dataIndex.ActivityName,
-				//StartTime:    dataIndex.StartTime,
 			})
 		} else if dataIndex.Types == consts.TypesNameAirdrop {
 			info = append(info, models.NotificationInfo{
@@ -95,7 +94,11 @@ func httpNotificationList(c *gin.Context) {
 				DaoName:      dataIndex.DaoName,
 				ActivityId:   dataIndex.ActivityId,
 				ActivityName: dataIndex.ActivityName,
-				//StartTime:    dataIndex.StartTime,
+			})
+		} else if dataIndex.Types == consts.TypesNameReserveToken {
+			info = append(info, models.NotificationInfo{
+				ChainId:      dataIndex.ChainId,
+				TokenAddress: dataIndex.DaoAddress,
 			})
 		} else if dataIndex.Types == consts.TypesNamePublicSale {
 

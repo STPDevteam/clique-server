@@ -182,9 +182,11 @@ type ProposalModel struct {
 	ChainId    int    `db:"chain_id"`
 	DaoAddress string `db:"dao_address"`
 	Title      string `db:"title"`
+	ContentV1  string `db:"content_v1"`
 	Proposer   string `db:"proposer"`
 	StartTime  int64  `db:"start_time"`
 	EndTime    int64  `db:"end_time"`
+	Version    string `db:"version"`
 }
 
 type AirdropModel struct {

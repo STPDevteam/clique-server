@@ -243,13 +243,29 @@ CREATE TABLE `tb_proposal` (
     `chain_id` INT NOT NULL,
     `dao_address` VARCHAR(128) NOT NULL,
     `title` VARCHAR(500) NOT NULL,
+    `content_v1` TEXT NOT NULL,
 	`proposer` VARCHAR(128) NOT NULL,
 	`start_time` INT NOT NULL,
 	`end_time` INT NOT NULL,
+	`version` VARCHAR(10) NOT NULL,
 	PRIMARY KEY (`id`),
     INDEX `index_chain_id` (`chain_id` ASC),
     INDEX `index_dao_address` (`dao_address` ASC),
     INDEX `index_proposalId` (`proposal_id` ASC)
+);
+
+CREATE TABLE `tb_proposal_v1` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `chain_id` INT NOT NULL,
+    `dao_address` VARCHAR(128) NOT NULL,
+    `dao_address_v1` VARCHAR(128) NOT NULL,
+    `voting_v1` VARCHAR(128) NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `index_chain_id` (`chain_id` ASC),
+    INDEX `index_dao_address` (`dao_address` ASC),
+    INDEX `index_dao_address_v1` (`dao_address_v1` ASC)
 );
 
 CREATE TABLE `tb_airdrop` (
@@ -376,7 +392,7 @@ CREATE TABLE `tb_notification` (
     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `chain_id` INT NOT NULL,
-    `dao_address` VARCHAR(128) NOT NULL,
+    `dao_address` VARCHAR(128) NOT NULL,# if types=ReserveToken -> token address
     `types` VARCHAR(30) NOT NULL,
     `activity_id` INT NOT NULL,
     `dao_logo` VARCHAR(500) NOT NULL,
@@ -423,11 +439,13 @@ CREATE TABLE `tb_handle_lock` (
 # INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
 # ('CreateDao','0x18Be998c31815d1C3d1dde881801112D9ee81532',28315453,'0x',80001),
 # ('CreateERC20','0x18Be998c31815d1C3d1dde881801112D9ee81532',28315453,'0x',80001),
+# ('ClaimReserve','0x18Be998c31815d1C3d1dde881801112D9ee81532',28315453,'0x',80001),
 # ('CreateAirdrop','0x83D32D4618A8798112B0F6390b558761B8881348',28350844,'0x',80001),
 # ('SettleAirdrop','0x83D32D4618A8798112B0F6390b558761B8881348',28350844,'0x',80001),
 # ('Claimed','0x83D32D4618A8798112B0F6390b558761B8881348',28350844,'0x',80001),
 # ('CreateDao','0x93e7A03239d62CC24D84A7A216E81FB2aDbC7D9b',7666402,'0x',5),
 # ('CreateERC20','0x93e7A03239d62CC24D84A7A216E81FB2aDbC7D9b',7666402,'0x',5),
+# ('ClaimReserve','0x93e7A03239d62CC24D84A7A216E81FB2aDbC7D9b',7666402,'0x',5),
 # ('CreateAirdrop','0x4a9e8EeBd7e3d928E494A3ef43baD56838FB2Bf3',7678702,'0x',5),
 # ('SettleAirdrop','0x4a9e8EeBd7e3d928E494A3ef43baD56838FB2Bf3',7678702,'0x',5),
 # ('Claimed','0x4a9e8EeBd7e3d928E494A3ef43baD56838FB2Bf3',7678702,'0x',5);
@@ -436,7 +454,9 @@ CREATE TABLE `tb_handle_lock` (
 INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
 ('CreateDao','0x75e4b5644eA842817155f960600b3cC3194D14C2',28366954,'0x',80001),
 ('CreateERC20','0x75e4b5644eA842817155f960600b3cC3194D14C2',28366954,'0x',80001),
+('ClaimReserve','0x75e4b5644eA842817155f960600b3cC3194D14C2',28366954,'0x',80001),
 ('CreateDao','0xd02C1CC76Cfb5b793f3a792B7BA74c53161e9e01',7684278,'0x',5),
-('CreateERC20','0xd02C1CC76Cfb5b793f3a792B7BA74c53161e9e01',7684278,'0x',5);
+('CreateERC20','0xd02C1CC76Cfb5b793f3a792B7BA74c53161e9e01',7684278,'0x',5),
+('ClaimReserve','0xd02C1CC76Cfb5b793f3a792B7BA74c53161e9e01',7684278,'0x',5);
 
 INSERT INTO tb_category (category_name) VALUES ('Social'),('Protocol'),('NFT'),('Metaverse'),('Gaming'),('Dapp'),('Other');

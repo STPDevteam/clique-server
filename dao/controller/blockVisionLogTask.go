@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"database/sql"
 	"fmt"
 	oo "github.com/Anna2024/liboo"
 	_ "golang.org/x/net/bpf"
@@ -222,9 +223,58 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 				return
 			}
 
-			errTx = ownTokensImgSave(blockData[i]["address"].(string), tokenAddress, url, chainId)
+			errTx = ownTokensImgSave(blockData[i]["address"].(string), tokenAddress, url, chainId, tx)
 			if errTx != nil {
 				oo.LogW("ownTokensImgSave func err: %v", errTx)
+				return
+			}
+
+			//for notification
+			var notificationData = make([]map[string]interface{}, 0)
+			var values = make(map[string]interface{})
+			values["chain_id"] = chainId
+			values["dao_address"] = tokenAddress
+			values["types"] = consts.TypesNameReserveToken
+			values["activity_id"] = 0
+			values["dao_logo"] = ""
+			values["dao_name"] = ""
+			values["activity_name"] = ""
+			values["start_time"] = 0
+			values["update_bool"] = 0
+			notificationData = append(notificationData, values)
+			sqlIns = oo.NewSqler().Table(consts.TbNameNotification).Insert(notificationData)
+			var result sql.Result
+			result, errTx = oo.SqlxTxExec(tx, sqlIns)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+			res, err := utils.ReserveToken(blockData[i]["transaction_hash"].(string), url)
+			if err != nil {
+				oo.LogW("ReserveToken failed. err: %v\n", err)
+				errTx = err
+				return
+			}
+			resTokenAccount, err := utils.DecodeDistribution(res.Result.Input)
+			if err != nil {
+				oo.LogW("DecodeDistribution failed. err: %v\n", err)
+				errTx = err
+				return
+			}
+
+			var m = make([]map[string]interface{}, 0)
+			for index := range resTokenAccount {
+				var v = make(map[string]interface{})
+				v["notification_id"], _ = result.LastInsertId()
+				v["account"] = resTokenAccount[index].Recipient
+				v["already_read"] = 0
+				v["notification_time"] = time.Now().Unix()
+				m = append(m, v)
+			}
+			sqlIns = oo.NewSqler().Table(consts.TbNameNotificationAccount).InsertBatch(m)
+			_, errTx = oo.SqlxTxExec(tx, sqlIns)
+			if errTx != nil {
+				oo.LogW("SQL err: %v\n", errTx)
 				return
 			}
 
@@ -243,7 +293,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			record["update_bool"] = 1
 			recordInsert = append(recordInsert, record)
 			sqlInsRecord := oo.NewSqler().Table(consts.TbNameAccountRecord).Insert(recordInsert)
-			errTx = oo.SqlExec(sqlInsRecord)
+			_, errTx = oo.SqlxTxExec(tx, sqlInsRecord)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return
@@ -268,7 +318,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			record["update_bool"] = 1
 			recordInsert = append(recordInsert, record)
 			sqlInsRecord := oo.NewSqler().Table(consts.TbNameAccountRecord).Insert(recordInsert)
-			errTx = oo.SqlExec(sqlInsRecord)
+			_, errTx = oo.SqlxTxExec(tx, sqlInsRecord)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return
@@ -321,7 +371,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			daoValues["discord"] = ""
 			daoValues["website"] = ""
 			daoValues["update_bool"] = 0
-			daoValues["approve"] = 0
+			daoValues["approve"] = 1 //approve 0
 			daoMap = append(daoMap, daoValues)
 			sqlInsDao := oo.NewSqler().Table(consts.TbNameDao).Insert(daoMap)
 			_, errTx = oo.SqlxTxExec(tx, sqlInsDao)
@@ -384,7 +434,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			record["update_bool"] = 1
 			recordInsert = append(recordInsert, record)
 			sqlInsRecord := oo.NewSqler().Table(consts.TbNameAccountRecord).Insert(recordInsert)
-			errTx = oo.SqlExec(sqlInsRecord)
+			_, errTx = oo.SqlxTxExec(tx, sqlInsRecord)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return
@@ -437,8 +487,10 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			v["proposal_id"] = proposalId
 			v["title"] = proposalTitle[:int(math.Min(float64(len(proposalTitle)), 500))]
 			v["proposer"] = proposer
+			v["content_v1"] = ""
 			v["start_time"] = startTime
 			v["end_time"] = endTime
+			v["version"] = "v2"
 			m = append(m, v)
 			sqlIns = oo.NewSqler().Table(consts.TbNameProposal).Insert(m)
 			_, errTx = oo.SqlxTxExec(tx, sqlIns)
@@ -492,7 +544,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			record["update_bool"] = 1
 			recordInsert = append(recordInsert, record)
 			sqlInsRecord := oo.NewSqler().Table(consts.TbNameAccountRecord).Insert(recordInsert)
-			errTx = oo.SqlExec(sqlInsRecord)
+			_, errTx = oo.SqlxTxExec(tx, sqlInsRecord)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return
@@ -531,7 +583,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			record["update_bool"] = 1
 			recordInsert = append(recordInsert, record)
 			sqlInsRecord := oo.NewSqler().Table(consts.TbNameAccountRecord).Insert(recordInsert)
-			errTx = oo.SqlExec(sqlInsRecord)
+			_, errTx = oo.SqlxTxExec(tx, sqlInsRecord)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return
@@ -589,7 +641,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			record["update_bool"] = 1
 			recordInsert = append(recordInsert, record)
 			sqlInsRecord := oo.NewSqler().Table(consts.TbNameAccountRecord).Insert(recordInsert)
-			errTx = oo.SqlExec(sqlInsRecord)
+			_, errTx = oo.SqlxTxExec(tx, sqlInsRecord)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return
@@ -634,7 +686,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			record["update_bool"] = 1
 			recordInsert = append(recordInsert, record)
 			sqlInsRecord := oo.NewSqler().Table(consts.TbNameAccountRecord).Insert(recordInsert)
-			errTx = oo.SqlExec(sqlInsRecord)
+			_, errTx = oo.SqlxTxExec(tx, sqlInsRecord)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return
@@ -696,7 +748,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 				record["update_bool"] = 1
 				recordInsert = append(recordInsert, record)
 				sqlInsRecord := oo.NewSqler().Table(consts.TbNameAccountRecord).Insert(recordInsert)
-				errTx = oo.SqlExec(sqlInsRecord)
+				_, errTx = oo.SqlxTxExec(tx, sqlInsRecord)
 				if errTx != nil {
 					oo.LogW("SQL err: %v", errTx)
 					return
@@ -761,7 +813,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			record["update_bool"] = 1
 			recordInsert = append(recordInsert, record)
 			sqlInsRecord := oo.NewSqler().Table(consts.TbNameAccountRecord).Insert(recordInsert)
-			errTx = oo.SqlExec(sqlInsRecord)
+			_, errTx = oo.SqlxTxExec(tx, sqlInsRecord)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return
@@ -843,7 +895,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			record["update_bool"] = 1
 			recordInsert = append(recordInsert, record)
 			sqlInsRecord := oo.NewSqler().Table(consts.TbNameAccountRecord).Insert(recordInsert)
-			errTx = oo.SqlExec(sqlInsRecord)
+			_, errTx = oo.SqlxTxExec(tx, sqlInsRecord)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return
@@ -893,7 +945,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			record["update_bool"] = 1
 			recordInsert = append(recordInsert, record)
 			sqlInsRecord := oo.NewSqler().Table(consts.TbNameAccountRecord).Insert(recordInsert)
-			errTx = oo.SqlExec(sqlInsRecord)
+			_, errTx = oo.SqlxTxExec(tx, sqlInsRecord)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return

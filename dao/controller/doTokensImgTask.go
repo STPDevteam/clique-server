@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	oo "github.com/Anna2024/liboo"
+	"github.com/jmoiron/sqlx"
 	"stp_dao_v2/consts"
 	"stp_dao_v2/models"
 	"stp_dao_v2/utils"
@@ -105,7 +106,7 @@ func tokensImgTask() {
 
 }
 
-func ownTokensImgSave(contract, tokenAddress, url string, chainId int) error {
+func ownTokensImgSave(contract, tokenAddress, url string, chainId int, tx *sqlx.Tx) error {
 	const paramsDataPrefix = "0x9a39728f000000000000000000000000"
 	data := fmt.Sprintf("%s%s", paramsDataPrefix, strings.TrimPrefix(tokenAddress, "0x"))
 
@@ -152,7 +153,7 @@ func ownTokensImgSave(contract, tokenAddress, url string, chainId int) error {
 			tokenAddress,
 		)
 	}
-	err = oo.SqlExec(sqlStr)
+	_, err = oo.SqlxTxExec(tx, sqlStr)
 	if err != nil {
 		oo.LogW("SQL failed. err: %v\n", err)
 		return err

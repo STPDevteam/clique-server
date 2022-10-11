@@ -12,6 +12,8 @@ type AppConfig struct {
 	ScanInfoConfName   []string `mapstructure:"scan_info_conf_name" toml:"scan_info_conf_name"`
 	TestnetBalanceSign []int    `mapstructure:"testnet_balance_sign" toml:"testnet_balance_sign"`
 	MainnetBalanceSign []int    `mapstructure:"mainnet_balance_sign" toml:"mainnet_balance_sign"`
+	ApiV1BlockUrl      string   `mapstructure:"api_v1_block_url" toml:"api_v1_block_url"`
+	ApiV1ProposalUrl   string   `mapstructure:"api_v1_proposal_url" toml:"api_v1_proposal_url"`
 }
 
 type MysqlConfig struct {
