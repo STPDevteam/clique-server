@@ -124,7 +124,8 @@ func updateAccountRecord() {
 					types = consts.EvVote
 				}
 				sqlUp := oo.NewSqler().Table(consts.TbNameAccountRecord).Where("types", types).
-					Where("chain_id", entities[index].ChainId).Where("address", entities[index].Address).Update(v)
+					Where("chain_id", entities[index].ChainId).Where("address", entities[index].Address).
+					Where("activity_id", entities[index].ActivityId).Update(v)
 				err = oo.SqlExec(sqlUp)
 				if err != nil {
 					oo.LogW("SQL err:%v", err)
@@ -169,7 +170,8 @@ func updateAccountRecord() {
 					types = consts.EvClaimed
 				}
 				sqlUp := oo.NewSqler().Table(consts.TbNameAccountRecord).Where("types", types).
-					Where("chain_id", entities[index].ChainId).Where("address", entities[index].Address).Update(v)
+					Where("chain_id", entities[index].ChainId).Where("address", entities[index].Address).
+					Where("activity_id", entities[index].ActivityId).Update(v)
 				err = oo.SqlExec(sqlUp)
 				if err != nil {
 					oo.LogW("SQL err:%v", err)
