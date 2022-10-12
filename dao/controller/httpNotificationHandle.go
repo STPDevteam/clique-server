@@ -30,7 +30,7 @@ func httpNotificationList(c *gin.Context) {
 
 	var accountEntities []models.NotificationAccountModel
 	sqler := oo.NewSqler().Table(consts.TbNameNotificationAccount).
-		Where("notification_time", ">=", time.Now().Unix()).Where("account", accountParam)
+		Where("notification_time", "<=", time.Now().Unix()).Where("account", accountParam)
 
 	var total uint64
 	sqlCopy := *sqler
@@ -193,7 +193,8 @@ func httpNotificationUnreadTotal(c *gin.Context) {
 	accountParam := c.Query("account")
 
 	var unreadTotal int
-	sqlCount := oo.NewSqler().Table(consts.TbNameNotificationAccount).Where("account", accountParam).Where("already_read", 0).Count()
+	sqlCount := oo.NewSqler().Table(consts.TbNameNotificationAccount).Where("account", accountParam).
+		Where("notification_time", "<=", time.Now().Unix()).Where("already_read", 0).Count()
 	err := oo.SqlGet(sqlCount, &unreadTotal)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)

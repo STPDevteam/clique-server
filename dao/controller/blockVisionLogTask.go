@@ -534,7 +534,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 				return
 			}
 			var weight = make(map[string]interface{})
-			weight["weight"] = totalProposal
+			weight["weight"] = totalProposal + 1
 			sqlUp = oo.NewSqler().Table(consts.TbNameDao).Where("chain_id", chainId).Where("dao_address", daoAddress).Update(weight)
 			_, errTx = oo.SqlxTxExec(tx, sqlUp)
 			if errTx != nil {

@@ -78,7 +78,7 @@ func saveV1Proposal(decode []interface{}, data models.V1ProposalData) error {
 	defer oo.CloseSqlxTx(tx, &errTx)
 
 	var title string
-	title, ok := decode[4].(string)
+	title, ok := decode[3].(string)
 	if !ok {
 		oo.LogW(".(string) failed.")
 		return errors.New(".(string) failed")
@@ -127,7 +127,7 @@ func saveV1Proposal(decode []interface{}, data models.V1ProposalData) error {
 			return errTx
 		}
 		var weight = make(map[string]interface{})
-		weight["weight"] = totalProposal
+		weight["weight"] = totalProposal + 1
 		sqlUp := oo.NewSqler().Table(consts.TbNameDao).Where("chain_id", entities[0].ChainId).Where("dao_address", entities[0].DaoAddress).Update(weight)
 		_, errTx = oo.SqlxTxExec(tx, sqlUp)
 		if errTx != nil {
