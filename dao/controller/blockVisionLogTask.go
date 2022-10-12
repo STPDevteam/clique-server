@@ -526,12 +526,19 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			}
 
 			// for dao order with proposal total
+			var totalProposal int
+			sqlSel := oo.NewSqler().Table(consts.TbNameProposal).Where("chain_id", chainId).Where("dao_address", daoAddress).Count()
+			errTx = oo.SqlGet(sqlSel, &totalProposal)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
 			var weight = make(map[string]interface{})
-			weight["weight"] = proposalId + 1
+			weight["weight"] = totalProposal
 			sqlUp = oo.NewSqler().Table(consts.TbNameDao).Where("chain_id", chainId).Where("dao_address", daoAddress).Update(weight)
 			_, errTx = oo.SqlxTxExec(tx, sqlUp)
 			if errTx != nil {
-				oo.LogW("SQL err: %v\n", errTx)
+				oo.LogW("SQL err: %v ", errTx)
 				return
 			}
 
