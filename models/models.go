@@ -517,3 +517,10 @@ type ResAccountRecord struct {
 	Titles     string `json:"titles"`
 	Time       int64  `json:"time"`
 }
+
+type ResOverview struct {
+	TotalDao         int `json:"totalDao"`
+	TotalApproveDao  int `json:"totalApproveDao"`
+	TotalVote        int `json:"totalVote"`
+	TotalAddressVote int `json:"totalAddressVote"`
+}
