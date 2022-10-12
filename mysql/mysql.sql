@@ -185,8 +185,7 @@ CREATE TABLE `tb_account` (
 PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `tb_account_record`
-(
+CREATE TABLE `tb_account_record` (
     `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `create_time` TIMESTAMP    NOT NULL                             DEFAULT CURRENT_TIMESTAMP,
     `update_time` TIMESTAMP    NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -243,6 +242,7 @@ CREATE TABLE `tb_proposal` (
     `chain_id` INT NOT NULL,
     `dao_address` VARCHAR(128) NOT NULL,
     `title` VARCHAR(500) NOT NULL,
+    `id_v1` INT NOT NULL,
     `content_v1` TEXT NOT NULL,
 	`proposer` VARCHAR(128) NOT NULL,
 	`start_time` INT NOT NULL,
@@ -265,7 +265,8 @@ CREATE TABLE `tb_proposal_v1` (
     PRIMARY KEY (`id`),
     INDEX `index_chain_id` (`chain_id` ASC),
     INDEX `index_dao_address` (`dao_address` ASC),
-    INDEX `index_dao_address_v1` (`dao_address_v1` ASC)
+    INDEX `index_dao_address_v1` (`dao_address_v1` ASC),
+    UNIQUE INDEX `index_voting_v1` (`voting_v1` ASC)
 );
 
 CREATE TABLE `tb_airdrop` (
@@ -452,11 +453,22 @@ CREATE TABLE `tb_handle_lock` (
 
 # test
 INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
-('CreateDao','0x75e4b5644eA842817155f960600b3cC3194D14C2',28366954,'0x',80001),
-('CreateERC20','0x75e4b5644eA842817155f960600b3cC3194D14C2',28366954,'0x',80001),
-('ClaimReserve','0x75e4b5644eA842817155f960600b3cC3194D14C2',28366954,'0x',80001),
-('CreateDao','0xd02C1CC76Cfb5b793f3a792B7BA74c53161e9e01',7684278,'0x',5),
-('CreateERC20','0xd02C1CC76Cfb5b793f3a792B7BA74c53161e9e01',7684278,'0x',5),
-('ClaimReserve','0xd02C1CC76Cfb5b793f3a792B7BA74c53161e9e01',7684278,'0x',5);
+('CreateDao','0x03919E8A7db18B89aC287ddb8ad5DE34F44E1E11',28561789,'0x',80001),
+('CreateERC20','0x03919E8A7db18B89aC287ddb8ad5DE34F44E1E11',28561789,'0x',80001),
+('ClaimReserve','0x03919E8A7db18B89aC287ddb8ad5DE34F44E1E11',28561789,'0x',80001),
+('CreateAirdrop','0x4a9e8EeBd7e3d928E494A3ef43baD56838FB2Bf3',28561881,'0x',80001),
+('SettleAirdrop','0x4a9e8EeBd7e3d928E494A3ef43baD56838FB2Bf3',28561881,'0x',80001),
+('Claimed','0x4a9e8EeBd7e3d928E494A3ef43baD56838FB2Bf3',28561881,'0x',80001),
+('CreateDao','0x8ab3364443396D81703444F2c29E86A2809c5eC1',7750148,'0x',5),
+('CreateERC20','0x8ab3364443396D81703444F2c29E86A2809c5eC1',7750148,'0x',5),
+('ClaimReserve','0x8ab3364443396D81703444F2c29E86A2809c5eC1',7750148,'0x',5),
+('CreateAirdrop','0x8FC198E84e43474F95468300593539B8cb3bEe8f',7750200,'0x',5),
+('SettleAirdrop','0x8FC198E84e43474F95468300593539B8cb3bEe8f',7750200,'0x',5),
+('Claimed','0x8FC198E84e43474F95468300593539B8cb3bEe8f',7750200,'0x',5);
 
 INSERT INTO tb_category (category_name) VALUES ('Social'),('Protocol'),('NFT'),('Metaverse'),('Gaming'),('Dapp'),('Other');
+
+#example
+# INSERT into tb_proposal_v1 (chain_id,dao_address,dao_address_v1,voting_v1) VALUES
+# (5,'0xb6dbd00a199b3a616be3d38c621b337f48a065ce','0xbc61E252c79D76D9Eb23DAE0E524E80dBA6E54B4','0x6ada02cb261f864646a6fc2466a9350336fda5ad'),
+# (5,'0xf8c3b39b2533cb853620c5ccf580ad5cb2f744cd','0x53760E38B28d6882Ccf21151417Bc942E2300D00','0xef6d5b23a69b622851cca5bc2202e257021e4f7d');

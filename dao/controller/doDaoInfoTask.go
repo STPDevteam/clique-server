@@ -40,7 +40,7 @@ func (svc *Service) updateDaoInfoTask() {
 						}
 						val, ok := res.Result.(string)
 						if !ok {
-							oo.LogW("QueryDaoInfo failed. chainId:%d. err: %v\n", chainId, errQ)
+							oo.LogW(".(string) failed.")
 							return
 						}
 

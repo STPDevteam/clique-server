@@ -117,7 +117,7 @@ func ownTokensImgSave(contract, tokenAddress, url string, chainId int, tx *sqlx.
 	}
 	val, ok := res.Result.(string)
 	if !ok {
-		oo.LogW("QueryMethodEthCall failed. chainId:%d. err: %v\n", chainId, err)
+		oo.LogW(".(string) failed.")
 		return err
 	}
 

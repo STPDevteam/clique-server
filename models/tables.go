@@ -182,11 +182,22 @@ type ProposalModel struct {
 	ChainId    int    `db:"chain_id"`
 	DaoAddress string `db:"dao_address"`
 	Title      string `db:"title"`
+	IdV1       int    `db:"id_v1"`
 	ContentV1  string `db:"content_v1"`
 	Proposer   string `db:"proposer"`
 	StartTime  int64  `db:"start_time"`
 	EndTime    int64  `db:"end_time"`
 	Version    string `db:"version"`
+}
+
+type ProposalV1Model struct {
+	Id           uint64 `db:"id,omitempty" sqler:"skips"`
+	CreateTime   string `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime   string `db:"update_time,omitempty" sqler:"skips"`
+	ChainId      int    `db:"chain_id"`
+	DaoAddress   string `db:"dao_address"`
+	DaoAddressV1 string `db:"dao_address_v1"`
+	VotingV1     string `db:"voting_v1"`
 }
 
 type AirdropModel struct {

@@ -277,7 +277,7 @@ func GetTokenImg(url string) (data *models.TokenImg, err error) {
 	return data, nil
 }
 
-func GetV1LastBlockNumber(url string) (data *models.V1LastBlockNumber, err error) {
+func GetV1ProposalHistory(url string) (data *models.V1ProposalHistory, err error) {
 	res, err := DoGet(url)
 	if err != nil {
 		return nil, err

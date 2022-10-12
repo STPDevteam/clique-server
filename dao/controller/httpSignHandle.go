@@ -128,16 +128,16 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 		var success = false
 		for _, testChainId := range svc.appConfig.TestnetBalanceSign {
 			if params.ChainId == testChainId {
-				url = consts.GetAnkrArchive(params.ChainId)
-				if url == "" {
-					c.JSON(http.StatusInternalServerError, models.Response{
-						Code:    500,
-						Message: "Unsupported token.",
-					})
-					return
-				}
+				//url = consts.GetAnkrArchive(params.ChainId)
+				//if url == "" {
+				//	c.JSON(http.StatusInternalServerError, models.Response{
+				//		Code:    500,
+				//		Message: "Unsupported token.",
+				//	})
+				//	return
+				//}
 				data := fmt.Sprintf("%s%s", paramsDataPrefix, strings.TrimPrefix(params.Account, "0x"))
-				res, errQb := utils.QueryMethodEthCallByTag(tokenAddress, data, url, voteEntity.BlockNumber)
+				res, errQb := utils.QueryMethodEthCallByTag(tokenAddress, data, url, "latest")
 				if errQb != nil || res.Result == nil || res.Result == "0x" {
 					c.JSON(http.StatusInternalServerError, models.Response{
 						Code:    500,

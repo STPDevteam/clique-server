@@ -43,7 +43,7 @@ func (svc *Service) scheduledTask() {
 			}
 			val, ok := resBlock.Result.(string)
 			if !ok {
-				oo.LogW("QueryLatestBlock failed. err: %v\n", err)
+				oo.LogW(".(string) failed.")
 				continue
 			}
 			latestBlockNum, _ = utils.Hex2Dec(val)
@@ -273,7 +273,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 				v["notification_id"], _ = result.LastInsertId()
 				v["account"] = resTokenAccount[index].Recipient
 				v["already_read"] = 0
-				v["notification_time"] = time.Now().Unix()
+				v["notification_time"] = resTokenAccount[index].LockDate
 				m = append(m, v)
 			}
 			sqlIns = oo.NewSqler().Table(consts.TbNameNotificationAccount).InsertBatch(m)
@@ -491,8 +491,9 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			v["dao_address"] = daoAddress
 			v["proposal_id"] = proposalId
 			v["title"] = proposalTitle[:int(math.Min(float64(len(proposalTitle)), 500))]
-			v["proposer"] = proposer
+			v["id_v1"] = 0
 			v["content_v1"] = ""
+			v["proposer"] = proposer
 			v["start_time"] = startTime
 			v["end_time"] = endTime
 			v["version"] = "v2"

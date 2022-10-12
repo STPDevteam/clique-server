@@ -56,6 +56,7 @@ func (svc *Service) Start(ctx *cli.Context) error {
 	go tokensImgTask()
 	go updateNotification()
 	go updateAccountRecord()
+	go svc.getV1Proposal()
 
 	router := gin.Default()
 	router.Use(utils.Cors())
@@ -125,6 +126,10 @@ func (svc *Service) Start(ctx *cli.Context) error {
 		r11.GET("/list", httpNotificationList)
 		r11.POST("/read", httpNotificationRead)
 		r11.GET("/unread/total", httpNotificationUnreadTotal)
+	}
+	r12 := router.Group(path.Join(basePath, "/overview"))
+	{
+		r12.GET("/total", httpRecordTotal)
 	}
 
 	url := ginSwagger.URL(svc.appConfig.SwaggerUrl)

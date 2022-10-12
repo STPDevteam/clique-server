@@ -8,6 +8,7 @@ import (
 	"stp_dao_v2/consts"
 	"stp_dao_v2/models"
 	"strconv"
+	"time"
 )
 
 // @Summary notification list
@@ -28,7 +29,8 @@ func httpNotificationList(c *gin.Context) {
 	offsetParam, _ := strconv.Atoi(offset)
 
 	var accountEntities []models.NotificationAccountModel
-	sqler := oo.NewSqler().Table(consts.TbNameNotificationAccount).Where("account", accountParam)
+	sqler := oo.NewSqler().Table(consts.TbNameNotificationAccount).
+		Where("notification_time", ">=", time.Now().Unix()).Where("account", accountParam)
 
 	var total uint64
 	sqlCopy := *sqler

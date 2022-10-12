@@ -317,10 +317,18 @@ type TokenImg struct {
 	} `json:"image"`
 }
 
-type V1LastBlockNumber struct {
-	Code int    `json:"code"`
-	Data int    `json:"data"`
-	Msg  string `json:"msg"`
+type V1ProposalHistory struct {
+	Code int              `json:"code"`
+	Data []V1ProposalData `json:"data"`
+	Msg  string           `json:"msg"`
+}
+
+type V1ProposalData struct {
+	Id      int    `json:"id"`
+	Address string `json:"address"`
+	Topic1  string `json:"topic1"`
+	Topic2  string `json:"topic2"`
+	Data    string `json:"data"`
 }
 
 type ResTokenImg struct {

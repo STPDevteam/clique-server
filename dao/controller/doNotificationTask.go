@@ -10,7 +10,6 @@ import (
 
 func updateNotification() {
 	defer time.AfterFunc(time.Duration(60)*time.Second, updateNotification)
-	var nowTime = time.Now().Unix()
 
 	tx, errTx := oo.NewSqlxTx()
 	if errTx != nil {
@@ -112,7 +111,7 @@ func updateNotification() {
 						v["notification_id"] = entities[index].Id
 						v["account"] = account
 						v["already_read"] = 0
-						v["notification_time"] = nowTime
+						v["notification_time"] = entities[index].StartTime
 						m = append(m, v)
 					}
 				}
@@ -148,7 +147,7 @@ func updateNotification() {
 						v["notification_id"] = entities[index].Id
 						v["account"] = account
 						v["already_read"] = 0
-						v["notification_time"] = nowTime
+						v["notification_time"] = entities[index].StartTime
 						m = append(m, v)
 					}
 					sqlIns := oo.NewSqler().Table(consts.TbNameNotificationAccount).InsertBatch(m)
