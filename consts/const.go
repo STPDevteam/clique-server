@@ -144,16 +144,3 @@ func EventTypes(event string) string {
 	}
 	return event
 }
-
-func GetAnkrArchive(chainId int) string {
-	if chainId == 80001 {
-		return "https://rpc.ankr.com/polygon_mumbai"
-	}
-	if chainId == 137 {
-		return "https://rpc.ankr.com/polygon"
-	}
-	if chainId == 5 {
-		return "https://rpc.ankr.com/eth_goerli"
-	}
-	return ""
-}

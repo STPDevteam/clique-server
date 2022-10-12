@@ -126,18 +126,18 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 		}
 
 		var success = false
-		for _, testChainId := range svc.appConfig.TestnetBalanceSign {
+		for _, testChainId := range svc.appConfig.ArchiveBalanceSign {
 			if params.ChainId == testChainId {
-				//url = consts.GetAnkrArchive(params.ChainId)
-				//if url == "" {
-				//	c.JSON(http.StatusInternalServerError, models.Response{
-				//		Code:    500,
-				//		Message: "Unsupported token.",
-				//	})
-				//	return
-				//}
+				url = svc.getArchiveNode(tokenChainId)
+				if url == "" {
+					c.JSON(http.StatusInternalServerError, models.Response{
+						Code:    500,
+						Message: "Unsupported token.",
+					})
+					return
+				}
 				data := fmt.Sprintf("%s%s", paramsDataPrefix, strings.TrimPrefix(params.Account, "0x"))
-				res, errQb := utils.QueryMethodEthCallByTag(tokenAddress, data, url, "latest")
+				res, errQb := utils.QueryMethodEthCallByTag(tokenAddress, data, url, voteEntity.BlockNumber)
 				if errQb != nil || res.Result == nil || res.Result == "0x" {
 					c.JSON(http.StatusInternalServerError, models.Response{
 						Code:    500,
@@ -424,4 +424,17 @@ func (svc *Service) httpQueryDaoHandle(c *gin.Context) {
 		},
 	})
 
+}
+
+func (svc *Service) getArchiveNode(chainId int64) string {
+	if chainId == 80001 {
+		return "https://rpc.ankr.com/polygon_mumbai"
+	}
+	if chainId == 137 {
+		return svc.appConfig.PolygonQuickNodeRPC
+	}
+	if chainId == 5 {
+		return "https://rpc.ankr.com/eth_goerli"
+	}
+	return ""
 }

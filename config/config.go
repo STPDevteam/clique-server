@@ -10,10 +10,10 @@ type AppConfig struct {
 	SwaggerUrl              string   `mapstructure:"swagger_url" toml:"swagger_url"`
 	MysqlConfName           string   `mapstructure:"mysql_conf_name" toml:"mysql_conf_name"`
 	ScanInfoConfName        []string `mapstructure:"scan_info_conf_name" toml:"scan_info_conf_name"`
-	TestnetBalanceSign      []int    `mapstructure:"testnet_balance_sign" toml:"testnet_balance_sign"`
-	MainnetBalanceSign      []int    `mapstructure:"mainnet_balance_sign" toml:"mainnet_balance_sign"`
+	ArchiveBalanceSign      []int    `mapstructure:"archive_balance_sign" toml:"archive_balance_sign"`
 	ApiV1ProposalUrl        string   `mapstructure:"api_v1_proposal_url" toml:"api_v1_proposal_url"`
 	ApiV1ProposalContentUrl string   `mapstructure:"api_v1_proposal_content_url" toml:"api_v1_proposal_content_url"`
+	PolygonQuickNodeRPC     string   `mapstructure:"polygon_quick_node_rpc" toml:"polygon_quick_node_rpc"`
 }
 
 type MysqlConfig struct {
