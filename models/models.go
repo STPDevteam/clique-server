@@ -95,7 +95,6 @@ type ResQueryAccount struct {
 	//MyTokens     []ResMyTokens `json:"myTokens"`
 	AdminDao  []ResDao `json:"adminDao"`
 	MemberDao []ResDao `json:"memberDao"`
-	//Activity  []ResActivity `json:"activity"`
 }
 
 //type ResMyTokens struct {

@@ -22,9 +22,6 @@ func (svc *Service) getV1Proposal() {
 		oo.LogW("SQL err: %v", err)
 		return
 	}
-	if v1MaxId != 0 {
-		v1MaxId = v1MaxId + 1
-	}
 
 	var v1Url = fmt.Sprintf(svc.appConfig.ApiV1ProposalUrl, v1MaxId)
 	res, err := utils.GetV1ProposalHistory(v1Url)
@@ -81,7 +78,8 @@ func saveV1Proposal(decode []interface{}, data models.V1ProposalData) error {
 	title, ok := decode[3].(string)
 	if !ok {
 		oo.LogW(".(string) failed.")
-		return errors.New(".(string) failed")
+		errTx = errors.New(".(string) failed")
+		return errTx
 	}
 	var content = decode[4]
 	startTime, _ := utils.Hex2Dec(data.Data[194:258])

@@ -149,24 +149,33 @@ func httpQueryAccount(c *gin.Context) {
 	}
 	var dataMember = make([]models.ResDao, 0)
 	for index := range memberEntities {
-		var daoEntity []models.DaoModel
-		sqlSel = oo.NewSqler().Table(consts.TbNameDao).Where("chain_id", memberEntities[index].ChainId).Where("dao_address", memberEntities[index].DaoAddress).Select()
-		err = oo.SqlSelect(sqlSel, &daoEntity)
-		if err != nil {
-			oo.LogW("SQL err: %v", err)
-			c.JSON(http.StatusInternalServerError, models.Response{
-				Code:    500,
-				Message: "Something went wrong, Please try again later.",
-			})
-			return
+		var success = false
+		for indexAdmin := range adminDaoEntities {
+			if adminDaoEntities[indexAdmin].ChainId == memberEntities[index].ChainId && adminDaoEntities[indexAdmin].DaoAddress == memberEntities[index].DaoAddress {
+				success = true
+				break
+			}
 		}
-		dataMember = append(dataMember, models.ResDao{
-			DaoAddress:   memberEntities[index].DaoAddress,
-			ChainId:      memberEntities[index].ChainId,
-			AccountLevel: consts.LevelMember,
-			DaoName:      daoEntity[0].DaoName,
-			DaoLogo:      daoEntity[0].DaoLogo,
-		})
+		if !success {
+			var daoEntity []models.DaoModel
+			sqlSel = oo.NewSqler().Table(consts.TbNameDao).Where("chain_id", memberEntities[index].ChainId).Where("dao_address", memberEntities[index].DaoAddress).Select()
+			err = oo.SqlSelect(sqlSel, &daoEntity)
+			if err != nil {
+				oo.LogW("SQL err: %v", err)
+				c.JSON(http.StatusInternalServerError, models.Response{
+					Code:    500,
+					Message: "Something went wrong, Please try again later.",
+				})
+				return
+			}
+			dataMember = append(dataMember, models.ResDao{
+				DaoAddress:   memberEntities[index].DaoAddress,
+				ChainId:      memberEntities[index].ChainId,
+				AccountLevel: consts.LevelMember,
+				DaoName:      daoEntity[0].DaoName,
+				DaoLogo:      daoEntity[0].DaoLogo,
+			})
+		}
 	}
 
 	c.JSON(http.StatusOK, models.Response{
