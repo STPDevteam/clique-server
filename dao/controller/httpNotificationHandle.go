@@ -51,7 +51,8 @@ func httpNotificationList(c *gin.Context) {
 	}
 
 	var unreadTotal int
-	sqlCount := oo.NewSqler().Table(consts.TbNameNotificationAccount).Where("account", accountParam).Where("already_read", 0).Count()
+	sqlCount := oo.NewSqler().Table(consts.TbNameNotificationAccount).Where("notification_time", "<=", time.Now().Unix()).
+		Where("account", accountParam).Where("already_read", 0).Count()
 	err = oo.SqlGet(sqlCount, &unreadTotal)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)

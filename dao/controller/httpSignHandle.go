@@ -45,7 +45,7 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 		oo.LogW("SQL err: %v", err)
 		c.JSON(http.StatusInternalServerError, models.Response{
 			Code:    500,
-			Message: "Something went wrong, Please try again later.",
+			Message: "Something went wrong, Please try again later.1",
 		})
 		return
 	}
@@ -61,7 +61,7 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 		oo.LogW("SQL err: %v", err)
 		c.JSON(http.StatusInternalServerError, models.Response{
 			Code:    500,
-			Message: "Something went wrong, Please try again later.",
+			Message: "Something went wrong, Please try again later.2",
 		})
 		return
 	}
@@ -101,7 +101,7 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 		if errQb != nil || res.Result == nil || res.Result == "0x" {
 			c.JSON(http.StatusInternalServerError, models.Response{
 				Code:    500,
-				Message: "Something went wrong, Please try again later.",
+				Message: "Something went wrong, Please try again later.3",
 			})
 			return
 		}
@@ -120,7 +120,7 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 			oo.LogW("SQL err: %v", err)
 			c.JSON(http.StatusInternalServerError, models.Response{
 				Code:    500,
-				Message: "Something went wrong, Please try again later.",
+				Message: "Something went wrong, Please try again later.4",
 			})
 			return
 		}
@@ -137,11 +137,19 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 					return
 				}
 				data := fmt.Sprintf("%s%s", paramsDataPrefix, strings.TrimPrefix(params.Account, "0x"))
-				res, errQb := utils.QueryMethodEthCallByTag(tokenAddress, data, url, voteEntity.BlockNumber)
+				var tag string
+				for _, testnet := range svc.appConfig.TestnetBalanceSign {
+					if testnet == testChainId {
+						tag = "latest"
+						break
+					}
+					tag = voteEntity.BlockNumber
+				}
+				res, errQb := utils.QueryMethodEthCallByTag(tokenAddress, data, url, tag)
 				if errQb != nil || res.Result == nil || res.Result == "0x" {
 					c.JSON(http.StatusInternalServerError, models.Response{
 						Code:    500,
-						Message: "Something went wrong, Please try again later.",
+						Message: "Something went wrong, Please try again later.5",
 					})
 					return
 				}
@@ -158,7 +166,7 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 				oo.LogW("DoPost err: %v", errQ)
 				c.JSON(http.StatusInternalServerError, models.Response{
 					Code:    500,
-					Message: "Something went wrong, Please try again later.",
+					Message: "Something went wrong, Please try again later.6",
 				})
 				return
 			}

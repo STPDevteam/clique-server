@@ -11,6 +11,7 @@ type AppConfig struct {
 	MysqlConfName           string   `mapstructure:"mysql_conf_name" toml:"mysql_conf_name"`
 	ScanInfoConfName        []string `mapstructure:"scan_info_conf_name" toml:"scan_info_conf_name"`
 	ArchiveBalanceSign      []int    `mapstructure:"archive_balance_sign" toml:"archive_balance_sign"`
+	TestnetBalanceSign      []int    `mapstructure:"testnet_balance_sign" toml:"testnet_balance_sign"`
 	ApiV1ProposalUrl        string   `mapstructure:"api_v1_proposal_url" toml:"api_v1_proposal_url"`
 	ApiV1ProposalContentUrl string   `mapstructure:"api_v1_proposal_content_url" toml:"api_v1_proposal_content_url"`
 	PolygonQuickNodeRPC     string   `mapstructure:"polygon_quick_node_rpc" toml:"polygon_quick_node_rpc"`
