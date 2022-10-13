@@ -16,6 +16,7 @@ import (
 // @version 0.0.1
 // @description query proposal list
 // @Produce json
+// @Param version query string false "version: v1/v2"
 // @Param status query int false "status:Soon:1,Open:2,Closed:3"
 // @Param daoAddress query string true "Dao address"
 // @Param chainId query int true "chainId"
@@ -33,6 +34,7 @@ func httpProposalsList(c *gin.Context) {
 	offsetParam, _ := strconv.Atoi(offset)
 	status := c.Query("status")
 	statusParam, _ := strconv.Atoi(status)
+	versionParam := c.Query("version")
 
 	var listEntities []models.ProposalModel
 	sqler := oo.NewSqler().Table(consts.TbNameProposal).
@@ -48,13 +50,19 @@ func httpProposalsList(c *gin.Context) {
 	if statusParam == 3 {
 		sqler = sqler.Where("end_time", "<=", now)
 	}
+	if versionParam == "v1" {
+		sqler = sqler.Where("version", versionParam)
+	}
+	if versionParam == "v2" {
+		sqler = sqler.Where("version", versionParam)
+	}
 	var total uint64
 	sqlCopy := *sqler
 	sqlStr := sqlCopy.Count()
 	err := oo.SqlGet(sqlStr, &total)
 	if err == nil {
 		sqlCopy = *sqler
-		sqlStr = sqlCopy.Order("proposal_id DESC").Limit(countParam).Offset(offsetParam).Select()
+		sqlStr = sqlCopy.Order("version DESC,proposal_id DESC").Limit(countParam).Offset(offsetParam).Select()
 		err = oo.SqlSelect(sqlStr, &listEntities)
 	}
 	if err != nil {
@@ -68,17 +76,45 @@ func httpProposalsList(c *gin.Context) {
 
 	var data = make([]models.ResProposalsList, 0)
 	for index := range listEntities {
-		data = append(data, models.ResProposalsList{
-			ChainId:    chainIdParam,
-			DaoAddress: daoAddressParam,
-			ProposalId: listEntities[index].ProposalId,
-			Proposer:   listEntities[index].Proposer,
-			Title:      listEntities[index].Title,
-			ContentV1:  listEntities[index].ContentV1,
-			StartTime:  listEntities[index].StartTime,
-			EndTime:    listEntities[index].EndTime,
-			Version:    listEntities[index].Version,
-		})
+		if listEntities[index].Version == "v2" {
+			data = append(data, models.ResProposalsList{
+				ChainId:    chainIdParam,
+				DaoAddress: daoAddressParam,
+				ProposalId: listEntities[index].ProposalId,
+				Proposer:   listEntities[index].Proposer,
+				Title:      listEntities[index].Title,
+				StartTime:  listEntities[index].StartTime,
+				EndTime:    listEntities[index].EndTime,
+				Version:    listEntities[index].Version,
+			})
+		}
+		if listEntities[index].Version == "v1" {
+			var daoAddressV1 string
+			sqlSel := oo.NewSqler().Table(consts.TbNameProposalV1).Where("chain_id", chainIdParam).
+				Where("dao_address", daoAddressParam).Select("dao_address_v1")
+			err = oo.SqlGet(sqlSel, &daoAddressV1)
+			if err != nil {
+				oo.LogW("SQL err: %v", err)
+				c.JSON(http.StatusInternalServerError, models.Response{
+					Code:    500,
+					Message: "Something went wrong, Please try again later.",
+				})
+				return
+			}
+			data = append(data, models.ResProposalsList{
+				ChainId:      chainIdParam,
+				DaoAddress:   daoAddressParam,
+				DaoAddressV1: daoAddressV1,
+				ProposalId:   listEntities[index].ProposalId,
+				Proposer:     listEntities[index].Proposer,
+				Title:        listEntities[index].Title,
+				ContentV1:    listEntities[index].ContentV1,
+				StartTime:    listEntities[index].StartTime,
+				EndTime:      listEntities[index].EndTime,
+				Version:      listEntities[index].Version,
+			})
+		}
+
 	}
 
 	c.JSON(http.StatusOK, models.Response{

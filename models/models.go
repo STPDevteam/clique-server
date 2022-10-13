@@ -203,15 +203,16 @@ type ResProposalsListPage struct {
 }
 
 type ResProposalsList struct {
-	ChainId    int    `json:"chainId"`
-	DaoAddress string `json:"daoAddress"`
-	ProposalId int    `json:"proposalId"`
-	Proposer   string `json:"proposer"`
-	Title      string `json:"title"`
-	ContentV1  string `json:"contentV1"`
-	StartTime  int64  `json:"startTime"`
-	EndTime    int64  `json:"endTime"`
-	Version    string `json:"version"`
+	ChainId      int    `json:"chainId"`
+	DaoAddress   string `json:"daoAddress"`
+	DaoAddressV1 string `json:"daoAddressV1"`
+	ProposalId   int    `json:"proposalId"`
+	Proposer     string `json:"proposer"`
+	Title        string `json:"title"`
+	ContentV1    string `json:"contentV1"`
+	StartTime    int64  `json:"startTime"`
+	EndTime      int64  `json:"endTime"`
+	Version      string `json:"version"`
 }
 
 type ResVotesListPage struct {
