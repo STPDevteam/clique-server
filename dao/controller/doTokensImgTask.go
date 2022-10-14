@@ -22,6 +22,12 @@ func tokensImgTask() {
 		return
 	}
 
+	resId, err := utils.GetTokensId("https://api.coingecko.com/api/v3/coins/list?include_platform=true")
+	if err != nil {
+		oo.LogW("GetTokensId failed error: %v", err)
+		return
+	}
+
 	for indexToken := range entities {
 		tokenChainId := entities[indexToken].TokenChainId
 		tokenAddress := entities[indexToken].TokenAddress
@@ -48,11 +54,8 @@ func tokensImgTask() {
 			continue
 		}
 
-		resId, err := utils.GetTokensId("https://api.coingecko.com/api/v3/coins/list?include_platform=true")
-		if err != nil {
-			oo.LogW("GetTokensId failed error: %v", err)
-			continue
-		}
+		time.Sleep(time.Duration(15) * time.Second)
+
 		for indexId := range resId {
 			if resId[indexId].Platforms[platforms] == strings.ToLower(tokenAddress) {
 				imgStr := fmt.Sprintf(`https://api.coingecko.com/api/v3/coins/%s?localization=false&tickers=false&market_data=false&community_data=false&developer_data=false&sparkline=false`, resId[indexId].Id)
@@ -101,7 +104,7 @@ func tokensImgTask() {
 				break
 			}
 		}
-		time.Sleep(time.Duration(1) * time.Second)
+		time.Sleep(time.Duration(15) * time.Second)
 	}
 
 }
