@@ -2,6 +2,7 @@ package controller
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	oo "github.com/Anna2024/liboo"
 	_ "golang.org/x/net/bpf"
@@ -784,6 +785,11 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 				oo.LogW("SQL err: %v", errTx)
 				return
 			}
+			if len(airdropEntity) == 0 {
+				oo.LogW("there is no airdrop data in the background")
+				errTx = errors.New("there is no airdrop data in the background")
+				return
+			}
 
 			var m = make([]map[string]interface{}, 0)
 			var v = make(map[string]interface{})
@@ -872,6 +878,11 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 				oo.LogW("SQL err: %v", errTx)
 				return
 			}
+			if len(airdropEntity) == 0 {
+				oo.LogW("there is no airdrop data in the background")
+				errTx = errors.New("there is no airdrop data in the background")
+				return
+			}
 
 			//for notification
 			var notificationData = make([]map[string]interface{}, 0)
@@ -924,6 +935,11 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			errTx = oo.SqlSelect(sqlSel, &airdropEntity)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+			if len(airdropEntity) == 0 {
+				oo.LogW("there is no airdrop data in the background")
+				errTx = errors.New("there is no airdrop data in the background")
 				return
 			}
 
