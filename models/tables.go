@@ -198,6 +198,7 @@ type ProposalV1Model struct {
 	DaoAddress   string `db:"dao_address"`
 	DaoAddressV1 string `db:"dao_address_v1"`
 	VotingV1     string `db:"voting_v1"`
+	StartIdV1    int    `db:"start_id_v1"`
 }
 
 type AirdropModel struct {
