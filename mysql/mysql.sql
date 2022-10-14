@@ -262,7 +262,7 @@ CREATE TABLE `tb_proposal_v1` (
     `dao_address` VARCHAR(128) NOT NULL,
     `dao_address_v1` VARCHAR(128) NOT NULL,
     `voting_v1` VARCHAR(128) NOT NULL,
-    `start_id_v1` INT NOT NULL,#new data must -1
+    `start_id_v1` INT NOT NULL DEFAULT -1,
     PRIMARY KEY (`id`),
     INDEX `index_chain_id` (`chain_id` ASC),
     INDEX `index_dao_address` (`dao_address` ASC),
@@ -485,9 +485,9 @@ INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain
 
 INSERT INTO tb_category (category_name) VALUES ('Social'),('Protocol'),('NFT'),('Metaverse'),('Gaming'),('Dapp'),('Other');
 
-#example
-INSERT into tb_proposal_v1 (chain_id,dao_address,dao_address_v1,voting_v1,start_id_v1) VALUES
-(5,'0xb6dbd00a199b3a616be3d38c621b337f48a065ce','0xbc61E252c79D76D9Eb23DAE0E524E80dBA6E54B4','0x6ada02cb261f864646a6fc2466a9350336fda5ad',-1),
-(5,'0xf8c3b39b2533cb853620c5ccf580ad5cb2f744cd','0x53760E38B28d6882Ccf21151417Bc942E2300D00','0xef6d5b23a69b622851cca5bc2202e257021e4f7d',-1),
-(5,'0xb61d2ab83f9c976bb28f8343e304d733b38832d0','0x9a151fAaca125f344E30BE6c9deF867a53a1e824','0x4ea954b5523226c671b767c3b8dfb05df8ae1561',-1),
-(5,'0xc01123105f8478b56cf0a2ee67fac13d9f58e65d','0x31e7B9aF1643e96437d9DC49d3c546620A063FEC','0x29f3f68ffeff164e2d06558fb5760e1429073bd0',-1);
+#example dev
+INSERT into tb_proposal_v1 (chain_id,dao_address,dao_address_v1,voting_v1) VALUES
+(5,'0xb6dbd00a199b3a616be3d38c621b337f48a065ce','0xbc61E252c79D76D9Eb23DAE0E524E80dBA6E54B4','0x6ada02cb261f864646a6fc2466a9350336fda5ad'),
+(5,'0xf8c3b39b2533cb853620c5ccf580ad5cb2f744cd','0x53760E38B28d6882Ccf21151417Bc942E2300D00','0xef6d5b23a69b622851cca5bc2202e257021e4f7d'),
+(5,'0xb61d2ab83f9c976bb28f8343e304d733b38832d0','0x9a151fAaca125f344E30BE6c9deF867a53a1e824','0x4ea954b5523226c671b767c3b8dfb05df8ae1561'),
+(5,'0xc01123105f8478b56cf0a2ee67fac13d9f58e65d','0x31e7B9aF1643e96437d9DC49d3c546620A063FEC','0x29f3f68ffeff164e2d06558fb5760e1429073bd0');

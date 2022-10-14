@@ -519,8 +519,8 @@ type ResAccountRecord struct {
 }
 
 type ResOverview struct {
-	TotalDao         int `json:"totalDao"`
-	TotalApproveDao  int `json:"totalApproveDao"`
-	TotalVote        int `json:"totalVote"`
-	TotalAddressVote int `json:"totalAddressVote"`
+	TotalDao        int `json:"totalDao"`
+	TotalApproveDao int `json:"totalApproveDao"`
+	TotalAccount    int `json:"totalAccount"`
+	TotalProposal   int `json:"totalProposal"`
 }
