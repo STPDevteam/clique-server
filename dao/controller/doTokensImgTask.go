@@ -54,7 +54,7 @@ func tokensImgTask() {
 			continue
 		}
 
-		time.Sleep(time.Duration(15) * time.Second)
+		time.Sleep(time.Duration(60) * time.Second)
 
 		for indexId := range resId {
 			if resId[indexId].Platforms[platforms] == strings.ToLower(tokenAddress) {
@@ -104,7 +104,7 @@ func tokensImgTask() {
 				break
 			}
 		}
-		time.Sleep(time.Duration(15) * time.Second)
+		time.Sleep(time.Duration(60) * time.Second)
 	}
 
 }

@@ -89,13 +89,15 @@ func (svc *Service) getV1Proposal() {
 			updateId = data.Id
 		}
 
-		var updateStartId = make(map[string]interface{})
-		updateStartId["start_id_v1"] = updateId
-		sqlUp := oo.NewSqler().Table(consts.TbNameProposalV1).Where("start_id_v1 >= 0").Update(updateStartId)
-		err = oo.SqlExec(sqlUp)
-		if err != nil {
-			oo.LogW("SQL err: %v", err)
-			return
+		if updateId != 0 {
+			var updateStartId = make(map[string]interface{})
+			updateStartId["start_id_v1"] = updateId
+			sqlUp := oo.NewSqler().Table(consts.TbNameProposalV1).Where("start_id_v1 >= 0").Update(updateStartId)
+			err = oo.SqlExec(sqlUp)
+			if err != nil {
+				oo.LogW("SQL err: %v", err)
+				return
+			}
 		}
 
 	}
