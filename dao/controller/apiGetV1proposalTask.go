@@ -42,6 +42,7 @@ func (svc *Service) getV1Proposal() {
 		return
 	}
 
+	var updateId int
 	if res.Data != nil {
 		for _, data := range res.Data {
 			var countExist int
@@ -85,7 +86,18 @@ func (svc *Service) getV1Proposal() {
 					return
 				}
 			}
+			updateId = data.Id
 		}
+
+		var updateStartId = make(map[string]interface{})
+		updateStartId["start_id_v1"] = updateId
+		sqlUp := oo.NewSqler().Table(consts.TbNameProposalV1).Where("start_id_v1 >= 0").Update(updateStartId)
+		err = oo.SqlExec(sqlUp)
+		if err != nil {
+			oo.LogW("SQL err: %v", err)
+			return
+		}
+
 	}
 
 }
@@ -166,15 +178,6 @@ func saveV1Proposal(decode []interface{}, data models.V1ProposalData) error {
 				oo.LogW("SQL err: %v", errTx)
 				return errTx
 			}
-		}
-
-		var updateStartId = make(map[string]interface{})
-		updateStartId["start_id_v1"] = data.Id
-		sqlUp := oo.NewSqler().Table(consts.TbNameProposalV1).Where("start_id_v1 >= 0").Update(updateStartId)
-		_, errTx = oo.SqlxTxExec(tx, sqlUp)
-		if errTx != nil {
-			oo.LogW("SQL err: %v", errTx)
-			return errTx
 		}
 
 	}

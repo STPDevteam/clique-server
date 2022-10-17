@@ -483,7 +483,7 @@ INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain
 ('SettleAirdrop','0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e',15731651,'0x',1),
 ('Claimed','0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e',15731651,'0x',1);
 
-INSERT INTO tb_category (category_name) VALUES ('Social'),('Protocol'),('NFT'),('Metaverse'),('Gaming'),('Dapp'),('Other');
+INSERT INTO tb_category (category_name) VALUES ('Social'),('Protocol'),('NFT'),('Metaverse'),('Gaming'),('Other');
 
 #example dev
 INSERT into tb_proposal_v1 (chain_id,dao_address,dao_address_v1,voting_v1) VALUES
@@ -491,3 +491,11 @@ INSERT into tb_proposal_v1 (chain_id,dao_address,dao_address_v1,voting_v1) VALUE
 (5,'0xf8c3b39b2533cb853620c5ccf580ad5cb2f744cd','0x53760E38B28d6882Ccf21151417Bc942E2300D00','0xef6d5b23a69b622851cca5bc2202e257021e4f7d'),
 (5,'0xb61d2ab83f9c976bb28f8343e304d733b38832d0','0x9a151fAaca125f344E30BE6c9deF867a53a1e824','0x4ea954b5523226c671b767c3b8dfb05df8ae1561'),
 (5,'0xc01123105f8478b56cf0a2ee67fac13d9f58e65d','0x31e7B9aF1643e96437d9DC49d3c546620A063FEC','0x29f3f68ffeff164e2d06558fb5760e1429073bd0');
+
+# pre
+INSERT into tb_proposal_v1 (chain_id,dao_address,dao_address_v1,voting_v1) VALUES
+(137,'0xe3fdef87375eb4c64b3746f9ea0f1f8d55454b56','0x31e7B9aF1643e96437d9DC49d3c546620A063FEC','0x29f3f68ffeff164e2d06558fb5760e1429073bd0'),
+(137,'0x39fa22b4852119c62aabdd4523ac587481943c61','0xbc61E252c79D76D9Eb23DAE0E524E80dBA6E54B4','0x6ada02cb261f864646a6fc2466a9350336fda5ad'),
+(137,'0x1d78b7713caf654a6ce17349557017beeb39e8b9','0x53760E38B28d6882Ccf21151417Bc942E2300D00','0xef6d5b23a69b622851cca5bc2202e257021e4f7d'),
+(137,'0xf515548f7c6b7ec624517dca51eeed16f4e20b08','0x9a151fAaca125f344E30BE6c9deF867a53a1e824','0x4ea954b5523226c671b767c3b8dfb05df8ae1561'),
+(137,'0xb3aaa786e49cf3e516447bf79cea3cdd679e053d','0x139dF112feb210c294c540fccb7dFF2607E7158b','0xd704d21a7bff1f1c126d9ca8e93be591996ea5e9');
