@@ -173,7 +173,7 @@ func saveV1Proposal(decode []interface{}, data models.V1ProposalData) error {
 				return errTx
 			}
 			var weight = make(map[string]interface{})
-			weight["weight"] = totalProposal + 1
+			weight["weight"] = totalProposal
 			sqlUp := oo.NewSqler().Table(consts.TbNameDao).Where("chain_id", entities[0].ChainId).Where("dao_address", entities[0].DaoAddress).Update(weight)
 			_, errTx = oo.SqlxTxExec(tx, sqlUp)
 			if errTx != nil {

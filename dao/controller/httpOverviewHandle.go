@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	oo "github.com/Anna2024/liboo"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -42,7 +43,8 @@ func httpRecordTotal(c *gin.Context) {
 	}
 
 	var totalAccount int
-	sqlSel = oo.NewSqler().Table(consts.TbNameAccount).Count()
+	//sqlSel = oo.NewSqler().Table(consts.TbNameAccount).Count()
+	sqlSel = fmt.Sprintf(`SELECT count(DISTINCT message_sender) as count FROM %s`, consts.TbNameEventHistorical)
 	err = oo.SqlGet(sqlSel, &totalAccount)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)

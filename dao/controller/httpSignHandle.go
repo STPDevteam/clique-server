@@ -98,6 +98,7 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 	if params.SignType == "0" {
 		data := fmt.Sprintf("%s%s", paramsDataPrefix, strings.TrimPrefix(params.Account, "0x"))
 		res, errQb := utils.QueryMethodEthCall(tokenAddress, data, url)
+		oo.LogW("DoPost err: %v, tokenAddress:%v, data:%v, url:%v", errQb, tokenAddress, data, url)
 		if errQb != nil || res.Result == nil || res.Result == "0x" {
 			c.JSON(http.StatusInternalServerError, models.Response{
 				Code:    500,
@@ -147,6 +148,7 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 				}
 				res, errQb := utils.QueryMethodEthCallByTag(tokenAddress, data, url, tag)
 				if errQb != nil || res.Result == nil || res.Result == "0x" {
+					oo.LogW("DoPost err: %v, tokenAddress:%v, data:%v, url:%v, tag:%v", errQb, tokenAddress, data, url, tag)
 					c.JSON(http.StatusInternalServerError, models.Response{
 						Code:    500,
 						Message: "Something went wrong, Please try again later.5",
@@ -163,7 +165,7 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 			blockNumber, _ := strconv.ParseInt(voteEntity.BlockNumber, 16, 64)
 			res, errQ := utils.QuerySpecifyBalance(tokenAddress, params.Account, url, blockNumber)
 			if errQ != nil {
-				oo.LogW("DoPost err: %v", errQ)
+				oo.LogW("DoPost err: %v, tokenAddress:%v, data:%v, url:%v, blockNumber:%v", errQ, tokenAddress, params.Account, url, blockNumber)
 				c.JSON(http.StatusInternalServerError, models.Response{
 					Code:    500,
 					Message: "Something went wrong, Please try again later.6",
