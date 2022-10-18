@@ -107,6 +107,7 @@ type DaoModel struct {
 	UpdateBool        bool          `db:"update_bool"`
 	Weight            sql.NullInt64 `db:"weight"`
 	Approve           bool          `db:"approve"`
+	Deprecated        bool          `db:"deprecated"`
 }
 
 type CategoryModel struct {
@@ -188,6 +189,7 @@ type ProposalModel struct {
 	StartTime  int64  `db:"start_time"`
 	EndTime    int64  `db:"end_time"`
 	Version    string `db:"version"`
+	Deprecated bool   `db:"deprecated"`
 }
 
 type ProposalV1Model struct {
@@ -261,6 +263,7 @@ type ActivityModel struct {
 	PublishTime      int64         `db:"publish_time"`
 	Price            string        `db:"price"`
 	Weight           sql.NullInt64 `db:"weight"`
+	Deprecated       bool          `db:"deprecated"`
 }
 
 type ClaimedModel struct {

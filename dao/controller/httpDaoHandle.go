@@ -52,11 +52,11 @@ func httpDaoList(c *gin.Context) {
 	}
 
 	var sqlCount, sqlSel, sqlWhere, sqlOrderLimit, sqlSubquery string
-	sqlCount = fmt.Sprintf(`SELECT COUNT(*) FROM %s `, consts.TbNameDao)
-	sqlSel = fmt.Sprintf(`SELECT * FROM %s `, consts.TbNameDao)
+	sqlCount = fmt.Sprintf(`SELECT COUNT(*) FROM %s WHERE deprecated=%t `, consts.TbNameDao, false)
+	sqlSel = fmt.Sprintf(`SELECT * FROM %s WHERE deprecated=%t `, consts.TbNameDao, false)
 	sqlOrderLimit = fmt.Sprintf(`%s Limit %d,%d `, orderStr, offsetParam, countParam)
 	if keywordParam != "" {
-		sqlWhere = fmt.Sprintf(`WHERE (dao_address='%s' OR token_address='%s' OR dao_name LIKE '%%%s%%') `, keywordParam, keywordParam, keywordParam)
+		sqlWhere = fmt.Sprintf(`AND (dao_address='%s' OR token_address='%s' OR dao_name LIKE '%%%s%%') `, keywordParam, keywordParam, keywordParam)
 	}
 	if categoryParam != "" {
 		var categoryId int
@@ -70,11 +70,7 @@ func httpDaoList(c *gin.Context) {
 			})
 			return
 		}
-		if keywordParam == "" {
-			sqlSubquery = fmt.Sprintf(`WHERE id IN (SELECT dao_id FROM %s WHERE category_id = %d) `, consts.TbNameDaoCategory, categoryId)
-		} else {
-			sqlSubquery = fmt.Sprintf(`AND id IN (SELECT dao_id FROM %s WHERE category_id = %d) `, consts.TbNameDaoCategory, categoryId)
-		}
+		sqlSubquery = fmt.Sprintf(`AND id IN (SELECT dao_id FROM %s WHERE category_id = %d) `, consts.TbNameDaoCategory, categoryId)
 	}
 
 	sqlStrCount := fmt.Sprintf(`%s%s%s`, sqlCount, sqlWhere, sqlSubquery)
@@ -99,9 +95,8 @@ func httpDaoList(c *gin.Context) {
 	for index := range daoListEntity {
 
 		var totalProposals uint64
-		sqlTotal := oo.NewSqler().Table(consts.TbNameProposal).
-			Where("chain_id", daoListEntity[index].ChainId).
-			Where("dao_address", daoListEntity[index].DaoAddress).Count()
+		sqlTotal := oo.NewSqler().Table(consts.TbNameProposal).Where("deprecated", 0).
+			Where("chain_id", daoListEntity[index].ChainId).Where("dao_address", daoListEntity[index].DaoAddress).Count()
 		err = oo.SqlGet(sqlTotal, &totalProposals)
 		if err != nil {
 			oo.LogW("SQL err: %v", err)
@@ -114,7 +109,7 @@ func httpDaoList(c *gin.Context) {
 
 		var activeProposals uint64
 		var now = time.Now().Unix()
-		sqlActive := oo.NewSqler().Table(consts.TbNameProposal).
+		sqlActive := oo.NewSqler().Table(consts.TbNameProposal).Where("deprecated", 0).
 			Where("chain_id", daoListEntity[index].ChainId).
 			Where("dao_address", daoListEntity[index].DaoAddress).
 			Where("start_time", "<=", now).
@@ -130,7 +125,7 @@ func httpDaoList(c *gin.Context) {
 		}
 
 		var soonProposals uint64
-		sqlSoon := oo.NewSqler().Table(consts.TbNameProposal).
+		sqlSoon := oo.NewSqler().Table(consts.TbNameProposal).Where("deprecated", 0).
 			Where("chain_id", daoListEntity[index].ChainId).
 			Where("dao_address", daoListEntity[index].DaoAddress).
 			Where("start_time", ">=", now).Count()
@@ -145,7 +140,7 @@ func httpDaoList(c *gin.Context) {
 		}
 
 		var closedProposals uint64
-		sqlClosed := oo.NewSqler().Table(consts.TbNameProposal).
+		sqlClosed := oo.NewSqler().Table(consts.TbNameProposal).Where("deprecated", 0).
 			Where("chain_id", daoListEntity[index].ChainId).
 			Where("dao_address", daoListEntity[index].DaoAddress).
 			Where("end_time", "<=", now).Count()
@@ -362,11 +357,25 @@ func httpLeftDaoJoin(c *gin.Context) {
 
 	var data = make([]models.ResLeftDaoCreator, 0)
 	for index := range entities {
-		data = append(data, models.ResLeftDaoCreator{
-			Account:    accountParam,
-			DaoAddress: entities[index].DaoAddress,
-			ChainId:    entities[index].ChainId,
-		})
+		var deprecated bool
+		sqlSel := oo.NewSqler().Table(consts.TbNameDao).Where("chain_id", entities[index].ChainId).
+			Where("dao_address", entities[index].DaoAddress).Select("deprecated")
+		err = oo.SqlGet(sqlSel, &deprecated)
+		if err != nil {
+			oo.LogW("%v", err)
+			c.JSON(http.StatusOK, models.Response{
+				Code:    500,
+				Message: "Something went wrong, Please try again later.",
+			})
+			return
+		}
+		if !deprecated {
+			data = append(data, models.ResLeftDaoCreator{
+				Account:    accountParam,
+				DaoAddress: entities[index].DaoAddress,
+				ChainId:    entities[index].ChainId,
+			})
+		}
 	}
 
 	c.JSON(http.StatusOK, models.Response{

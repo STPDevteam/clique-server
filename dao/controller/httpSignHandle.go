@@ -98,8 +98,8 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 	if params.SignType == "0" {
 		data := fmt.Sprintf("%s%s", paramsDataPrefix, strings.TrimPrefix(params.Account, "0x"))
 		res, errQb := utils.QueryMethodEthCall(tokenAddress, data, url)
-		oo.LogW("DoPost err: %v, tokenAddress:%v, data:%v, url:%v", errQb, tokenAddress, data, url)
 		if errQb != nil || res.Result == nil || res.Result == "0x" {
+			oo.LogW("DoPost err: %v, tokenAddress:%v, data:%v, url:%v", errQb, tokenAddress, data, url)
 			c.JSON(http.StatusInternalServerError, models.Response{
 				Code:    500,
 				Message: "Something went wrong, Please try again later.3",

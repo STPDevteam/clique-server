@@ -528,7 +528,8 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 
 			// for dao order with proposal total
 			var totalProposal int
-			sqlSel := oo.NewSqler().Table(consts.TbNameProposal).Where("chain_id", chainId).Where("dao_address", daoAddress).Count()
+			sqlSel := oo.NewSqler().Table(consts.TbNameProposal).Where("deprecated", 0).
+				Where("chain_id", chainId).Where("dao_address", daoAddress).Count()
 			errTx = oo.SqlGet(sqlSel, &totalProposal)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)

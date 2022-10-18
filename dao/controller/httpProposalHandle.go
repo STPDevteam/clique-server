@@ -37,9 +37,8 @@ func httpProposalsList(c *gin.Context) {
 	versionParam := c.Query("version")
 
 	var listEntities []models.ProposalModel
-	sqler := oo.NewSqler().Table(consts.TbNameProposal).
-		Where("chain_id", chainIdParam).
-		Where("dao_address", daoAddressParam)
+	sqler := oo.NewSqler().Table(consts.TbNameProposal).Where("deprecated", 0).
+		Where("chain_id", chainIdParam).Where("dao_address", daoAddressParam)
 	var now = time.Now().Unix()
 	if statusParam == 1 {
 		sqler = sqler.Where("start_time", ">=", now)

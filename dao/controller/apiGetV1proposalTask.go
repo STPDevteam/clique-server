@@ -166,7 +166,8 @@ func saveV1Proposal(decode []interface{}, data models.V1ProposalData) error {
 
 			// for dao order with proposal total
 			var totalProposal int
-			sqlSel = oo.NewSqler().Table(consts.TbNameProposal).Where("chain_id", entities[0].ChainId).Where("dao_address", entities[0].DaoAddress).Count()
+			sqlSel = oo.NewSqler().Table(consts.TbNameProposal).Where("deprecated", 0).
+				Where("chain_id", entities[0].ChainId).Where("dao_address", entities[0].DaoAddress).Count()
 			errTx = oo.SqlGet(sqlSel, &totalProposal)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)

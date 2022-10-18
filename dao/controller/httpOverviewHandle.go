@@ -19,7 +19,7 @@ import (
 func httpRecordTotal(c *gin.Context) {
 
 	var totalDao int
-	sqlSel := oo.NewSqler().Table(consts.TbNameDao).Count()
+	sqlSel := oo.NewSqler().Table(consts.TbNameDao).Where("deprecated", 0).Count()
 	err := oo.SqlGet(sqlSel, &totalDao)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)
@@ -31,7 +31,7 @@ func httpRecordTotal(c *gin.Context) {
 	}
 
 	var totalApproveDao int
-	sqlSel = oo.NewSqler().Table(consts.TbNameDao).Where("approve", 1).Count()
+	sqlSel = oo.NewSqler().Table(consts.TbNameDao).Where("deprecated", 0).Where("approve", 1).Count()
 	err = oo.SqlGet(sqlSel, &totalApproveDao)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)
@@ -56,7 +56,7 @@ func httpRecordTotal(c *gin.Context) {
 	}
 
 	var totalProposal int
-	sqlSel = oo.NewSqler().Table(consts.TbNameProposal).Count()
+	sqlSel = oo.NewSqler().Table(consts.TbNameProposal).Where("deprecated", 0).Count()
 	err = oo.SqlGet(sqlSel, &totalProposal)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)

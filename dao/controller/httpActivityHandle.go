@@ -36,7 +36,7 @@ func httpActivity(c *gin.Context) {
 	offsetParam, _ := strconv.Atoi(offset)
 
 	var listEntities []models.ActivityModel
-	sqler := oo.NewSqler().Table(consts.TbNameActivity)
+	sqler := oo.NewSqler().Table(consts.TbNameActivity).Where("deprecated", 0)
 	if chainIdParam != 0 && daoAddressParam != "" {
 		sqler = sqler.Where("chain_id", chainIdParam).Where("dao_address", daoAddressParam)
 	}

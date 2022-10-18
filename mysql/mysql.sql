@@ -88,11 +88,13 @@ CREATE TABLE `tb_dao` (
 	`update_bool` bool NOT NULL,
 	`weight` INT,
 	`approve` bool NOT NULL,
+	`deprecated` bool NOT NULL DEFAULT false,
   PRIMARY KEY (`id`),
-  INDEX `dao_address` (`dao_address` ASC),
-  INDEX `dao_name` (`dao_name` ASC),
-  INDEX `token_address` (`token_address` ASC),
-  INDEX `creator` (`creator` ASC)
+  INDEX `index_dao_address` (`dao_address` ASC),
+  INDEX `index_dao_name` (`dao_name` ASC),
+  INDEX `index_token_address` (`token_address` ASC),
+  INDEX `index_creator` (`creator` ASC),
+  INDEX `index_deprecated` (`deprecated` ASC)
 );
 
 CREATE TABLE `tb_category`(
@@ -248,10 +250,12 @@ CREATE TABLE `tb_proposal` (
 	`start_time` INT NOT NULL,
 	`end_time` INT NOT NULL,
 	`version` VARCHAR(10) NOT NULL,
+    `deprecated` bool NOT NULL DEFAULT false,
 	PRIMARY KEY (`id`),
     INDEX `index_chain_id` (`chain_id` ASC),
     INDEX `index_dao_address` (`dao_address` ASC),
-    INDEX `index_proposalId` (`proposal_id` ASC)
+    INDEX `index_proposalId` (`proposal_id` ASC),
+    INDEX `index_deprecated` (`deprecated` ASC)
 );
 
 CREATE TABLE `tb_proposal_v1` (
@@ -345,6 +349,7 @@ CREATE TABLE `tb_activity` (
     `publish_time` INT NOT NULL,
     `price` VARCHAR(128) NOT NULL,
     `weight` INT,
+    `deprecated` bool NOT NULL DEFAULT false,
     PRIMARY KEY (`id`),
     INDEX `index_id` (`id` ASC),
     INDEX `index_airdropId` (`activity_id` ASC),
@@ -352,7 +357,8 @@ CREATE TABLE `tb_activity` (
     INDEX `index_chain_id` (`chain_id` ASC),
     INDEX `index_dao_address` (`dao_address` ASC),
     INDEX `index_start_time` (`start_time` ASC),
-    INDEX `index_end_time` (`end_time` ASC)
+    INDEX `index_end_time` (`end_time` ASC),
+    INDEX `index_deprecated` (`deprecated` ASC)
 );
 
 CREATE TABLE `tb_claimed` (

@@ -127,13 +127,16 @@ func httpQueryAccount(c *gin.Context) {
 			})
 			return
 		}
-		dataAdmin = append(dataAdmin, models.ResDao{
-			DaoAddress:   adminDaoEntities[index].DaoAddress,
-			ChainId:      adminDaoEntities[index].ChainId,
-			AccountLevel: adminDaoEntities[index].AccountLevel,
-			DaoName:      daoEntity[0].DaoName,
-			DaoLogo:      daoEntity[0].DaoLogo,
-		})
+		if !daoEntity[0].Deprecated {
+			dataAdmin = append(dataAdmin, models.ResDao{
+				DaoAddress:   adminDaoEntities[index].DaoAddress,
+				ChainId:      adminDaoEntities[index].ChainId,
+				AccountLevel: adminDaoEntities[index].AccountLevel,
+				DaoName:      daoEntity[0].DaoName,
+				DaoLogo:      daoEntity[0].DaoLogo,
+			})
+		}
+
 	}
 
 	var memberEntities []models.MemberModel
@@ -168,13 +171,15 @@ func httpQueryAccount(c *gin.Context) {
 				})
 				return
 			}
-			dataMember = append(dataMember, models.ResDao{
-				DaoAddress:   memberEntities[index].DaoAddress,
-				ChainId:      memberEntities[index].ChainId,
-				AccountLevel: consts.LevelMember,
-				DaoName:      daoEntity[0].DaoName,
-				DaoLogo:      daoEntity[0].DaoLogo,
-			})
+			if !daoEntity[0].Deprecated {
+				dataMember = append(dataMember, models.ResDao{
+					DaoAddress:   memberEntities[index].DaoAddress,
+					ChainId:      memberEntities[index].ChainId,
+					AccountLevel: consts.LevelMember,
+					DaoName:      daoEntity[0].DaoName,
+					DaoLogo:      daoEntity[0].DaoLogo,
+				})
+			}
 		}
 	}
 
