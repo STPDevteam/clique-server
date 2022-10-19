@@ -370,7 +370,7 @@ func httpQueryAccountSignList(c *gin.Context) {
 		var entity models.AccountModel
 		sqlSel := oo.NewSqler().Table(consts.TbNameAccount).Where("account", entities[index].Account).Select()
 		err = oo.SqlGet(sqlSel, &entity)
-		if err != nil {
+		if err != nil && err != oo.ErrNoRows {
 			oo.LogW("SQL err: %v", err)
 			c.JSON(http.StatusInternalServerError, models.Response{
 				Code:    500,
