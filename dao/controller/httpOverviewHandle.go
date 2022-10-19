@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	oo "github.com/Anna2024/liboo"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -16,7 +15,7 @@ import (
 // @Produce json
 // @Success 200 {object} models.ResOverview
 // @Router /stpdao/v2/overview/total [get]
-func httpRecordTotal(c *gin.Context) {
+func (svc *Service) httpRecordTotal(c *gin.Context) {
 
 	var totalDao int
 	sqlSel := oo.NewSqler().Table(consts.TbNameDao).Where("deprecated", 0).Count()
@@ -42,12 +41,28 @@ func httpRecordTotal(c *gin.Context) {
 		return
 	}
 
-	var totalAccount int
+	var totalAccount interface{}
 	//sqlSel = oo.NewSqler().Table(consts.TbNameAccount).Count()
-	sqlSel = fmt.Sprintf(`SELECT count(DISTINCT message_sender) as count FROM %s`, consts.TbNameEventHistorical)
-	err = oo.SqlGet(sqlSel, &totalAccount)
-	if err != nil {
-		oo.LogW("SQL err: %v", err)
+	//sqlSel = fmt.Sprintf(`SELECT count(DISTINCT message_sender) as count FROM %s`, consts.TbNameEventHistorical)
+	//err = oo.SqlGet(sqlSel, &totalAccount)
+	//if err != nil {
+	//	oo.LogW("SQL err: %v", err)
+	//	c.JSON(http.StatusInternalServerError, models.Response{
+	//		Code:    500,
+	//		Message: "Something went wrong, Please try again later.",
+	//	})
+	//	return
+	//}
+	totalAccount, ok := svc.mCache.Get(consts.CacheTokenHolders)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+	val, ok2 := totalAccount.(uint64)
+	if !ok2 {
 		c.JSON(http.StatusInternalServerError, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",
@@ -73,7 +88,7 @@ func httpRecordTotal(c *gin.Context) {
 		Data: models.ResOverview{
 			TotalDao:        totalDao,
 			TotalApproveDao: totalApproveDao,
-			TotalAccount:    totalAccount,
+			TotalAccount:    val,
 			TotalProposal:   totalProposal,
 		},
 	})

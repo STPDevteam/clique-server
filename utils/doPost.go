@@ -305,3 +305,36 @@ func QueryMethodEthCallByTag(to, data, url, tag string) (*models.JsonRPCModel, e
 func QueryMethodEthCall(to, data, url string) (*models.JsonRPCModel, error) {
 	return QueryMethodEthCallByTag(to, data, url, "latest")
 }
+
+func QueryErc20TokenHolders(token, url string) (*models.JsonRPCTokenHoldersModel, error) {
+	body := fmt.Sprintf(`{
+		"id": 1,
+		"jsonrpc": "2.0",
+		"method": "erc20_tokenHolders",
+		"params": {
+			"contractAddress":"%s",
+			"pageSize":1,
+			"pageIndex":1
+		}
+	}`, token)
+
+	return jsonRPCTokenHolders(body, url)
+}
+
+func jsonRPCTokenHolders(body, url string) (data *models.JsonRPCTokenHoldersModel, err error) {
+	res, err := DoPost(
+		url,
+		"application/json",
+		body,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(res, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}

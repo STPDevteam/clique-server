@@ -29,6 +29,16 @@ type Result struct {
 	TransactionIndex string   `json:"transactionIndex"`
 }
 
+type JsonRPCTokenHoldersModel struct {
+	Id      uint64  `json:"id"`
+	Jsonrpc string  `json:"jsonrpc"`
+	Result  Holders `json:"result"`
+}
+
+type Holders struct {
+	Total uint64 `json:"total"`
+}
+
 type JsonRPCTimesTampModel struct {
 	Id      uint64           `json:"id"`
 	Jsonrpc string           `json:"jsonrpc"`
@@ -519,10 +529,10 @@ type ResAccountRecord struct {
 }
 
 type ResOverview struct {
-	TotalDao        int `json:"totalDao"`
-	TotalApproveDao int `json:"totalApproveDao"`
-	TotalAccount    int `json:"totalAccount"`
-	TotalProposal   int `json:"totalProposal"`
+	TotalDao        int    `json:"totalDao"`
+	TotalApproveDao int    `json:"totalApproveDao"`
+	TotalAccount    uint64 `json:"totalAccount"`
+	TotalProposal   int    `json:"totalProposal"`
 }
 
 type ResAccountSignPage struct {

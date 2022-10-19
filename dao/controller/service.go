@@ -6,6 +6,7 @@ import (
 	"fmt"
 	oo "github.com/Anna2024/liboo"
 	"github.com/gin-gonic/gin"
+	"github.com/patrickmn/go-cache"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/urfave/cli"
@@ -18,6 +19,7 @@ import (
 	"stp_dao_v2/models"
 	"stp_dao_v2/utils"
 	"strings"
+	"time"
 )
 
 type Service struct {
@@ -26,6 +28,7 @@ type Service struct {
 	gConfig    *oo.Config
 	appConfig  *config.AppConfig
 	scanInfo   []*config.ScanInfoConfig
+	mCache     *cache.Cache
 }
 
 func NewService() *Service {
@@ -50,6 +53,9 @@ func (svc *Service) Start(ctx *cli.Context) error {
 		oo.LogW("init mysql failed: %v", err)
 		return err
 	}
+	svc.mCache = cache.New(cache.NoExpiration, cache.NoExpiration)
+	// STPT holder, snapshot at #15781071
+	svc.mCache.Set(consts.CacheTokenHolders, 13804, cache.NoExpiration)
 
 	go svc.scheduledTask()
 	go svc.updateDaoInfoTask()
@@ -57,6 +63,7 @@ func (svc *Service) Start(ctx *cli.Context) error {
 	go updateNotification()
 	go updateAccountRecord()
 	go svc.getV1Proposal()
+	go svc.getEthTokenHoldersTotal()
 
 	router := gin.Default()
 	router.Use(utils.Cors())
@@ -130,7 +137,7 @@ func (svc *Service) Start(ctx *cli.Context) error {
 	}
 	r12 := router.Group(path.Join(basePath, "/overview"))
 	{
-		r12.GET("/total", httpRecordTotal)
+		r12.GET("/total", svc.httpRecordTotal)
 	}
 
 	url := ginSwagger.URL(svc.appConfig.SwaggerUrl)
@@ -268,4 +275,52 @@ func checkAccountJoinOrQuit(data *models.JoinDaoWithSignParam) (ret bool) {
 		return false
 	}
 	return true
+}
+
+func (svc *Service) getEthTokenHoldersTotal() {
+	defer time.AfterFunc(time.Duration(10*60)*time.Second, svc.getEthTokenHoldersTotal)
+
+	var entities []models.DaoModel
+	sqlSel := oo.NewSqler().Table(consts.TbNameDao).Select()
+	err := oo.SqlSelect(sqlSel, &entities)
+	if err != nil {
+		oo.LogW("SQL err:%v", err)
+		return
+	}
+
+	var queryTokenAddress []string
+	var set = make(map[string]bool)
+	for index := range entities {
+		if set[entities[index].TokenAddress] && set[string(entities[index].TokenChainId)] {
+			continue
+		}
+		set[entities[index].TokenAddress] = true
+		set[string(entities[index].TokenChainId)] = true
+
+		if entities[index].TokenChainId == 1 {
+			queryTokenAddress = append(queryTokenAddress, entities[index].TokenAddress)
+		}
+	}
+
+	var totalTokenHolder uint64
+	for _, token := range queryTokenAddress {
+
+		for indexScan := range svc.scanInfo {
+			for indexUrl := range svc.scanInfo[indexScan].ChainId {
+				if svc.scanInfo[indexScan].ChainId[indexUrl] == 1 {
+					url := svc.scanInfo[indexScan].ScanUrl[indexUrl]
+
+					res, err := utils.QueryErc20TokenHolders(token, url)
+					if err != nil {
+						oo.LogW("QueryErc20TokenHolders err:%v", err)
+						return
+					}
+					totalTokenHolder += res.Result.Total
+
+				}
+			}
+		}
+	}
+
+	svc.mCache.Set(consts.CacheTokenHolders, totalTokenHolder, cache.NoExpiration)
 }

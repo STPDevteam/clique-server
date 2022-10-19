@@ -49,7 +49,7 @@ func (svc *Service) scheduledTask() {
 			}
 			latestBlockNum, _ = utils.Hex2Dec(val)
 
-			latestBlockNum = int(math.Min(float64(latestBlockNum-svc.appConfig.DelayedBlockNumber), float64(currentBlockNum+svc.appConfig.BlockNumberPerReq)))
+			latestBlockNum = int(math.Min(float64(latestBlockNum-svc.scanInfo[indexScan].DelayedBlockNumber[indexUrl]), float64(currentBlockNum+svc.appConfig.BlockNumberPerReq)))
 			for ; currentBlockNum <= latestBlockNum; currentBlockNum++ {
 
 				var blockData = make([]map[string]interface{}, 0)

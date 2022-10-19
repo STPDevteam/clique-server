@@ -218,7 +218,7 @@ CREATE TABLE `tb_account_sign` (
     `dao_address` VARCHAR(128) NOT NULL,
     `account` VARCHAR(128) NOT NULL,
     `operate` VARCHAR(30) NOT NULL,
-    `signature` VARCHAR(130) NOT NULL,
+    `signature` VARCHAR(132) NOT NULL,
     `message` VARCHAR(132) NOT NULL,
     `timestamp` INT NOT NULL,
      PRIMARY KEY (`id`),
