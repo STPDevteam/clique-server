@@ -8,6 +8,7 @@ import (
 	"stp_dao_v2/consts"
 	"stp_dao_v2/models"
 	"strconv"
+	"time"
 )
 
 // @Summary account info
@@ -312,6 +313,79 @@ func httpQueryRecordList(c *gin.Context) {
 		Code:    http.StatusOK,
 		Message: "ok",
 		Data: models.ResAccountRecordPage{
+			List:  data,
+			Total: total,
+		},
+	})
+
+}
+
+// @Summary account sign record list
+// @Tags account
+// @version 0.0.1
+// @description account sign record list
+// @Produce json
+// @Param offset query  int true "offset,page"
+// @Param count query  int true "count,page"
+// @Success 200 {object} models.ResAccountSignPage
+// @Router /stpdao/v2/account/sign/list [get]
+func httpQueryAccountSignList(c *gin.Context) {
+	count := c.Query("count")
+	offset := c.Query("offset")
+	countParam, _ := strconv.Atoi(count)
+	offsetParam, _ := strconv.Atoi(offset)
+
+	var entities []models.AccountSignModel
+	sqler := oo.NewSqler().Table(consts.TbNameAccountSign).Where("timestamp", "<", time.Now().Unix()-60)
+
+	var total uint64
+	sqlCopy := *sqler
+	sqlStr := sqlCopy.Count()
+	err := oo.SqlGet(sqlStr, &total)
+	if err == nil {
+		sqlCopy = *sqler
+		sqlStr = sqlCopy.Order("timestamp DESC").Limit(countParam).Offset(offsetParam).Select()
+		err = oo.SqlSelect(sqlStr, &entities)
+	}
+	if err != nil {
+		oo.LogW("SQL err: %v", err)
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+
+	var data = make([]models.ResAccountSign, 0)
+	for index := range entities {
+		var entity models.AccountModel
+		sqlSel := oo.NewSqler().Table(consts.TbNameAccount).Where("account", entities[index].Account).Select()
+		err = oo.SqlGet(sqlSel, &entity)
+		if err != nil {
+			oo.LogW("SQL err: %v", err)
+			c.JSON(http.StatusInternalServerError, models.Response{
+				Code:    500,
+				Message: "Something went wrong, Please try again later.",
+			})
+			return
+		}
+
+		data = append(data, models.ResAccountSign{
+			ChainId:     entities[index].ChainId,
+			DaoAddress:  entities[index].DaoAddress,
+			Account:     entities[index].Account,
+			Operate:     entities[index].Operate,
+			Signature:   entities[index].Signature,
+			Message:     entities[index].Message,
+			Timestamp:   entities[index].Timestamp,
+			AccountLogo: entity.AccountLogo.String,
+		})
+	}
+
+	c.JSON(http.StatusOK, models.Response{
+		Code:    http.StatusOK,
+		Message: "ok",
+		Data: models.ResAccountSignPage{
 			List:  data,
 			Total: total,
 		},

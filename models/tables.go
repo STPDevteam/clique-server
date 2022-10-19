@@ -48,6 +48,19 @@ type AccountModel struct {
 	Discord      sql.NullString `db:"discord"`
 }
 
+type AccountSignModel struct {
+	Id         uint64 `db:"id,omitempty" sqler:"skips"`
+	CreateTime string `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime string `db:"update_time,omitempty" sqler:"skips"`
+	ChainId    int    `db:"chain_id"`
+	DaoAddress string `db:"dao_address"`
+	Account    string `db:"account"`
+	Operate    string `db:"operate"`
+	Signature  string `db:"signature"`
+	Message    string `db:"message"`
+	Timestamp  int64  `db:"timestamp"`
+}
+
 type AccountRecordModel struct {
 	Id         uint64 `db:"id,omitempty" sqler:"skips"`
 	CreateTime string `db:"create_time,omitempty" sqler:"skips"`

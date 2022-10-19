@@ -89,7 +89,7 @@ func (svc *Service) scheduledTask() {
 
 							for indexNeed := range needEvent {
 								if eventType == needEvent[indexNeed].EventType &&
-									res.Result[i].Address == strings.ToLower(needEvent[indexNeed].Address) &&
+									strings.ToLower(res.Result[i].Address) == strings.ToLower(needEvent[indexNeed].Address) &&
 									needEvent[indexNeed].LastBlockNumber <= currentBlockNum {
 
 									resTime, errTime := utils.QueryTimesTamp(currentBlock, url)
@@ -409,6 +409,23 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 				1,
 			)
 			_, errTx = oo.SqlxTxExec(tx, sqlInsMember)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+
+			var m = make([]map[string]interface{}, 0)
+			var v = make(map[string]interface{})
+			v["chain_id"] = chainId
+			v["dao_address"] = daoAddress
+			v["account"] = creatorAddress
+			v["operate"] = "created"
+			v["signature"] = blockData[i]["transaction_hash"].(string)
+			v["message"] = ""
+			v["timestamp"] = time.Now().Unix()
+			m = append(m, v)
+			sqlIns = oo.NewSqler().Table(consts.TbNameAccountSign).Insert(m)
+			_, errTx = oo.SqlxTxExec(tx, sqlIns)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return

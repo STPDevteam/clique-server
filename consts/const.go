@@ -10,6 +10,7 @@ const (
 	TbNameScanTask            = "scan_task"
 	TbNameAccount             = "tb_account"
 	TbNameAccountRecord       = "tb_account_record"
+	TbNameAccountSign         = "tb_account_sign"
 	TbNameNonce               = "tb_nonce"
 	TbNameMember              = "tb_member"
 	TbNameDao                 = "tb_dao"

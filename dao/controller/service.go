@@ -97,6 +97,7 @@ func (svc *Service) Start(ctx *cli.Context) error {
 		r6.POST("/query", httpQueryAccount)
 		r6.POST("/update", httpUpdateAccount)
 		r6.GET("/record", httpQueryRecordList)
+		r6.GET("/sign/list", httpQueryAccountSignList)
 	}
 	r7 := router.Group(path.Join(basePath, "/token"))
 	{
@@ -239,6 +240,26 @@ func checkAirdropAdminAndTimestamp(sign *models.AirdropAdminSignData) (ret bool)
 	err = oo.SqlGet(sqlSql, &count)
 	oo.LogD("count:%v", count)
 	if err != nil || count == 0 {
+		return false
+	}
+
+	if !ret {
+		oo.LogD("check Sign fail")
+		return false
+	}
+	return true
+}
+
+func checkAccountJoinOrQuit(data *models.JoinDaoWithSignParam) (ret bool) {
+	message := fmt.Sprintf(`%d,%s,%s,%d`, data.Params.ChainId, data.Params.DaoAddress, data.Params.JoinSwitch, data.Params.Timestamp)
+	ret, errSign := utils.CheckPersonalSign(message, data.Sign.Account, data.Sign.Signature)
+	if errSign != nil {
+		oo.LogD("signMessage err %v", errSign)
+		return false
+	}
+
+	if !utils.CheckAdminSignMessageTimestamp(data.Params.Timestamp) {
+		oo.LogD("signMessage CheckAdminSignMessageTimestamp err %v", errSign)
 		return false
 	}
 

@@ -241,7 +241,7 @@ func httpDaoJoinOrQuit(c *gin.Context) {
 		return
 	}
 
-	if !checkLogin(&params.Sign) {
+	if !checkAccountJoinOrQuit(&params) {
 		oo.LogD("SignData err not auth")
 		c.JSON(http.StatusUnauthorized, models.Response{
 			Code:    http.StatusUnauthorized,
@@ -251,10 +251,32 @@ func httpDaoJoinOrQuit(c *gin.Context) {
 		return
 	}
 
+	message := fmt.Sprintf(`%d,%s,%s,%d`, params.Params.ChainId, params.Params.DaoAddress, params.Params.JoinSwitch, params.Params.Timestamp)
+	var m = make([]map[string]interface{}, 0)
+	var v = make(map[string]interface{})
+	v["chain_id"] = params.Params.ChainId
+	v["dao_address"] = params.Params.DaoAddress
+	v["account"] = params.Sign.Account
+	v["operate"] = params.Params.JoinSwitch
+	v["signature"] = params.Sign.Signature
+	v["message"] = message
+	v["timestamp"] = time.Now().Unix()
+	m = append(m, v)
+	sqlIns := oo.NewSqler().Table(consts.TbNameAccountSign).Insert(m)
+	err = oo.SqlExec(sqlIns)
+	if err != nil {
+		oo.LogW("%v", err)
+		c.JSON(http.StatusOK, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+
 	var count int
 	sqlSel := oo.NewSqler().Table(consts.TbNameMember).
 		Where("dao_address", params.Params.DaoAddress).
-		Where("account", params.Params.Account).
+		Where("account", params.Sign.Account).
 		Where("chain_id", params.Params.ChainId).Count()
 	err = oo.SqlGet(sqlSel, &count)
 	if err != nil {
@@ -266,59 +288,42 @@ func httpDaoJoinOrQuit(c *gin.Context) {
 		return
 	}
 
-	var role string
-	sqlSelRole := oo.NewSqler().Table(consts.TbNameAdmin).
-		Where("dao_address", params.Params.DaoAddress).
-		Where("chain_id", params.Params.ChainId).
-		Where("account", params.Params.Account).Select("account_level")
-	err = oo.SqlGet(sqlSelRole, &role)
-	if err != nil && err != oo.ErrNoRows {
-		oo.LogW("%v", err)
-		c.JSON(http.StatusOK, models.Response{
-			Code:    500,
-			Message: "Something went wrong, Please try again later.",
-		})
-		return
-	}
+	if (count == 0 && params.Params.JoinSwitch == "join") || (count == 1 && params.Params.JoinSwitch == "join") {
 
-	if role != consts.LevelSuperAdmin {
-		if (count == 0 && params.Params.JoinSwitch == 1) || (count == 1 && params.Params.JoinSwitch == 1) {
+		sqlIns = fmt.Sprintf(`REPLACE INTO %s (dao_address,chain_id,account,join_switch) VALUES ('%s',%d,'%s',%d)`,
+			consts.TbNameMember,
+			params.Params.DaoAddress,
+			params.Params.ChainId,
+			params.Sign.Account,
+			1,
+		)
+		err = oo.SqlExec(sqlIns)
+		if err != nil {
+			oo.LogW("%v", err)
+			c.JSON(http.StatusOK, models.Response{
+				Code:    500,
+				Message: "Something went wrong, Please try again later.",
+			})
+			return
+		}
 
-			sqlIns := fmt.Sprintf(`REPLACE INTO %s (dao_address,chain_id,account,join_switch) VALUES ('%s',%d,'%s',%d)`,
-				consts.TbNameMember,
-				params.Params.DaoAddress,
-				params.Params.ChainId,
-				params.Params.Account,
-				params.Params.JoinSwitch,
-			)
-			err = oo.SqlExec(sqlIns)
-			if err != nil {
-				oo.LogW("%v", err)
-				c.JSON(http.StatusOK, models.Response{
-					Code:    500,
-					Message: "Something went wrong, Please try again later.",
-				})
-				return
-			}
+	} else if count == 1 && params.Params.JoinSwitch == "quit" {
 
-		} else if count == 1 && params.Params.JoinSwitch == 0 {
-
-			sqlUp := fmt.Sprintf(`UPDATE %s SET join_switch=%d WHERE dao_address='%s' AND account='%s' AND chain_id=%d`,
-				consts.TbNameMember,
-				params.Params.JoinSwitch,
-				params.Params.DaoAddress,
-				params.Params.Account,
-				params.Params.ChainId,
-			)
-			err = oo.SqlExec(sqlUp)
-			if err != nil {
-				oo.LogW("%v", err)
-				c.JSON(http.StatusOK, models.Response{
-					Code:    500,
-					Message: "Something went wrong, Please try again later.",
-				})
-				return
-			}
+		sqlUp := fmt.Sprintf(`UPDATE %s SET join_switch=%d WHERE dao_address='%s' AND account='%s' AND chain_id=%d`,
+			consts.TbNameMember,
+			0,
+			params.Params.DaoAddress,
+			params.Sign.Account,
+			params.Params.ChainId,
+		)
+		err = oo.SqlExec(sqlUp)
+		if err != nil {
+			oo.LogW("%v", err)
+			c.JSON(http.StatusOK, models.Response{
+				Code:    500,
+				Message: "Something went wrong, Please try again later.",
+			})
+			return
 		}
 	}
 

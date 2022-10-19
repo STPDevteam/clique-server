@@ -184,11 +184,11 @@ type JoinDaoWithSignParam struct {
 }
 
 type JoinDaoParam struct {
-	// 0:quit Dao,1:join Dao
-	JoinSwitch int    `json:"joinSwitch"`
-	DaoAddress string `json:"daoAddress"`
 	ChainId    int    `json:"chainId"`
-	Account    string `json:"account"`
+	DaoAddress string `json:"daoAddress"`
+	// join/quit
+	JoinSwitch string `json:"joinSwitch"`
+	Timestamp  int64  `json:"timestamp"`
 }
 
 type ResLeftDaoCreator struct {
@@ -523,4 +523,20 @@ type ResOverview struct {
 	TotalApproveDao int `json:"totalApproveDao"`
 	TotalAccount    int `json:"totalAccount"`
 	TotalProposal   int `json:"totalProposal"`
+}
+
+type ResAccountSignPage struct {
+	List  []ResAccountSign `json:"list"`
+	Total uint64           `json:"total"`
+}
+
+type ResAccountSign struct {
+	ChainId     int    `json:"chainId"`
+	DaoAddress  string `json:"daoAddress"`
+	Account     string `json:"account"`
+	Operate     string `json:"operate"`
+	Signature   string `json:"signature"`
+	Message     string `json:"message"`
+	Timestamp   int64  `json:"timestamp"`
+	AccountLogo string `json:"accountLogo"`
 }
