@@ -325,6 +325,8 @@ func httpQueryRecordList(c *gin.Context) {
 // @version 0.0.1
 // @description account sign record list
 // @Produce json
+// @Param chainId query  int false "chainId"
+// @Param daoAddress query  string false "daoAddress"
 // @Param offset query  int true "offset,page"
 // @Param count query  int true "count,page"
 // @Success 200 {object} models.ResAccountSignPage
@@ -332,11 +334,18 @@ func httpQueryRecordList(c *gin.Context) {
 func httpQueryAccountSignList(c *gin.Context) {
 	count := c.Query("count")
 	offset := c.Query("offset")
+	chainId := c.Query("chainId")
+	daoAddressParam := c.Query("daoAddress")
 	countParam, _ := strconv.Atoi(count)
 	offsetParam, _ := strconv.Atoi(offset)
+	chainIdParam, _ := strconv.Atoi(chainId)
 
 	var entities []models.AccountSignModel
 	sqler := oo.NewSqler().Table(consts.TbNameAccountSign).Where("timestamp", "<", time.Now().Unix()-60)
+
+	if chainIdParam != 0 && daoAddressParam != "" {
+		sqler = sqler.Where("chain_id", chainIdParam).Where("dao_address", daoAddressParam)
+	}
 
 	var total uint64
 	sqlCopy := *sqler
