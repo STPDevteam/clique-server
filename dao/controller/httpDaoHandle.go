@@ -26,7 +26,7 @@ import (
 // @Param count query  int true "count,page"
 // @Success 200 {object} models.ResDaoListPage
 // @Router /stpdao/v2/dao/list [get]
-func httpDaoList(c *gin.Context) {
+func (svc *Service) httpDaoList(c *gin.Context) {
 	accountParam := c.Query("account")
 	keywordParam := c.Query("keyword")
 	categoryParam := c.Query("category")
@@ -155,18 +155,39 @@ func httpDaoList(c *gin.Context) {
 		}
 
 		var members uint64
-		sqlMembers := oo.NewSqler().Table(consts.TbNameMember).
-			Where("dao_address", daoListEntity[index].DaoAddress).
-			Where("chain_id", daoListEntity[index].ChainId).
-			Where("join_switch", 1).Count()
-		err = oo.SqlGet(sqlMembers, &members)
-		if err != nil {
-			oo.LogW("SQL err: %v", err)
-			c.JSON(http.StatusInternalServerError, models.Response{
-				Code:    500,
-				Message: "Something went wrong, Please try again later.",
-			})
-			return
+		if daoListEntity[index].TokenChainId == 1 {
+			key := fmt.Sprintf(`%d-%s`, daoListEntity[index].TokenChainId, daoListEntity[index].TokenAddress)
+			tokenHolders, ok := svc.mCache.Get(key)
+			if !ok {
+				c.JSON(http.StatusInternalServerError, models.Response{
+					Code:    500,
+					Message: "Something went wrong, Please try again later.",
+				})
+				return
+			}
+			val, ok2 := tokenHolders.(uint64)
+			if !ok2 {
+				c.JSON(http.StatusInternalServerError, models.Response{
+					Code:    500,
+					Message: "Something went wrong, Please try again later.",
+				})
+				return
+			}
+			members = val
+		} else {
+			sqlMembers := oo.NewSqler().Table(consts.TbNameMember).
+				Where("dao_address", daoListEntity[index].DaoAddress).
+				Where("chain_id", daoListEntity[index].ChainId).
+				Where("join_switch", 1).Count()
+			err = oo.SqlGet(sqlMembers, &members)
+			if err != nil {
+				oo.LogW("SQL err: %v", err)
+				c.JSON(http.StatusInternalServerError, models.Response{
+					Code:    500,
+					Message: "Something went wrong, Please try again later.",
+				})
+				return
+			}
 		}
 
 		var joinSwitch int

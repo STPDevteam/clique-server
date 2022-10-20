@@ -76,7 +76,7 @@ func (svc *Service) Start(ctx *cli.Context) error {
 	}
 	r2 := router.Group(path.Join(basePath, "/dao"))
 	{
-		r2.GET("/list", httpDaoList)
+		r2.GET("/list", svc.httpDaoList)
 		r2.POST("/member", httpDaoJoinOrQuit)
 		r2.GET("/left", httpLeftDaoJoin)
 		r2.GET("/info", httpDaoInfo)
@@ -316,6 +316,9 @@ func (svc *Service) getEthTokenHoldersTotal() {
 						return
 					}
 					totalTokenHolder += res.Result.Total
+
+					key := fmt.Sprintf(`%d-%s`, 1, token)
+					svc.mCache.Set(key, res.Result.Total, cache.NoExpiration)
 
 				}
 			}
