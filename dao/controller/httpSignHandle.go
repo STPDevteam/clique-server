@@ -128,7 +128,7 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 
 		var success = false
 		for _, testChainId := range svc.appConfig.ArchiveBalanceSign {
-			if params.ChainId == testChainId {
+			if tokenChainId == int64(testChainId) {
 				url = svc.getArchiveNode(tokenChainId)
 				if url == "" {
 					c.JSON(http.StatusInternalServerError, models.Response{
