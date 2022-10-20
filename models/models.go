@@ -205,6 +205,7 @@ type ResLeftDaoCreator struct {
 	Account    string `json:"account"`
 	DaoAddress string `json:"daoAddress"`
 	ChainId    int    `json:"chainId"`
+	Role       string `json:"role"`
 }
 
 type ResProposalsListPage struct {

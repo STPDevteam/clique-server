@@ -413,10 +413,31 @@ func httpLeftDaoJoin(c *gin.Context) {
 			return
 		}
 		if !deprecated {
+			var adminEntities []models.AdminModel
+			sqlSel = oo.NewSqler().Table(consts.TbNameAdmin).Where("chain_id", entities[index].ChainId).
+				Where("dao_address", entities[index].DaoAddress).Where("account", accountParam).Select()
+			err = oo.SqlSelect(sqlSel, &adminEntities)
+			if err != nil {
+				oo.LogW("%v", err)
+				c.JSON(http.StatusOK, models.Response{
+					Code:    500,
+					Message: "Something went wrong, Please try again later.",
+				})
+				return
+			}
+			var role string
+			for indexAdmin := range adminEntities {
+				if adminEntities[indexAdmin].AccountLevel == consts.LevelSuperAdmin {
+					role = consts.LevelSuperAdmin
+					break
+				}
+				role = ""
+			}
 			data = append(data, models.ResLeftDaoCreator{
 				Account:    accountParam,
 				DaoAddress: entities[index].DaoAddress,
 				ChainId:    entities[index].ChainId,
+				Role:       role,
 			})
 		}
 	}
