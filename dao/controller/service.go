@@ -53,7 +53,7 @@ func (svc *Service) Start(ctx *cli.Context) error {
 		oo.LogW("init mysql failed: %v", err)
 		return err
 	}
-	svc.mCache = cache.New(cache.NoExpiration, cache.NoExpiration)
+	svc.mCache = cache.New(cache.NoExpiration, time.Duration(24)*time.Hour)
 	// STPT holder, snapshot at #15781071
 	svc.mCache.Set(consts.CacheTokenHolders, 13804, cache.NoExpiration)
 

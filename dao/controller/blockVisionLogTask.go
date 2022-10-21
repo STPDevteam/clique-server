@@ -12,6 +12,7 @@ import (
 	_ "stp_dao_v2/consts"
 	"stp_dao_v2/models"
 	"stp_dao_v2/utils"
+	"strconv"
 	"strings"
 	"time"
 	_ "time"
@@ -143,7 +144,7 @@ func (svc *Service) scheduledTask() {
 						}
 					}
 				}
-				save(blockData, currentBlockNum, chainId, url)
+				svc.save(blockData, currentBlockNum, chainId, url)
 			}
 		}
 	}
@@ -171,7 +172,7 @@ func needSaveEvent(chainId int) ([]models.ScanTaskModel, int, bool, error) {
 	return needEvent, min, true, nil
 }
 
-func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url string) {
+func (svc *Service) save(blockData []map[string]interface{}, currentBlockNum, chainId int, url string) {
 	tx, errTx := oo.NewSqlxTx()
 	if errTx != nil {
 		oo.LogW("SQL err: %v", errTx)
@@ -503,6 +504,35 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 				return
 			}
 
+			var daoEntity models.DaoModel
+			sqlSel := oo.NewSqler().Table(consts.TbNameDao).Where("chain_id", chainId).Where("dao_address", daoAddress).Select()
+			errTx = oo.SqlGet(sqlSel, &daoEntity)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+			var blockNumber string
+			if chainId == daoEntity.TokenChainId {
+				blockNumber = blockData[i]["block_number"].(string)
+			} else {
+				for indexScan := range svc.scanInfo {
+					for indexUrl := range svc.scanInfo[indexScan].ChainId {
+						if svc.scanInfo[indexScan].ChainId[indexUrl] == daoEntity.TokenChainId {
+							timestamp, _ := utils.Hex2Dec(blockData[i]["time_stamp"].(string))
+							urlGetBlock := fmt.Sprintf(svc.scanInfo[indexScan].QueryBlockNumberUrl[indexUrl], timestamp)
+							res, errG := utils.GetBlockNumberFromTimestamp(urlGetBlock)
+							if errG != nil {
+								oo.LogW("GetBlockNumberFromTimestamp err: %v", errTx)
+								errTx = errG
+								return
+							}
+							blockDec, _ := strconv.Atoi(res.Result)
+							blockNumber = fmt.Sprintf("0x%x", blockDec)
+						}
+					}
+				}
+			}
+
 			var m = make([]map[string]interface{}, 0)
 			var v = make(map[string]interface{})
 			v["chain_id"] = chainId
@@ -515,6 +545,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 			v["start_time"] = startTime
 			v["end_time"] = endTime
 			v["version"] = "v2"
+			v["block_number"] = blockNumber
 			m = append(m, v)
 			sqlIns = oo.NewSqler().Table(consts.TbNameProposal).Insert(m)
 			_, errTx = oo.SqlxTxExec(tx, sqlIns)
@@ -545,7 +576,7 @@ func save(blockData []map[string]interface{}, currentBlockNum, chainId int, url 
 
 			// for dao order with proposal total
 			var totalProposal int
-			sqlSel := oo.NewSqler().Table(consts.TbNameProposal).Where("deprecated", 0).
+			sqlSel = oo.NewSqler().Table(consts.TbNameProposal).Where("deprecated", 0).
 				Where("chain_id", chainId).Where("dao_address", daoAddress).Count()
 			errTx = oo.SqlGet(sqlSel, &totalProposal)
 			if errTx != nil {

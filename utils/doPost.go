@@ -338,3 +338,17 @@ func jsonRPCTokenHolders(body, url string) (data *models.JsonRPCTokenHoldersMode
 
 	return data, nil
 }
+
+func GetBlockNumberFromTimestamp(url string) (data *models.JsonRPCGetBlockNumber, err error) {
+	res, err := DoGet(url)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(res, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}

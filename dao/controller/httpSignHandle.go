@@ -12,6 +12,7 @@ import (
 	"stp_dao_v2/utils"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // @Summary sign
@@ -109,14 +110,27 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 		resBalance = strings.TrimPrefix(res.Result.(string), "0x")
 
 	} else if params.SignType == "1" {
-		var voteEntity models.EventHistoricalModel
-		proposalId := utils.FixTo0x64String(fmt.Sprintf(`%x`, params.ProposalId))
-		sqlVote := oo.NewSqler().Table(consts.TbNameEventHistorical).
-			Where("event_type", consts.EvCreateProposal).
-			Where("address", params.DaoAddress).
-			Where("chain_id", params.ChainId).
-			Where("topic1", proposalId).Select()
-		err = oo.SqlGet(sqlVote, &voteEntity)
+		//var voteEntity models.EventHistoricalModel
+		//proposalId := utils.FixTo0x64String(fmt.Sprintf(`%x`, params.ProposalId))
+		//sqlVote := oo.NewSqler().Table(consts.TbNameEventHistorical).
+		//	Where("event_type", consts.EvCreateProposal).
+		//	Where("address", params.DaoAddress).
+		//	Where("chain_id", params.ChainId).
+		//	Where("topic1", proposalId).Select()
+		//err = oo.SqlGet(sqlVote, &voteEntity)
+		//if err != nil {
+		//	oo.LogW("SQL err: %v", err)
+		//	c.JSON(http.StatusInternalServerError, models.Response{
+		//		Code:    500,
+		//		Message: "Something went wrong, Please try again later.4",
+		//	})
+		//	return
+		//}
+
+		var blockNumber string
+		sqlSel = oo.NewSqler().Table(consts.TbNameProposal).Where("chain_id", params.ChainId).
+			Where("dao_address", params.DaoAddress).Where("proposal_id", params.ProposalId).Select("block_number")
+		err = oo.SqlGet(sqlSel, &blockNumber)
 		if err != nil {
 			oo.LogW("SQL err: %v", err)
 			c.JSON(http.StatusInternalServerError, models.Response{
@@ -127,55 +141,64 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 		}
 
 		var success = false
-		for _, testChainId := range svc.appConfig.ArchiveBalanceSign {
-			if tokenChainId == int64(testChainId) {
-				url = svc.getArchiveNode(tokenChainId)
-				if url == "" {
-					c.JSON(http.StatusInternalServerError, models.Response{
-						Code:    500,
-						Message: "Unsupported token.",
-					})
-					return
-				}
-				data := fmt.Sprintf("%s%s", paramsDataPrefix, strings.TrimPrefix(params.Account, "0x"))
-				var tag string
-				for _, testnet := range svc.appConfig.TestnetBalanceSign {
-					if testnet == testChainId {
-						tag = "latest"
-						break
+		key := fmt.Sprintf(`%d-%s-%s-%s`, tokenChainId, tokenAddress, params.Account, blockNumber)
+		cacheBalance, ok := svc.mCache.Get(key)
+		if !ok {
+			for _, testChainId := range svc.appConfig.ArchiveBalanceSign {
+				if tokenChainId == int64(testChainId) {
+					url = svc.getArchiveNode(tokenChainId)
+					if url == "" {
+						c.JSON(http.StatusInternalServerError, models.Response{
+							Code:    500,
+							Message: "Unsupported token.",
+						})
+						return
 					}
-					tag = voteEntity.BlockNumber
-				}
-				res, errQb := utils.QueryMethodEthCallByTag(tokenAddress, data, url, tag)
-				if errQb != nil || res.Result == nil || res.Result == "0x" {
-					oo.LogW("DoPost err: %v, tokenAddress:%v, data:%v, url:%v, tag:%v", errQb, tokenAddress, data, url, tag)
-					c.JSON(http.StatusInternalServerError, models.Response{
-						Code:    500,
-						Message: "Something went wrong, Please try again later.5",
-					})
-					return
-				}
-				resBalance = strings.TrimPrefix(res.Result.(string), "0x")
-				success = true
-				break
-			}
-		}
+					data := fmt.Sprintf("%s%s", paramsDataPrefix, strings.TrimPrefix(params.Account, "0x"))
+					var tag string
+					for _, testnet := range svc.appConfig.TestnetBalanceSign {
+						if testnet == testChainId {
+							tag = "latest"
+							break
+						}
+						tag = blockNumber
+					}
+					res, errQb := utils.QueryMethodEthCallByTag(tokenAddress, data, url, tag)
+					if errQb != nil || res.Result == nil || res.Result == "0x" {
+						oo.LogW("DoPost err: %v, tokenAddress:%v, data:%v, url:%v, tag:%v", errQb, tokenAddress, data, url, tag)
+						c.JSON(http.StatusInternalServerError, models.Response{
+							Code:    500,
+							Message: "Something went wrong, Please try again later.5",
+						})
+						return
+					}
 
-		if !success {
-			blockNumber, _ := strconv.ParseInt(voteEntity.BlockNumber, 16, 64)
-			res, errQ := utils.QuerySpecifyBalance(tokenAddress, params.Account, url, blockNumber)
-			if errQ != nil {
-				oo.LogW("DoPost err: %v, tokenAddress:%v, data:%v, url:%v, blockNumber:%v", errQ, tokenAddress, params.Account, url, blockNumber)
-				c.JSON(http.StatusInternalServerError, models.Response{
-					Code:    500,
-					Message: "Something went wrong, Please try again later.6",
-				})
-				return
+					resBalance = strings.TrimPrefix(res.Result.(string), "0x")
+					success = true
+					break
+				}
 			}
-			decBalance, _ := new(big.Int).SetString(res.Result.Value, 10)
-			resBalance = fmt.Sprintf("%064s", fmt.Sprintf("%x", decBalance))
-		}
+			if !success {
+				blockNumberDec, _ := strconv.ParseInt(blockNumber, 16, 64)
+				if !ok {
+					res, errQ := utils.QuerySpecifyBalance(tokenAddress, params.Account, url, blockNumberDec)
+					if errQ != nil {
+						oo.LogW("DoPost err: %v, tokenAddress:%v, data:%v, url:%v, blockNumber:%v", errQ, tokenAddress, params.Account, url, blockNumber)
+						c.JSON(http.StatusInternalServerError, models.Response{
+							Code:    500,
+							Message: "Something went wrong, Please try again later.6",
+						})
+						return
+					}
+					decBalance, _ := new(big.Int).SetString(res.Result.Value, 10)
+					resBalance = fmt.Sprintf("%064s", fmt.Sprintf("%x", decBalance))
+				}
+			}
 
+			svc.mCache.Set(key, resBalance, time.Duration(72)*time.Hour)
+		} else {
+			resBalance = cacheBalance.(string)
+		}
 	}
 	balance, _ := utils.Hex2BigInt(fmt.Sprintf("0x%s", resBalance))
 
@@ -437,11 +460,14 @@ func (svc *Service) httpQueryDaoHandle(c *gin.Context) {
 }
 
 func (svc *Service) getArchiveNode(chainId int64) string {
-	if chainId == 80001 {
-		return "https://rpc.ankr.com/polygon_mumbai"
+	if chainId == 1 {
+		return svc.appConfig.MainnetChainstackRPC
 	}
 	if chainId == 137 {
 		return svc.appConfig.PolygonQuickNodeRPC
+	}
+	if chainId == 80001 {
+		return "https://rpc.ankr.com/polygon_mumbai"
 	}
 	if chainId == 5 {
 		return "https://rpc.ankr.com/eth_goerli"

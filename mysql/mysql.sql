@@ -269,11 +269,13 @@ CREATE TABLE `tb_proposal` (
 	`end_time` INT NOT NULL,
 	`version` VARCHAR(10) NOT NULL,
     `deprecated` bool NOT NULL DEFAULT false,
+    `block_number` VARCHAR(66) NOT NULL DEFAULT '',
 	PRIMARY KEY (`id`),
     INDEX `index_chain_id` (`chain_id` ASC),
     INDEX `index_dao_address` (`dao_address` ASC),
     INDEX `index_proposalId` (`proposal_id` ASC),
-    INDEX `index_deprecated` (`deprecated` ASC)
+    INDEX `index_deprecated` (`deprecated` ASC),
+    INDEX `index_block_number` (`block_number` ASC)
 );
 
 CREATE TABLE `tb_proposal_v1` (

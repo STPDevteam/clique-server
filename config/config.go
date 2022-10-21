@@ -14,6 +14,7 @@ type AppConfig struct {
 	ApiV1ProposalUrl        string   `mapstructure:"api_v1_proposal_url" toml:"api_v1_proposal_url"`
 	ApiV1ProposalContentUrl string   `mapstructure:"api_v1_proposal_content_url" toml:"api_v1_proposal_content_url"`
 	PolygonQuickNodeRPC     string   `mapstructure:"polygon_quick_node_rpc" toml:"polygon_quick_node_rpc"`
+	MainnetChainstackRPC    string   `mapstructure:"mainnet_chainstack_rpc" toml:"mainnet_chainstack_rpc"`
 }
 
 type MysqlConfig struct {
@@ -25,8 +26,9 @@ type MysqlConfig struct {
 }
 
 type ScanInfoConfig struct {
-	ChainId            []int    `mapstructure:"chain_id" toml:"chain_id"`
-	ScanUrl            []string `mapstructure:"scan_url" toml:"scan_url"`
-	HandleLockBlock    []int    `mapstructure:"handle_lock_block" toml:"handle_lock_block"`
-	DelayedBlockNumber []int    `mapstructure:"delayed_block_number" toml:"delayed_block_number"`
+	ChainId             []int    `mapstructure:"chain_id" toml:"chain_id"`
+	ScanUrl             []string `mapstructure:"scan_url" toml:"scan_url"`
+	HandleLockBlock     []int    `mapstructure:"handle_lock_block" toml:"handle_lock_block"`
+	DelayedBlockNumber  []int    `mapstructure:"delayed_block_number" toml:"delayed_block_number"`
+	QueryBlockNumberUrl []string `mapstructure:"query_block_number_url" toml:"query_block_number_url"`
 }

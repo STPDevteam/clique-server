@@ -76,6 +76,12 @@ type JsonRPCBalanceModel struct {
 	Result  Balance `json:"result"`
 }
 
+type JsonRPCGetBlockNumber struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+	Result  string `json:"result"`
+}
+
 type Balance struct {
 	Value string `json:"Value"`
 }

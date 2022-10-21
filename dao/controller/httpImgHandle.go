@@ -27,8 +27,8 @@ func (svc *Service) httpUploadImg(c *gin.Context) {
 
 	r.Body = http.MaxBytesReader(w, r.Body, svc.appConfig.MaxUpdateImgSize)
 	if err := r.ParseMultipartForm(svc.appConfig.MaxUpdateImgSize); err != nil {
-		c.JSON(http.StatusBadRequest, models.Response{
-			Code:    http.StatusBadRequest,
+		c.JSON(http.StatusOK, models.Response{
+			Code:    http.StatusOK,
 			Message: "The uploaded file is too big. Please choose an file that's less than 1MB in size",
 		})
 		return
@@ -37,8 +37,8 @@ func (svc *Service) httpUploadImg(c *gin.Context) {
 	// The argument to FormFile must match the name attribute of the file input on the frontend
 	file, fileHeader, err := r.FormFile("file")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, models.Response{
-			Code:    http.StatusBadRequest,
+		c.JSON(http.StatusOK, models.Response{
+			Code:    http.StatusOK,
 			Message: "FormFile key must 'file'",
 		})
 		return
@@ -48,8 +48,8 @@ func (svc *Service) httpUploadImg(c *gin.Context) {
 	buff := make([]byte, 512)
 	_, err = file.Read(buff)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, models.Response{
-			Code:    http.StatusInternalServerError,
+		c.JSON(http.StatusOK, models.Response{
+			Code:    http.StatusOK,
 			Message: "Something went wrong, Please try again later.",
 		})
 		return
@@ -57,8 +57,8 @@ func (svc *Service) httpUploadImg(c *gin.Context) {
 
 	filetype := http.DetectContentType(buff)
 	if filetype != "image/jpeg" && filetype != "image/png" && fileHeader.Header.Get("Content-Type") != "image/svg+xml" {
-		c.JSON(http.StatusBadRequest, models.Response{
-			Code:    http.StatusBadRequest,
+		c.JSON(http.StatusOK, models.Response{
+			Code:    http.StatusOK,
 			Message: "The provided file format is not allowed. Please upload a JPEG or PNG or SVG image",
 		})
 		return
@@ -66,8 +66,8 @@ func (svc *Service) httpUploadImg(c *gin.Context) {
 
 	_, err = file.Seek(0, io.SeekStart)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, models.Response{
-			Code:    http.StatusInternalServerError,
+		c.JSON(http.StatusOK, models.Response{
+			Code:    http.StatusOK,
 			Message: "Something went wrong, Please try again later.",
 		})
 		return
@@ -76,8 +76,8 @@ func (svc *Service) httpUploadImg(c *gin.Context) {
 	// Create the uploads folder if it doesn't already exist
 	err = os.MkdirAll("./static", os.ModePerm)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, models.Response{
-			Code:    http.StatusInternalServerError,
+		c.JSON(http.StatusOK, models.Response{
+			Code:    http.StatusOK,
 			Message: "Something went wrong, Please try again later.",
 		})
 		return
@@ -88,8 +88,8 @@ func (svc *Service) httpUploadImg(c *gin.Context) {
 	paths := fmt.Sprintf(".%s", path)
 	dst, err := os.Create(paths)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, models.Response{
-			Code:    http.StatusInternalServerError,
+		c.JSON(http.StatusOK, models.Response{
+			Code:    http.StatusOK,
 			Message: "Something went wrong, Please try again later.",
 		})
 		return
@@ -99,8 +99,8 @@ func (svc *Service) httpUploadImg(c *gin.Context) {
 	// Copy the uploaded file to the filesystem at the specified destination
 	_, err = io.Copy(dst, file)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, models.Response{
-			Code:    http.StatusInternalServerError,
+		c.JSON(http.StatusOK, models.Response{
+			Code:    http.StatusOK,
 			Message: "Something went wrong, Please try again later.",
 		})
 		return
