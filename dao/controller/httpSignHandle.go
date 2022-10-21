@@ -129,7 +129,8 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 
 		var blockNumber string
 		sqlSel = oo.NewSqler().Table(consts.TbNameProposal).Where("chain_id", params.ChainId).
-			Where("dao_address", params.DaoAddress).Where("proposal_id", params.ProposalId).Select("block_number")
+			Where("dao_address", params.DaoAddress).Where("proposal_id", params.ProposalId).
+			Where("version", "v2").Select("block_number")
 		err = oo.SqlGet(sqlSel, &blockNumber)
 		if err != nil {
 			oo.LogW("SQL err: %v", err)
@@ -155,13 +156,12 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 						return
 					}
 					data := fmt.Sprintf("%s%s", paramsDataPrefix, strings.TrimPrefix(params.Account, "0x"))
-					var tag string
+					var tag = blockNumber
 					for _, testnet := range svc.appConfig.TestnetBalanceSign {
 						if testnet == testChainId {
 							tag = "latest"
 							break
 						}
-						tag = blockNumber
 					}
 					res, errQb := utils.QueryMethodEthCallByTag(tokenAddress, data, url, tag)
 					if errQb != nil || res.Result == nil || res.Result == "0x" {

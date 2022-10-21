@@ -526,7 +526,15 @@ func (svc *Service) save(blockData []map[string]interface{}, currentBlockNum, ch
 								errTx = errG
 								return
 							}
-							blockDec, _ := strconv.Atoi(res.Result)
+							if res.Status != "1" || strings.ToLower(res.Message) != "ok" {
+								errTx = errors.New("getBlockNumberFromTimestamp failed")
+								return
+							}
+							blockDec, errA := strconv.Atoi(res.Result)
+							if errA != nil {
+								errTx = errA
+								return
+							}
 							blockNumber = fmt.Sprintf("0x%x", blockDec)
 						}
 					}

@@ -56,7 +56,7 @@ func (svc *Service) httpDaoList(c *gin.Context) {
 	sqlSel = fmt.Sprintf(`SELECT * FROM %s WHERE deprecated=%t `, consts.TbNameDao, false)
 	sqlOrderLimit = fmt.Sprintf(`%s Limit %d,%d `, orderStr, offsetParam, countParam)
 	if keywordParam != "" {
-		sqlWhere = fmt.Sprintf(`AND (dao_address='%s' OR token_address='%s' OR dao_name LIKE '%%%s%%') `, keywordParam, keywordParam, keywordParam)
+		sqlWhere = fmt.Sprintf(`AND (dao_address='%s' OR token_address='%s' OR dao_name LIKE '%%%s%%' OR handle LIKE '%%%s%%') `, keywordParam, keywordParam, keywordParam, keywordParam)
 	}
 	if categoryParam != "" {
 		var categoryId int
