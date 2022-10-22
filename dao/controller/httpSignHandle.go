@@ -53,11 +53,40 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 	chainIdAndTokenAddress := strings.TrimPrefix(createDaoEntity[0].Data, "0x")
 	resChainId := chainIdAndTokenAddress[:64]
 
-	var nonceEntity []models.NonceModel
-	sqlSel := oo.NewSqler().Table(consts.TbNameNonce).
-		Where("chain_id", params.ChainId).
-		Where("account", params.Account).Select()
-	err = oo.SqlSelect(sqlSel, &nonceEntity)
+	/*
+		var nonceEntity []models.NonceModel
+		sqlSel := oo.NewSqler().Table(consts.TbNameNonce).
+			Where("chain_id", params.ChainId).
+			Where("account", params.Account).Select()
+		err = oo.SqlSelect(sqlSel, &nonceEntity)
+		if err != nil {
+			oo.LogW("SQL err: %v", err)
+			c.JSON(http.StatusInternalServerError, models.Response{
+				Code:    500,
+				Message: "Something went wrong, Please try again later.2",
+			})
+			return
+		}
+		var resNonce string
+		if len(nonceEntity) == 0 {
+			resNonce = "0000000000000000000000000000000000000000000000000000000000000000"
+		} else {
+			resNonce = fmt.Sprintf("%064s", strings.TrimPrefix(strconv.FormatInt(int64(nonceEntity[0].Nonce), 16), "0x"))
+		}
+	*/
+	var urlChain string
+	for indexScan := range svc.scanInfo {
+		for indexUrl := range svc.scanInfo[indexScan].ChainId {
+			if svc.scanInfo[indexScan].ChainId[indexUrl] == params.ChainId {
+				urlChain = svc.scanInfo[indexScan].ScanUrl[indexUrl]
+				break
+			}
+		}
+	}
+	var contract string
+	sqlSel := oo.NewSqler().Table(consts.TbNameScanTask).Where("event_type", consts.EvCreateDao).
+		Where("chain_id", params.ChainId).Select("address")
+	err = oo.SqlGet(sqlSel, &contract)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)
 		c.JSON(http.StatusInternalServerError, models.Response{
@@ -66,12 +95,27 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 		})
 		return
 	}
-	var resNonce string
-	if len(nonceEntity) == 0 {
-		resNonce = "0000000000000000000000000000000000000000000000000000000000000000"
-	} else {
-		resNonce = fmt.Sprintf("%064s", strings.TrimPrefix(strconv.FormatInt(int64(nonceEntity[0].Nonce), 16), "0x"))
+	const paramNonceDataPrefix = "0x7ecebe00000000000000000000000000"
+	dataParam := fmt.Sprintf("%s%s", paramNonceDataPrefix, strings.TrimPrefix(params.Account, "0x"))
+	resultNonces, err := utils.QueryMethodEthCall(contract, dataParam, urlChain)
+	if err != nil {
+		oo.LogW("QueryMethodEthCall err: %v", err)
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.2.1",
+		})
+		return
 	}
+	val, okNonce := resultNonces.Result.(string)
+	if !okNonce {
+		oo.LogW(".(string) failed")
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.2.2",
+		})
+		return
+	}
+	resNonce := strings.TrimPrefix(val, "0x")
 
 	tokenAddress := utils.FixTo0x40String(chainIdAndTokenAddress[64:128])
 	tokenChainId, _ := strconv.ParseInt(chainIdAndTokenAddress[:64], 16, 64)
