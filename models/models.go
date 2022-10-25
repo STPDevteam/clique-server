@@ -192,6 +192,7 @@ type ResSignCreateData struct {
 	TokenAddress string `json:"tokenAddress"`
 	Signature    string `json:"signature"`
 	Balance      string `json:"balance"`
+	Deadline     int64  `json:"deadline"`
 }
 
 type JoinDaoWithSignParam struct {

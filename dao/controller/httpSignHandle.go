@@ -51,71 +51,7 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 		return
 	}
 	chainIdAndTokenAddress := strings.TrimPrefix(createDaoEntity[0].Data, "0x")
-	resChainId := chainIdAndTokenAddress[:64]
-
-	/*
-		var nonceEntity []models.NonceModel
-		sqlSel := oo.NewSqler().Table(consts.TbNameNonce).
-			Where("chain_id", params.ChainId).
-			Where("account", params.Account).Select()
-		err = oo.SqlSelect(sqlSel, &nonceEntity)
-		if err != nil {
-			oo.LogW("SQL err: %v", err)
-			c.JSON(http.StatusInternalServerError, models.Response{
-				Code:    500,
-				Message: "Something went wrong, Please try again later.2",
-			})
-			return
-		}
-		var resNonce string
-		if len(nonceEntity) == 0 {
-			resNonce = "0000000000000000000000000000000000000000000000000000000000000000"
-		} else {
-			resNonce = fmt.Sprintf("%064s", strings.TrimPrefix(strconv.FormatInt(int64(nonceEntity[0].Nonce), 16), "0x"))
-		}
-	*/
-	var urlChain string
-	for indexScan := range svc.scanInfo {
-		for indexUrl := range svc.scanInfo[indexScan].ChainId {
-			if svc.scanInfo[indexScan].ChainId[indexUrl] == params.ChainId {
-				urlChain = svc.scanInfo[indexScan].ScanUrl[indexUrl]
-				break
-			}
-		}
-	}
-	var contract string
-	sqlSel := oo.NewSqler().Table(consts.TbNameScanTask).Where("event_type", consts.EvCreateDao).
-		Where("chain_id", params.ChainId).Select("address")
-	err = oo.SqlGet(sqlSel, &contract)
-	if err != nil {
-		oo.LogW("SQL err: %v", err)
-		c.JSON(http.StatusInternalServerError, models.Response{
-			Code:    500,
-			Message: "Something went wrong, Please try again later.2",
-		})
-		return
-	}
-	const paramNonceDataPrefix = "0x7ecebe00000000000000000000000000"
-	dataParam := fmt.Sprintf("%s%s", paramNonceDataPrefix, strings.TrimPrefix(params.Account, "0x"))
-	resultNonces, err := utils.QueryMethodEthCall(contract, dataParam, urlChain)
-	if err != nil {
-		oo.LogW("QueryMethodEthCall err: %v", err)
-		c.JSON(http.StatusInternalServerError, models.Response{
-			Code:    500,
-			Message: "Something went wrong, Please try again later.2.1",
-		})
-		return
-	}
-	val, okNonce := resultNonces.Result.(string)
-	if !okNonce {
-		oo.LogW(".(string) failed")
-		c.JSON(http.StatusInternalServerError, models.Response{
-			Code:    500,
-			Message: "Something went wrong, Please try again later.2.2",
-		})
-		return
-	}
-	resNonce := strings.TrimPrefix(val, "0x")
+	resTokenChainId := chainIdAndTokenAddress[:64]
 
 	tokenAddress := utils.FixTo0x40String(chainIdAndTokenAddress[64:128])
 	tokenChainId, _ := strconv.ParseInt(chainIdAndTokenAddress[:64], 16, 64)
@@ -138,6 +74,8 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 		return
 	}
 
+	var deadline = time.Now().Unix() + 1800
+	var resProposalId string
 	var resBalance string
 	const paramsDataPrefix = "0x70a08231000000000000000000000000"
 	if params.SignType == "0" {
@@ -152,27 +90,12 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 			return
 		}
 		resBalance = strings.TrimPrefix(res.Result.(string), "0x")
+		resProposalId = fmt.Sprintf("%064x", deadline)
 
 	} else if params.SignType == "1" {
-		//var voteEntity models.EventHistoricalModel
-		//proposalId := utils.FixTo0x64String(fmt.Sprintf(`%x`, params.ProposalId))
-		//sqlVote := oo.NewSqler().Table(consts.TbNameEventHistorical).
-		//	Where("event_type", consts.EvCreateProposal).
-		//	Where("address", params.DaoAddress).
-		//	Where("chain_id", params.ChainId).
-		//	Where("topic1", proposalId).Select()
-		//err = oo.SqlGet(sqlVote, &voteEntity)
-		//if err != nil {
-		//	oo.LogW("SQL err: %v", err)
-		//	c.JSON(http.StatusInternalServerError, models.Response{
-		//		Code:    500,
-		//		Message: "Something went wrong, Please try again later.4",
-		//	})
-		//	return
-		//}
 
 		var blockNumber string
-		sqlSel = oo.NewSqler().Table(consts.TbNameProposal).Where("chain_id", params.ChainId).
+		sqlSel := oo.NewSqler().Table(consts.TbNameProposal).Where("chain_id", params.ChainId).
 			Where("dao_address", params.DaoAddress).Where("proposal_id", params.ProposalId).
 			Where("version", "v2").Select("block_number")
 		err = oo.SqlGet(sqlSel, &blockNumber)
@@ -243,14 +166,18 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 		} else {
 			resBalance = cacheBalance.(string)
 		}
+
+		resProposalId = fmt.Sprintf("%064x", params.ProposalId)
 	}
 	balance, _ := utils.Hex2BigInt(fmt.Sprintf("0x%s", resBalance))
 
 	resTokenAddress := strings.TrimPrefix(tokenAddress, "0x")
 	resSignType := fmt.Sprintf("%064s", params.SignType)
 	resAccount := strings.TrimPrefix(params.Account, "0x")
+	resChainId := fmt.Sprintf("%064x", params.ChainId)
+	resDaoAddress := strings.TrimPrefix(params.DaoAddress, "0x")
 
-	message := fmt.Sprintf("%s%s%s%s%s%s", resAccount, resNonce, resChainId, resTokenAddress, resBalance, resSignType)
+	message := fmt.Sprintf("%s%s%s%s%s%s%s%s", resAccount, resChainId, resDaoAddress, resTokenChainId, resTokenAddress, resProposalId, resBalance, resSignType)
 	signature, err := utils.SignMessage(message, svc.appConfig.SignMessagePriKey)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, models.Response{
@@ -270,6 +197,7 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 			TokenAddress: tokenAddress,
 			Balance:      balance.String(),
 			Signature:    signature,
+			Deadline:     deadline,
 		},
 	})
 }

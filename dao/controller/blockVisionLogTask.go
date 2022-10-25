@@ -483,19 +483,8 @@ func (svc *Service) save(blockData []map[string]interface{}, currentBlockNum, ch
 			proposer := utils.FixTo0x40String(blockData[i]["topic2"].(string))
 			daoAddress := blockData[i]["address"].(string)
 			proposalId, _ := utils.Hex2Dec(blockData[i]["topic1"].(string))
-			startTime, _ := utils.Hex2Dec(blockData[i]["data"].(string)[66:130])
-			endTime, _ := utils.Hex2Dec(blockData[i]["data"].(string)[130:194])
-			sqlIns := fmt.Sprintf(`INSERT INTO %s (account,nonce,chain_id) VALUES ('%s',%d,%d) ON DUPLICATE KEY UPDATE nonce=nonce+1`,
-				consts.TbNameNonce,
-				proposer,
-				1,
-				chainId,
-			)
-			_, errTx = oo.SqlxTxExec(tx, sqlIns)
-			if errTx != nil {
-				oo.LogW("SQL err: %v", errTx)
-				return
-			}
+			startTime, _ := utils.Hex2Dec(blockData[i]["data"].(string)[:66])
+			endTime, _ := utils.Hex2Dec(blockData[i]["data"].(string)[66:130])
 
 			proposalTitle, err := proposalInfo(daoAddress, blockData[i]["topic1"].(string), url)
 			if err != nil {
@@ -555,7 +544,7 @@ func (svc *Service) save(blockData []map[string]interface{}, currentBlockNum, ch
 			v["version"] = "v2"
 			v["block_number"] = blockNumber
 			m = append(m, v)
-			sqlIns = oo.NewSqler().Table(consts.TbNameProposal).Insert(m)
+			sqlIns := oo.NewSqler().Table(consts.TbNameProposal).Insert(m)
 			_, errTx = oo.SqlxTxExec(tx, sqlIns)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
@@ -664,20 +653,7 @@ func (svc *Service) save(blockData []map[string]interface{}, currentBlockNum, ch
 		if blockData[i]["event_type"] == consts.EvVote {
 			proposalId, _ := utils.Hex2Dec(blockData[i]["topic1"].(string))
 			voter := utils.FixTo0x40String(blockData[i]["topic2"].(string))
-			nonce, _ := utils.Hex2Dec(blockData[i]["data"].(string)[66:130])
 			daoAddress := blockData[i]["address"].(string)
-			sqlUpdate := fmt.Sprintf(`INSERT INTO %s (account,nonce,chain_id) VALUES ('%s',%d,%d) ON DUPLICATE KEY UPDATE nonce=%d`,
-				consts.TbNameNonce,
-				voter,
-				nonce+1,
-				chainId,
-				nonce+1,
-			)
-			_, errTx = oo.SqlxTxExec(tx, sqlUpdate)
-			if errTx != nil {
-				oo.LogW("SQL err: %v", errTx)
-				return
-			}
 
 			amount, _ := utils.Hex2BigInt(blockData[i]["data"].(string)[:66])
 			var m = make([]map[string]interface{}, 0)
@@ -688,7 +664,7 @@ func (svc *Service) save(blockData []map[string]interface{}, currentBlockNum, ch
 			v["voter"] = voter
 			v["option_index"], _ = utils.Hex2Dec(blockData[i]["topic3"].(string))
 			v["amount"] = amount.String()
-			v["nonce"] = nonce
+			v["nonce"] = 0
 			m = append(m, v)
 			sqlIns := oo.NewSqler().Table(consts.TbNameVote).Insert(m)
 			_, errTx = oo.SqlxTxExec(tx, sqlIns)
@@ -1146,6 +1122,7 @@ func (svc *Service) save(blockData []map[string]interface{}, currentBlockNum, ch
 }
 
 func proposalInfo(daoAddress, proposalId, url string) (string, error) {
+	// proposals(uint256 proposalId)
 	const dataPrefix = "0x013cf08b"
 	data := fmt.Sprintf("%s%s", dataPrefix, strings.TrimPrefix(proposalId, "0x"))
 	res, err := utils.QueryMethodEthCall(daoAddress, data, url)
