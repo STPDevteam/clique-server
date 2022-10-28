@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	oo "github.com/Anna2024/liboo"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -41,34 +42,33 @@ func (svc *Service) httpRecordTotal(c *gin.Context) {
 		return
 	}
 
-	var totalAccount interface{}
-	//sqlSel = oo.NewSqler().Table(consts.TbNameAccount).Count()
-	//sqlSel = fmt.Sprintf(`SELECT count(DISTINCT message_sender) as count FROM %s`, consts.TbNameEventHistorical)
-	//err = oo.SqlGet(sqlSel, &totalAccount)
-	//if err != nil {
-	//	oo.LogW("SQL err: %v", err)
+	var totalAccount uint64
+	sqlSel = fmt.Sprintf(`SELECT count(DISTINCT account) as count FROM %s where join_switch=1`, consts.TbNameMember)
+	err = oo.SqlGet(sqlSel, &totalAccount)
+	if err != nil {
+		oo.LogW("SQL err: %v", err)
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+	//totalAccount, ok := svc.mCache.Get(consts.CacheTokenHolders)
+	//if !ok {
 	//	c.JSON(http.StatusInternalServerError, models.Response{
 	//		Code:    500,
 	//		Message: "Something went wrong, Please try again later.",
 	//	})
 	//	return
 	//}
-	totalAccount, ok := svc.mCache.Get(consts.CacheTokenHolders)
-	if !ok {
-		c.JSON(http.StatusInternalServerError, models.Response{
-			Code:    500,
-			Message: "Something went wrong, Please try again later.",
-		})
-		return
-	}
-	val, ok2 := totalAccount.(uint64)
-	if !ok2 {
-		c.JSON(http.StatusInternalServerError, models.Response{
-			Code:    500,
-			Message: "Something went wrong, Please try again later.",
-		})
-		return
-	}
+	//val, ok2 := totalAccount.(uint64)
+	//if !ok2 {
+	//	c.JSON(http.StatusInternalServerError, models.Response{
+	//		Code:    500,
+	//		Message: "Something went wrong, Please try again later.",
+	//	})
+	//	return
+	//}
 
 	var totalProposal int
 	sqlSel = oo.NewSqler().Table(consts.TbNameProposal).Where("deprecated", 0).Count()
@@ -88,7 +88,7 @@ func (svc *Service) httpRecordTotal(c *gin.Context) {
 		Data: models.ResOverview{
 			TotalDao:        totalDao,
 			TotalApproveDao: totalApproveDao,
-			TotalAccount:    val,
+			TotalAccount:    totalAccount,
 			TotalProposal:   totalProposal,
 		},
 	})

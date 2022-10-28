@@ -55,7 +55,7 @@ func (svc *Service) Start(ctx *cli.Context) error {
 	}
 	svc.mCache = cache.New(cache.NoExpiration, time.Duration(24)*time.Hour)
 	// STPT holder, snapshot at #15781071
-	svc.mCache.Set(consts.CacheTokenHolders, 13804, cache.NoExpiration)
+	//svc.mCache.Set(consts.CacheTokenHolders, 13804, cache.NoExpiration)
 
 	go svc.scheduledTask()
 	go svc.updateDaoInfoTask()
@@ -63,7 +63,7 @@ func (svc *Service) Start(ctx *cli.Context) error {
 	go updateNotification()
 	go updateAccountRecord()
 	go svc.getV1Proposal()
-	go svc.getEthTokenHoldersTotal()
+	//go svc.getEthTokenHoldersTotal()
 
 	router := gin.Default()
 	router.Use(utils.Cors())
@@ -277,53 +277,53 @@ func checkAccountJoinOrQuit(data *models.JoinDaoWithSignParam) (ret bool) {
 	return true
 }
 
-func (svc *Service) getEthTokenHoldersTotal() {
-	defer time.AfterFunc(time.Duration(10*60)*time.Second, svc.getEthTokenHoldersTotal)
-
-	var entities []models.DaoModel
-	sqlSel := oo.NewSqler().Table(consts.TbNameDao).Select()
-	err := oo.SqlSelect(sqlSel, &entities)
-	if err != nil {
-		oo.LogW("SQL err:%v", err)
-		return
-	}
-
-	var queryTokenAddress []string
-	var set = make(map[string]bool)
-	for index := range entities {
-		if set[entities[index].TokenAddress] && set[string(entities[index].TokenChainId)] {
-			continue
-		}
-		set[entities[index].TokenAddress] = true
-		set[string(entities[index].TokenChainId)] = true
-
-		if entities[index].TokenChainId == 1 {
-			queryTokenAddress = append(queryTokenAddress, entities[index].TokenAddress)
-		}
-	}
-
-	var totalTokenHolder uint64
-	for _, token := range queryTokenAddress {
-
-		for indexScan := range svc.scanInfo {
-			for indexUrl := range svc.scanInfo[indexScan].ChainId {
-				if svc.scanInfo[indexScan].ChainId[indexUrl] == 1 {
-					url := svc.scanInfo[indexScan].ScanUrl[indexUrl]
-
-					res, err := utils.QueryErc20TokenHolders(token, url)
-					if err != nil {
-						oo.LogW("QueryErc20TokenHolders err:%v", err)
-						return
-					}
-					totalTokenHolder += res.Result.Total
-
-					key := fmt.Sprintf(`%d-%s`, 1, token)
-					svc.mCache.Set(key, res.Result.Total, cache.NoExpiration)
-
-				}
-			}
-		}
-	}
-
-	svc.mCache.Set(consts.CacheTokenHolders, totalTokenHolder, cache.NoExpiration)
-}
+//func (svc *Service) getEthTokenHoldersTotal() {
+//	defer time.AfterFunc(time.Duration(10*60)*time.Second, svc.getEthTokenHoldersTotal)
+//
+//	var entities []models.DaoModel
+//	sqlSel := oo.NewSqler().Table(consts.TbNameDao).Select()
+//	err := oo.SqlSelect(sqlSel, &entities)
+//	if err != nil {
+//		oo.LogW("SQL err:%v", err)
+//		return
+//	}
+//
+//	var queryTokenAddress []string
+//	var set = make(map[string]bool)
+//	for index := range entities {
+//		if set[entities[index].TokenAddress] && set[string(entities[index].TokenChainId)] {
+//			continue
+//		}
+//		set[entities[index].TokenAddress] = true
+//		set[string(entities[index].TokenChainId)] = true
+//
+//		if entities[index].TokenChainId == 1 {
+//			queryTokenAddress = append(queryTokenAddress, entities[index].TokenAddress)
+//		}
+//	}
+//
+//	var totalTokenHolder uint64
+//	for _, token := range queryTokenAddress {
+//
+//		for indexScan := range svc.scanInfo {
+//			for indexUrl := range svc.scanInfo[indexScan].ChainId {
+//				if svc.scanInfo[indexScan].ChainId[indexUrl] == 1 {
+//					url := svc.scanInfo[indexScan].ScanUrl[indexUrl]
+//
+//					res, err := utils.QueryErc20TokenHolders(token, url)
+//					if err != nil {
+//						oo.LogW("QueryErc20TokenHolders err:%v", err)
+//						return
+//					}
+//					totalTokenHolder += res.Result.Total
+//
+//					key := fmt.Sprintf(`%d-%s`, 1, token)
+//					svc.mCache.Set(key, res.Result.Total, cache.NoExpiration)
+//
+//				}
+//			}
+//		}
+//	}
+//
+//	svc.mCache.Set(consts.CacheTokenHolders, totalTokenHolder, cache.NoExpiration)
+//}
