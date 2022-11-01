@@ -507,24 +507,28 @@ func (svc *Service) save(blockData []map[string]interface{}, currentBlockNum, ch
 				for indexScan := range svc.scanInfo {
 					for indexUrl := range svc.scanInfo[indexScan].ChainId {
 						if svc.scanInfo[indexScan].ChainId[indexUrl] == daoEntity.TokenChainId {
-							timestamp, _ := utils.Hex2Dec(blockData[i]["time_stamp"].(string))
-							urlGetBlock := fmt.Sprintf(svc.scanInfo[indexScan].QueryBlockNumberUrl[indexUrl], timestamp)
-							res, errG := utils.GetBlockNumberFromTimestamp(urlGetBlock)
-							if errG != nil {
-								oo.LogW("GetBlockNumberFromTimestamp err: %v", errTx)
-								errTx = errG
-								return
+							if daoEntity.TokenChainId == consts.KlaytnTestnet1001 || daoEntity.TokenChainId == consts.KlaytnMainnet8217 {
+
+							} else {
+								timestamp, _ := utils.Hex2Dec(blockData[i]["time_stamp"].(string))
+								urlGetBlock := fmt.Sprintf(svc.scanInfo[indexScan].QueryBlockNumberUrl[indexUrl], timestamp)
+								res, errG := utils.GetBlockNumberFromTimestamp(urlGetBlock)
+								if errG != nil {
+									oo.LogW("GetBlockNumberFromTimestamp err: %v", errTx)
+									errTx = errG
+									return
+								}
+								if res.Status != "1" || strings.ToLower(res.Message) != "ok" {
+									errTx = errors.New("getBlockNumberFromTimestamp failed")
+									return
+								}
+								blockDec, errA := strconv.Atoi(res.Result)
+								if errA != nil {
+									errTx = errA
+									return
+								}
+								blockNumber = fmt.Sprintf("0x%x", blockDec)
 							}
-							if res.Status != "1" || strings.ToLower(res.Message) != "ok" {
-								errTx = errors.New("getBlockNumberFromTimestamp failed")
-								return
-							}
-							blockDec, errA := strconv.Atoi(res.Result)
-							if errA != nil {
-								errTx = errA
-								return
-							}
-							blockNumber = fmt.Sprintf("0x%x", blockDec)
 						}
 					}
 				}

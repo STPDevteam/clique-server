@@ -65,6 +65,9 @@ const (
 	CacheTokenHolders = "CacheTokenHolders"
 
 	SignMessagePrefix = "Welcome come Clique"
+
+	KlaytnTestnet1001 = 1001
+	KlaytnMainnet8217 = 8217
 )
 
 func EventTypes(event string) string {

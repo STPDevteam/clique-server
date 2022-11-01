@@ -464,6 +464,19 @@ CREATE TABLE `tb_handle_lock` (
     INDEX `index_account` (`account` ASC)
 );
 
+CREATE TABLE `klaytn_block_timestamp` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `chain_id` INT NOT NULL,
+    `block_number` INT UNSIGNED NOT NULL,
+    `timestamp` INT NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `index_chain_id` (`chain_id` ASC),
+    INDEX `index_block_number` (`block_number` ASC),
+    INDEX `index_timestamp` (`timestamp` ASC)
+);
+
 # dev
 # INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
 # ('CreateDao','0x18Be998c31815d1C3d1dde881801112D9ee81532',28315453,'0x',80001),
@@ -495,19 +508,19 @@ CREATE TABLE `tb_handle_lock` (
 # ('Claimed','0x8FC198E84e43474F95468300593539B8cb3bEe8f',7750200,'0x',5);
 
 # pre
-INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
-('CreateDao','0xa2d34aA709De897Ef62ee08274EC6e2c451a1CdC',34248089,'0x',137),
-('CreateERC20','0xa2d34aA709De897Ef62ee08274EC6e2c451a1CdC',34248089,'0x',137),
-('ClaimReserve','0xa2d34aA709De897Ef62ee08274EC6e2c451a1CdC',34248089,'0x',137),
-('CreateAirdrop','0x9fBa77AA2957b2C47c0B80e14fdf7e7d28eDd127',34248107,'0x',137),
-('SettleAirdrop','0x9fBa77AA2957b2C47c0B80e14fdf7e7d28eDd127',34248107,'0x',137),
-('Claimed','0x9fBa77AA2957b2C47c0B80e14fdf7e7d28eDd127',34248107,'0x',137),
-('CreateDao','0xD7a52a2Fe72A588351600Fa2feDD6132381f065d',15731643,'0x',1),
-('CreateERC20','0xD7a52a2Fe72A588351600Fa2feDD6132381f065d',15731643,'0x',1),
-('ClaimReserve','0xD7a52a2Fe72A588351600Fa2feDD6132381f065d',15731643,'0x',1),
-('CreateAirdrop','0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e',15731651,'0x',1),
-('SettleAirdrop','0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e',15731651,'0x',1),
-('Claimed','0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e',15731651,'0x',1);
+# INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
+# ('CreateDao','0xa2d34aA709De897Ef62ee08274EC6e2c451a1CdC',34248089,'0x',137),
+# ('CreateERC20','0xa2d34aA709De897Ef62ee08274EC6e2c451a1CdC',34248089,'0x',137),
+# ('ClaimReserve','0xa2d34aA709De897Ef62ee08274EC6e2c451a1CdC',34248089,'0x',137),
+# ('CreateAirdrop','0x9fBa77AA2957b2C47c0B80e14fdf7e7d28eDd127',34248107,'0x',137),
+# ('SettleAirdrop','0x9fBa77AA2957b2C47c0B80e14fdf7e7d28eDd127',34248107,'0x',137),
+# ('Claimed','0x9fBa77AA2957b2C47c0B80e14fdf7e7d28eDd127',34248107,'0x',137),
+# ('CreateDao','0xD7a52a2Fe72A588351600Fa2feDD6132381f065d',15731643,'0x',1),
+# ('CreateERC20','0xD7a52a2Fe72A588351600Fa2feDD6132381f065d',15731643,'0x',1),
+# ('ClaimReserve','0xD7a52a2Fe72A588351600Fa2feDD6132381f065d',15731643,'0x',1),
+# ('CreateAirdrop','0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e',15731651,'0x',1),
+# ('SettleAirdrop','0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e',15731651,'0x',1),
+# ('Claimed','0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e',15731651,'0x',1);
 
 INSERT INTO tb_category (category_name) VALUES ('Social'),('Protocol'),('NFT'),('Metaverse'),('Gaming'),('Other');
 
@@ -518,4 +531,11 @@ INSERT INTO tb_category (category_name) VALUES ('Social'),('Protocol'),('NFT'),(
 # (5,'0xb61d2ab83f9c976bb28f8343e304d733b38832d0','0x9a151fAaca125f344E30BE6c9deF867a53a1e824','0x4ea954b5523226c671b767c3b8dfb05df8ae1561'),
 # (5,'0xc01123105f8478b56cf0a2ee67fac13d9f58e65d','0x31e7B9aF1643e96437d9DC49d3c546620A063FEC','0x29f3f68ffeff164e2d06558fb5760e1429073bd0');
 
-
+#klaytn
+# INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
+# ('CreateDao','0x9fE8096d3C4D3cCb5E5537fa7761CdBb377d45bC',105622344,'0x',1001),
+# ('CreateERC20','0x9fE8096d3C4D3cCb5E5537fa7761CdBb377d45bC',105622344,'0x',1001),
+# ('ClaimReserve','0x9fE8096d3C4D3cCb5E5537fa7761CdBb377d45bC',105622344,'0x',1001),
+# ('CreateAirdrop','0x8b09B9008f3bF5D4F48e0A251a872EB45a4372Dd',105622351,'0x',1001),
+# ('SettleAirdrop','0x8b09B9008f3bF5D4F48e0A251a872EB45a4372Dd',105622351,'0x',1001),
+# ('Claimed','0x8b09B9008f3bF5D4F48e0A251a872EB45a4372Dd',105622351,'0x',1001);
