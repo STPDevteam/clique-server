@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"stp_dao_v2/models"
+	"strings"
 	"time"
 )
 
@@ -44,6 +45,16 @@ func (svc *Service) httpUploadImg(c *gin.Context) {
 		return
 	}
 	defer file.Close()
+
+	suffixArr := strings.Split(fileHeader.Filename, ".")
+	suffix := suffixArr[len(suffixArr)-1]
+	if strings.ToLower(suffix) != "jpeg" && strings.ToLower(suffix) != "png" && strings.ToLower(suffix) != "svg" {
+		c.JSON(http.StatusOK, models.Response{
+			Code:    http.StatusOK,
+			Message: "The provided file format is not allowed. Please upload a JPEG or PNG or SVG image",
+		})
+		return
+	}
 
 	buff := make([]byte, 512)
 	_, err = file.Read(buff)

@@ -464,19 +464,6 @@ CREATE TABLE `tb_handle_lock` (
     INDEX `index_account` (`account` ASC)
 );
 
-CREATE TABLE `klaytn_block_timestamp` (
-    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    `chain_id` INT NOT NULL,
-    `block_number` INT UNSIGNED NOT NULL,
-    `timestamp` INT NOT NULL,
-    PRIMARY KEY (`id`),
-    INDEX `index_chain_id` (`chain_id` ASC),
-    INDEX `index_block_number` (`block_number` ASC),
-    INDEX `index_timestamp` (`timestamp` ASC)
-);
-
 # dev
 # INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
 # ('CreateDao','0x18Be998c31815d1C3d1dde881801112D9ee81532',28315453,'0x',80001),

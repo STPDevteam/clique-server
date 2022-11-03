@@ -15,6 +15,7 @@ type AppConfig struct {
 	ApiV1ProposalContentUrl string   `mapstructure:"api_v1_proposal_content_url" toml:"api_v1_proposal_content_url"`
 	PolygonQuickNodeRPC     string   `mapstructure:"polygon_quick_node_rpc" toml:"polygon_quick_node_rpc"`
 	MainnetChainstackRPC    string   `mapstructure:"mainnet_chainstack_rpc" toml:"mainnet_chainstack_rpc"`
+	Key                     string   `mapstructure:"key" toml:"key"`
 }
 
 type MysqlConfig struct {
