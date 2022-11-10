@@ -507,10 +507,28 @@ func (svc *Service) save(blockData []map[string]interface{}, currentBlockNum, ch
 				for indexScan := range svc.scanInfo {
 					for indexUrl := range svc.scanInfo[indexScan].ChainId {
 						if svc.scanInfo[indexScan].ChainId[indexUrl] == daoEntity.TokenChainId {
-							if daoEntity.TokenChainId == consts.KlaytnTestnet1001 || daoEntity.TokenChainId == consts.KlaytnMainnet8217 {
-
+							timestamp, _ := utils.Hex2Dec(blockData[i]["time_stamp"].(string))
+							if daoEntity.TokenChainId == consts.Klaytntestnet1001 || daoEntity.TokenChainId == consts.Klaytnmainnet8217 {
+								var duration = 0
+							Loop:
+								var klaytnUrl = fmt.Sprintf(svc.scanInfo[indexScan].QueryBlockNumberUrl[indexUrl], daoEntity.TokenChainId, timestamp, duration)
+								resKB, errK := utils.GetKlaytnBlock(klaytnUrl)
+								if errK != nil {
+									oo.LogW("GetKlaytnBlock failed err: %v url:%s tokenChainId:%v timestamp:%v duration:%v", errK, svc.scanInfo[indexScan].QueryBlockNumberUrl[indexUrl], daoEntity.TokenChainId, timestamp, duration)
+									errTx = errK
+									return
+								}
+								if duration > 10 {
+									oo.LogW("query block number failed,duration > 10")
+									errTx = errors.New("query block number failed,duration > 10")
+									return
+								}
+								if len(resKB.Data) == 0 {
+									duration += 1
+									goto Loop
+								}
+								blockNumber = resKB.Data[0]
 							} else {
-								timestamp, _ := utils.Hex2Dec(blockData[i]["time_stamp"].(string))
 								urlGetBlock := fmt.Sprintf(svc.scanInfo[indexScan].QueryBlockNumberUrl[indexUrl], timestamp)
 								res, errG := utils.GetBlockNumberFromTimestamp(urlGetBlock)
 								if errG != nil {

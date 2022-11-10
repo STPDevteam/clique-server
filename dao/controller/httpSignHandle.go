@@ -432,17 +432,23 @@ func (svc *Service) httpQueryDaoHandle(c *gin.Context) {
 }
 
 func (svc *Service) getArchiveNode(chainId int64) string {
-	if chainId == 1 {
+	if chainId == consts.EthMainnet1 {
 		return svc.appConfig.MainnetChainstackRPC
 	}
-	if chainId == 137 {
+	if chainId == consts.PolygonMainnet137 {
 		return svc.appConfig.PolygonQuickNodeRPC
 	}
-	if chainId == 80001 {
+	if chainId == consts.PolygonTestnet80001 {
 		return "https://rpc.ankr.com/polygon_mumbai"
 	}
-	if chainId == 5 {
+	if chainId == consts.GoerliTestnet5 {
 		return "https://rpc.ankr.com/eth_goerli"
+	}
+	if chainId == consts.Klaytntestnet1001 {
+		return "https://baobab.fandom.finance/archive"
+	}
+	if chainId == consts.Klaytnmainnet8217 {
+		return "https://cypress.fandom.finance/archive"
 	}
 	return ""
 }

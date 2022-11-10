@@ -66,8 +66,12 @@ const (
 
 	SignMessagePrefix = "Welcome come Clique"
 
-	KlaytnTestnet1001 = 1001
-	KlaytnMainnet8217 = 8217
+	GoerliTestnet5      = 5
+	EthMainnet1         = 1
+	PolygonTestnet80001 = 80001
+	PolygonMainnet137   = 137
+	Klaytntestnet1001   = 1001
+	Klaytnmainnet8217   = 8217
 )
 
 func EventTypes(event string) string {

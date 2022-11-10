@@ -291,6 +291,20 @@ func GetV1ProposalHistory(url string) (data *models.V1ProposalHistory, err error
 	return data, nil
 }
 
+func GetKlaytnBlock(url string) (data *models.KlaytnBlock, err error) {
+	res, err := DoGet(url)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(res, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
 func QueryMethodEthCallByTag(to, data, url, tag string) (*models.JsonRPCModel, error) {
 	body := fmt.Sprintf(`{
 		"id": 1,

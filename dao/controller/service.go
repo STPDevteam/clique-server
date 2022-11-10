@@ -245,7 +245,6 @@ func checkAirdropAdminAndTimestamp(sign *models.AirdropAdminSignData) (ret bool)
 		sqlSql = oo.NewSqler().Table(consts.TbNameAirdrop).Where("id", sign.AirdropId).Where("creator", sign.Account).Count()
 	}
 	err = oo.SqlGet(sqlSql, &count)
-	oo.LogD("count:%v", count)
 	if err != nil || count == 0 {
 		return false
 	}

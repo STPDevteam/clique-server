@@ -349,6 +349,12 @@ type V1ProposalData struct {
 	Data    string `json:"data"`
 }
 
+type KlaytnBlock struct {
+	Code    int      `json:"code"`
+	Data    []string `json:"data"`
+	Message string   `json:"msg"`
+}
+
 type ResTokenImg struct {
 	TokenChainId int    `json:"tokenChainId"`
 	TokenAddress string `json:"tokenAddress"`
