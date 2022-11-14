@@ -823,6 +823,51 @@ func (svc *Service) save(blockData []map[string]interface{}, currentBlockNum, ch
 					return
 				}
 			}
+
+			// save member
+			var count int
+			sqlSel = oo.NewSqler().Table(consts.TbNameMember).Where("chain_id", chainId).Where("dao_address", daoAddress).
+				Where("account", newOwner).Count()
+			errTx = oo.SqlGet(sqlSel, &count)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+			if count == 0 {
+				var m = make([]map[string]interface{}, 0)
+				var v = make(map[string]interface{})
+				v["chain_id"] = chainId
+				v["dao_address"] = daoAddress
+				v["account"] = newOwner
+				v["join_switch"] = 1
+				m = append(m, v)
+				sqlInsMember := oo.NewSqler().Table(consts.TbNameMember).Insert(m)
+				_, errTx = oo.SqlxTxExec(tx, sqlInsMember)
+				if errTx != nil {
+					oo.LogW("SQL err: %v", errTx)
+					return
+				}
+			} else {
+				var oldDataCount int
+				sqlSel = oo.NewSqler().Table(consts.TbNameMember).Where("chain_id", chainId).Where("dao_address", daoAddress).
+					Where("account", newOwner).Where("join_switch", 1).Count()
+				errTx = oo.SqlGet(sqlSel, &oldDataCount)
+				if errTx != nil {
+					oo.LogW("SQL err: %v", errTx)
+					return
+				}
+				if oldDataCount != 1 {
+					var update = make(map[string]interface{})
+					update["join_switch"] = 1
+					sqlUp = oo.NewSqler().Table(consts.TbNameMember).Where("chain_id", chainId).Where("dao_address", daoAddress).
+						Where("account", newOwner).Update(update)
+					_, errTx = oo.SqlxTxExec(tx, sqlUp)
+					if errTx != nil {
+						oo.LogW("SQL err: %v", errTx)
+						return
+					}
+				}
+			}
 		}
 
 		if blockData[i]["event_type"] == consts.EvCreateAirdrop {
