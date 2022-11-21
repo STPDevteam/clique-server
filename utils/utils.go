@@ -91,3 +91,7 @@ func StringArrayFrom2DBytes(bytes2d [][]byte) []string {
 	}
 	return stringArray
 }
+
+func ReplaceSpecialChars(str string) string {
+	return strings.Replace(fmt.Sprint(strings.Replace(fmt.Sprint(str), "\\", `\\`, -1)), "'", `\'`, -1)
+}

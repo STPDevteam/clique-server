@@ -62,7 +62,7 @@ func (svc *Service) Start(ctx *cli.Context) error {
 	go tokensImgTask()
 	go updateNotification()
 	go updateAccountRecord()
-	go svc.getV1Proposal()
+	//go svc.getV1Proposal()
 	//go svc.getEthTokenHoldersTotal()
 
 	router := gin.Default()

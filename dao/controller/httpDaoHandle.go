@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"stp_dao_v2/consts"
 	"stp_dao_v2/models"
+	"stp_dao_v2/utils"
 	"strconv"
 	"time"
 )
@@ -36,6 +37,8 @@ func (svc *Service) httpDaoList(c *gin.Context) {
 	countParam, _ := strconv.Atoi(count)
 	customizeOrderProposalParam := c.Query("customizeOrderProposal")
 	customizeOrderCreateTimeParam := c.Query("customizeOrderCreateTime")
+
+	keywordParam = utils.ReplaceSpecialChars(keywordParam)
 
 	var orderStr string
 	if customizeOrderProposalParam == "ASC" && customizeOrderCreateTimeParam == "" {

@@ -4,9 +4,11 @@ go 1.18
 
 require (
 	github.com/0xKiwi/sol-merkle-tree-go v0.0.0-20201221015726-540cee3f3bd0
-	github.com/Anna2024/liboo v0.0.0-20220802101715-b2539380cabb
+	github.com/Anna2024/liboo v0.0.0-20221114112008-40bcaf3b52e5
 	github.com/ethereum/go-ethereum v1.10.21
 	github.com/gin-gonic/gin v1.8.1
+	github.com/jmoiron/sqlx v1.2.0
+	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pborman/uuid v1.2.0
 	github.com/swaggo/files v0.0.0-20220728132757-551d4a08d97a
 	github.com/swaggo/gin-swagger v1.5.1
@@ -37,7 +39,6 @@ require (
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/uuid v1.2.0 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
-	github.com/jmoiron/sqlx v1.2.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
@@ -48,7 +49,6 @@ require (
 	github.com/nats-io/go-nats v1.7.2 // indirect
 	github.com/nats-io/nkeys v0.2.0 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
-	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
 	github.com/pelletier/go-toml/v2 v2.0.1 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/syndtr/goleveldb v1.0.1-0.20220614013038-64ee5596c38a // indirect

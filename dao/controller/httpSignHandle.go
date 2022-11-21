@@ -112,8 +112,8 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 		key := fmt.Sprintf(`%d-%s-%s-%s`, tokenChainId, tokenAddress, params.Account, blockNumber)
 		cacheBalance, ok := svc.mCache.Get(key)
 		if !ok {
-			for _, testChainId := range svc.appConfig.ArchiveBalanceSign {
-				if tokenChainId == int64(testChainId) {
+			for _, archiveChainId := range svc.appConfig.ArchiveBalanceSign {
+				if tokenChainId == int64(archiveChainId) {
 					url = svc.getArchiveNode(tokenChainId)
 					if url == "" {
 						c.JSON(http.StatusInternalServerError, models.Response{
@@ -125,7 +125,7 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 					data := fmt.Sprintf("%s%s", paramsDataPrefix, strings.TrimPrefix(params.Account, "0x"))
 					var tag = blockNumber
 					for _, testnet := range svc.appConfig.TestnetBalanceSign {
-						if testnet == testChainId {
+						if testnet == archiveChainId {
 							tag = "latest"
 							break
 						}
@@ -168,6 +168,20 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 		}
 
 		resProposalId = fmt.Sprintf("%064x", params.ProposalId)
+	}
+	if resBalance == "0" {
+		c.JSON(http.StatusOK, models.Response{
+			Code:    http.StatusOK,
+			Message: "ok",
+			Data: models.ResSignCreateData{
+				Account:      params.Account,
+				TokenChainId: tokenChainId,
+				TokenAddress: tokenAddress,
+				Balance:      "0",
+				Deadline:     deadline,
+			},
+		})
+		return
 	}
 	balance, _ := utils.Hex2BigInt(fmt.Sprintf("0x%s", resBalance))
 
@@ -444,11 +458,14 @@ func (svc *Service) getArchiveNode(chainId int64) string {
 	if chainId == consts.GoerliTestnet5 {
 		return "https://rpc.ankr.com/eth_goerli"
 	}
-	if chainId == consts.Klaytntestnet1001 {
+	if chainId == consts.KlaytnTestnet1001 {
 		return "https://baobab.fandom.finance/archive"
 	}
-	if chainId == consts.Klaytnmainnet8217 {
+	if chainId == consts.KlaytnMainnet8217 {
 		return "https://cypress.fandom.finance/archive"
+	}
+	if chainId == consts.BSCTestnet97 {
+		return svc.appConfig.BSCQuickNodeRPC
 	}
 	return ""
 }

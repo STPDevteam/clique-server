@@ -70,8 +70,10 @@ const (
 	EthMainnet1         = 1
 	PolygonTestnet80001 = 80001
 	PolygonMainnet137   = 137
-	Klaytntestnet1001   = 1001
-	Klaytnmainnet8217   = 8217
+	KlaytnTestnet1001   = 1001
+	KlaytnMainnet8217   = 8217
+	BSCTestnet97        = 97
+	BSCMainnet56        = 56
 )
 
 func EventTypes(event string) string {

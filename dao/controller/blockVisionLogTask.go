@@ -508,7 +508,8 @@ func (svc *Service) save(blockData []map[string]interface{}, currentBlockNum, ch
 					for indexUrl := range svc.scanInfo[indexScan].ChainId {
 						if svc.scanInfo[indexScan].ChainId[indexUrl] == daoEntity.TokenChainId {
 							timestamp, _ := utils.Hex2Dec(blockData[i]["time_stamp"].(string))
-							if daoEntity.TokenChainId == consts.Klaytntestnet1001 || daoEntity.TokenChainId == consts.Klaytnmainnet8217 {
+							if daoEntity.TokenChainId == consts.KlaytnTestnet1001 || daoEntity.TokenChainId == consts.KlaytnMainnet8217 ||
+								daoEntity.TokenChainId == consts.BSCTestnet97 || daoEntity.TokenChainId == consts.BSCMainnet56 {
 								var duration = 0
 							Loop:
 								var klaytnUrl = fmt.Sprintf(svc.scanInfo[indexScan].QueryBlockNumberUrl[indexUrl], daoEntity.TokenChainId, timestamp, duration)
@@ -519,7 +520,7 @@ func (svc *Service) save(blockData []map[string]interface{}, currentBlockNum, ch
 									return
 								}
 								if duration > 10 {
-									oo.LogW("query block number failed,duration > 10")
+									oo.LogW("query block number failed,duration > 10. timestamp: %v", timestamp)
 									errTx = errors.New("query block number failed,duration > 10")
 									return
 								}
@@ -825,46 +826,55 @@ func (svc *Service) save(blockData []map[string]interface{}, currentBlockNum, ch
 			}
 
 			// save member
-			var count int
-			sqlSel = oo.NewSqler().Table(consts.TbNameMember).Where("chain_id", chainId).Where("dao_address", daoAddress).
-				Where("account", newOwner).Count()
-			errTx = oo.SqlGet(sqlSel, &count)
+			var contractAddr string
+			sqlSel = oo.NewSqler().Table(consts.TbNameScanTask).Where("chain_id", chainId).Where("event_type", consts.EvCreateDao).Select("address")
+			errTx = oo.SqlGet(sqlSel, &contractAddr)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return
 			}
-			if count == 0 {
-				var m = make([]map[string]interface{}, 0)
-				var v = make(map[string]interface{})
-				v["chain_id"] = chainId
-				v["dao_address"] = daoAddress
-				v["account"] = newOwner
-				v["join_switch"] = 1
-				m = append(m, v)
-				sqlInsMember := oo.NewSqler().Table(consts.TbNameMember).Insert(m)
-				_, errTx = oo.SqlxTxExec(tx, sqlInsMember)
-				if errTx != nil {
-					oo.LogW("SQL err: %v", errTx)
-					return
-				}
-			} else {
-				var oldDataCount int
+			if strings.ToLower(contractAddr) != strings.ToLower(newOwner) {
+				var count int
 				sqlSel = oo.NewSqler().Table(consts.TbNameMember).Where("chain_id", chainId).Where("dao_address", daoAddress).
-					Where("account", newOwner).Where("join_switch", 1).Count()
-				errTx = oo.SqlGet(sqlSel, &oldDataCount)
+					Where("account", newOwner).Count()
+				errTx = oo.SqlGet(sqlSel, &count)
 				if errTx != nil {
 					oo.LogW("SQL err: %v", errTx)
 					return
 				}
-				if oldDataCount != 1 {
-					var update = make(map[string]interface{})
-					update["join_switch"] = 1
-					sqlUp = oo.NewSqler().Table(consts.TbNameMember).Where("chain_id", chainId).Where("dao_address", daoAddress).
-						Where("account", newOwner).Update(update)
-					_, errTx = oo.SqlxTxExec(tx, sqlUp)
+				if count == 0 {
+					var m = make([]map[string]interface{}, 0)
+					var v = make(map[string]interface{})
+					v["chain_id"] = chainId
+					v["dao_address"] = daoAddress
+					v["account"] = newOwner
+					v["join_switch"] = 1
+					m = append(m, v)
+					sqlInsMember := oo.NewSqler().Table(consts.TbNameMember).Insert(m)
+					_, errTx = oo.SqlxTxExec(tx, sqlInsMember)
 					if errTx != nil {
 						oo.LogW("SQL err: %v", errTx)
 						return
+					}
+				} else {
+					var oldDataCount int
+					sqlSel = oo.NewSqler().Table(consts.TbNameMember).Where("chain_id", chainId).Where("dao_address", daoAddress).
+						Where("account", newOwner).Where("join_switch", 1).Count()
+					errTx = oo.SqlGet(sqlSel, &oldDataCount)
+					if errTx != nil {
+						oo.LogW("SQL err: %v", errTx)
+						return
+					}
+					if oldDataCount != 1 {
+						var update = make(map[string]interface{})
+						update["join_switch"] = 1
+						sqlUp = oo.NewSqler().Table(consts.TbNameMember).Where("chain_id", chainId).Where("dao_address", daoAddress).
+							Where("account", newOwner).Update(update)
+						_, errTx = oo.SqlxTxExec(tx, sqlUp)
+						if errTx != nil {
+							oo.LogW("SQL err: %v", errTx)
+							return
+						}
 					}
 				}
 			}
