@@ -4,8 +4,8 @@ gitea.com/xorm/sqlfiddle v0.0.0-20180821085327-62ce714f951a h1:lSA0F4e9A2NcQSqGq
 gitea.com/xorm/sqlfiddle v0.0.0-20180821085327-62ce714f951a/go.mod h1:EXuID2Zs0pAQhH8yz+DNjUbjppKQzKFAn28TMYPB6IU=
 github.com/0xKiwi/sol-merkle-tree-go v0.0.0-20201221015726-540cee3f3bd0 h1:v2smZnEMxWqkCk4iqeR43dWIaUhwBvJF0wVKlGW7QGw=
 github.com/0xKiwi/sol-merkle-tree-go v0.0.0-20201221015726-540cee3f3bd0/go.mod h1:DrUDgKMaQeC+T3iDtvouNaiHqx5bcotCwo2ElGiI/tc=
-github.com/Anna2024/liboo v0.0.0-20221114112008-40bcaf3b52e5 h1:fx/7mf3FTBHSigk9ZRp0L013vxamOOkkCJgrS30bBh4=
-github.com/Anna2024/liboo v0.0.0-20221114112008-40bcaf3b52e5/go.mod h1:7YqipSEOI2S9l3u/k4FO+sDauxD+SmtsDA03Lce4j3M=
+github.com/Anna2024/liboo v0.0.0-20221123130301-ad28d0617d91 h1:0M6RKp2TtCa8nr4dRrLMAcr0c1AUaK6awLja5zy9At4=
+github.com/Anna2024/liboo v0.0.0-20221123130301-ad28d0617d91/go.mod h1:7YqipSEOI2S9l3u/k4FO+sDauxD+SmtsDA03Lce4j3M=
 github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible/go.mod h1:r7JcOSlj0wfOMncg0iLm8Leh48TZaKVeNIfJntJ2wa0=

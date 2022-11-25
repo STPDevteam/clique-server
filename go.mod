@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/0xKiwi/sol-merkle-tree-go v0.0.0-20201221015726-540cee3f3bd0
-	github.com/Anna2024/liboo v0.0.0-20221114112008-40bcaf3b52e5
+	github.com/Anna2024/liboo v0.0.0-20221123130301-ad28d0617d91
 	github.com/ethereum/go-ethereum v1.10.21
 	github.com/gin-gonic/gin v1.8.1
 	github.com/jmoiron/sqlx v1.2.0

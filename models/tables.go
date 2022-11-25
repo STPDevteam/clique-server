@@ -46,6 +46,8 @@ type AccountModel struct {
 	Twitter      sql.NullString `db:"twitter"`
 	Github       sql.NullString `db:"github"`
 	Discord      sql.NullString `db:"discord"`
+	Email        sql.NullString `db:"email"`
+	Country      sql.NullString `db:"country"`
 }
 
 type AccountSignModel struct {

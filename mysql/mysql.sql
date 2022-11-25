@@ -1,5 +1,5 @@
-CREATE SCHEMA IF NOT EXISTS `stp_dao_v2_pre_klay` DEFAULT CHARACTER SET utf8 ;
-USE `stp_dao_v2_pre_klay`;
+CREATE SCHEMA IF NOT EXISTS `stp_dao_v2_pre_bsc` DEFAULT CHARACTER SET utf8 ;
+USE `stp_dao_v2_pre_bsc`;
 
 SET GLOBAL TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
 SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
@@ -184,7 +184,10 @@ CREATE TABLE `tb_account` (
 `twitter` VARCHAR(128),
 `github` VARCHAR(128),
 `discord` VARCHAR(128),
-PRIMARY KEY (`id`)
+`email` VARCHAR(128),
+`country` VARCHAR(128),
+PRIMARY KEY (`id`),
+INDEX `index_account` (`account` ASC)
 );
 
 CREATE TABLE `tb_account_record` (
@@ -546,3 +549,21 @@ INSERT INTO tb_category (category_name) VALUES ('Social'),('Protocol'),('NFT'),(
 # ('CreateAirdrop','0xae96637920430e4D05cCf11Db47cfa5cfC3224B7',24603072,'0x',97),
 # ('SettleAirdrop','0xae96637920430e4D05cCf11Db47cfa5cfC3224B7',24603072,'0x',97),
 # ('Claimed','0xae96637920430e4D05cCf11Db47cfa5cfC3224B7',24603072,'0x',97);
+
+#BSC mainnet pre
+# INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
+# ('CreateDao','0x5bf53eAFd960AE3Cced46D2B7B1b8555334dBeF0',23278269,'0x',56),
+# ('CreateERC20','0x5bf53eAFd960AE3Cced46D2B7B1b8555334dBeF0',23278269,'0x',56),
+# ('ClaimReserve','0x5bf53eAFd960AE3Cced46D2B7B1b8555334dBeF0',23278269,'0x',56),
+# ('CreateAirdrop','0x2AC73343B61ec8C0301aebB39514d1cD12f9013A',23291445,'0x',56),
+# ('SettleAirdrop','0x2AC73343B61ec8C0301aebB39514d1cD12f9013A',23291445,'0x',56),
+# ('Claimed','0x2AC73343B61ec8C0301aebB39514d1cD12f9013A',23291445,'0x',56);
+
+#BSC mainnet main
+# INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
+# ('CreateDao','0xd56a88fDE1861297A32416e86Fc6f3347A1677bc',23319449,'0x',56),
+# ('CreateERC20','0xd56a88fDE1861297A32416e86Fc6f3347A1677bc',23319449,'0x',56),
+# ('ClaimReserve','0xd56a88fDE1861297A32416e86Fc6f3347A1677bc',23319449,'0x',56),
+# ('CreateAirdrop','0x26E3a7841682D65e7a11e3C82067CeA0BbFC6aB4',23319449,'0x',56),
+# ('SettleAirdrop','0x26E3a7841682D65e7a11e3C82067CeA0BbFC6aB4',23319449,'0x',56),
+# ('Claimed','0x26E3a7841682D65e7a11e3C82067CeA0BbFC6aB4',23319449,'0x',56);

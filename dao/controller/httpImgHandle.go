@@ -118,16 +118,11 @@ func (svc *Service) httpUploadImg(c *gin.Context) {
 	}
 
 	var url string
-	if r.ProtoMajor == 2 {
+	if !strings.Contains(c.Request.Host, "localhost") {
 		url = fmt.Sprintf("https://%s%s", r.Host, path)
 	} else {
 		url = fmt.Sprintf("http://%s%s", r.Host, path)
 	}
-	//if strings.Contains(r.Proto, "HTTPS") {
-	//
-	//} else {
-	//
-	//}
 
 	c.JSON(http.StatusOK, models.Response{
 		Code: http.StatusOK,

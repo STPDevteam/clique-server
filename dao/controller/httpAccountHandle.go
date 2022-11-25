@@ -195,6 +195,8 @@ func httpQueryAccount(c *gin.Context) {
 			Twitter:      entity.Twitter.String,
 			Github:       entity.Github.String,
 			Discord:      entity.Discord.String,
+			Email:        entity.Email.String,
+			Country:      entity.Country.String,
 			//MyTokens:     dataMyTokens,
 			AdminDao:  dataAdmin,
 			MemberDao: dataMember,
@@ -239,6 +241,8 @@ func httpUpdateAccount(c *gin.Context) {
 	v["twitter"] = params.Param.Twitter[:int(math.Min(float64(len(params.Param.Twitter)), 128))]
 	v["github"] = params.Param.Github[:int(math.Min(float64(len(params.Param.Github)), 128))]
 	v["discord"] = params.Param.Discord[:int(math.Min(float64(len(params.Param.Discord)), 128))]
+	v["email"] = params.Param.Email[:int(math.Min(float64(len(params.Param.Email)), 128))]
+	v["country"] = params.Param.Country[:int(math.Min(float64(len(params.Param.Country)), 128))]
 	sqler := oo.NewSqler().Table(consts.TbNameAccount).Where("account", params.Sign.Account).Update(v)
 	err = oo.SqlExec(sqler)
 	if err != nil {

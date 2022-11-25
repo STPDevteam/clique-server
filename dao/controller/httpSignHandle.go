@@ -169,7 +169,7 @@ func (svc *Service) httpCreateSign(c *gin.Context) {
 
 		resProposalId = fmt.Sprintf("%064x", params.ProposalId)
 	}
-	if resBalance == "0" {
+	if params.SignType == "1" && resBalance == "0" {
 		c.JSON(http.StatusOK, models.Response{
 			Code:    http.StatusOK,
 			Message: "ok",
