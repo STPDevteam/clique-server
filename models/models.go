@@ -76,14 +76,38 @@ type JsonRPCBalanceModel struct {
 	Result  Balance `json:"result"`
 }
 
+type Balance struct {
+	Value string `json:"Value"`
+}
+
 type JsonRPCGetBlockNumber struct {
 	Status  string `json:"status"`
 	Message string `json:"message"`
 	Result  string `json:"result"`
 }
 
-type Balance struct {
-	Value string `json:"Value"`
+type JsonRPCAccountNFT struct {
+	Jsonrpc string `json:"jsonrpc"`
+	Id      int    `json:"id"`
+	Result  struct {
+		Data []struct {
+			ContractAddress string  `json:"contractAddress"`
+			TokenId         string  `json:"tokenId"`
+			Amount          float64 `json:"amount"`
+			Quantity        int     `json:"quantity"`
+			UsdAmount       float64 `json:"usdAmount"`
+			Currency        string  `json:"currency"`
+			Standard        string  `json:"standard"`
+			Metadata        struct {
+				ImageURL        string `json:"imageURL"`
+				GatewayImageURL string `json:"gatewayImageURL"`
+				Name            string `json:"name"`
+				CollectionName  string `json:"collectionName"`
+			} `json:"metadata"`
+		} `json:"data"`
+		NextPageIndex int `json:"nextPageIndex"`
+		Total         int `json:"total"`
+	} `json:"result"`
 }
 
 type Response struct {
@@ -110,6 +134,8 @@ type ResQueryAccount struct {
 	Discord      string `json:"discord"`
 	Email        string `json:"email"`
 	Country      string `json:"country"`
+	Youtube      string `json:"youtube"`
+	Opensea      string `json:"opensea"`
 	//MyTokens     []ResMyTokens `json:"myTokens"`
 	AdminDao  []ResDao `json:"adminDao"`
 	MemberDao []ResDao `json:"memberDao"`
@@ -152,6 +178,8 @@ type UpdateAccountParam struct {
 	Discord      string `json:"discord"`
 	Email        string `json:"email"`
 	Country      string `json:"country"`
+	Youtube      string `json:"youtube"`
+	Opensea      string `json:"opensea"`
 }
 
 type ResDaoListPage struct {
@@ -567,4 +595,39 @@ type ResAccountSign struct {
 	Message     string `json:"message"`
 	Timestamp   int64  `json:"timestamp"`
 	AccountLogo string `json:"accountLogo"`
+}
+
+type FollowWithSignParam struct {
+	Sign   SignData    `json:"sign"`
+	Params FollowParam `json:"params"`
+}
+
+type FollowParam struct {
+	FollowAccount string `json:"followAccount"`
+	// status false: unfollow true: follow
+	Status bool `json:"status"`
+}
+
+type ResAccountFollowPage struct {
+	List  []ResAccountFollow `json:"list"`
+	Total uint64             `json:"total"`
+}
+
+type ResAccountFollow struct {
+	Account   string `json:"account"`
+	Following string `json:"following"`
+	// following or mutualFollowing
+	Relation string `json:"relation"`
+}
+
+type ResAccountFollowersPage struct {
+	List  []ResAccountFollowers `json:"list"`
+	Total uint64                `json:"total"`
+}
+
+type ResAccountFollowers struct {
+	Account   string `json:"account"`
+	Followers string `json:"followers"`
+	// following or mutualFollowing
+	Relation string `json:"relation"`
 }

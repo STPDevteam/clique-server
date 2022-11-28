@@ -105,6 +105,10 @@ func (svc *Service) Start(ctx *cli.Context) error {
 		r6.POST("/update", httpUpdateAccount)
 		r6.GET("/record", httpQueryRecordList)
 		r6.GET("/sign/list", httpQueryAccountSignList)
+		r6.GET("/nfts", svc.httpQueryAccountNFTsList)
+		r6.POST("/update/follow", httpUpdateAccountFollow)
+		r6.GET("/following/list", httpAccountFollowingList)
+		r6.GET("/followers/list", httpAccountFollowersList)
 	}
 	r7 := router.Group(path.Join(basePath, "/token"))
 	{

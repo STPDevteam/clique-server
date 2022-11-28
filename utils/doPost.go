@@ -366,3 +366,36 @@ func GetBlockNumberFromTimestamp(url string) (data *models.JsonRPCGetBlockNumber
 
 	return data, nil
 }
+
+func AccountNFTPortfolio(account, url string, pageIndex, pageSize int) (*models.JsonRPCAccountNFT, error) {
+	body := fmt.Sprintf(`{
+		"jsonrpc": "2.0",
+			"id": 0,
+			"method": "account_nftPortfolio",
+			"params": {
+			"accountAddress": "%s",
+				"pageIndex": %d,
+				"pageSize": %d
+		}
+	}`, account, pageIndex, pageSize)
+
+	return jsonRPCAccountNFTPortfolio(body, url)
+}
+
+func jsonRPCAccountNFTPortfolio(body, url string) (data *models.JsonRPCAccountNFT, err error) {
+	res, err := DoPost(
+		url,
+		"application/json",
+		body,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(res, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}

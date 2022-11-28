@@ -48,6 +48,17 @@ type AccountModel struct {
 	Discord      sql.NullString `db:"discord"`
 	Email        sql.NullString `db:"email"`
 	Country      sql.NullString `db:"country"`
+	Youtube      sql.NullString `db:"youtube"`
+	Opensea      sql.NullString `db:"opensea"`
+}
+
+type AccountFollowModel struct {
+	Id         uint64 `db:"id,omitempty" sqler:"skips"`
+	CreateTime string `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime string `db:"update_time,omitempty" sqler:"skips"`
+	Account    string `db:"account"`
+	Followed   string `db:"followed"`
+	Status     bool   `db:"status"`
 }
 
 type AccountSignModel struct {

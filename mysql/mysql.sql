@@ -174,20 +174,36 @@ PRIMARY KEY (`id`)
 );
 
 CREATE TABLE `tb_account` (
-`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-`create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-`update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-`account` VARCHAR(128) NOT NULL UNIQUE,
-`account_logo` VARCHAR(128),
-`nickname` VARCHAR(128),
-`introduction` VARCHAR(200),
-`twitter` VARCHAR(128),
-`github` VARCHAR(128),
-`discord` VARCHAR(128),
-`email` VARCHAR(128),
-`country` VARCHAR(128),
-PRIMARY KEY (`id`),
-INDEX `index_account` (`account` ASC)
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `account` VARCHAR(128) NOT NULL UNIQUE,
+    `account_logo` VARCHAR(128),
+    `nickname` VARCHAR(128),
+    `introduction` VARCHAR(200),
+    `twitter` VARCHAR(128),
+    `github` VARCHAR(128),
+    `discord` VARCHAR(128),
+    `email` VARCHAR(128),
+    `country` VARCHAR(128),
+    `youtube` VARCHAR(128),
+    `opensea` VARCHAR(128),
+    PRIMARY KEY (`id`),
+    INDEX `index_account` (`account` ASC)
+);
+ALTER TABLE tb_account ADD `youtube` VARCHAR(128);
+ALTER TABLE tb_account ADD `opensea` VARCHAR(128);
+
+CREATE TABLE `tb_account_follow` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `account` VARCHAR(66) NOT NULL,
+    `followed` VARCHAR(66) NOT NULL,
+    `status` BOOL NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `index_account` (`account` ASC),
+    INDEX `index_followed` (`followed` ASC)
 );
 
 CREATE TABLE `tb_account_record` (

@@ -9,6 +9,7 @@ const (
 	TbNameEventHistorical     = "event_historical_data"
 	TbNameScanTask            = "scan_task"
 	TbNameAccount             = "tb_account"
+	TbNameAccountFollow       = "tb_account_follow"
 	TbNameAccountRecord       = "tb_account_record"
 	TbNameAccountSign         = "tb_account_sign"
 	TbNameNonce               = "tb_nonce"
