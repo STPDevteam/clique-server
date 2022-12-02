@@ -127,6 +127,8 @@ type ResUploadImgPath struct {
 type ResQueryAccount struct {
 	Account      string `json:"account"`
 	AccountLogo  string `json:"accountLogo"`
+	Followers    int    `json:"followers"`
+	Following    int    `json:"following"`
 	Nickname     string `json:"nickname"`
 	Introduction string `json:"introduction"`
 	Twitter      string `json:"twitter"`
@@ -614,8 +616,11 @@ type ResAccountFollowPage struct {
 }
 
 type ResAccountFollow struct {
-	Account   string `json:"account"`
-	Following string `json:"following"`
+	Account     string `json:"account"`
+	FollowTime  string `json:"followTime"`
+	Following   string `json:"following"`
+	AccountLogo string `json:"accountLogo"`
+	Nickname    string `json:"nickname"`
 	// following or mutualFollowing
 	Relation string `json:"relation"`
 }
@@ -626,8 +631,11 @@ type ResAccountFollowersPage struct {
 }
 
 type ResAccountFollowers struct {
-	Account   string `json:"account"`
-	Followers string `json:"followers"`
+	Account     string `json:"account"`
+	FollowTime  string `json:"followTime"`
+	Followers   string `json:"followers"`
+	AccountLogo string `json:"accountLogo"`
+	Nickname    string `json:"nickname"`
 	// following or mutualFollowing
 	Relation string `json:"relation"`
 }

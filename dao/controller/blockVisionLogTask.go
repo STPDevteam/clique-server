@@ -29,11 +29,11 @@ func (svc *Service) scheduledTask() {
 
 			needEvent, currentBlockNum, haveFirstBlock, errNeed := needSaveEvent(chainId)
 			if errNeed != nil {
-				oo.LogW("needSaveEvent failed. err:%v chainId:%d", errNeed, chainId)
+				//oo.LogW("needSaveEvent failed. err:%v chainId:%d", errNeed, chainId)
 				continue
 			}
 			if !haveFirstBlock || currentBlockNum == 0 {
-				oo.LogD("needSaveEvent failed. chainId:%d", chainId)
+				//oo.LogD("needSaveEvent failed. chainId:%d", chainId)
 				continue
 			}
 

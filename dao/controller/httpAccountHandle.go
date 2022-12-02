@@ -186,12 +186,38 @@ func httpQueryAccount(c *gin.Context) {
 		}
 	}
 
+	var followersCount int
+	sqlSel = oo.NewSqler().Table(consts.TbNameAccountFollow).Where("followed", entity.Account).Where("status", 1).Count()
+	err = oo.SqlGet(sqlSel, &followersCount)
+	if err != nil {
+		oo.LogW("SQL err: %v", err)
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+
+	var followingCount int
+	sqlSel = oo.NewSqler().Table(consts.TbNameAccountFollow).Where("account", entity.Account).Where("status", 1).Count()
+	err = oo.SqlGet(sqlSel, &followingCount)
+	if err != nil {
+		oo.LogW("SQL err: %v", err)
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, models.Response{
 		Code:    http.StatusOK,
 		Message: "ok",
 		Data: models.ResQueryAccount{
 			Account:      entity.Account,
 			AccountLogo:  entity.AccountLogo.String,
+			Followers:    followersCount,
+			Following:    followingCount,
 			Nickname:     entity.Nickname.String,
 			Introduction: entity.Introduction.String,
 			Twitter:      entity.Twitter.String,
@@ -247,8 +273,8 @@ func httpUpdateAccount(c *gin.Context) {
 	v["discord"] = params.Param.Discord[:int(math.Min(float64(len(params.Param.Discord)), 128))]
 	v["email"] = params.Param.Email[:int(math.Min(float64(len(params.Param.Email)), 128))]
 	v["country"] = params.Param.Country[:int(math.Min(float64(len(params.Param.Country)), 128))]
-	v["youtube"] = params.Param.Country[:int(math.Min(float64(len(params.Param.Youtube)), 128))]
-	v["opensea"] = params.Param.Country[:int(math.Min(float64(len(params.Param.Opensea)), 128))]
+	v["youtube"] = params.Param.Youtube[:int(math.Min(float64(len(params.Param.Youtube)), 128))]
+	v["opensea"] = params.Param.Opensea[:int(math.Min(float64(len(params.Param.Opensea)), 128))]
 	sqler := oo.NewSqler().Table(consts.TbNameAccount).Where("account", params.Sign.Account).Update(v)
 	err = oo.SqlExec(sqler)
 	if err != nil {
@@ -419,31 +445,29 @@ func httpQueryAccountSignList(c *gin.Context) {
 // @Produce json
 // @Param chainId query  int true "chainId 1 or 56"
 // @Param account query  string true "account"
-// @Param offset query  int true "offset,page default 20"
-// @Param count query  int true "count,page default 1"
+// @Param size query  int true "size,page default 20"
+// @Param index query  int true "index,page default 1"
 // @Success 200 {object} models.JsonRPCAccountNFT
-// @Router /stpdao/v2/account/sign/nfts [get]
+// @Router /stpdao/v2/account/nfts [get]
 func (svc *Service) httpQueryAccountNFTsList(c *gin.Context) {
-	count := c.Query("count")
-	offset := c.Query("offset")
+	pageIndex := c.Query("index")
+	PageSize := c.Query("size")
 	chainId := c.Query("chainId")
 	accountParam := c.Query("account")
-	countParam, _ := strconv.Atoi(count)
-	offsetParam, _ := strconv.Atoi(offset)
+	pageIndexParam, _ := strconv.Atoi(pageIndex)
+	PageSizeParam, _ := strconv.Atoi(PageSize)
 	chainIdParam, _ := strconv.Atoi(chainId)
 
 	var res *models.JsonRPCAccountNFT
-	key := fmt.Sprintf(`NFTs%d-%s-%d-%d`, chainId, accountParam, offsetParam, countParam)
+	key := fmt.Sprintf(`NFTs%d-%s-%d-%d`, chainIdParam, accountParam, pageIndexParam, PageSizeParam)
 	cacheNFTs, ok := svc.mCache.Get(key)
 	if !ok {
 		var url string
 		for indexScan := range svc.scanInfo {
 			for indexUrl := range svc.scanInfo[indexScan].ChainId {
-				if svc.scanInfo[indexScan].ChainId[indexUrl] == consts.EthMainnet1 || svc.scanInfo[indexScan].ChainId[indexUrl] == consts.BSCMainnet56 {
-					if svc.scanInfo[indexScan].ChainId[indexUrl] == chainIdParam {
-						url = svc.scanInfo[indexScan].ScanUrl[indexUrl]
-						break
-					}
+				if svc.scanInfo[indexScan].ChainId[indexUrl] == chainIdParam {
+					url = svc.scanInfo[indexScan].ScanUrl[indexUrl]
+					break
 				}
 			}
 		}
@@ -457,7 +481,8 @@ func (svc *Service) httpQueryAccountNFTsList(c *gin.Context) {
 		}
 
 		var err error
-		res, err = utils.AccountNFTPortfolio(accountParam, url, countParam, offsetParam)
+
+		res, err = utils.AccountNFTPortfolio(accountParam, url, pageIndexParam, PageSizeParam)
 		if err != nil {
 			oo.LogW("AccountNFTPortfolio err: %v", err)
 			c.JSON(http.StatusInternalServerError, models.Response{
@@ -614,7 +639,7 @@ func httpAccountFollowingList(c *gin.Context) {
 	err := oo.SqlGet(sqlStr, &total)
 	if err == nil {
 		sqlCopy = *sqler
-		sqlStr = sqlCopy.Order("create_time DESC").Limit(countParam).Offset(offsetParam).Select()
+		sqlStr = sqlCopy.Order("update_time DESC").Limit(countParam).Offset(offsetParam).Select()
 		err = oo.SqlSelect(sqlStr, &entities)
 	}
 	if err != nil {
@@ -645,10 +670,25 @@ func httpAccountFollowingList(c *gin.Context) {
 			relation = "mutualFollowing"
 		}
 
+		var entity models.AccountModel
+		sqlSel = oo.NewSqler().Table(consts.TbNameAccount).Where("account", entities[index].Followed).Select()
+		err = oo.SqlGet(sqlSel, &entity)
+		if err != nil && err != oo.ErrNoRows {
+			oo.LogW("SQL err: %v", err)
+			c.JSON(http.StatusInternalServerError, models.Response{
+				Code:    500,
+				Message: "Something went wrong, Please try again later.",
+			})
+			return
+		}
+
 		data = append(data, models.ResAccountFollow{
-			Account:   entities[index].Account,
-			Following: entities[index].Followed,
-			Relation:  relation,
+			Account:     entities[index].Account,
+			FollowTime:  entities[index].UpdateTime,
+			Following:   entities[index].Followed,
+			AccountLogo: entity.AccountLogo.String,
+			Nickname:    entity.Nickname.String,
+			Relation:    relation,
 		})
 	}
 
@@ -688,7 +728,7 @@ func httpAccountFollowersList(c *gin.Context) {
 	err := oo.SqlGet(sqlStr, &total)
 	if err == nil {
 		sqlCopy = *sqler
-		sqlStr = sqlCopy.Order("create_time DESC").Limit(countParam).Offset(offsetParam).Select()
+		sqlStr = sqlCopy.Order("update_time DESC").Limit(countParam).Offset(offsetParam).Select()
 		err = oo.SqlSelect(sqlStr, &entities)
 	}
 	if err != nil {
@@ -703,8 +743,8 @@ func httpAccountFollowersList(c *gin.Context) {
 	var data = make([]models.ResAccountFollowers, 0)
 	for index := range entities {
 		var mutualCount int
-		sqlSel := oo.NewSqler().Table(consts.TbNameAccountFollow).Where("account", entities[index].Account).
-			Where("followed", entities[index].Followed).Where("status", 1).Count()
+		sqlSel := oo.NewSqler().Table(consts.TbNameAccountFollow).Where("account", entities[index].Followed).
+			Where("followed", entities[index].Account).Where("status", 1).Count()
 		err = oo.SqlGet(sqlSel, &mutualCount)
 		if err != nil {
 			oo.LogW("SQL err: %v", err)
@@ -719,10 +759,25 @@ func httpAccountFollowersList(c *gin.Context) {
 			relation = "mutualFollowing"
 		}
 
+		var entity models.AccountModel
+		sqlSel = oo.NewSqler().Table(consts.TbNameAccount).Where("account", entities[index].Account).Select()
+		err = oo.SqlGet(sqlSel, &entity)
+		if err != nil && err != oo.ErrNoRows {
+			oo.LogW("SQL err: %v", err)
+			c.JSON(http.StatusInternalServerError, models.Response{
+				Code:    500,
+				Message: "Something went wrong, Please try again later.",
+			})
+			return
+		}
+
 		data = append(data, models.ResAccountFollowers{
-			Account:   entities[index].Followed,
-			Followers: entities[index].Account,
-			Relation:  relation,
+			Account:     entities[index].Followed,
+			FollowTime:  entities[index].UpdateTime,
+			Followers:   entities[index].Account,
+			AccountLogo: entity.AccountLogo.String,
+			Nickname:    entity.Nickname.String,
+			Relation:    relation,
 		})
 	}
 
@@ -733,5 +788,43 @@ func httpAccountFollowersList(c *gin.Context) {
 			List:  data,
 			Total: total,
 		},
+	})
+}
+
+// @Summary account relation
+// @Tags account
+// @version 0.0.1
+// @description account relation
+// @Produce json
+// @Param myself query string true "myself"
+// @Param others query string true "others"
+// @Success 200 {object} models.Response
+// @Router /stpdao/v2/account/relation [get]
+func httpAccountRelation(c *gin.Context) {
+	myselfParam := c.Query("myself")
+	othersParam := c.Query("others")
+
+	var count int
+	sqlSel := oo.NewSqler().Table(consts.TbNameAccountFollow).Where("account", myselfParam).
+		Where("followed", othersParam).Where("status", 1).Count()
+	err := oo.SqlGet(sqlSel, &count)
+	if err != nil {
+		oo.LogW("SQL err: %v", err)
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+
+	var isFollowing bool
+	if count == 1 {
+		isFollowing = true
+	}
+
+	c.JSON(http.StatusOK, models.Response{
+		Code:    http.StatusOK,
+		Message: "ok",
+		Data:    isFollowing,
 	})
 }
