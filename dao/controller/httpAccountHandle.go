@@ -18,11 +18,11 @@ import (
 // @version 0.0.1
 // @description account info
 // @Produce json
-// @Param request body models.AccountParam true "request"
+// @Param request body models.SignData true "request"
 // @Success 200 {object} models.ResQueryAccount
 // @Router /stpdao/v2/account/query [post]
 func httpQueryAccount(c *gin.Context) {
-	var params models.AccountParam
+	var params models.SignData
 	err := c.ShouldBindJSON(&params)
 	if err != nil {
 		oo.LogW("%v", err)
@@ -32,16 +32,6 @@ func httpQueryAccount(c *gin.Context) {
 		})
 		return
 	}
-
-	//if !checkLogin(&params) {
-	//	oo.LogD("SignData err not auth")
-	//	c.JSON(http.StatusUnauthorized, models.Response{
-	//		Code:    http.StatusUnauthorized,
-	//		Data:    models.ResResult{Success: false},
-	//		Message: "SignData err not auth",
-	//	})
-	//	return
-	//}
 
 	var counts int
 	sqlCount := oo.NewSqler().Table(consts.TbNameAccount).Where("account", params.Account).Count()
@@ -210,6 +200,11 @@ func httpQueryAccount(c *gin.Context) {
 		return
 	}
 
+	var email string
+	if checkLogin(&params) {
+		email = entity.Email.String
+	}
+
 	c.JSON(http.StatusOK, models.Response{
 		Code:    http.StatusOK,
 		Message: "ok",
@@ -223,7 +218,7 @@ func httpQueryAccount(c *gin.Context) {
 			Twitter:      entity.Twitter.String,
 			Github:       entity.Github.String,
 			Discord:      entity.Discord.String,
-			Email:        entity.Email.String,
+			Email:        email,
 			Country:      entity.Country.String,
 			Youtube:      entity.Youtube.String,
 			Opensea:      entity.Opensea.String,

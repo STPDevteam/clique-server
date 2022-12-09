@@ -191,8 +191,6 @@ CREATE TABLE `tb_account` (
     PRIMARY KEY (`id`),
     INDEX `index_account` (`account` ASC)
 );
-ALTER TABLE tb_account ADD `youtube` VARCHAR(128);
-ALTER TABLE tb_account ADD `opensea` VARCHAR(128);
 
 CREATE TABLE `tb_account_follow` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,

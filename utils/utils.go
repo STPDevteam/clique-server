@@ -95,3 +95,11 @@ func StringArrayFrom2DBytes(bytes2d [][]byte) []string {
 func ReplaceSpecialChars(str string) string {
 	return strings.Replace(fmt.Sprint(strings.Replace(fmt.Sprint(str), "\\", `\\`, -1)), "'", `\'`, -1)
 }
+
+func ReplaceEmailStar(email string) string {
+	var index = strings.Index(email, "@")
+	if index <= 0 {
+		return email
+	}
+	return email[:index/2] + "****" + email[index:]
+}
