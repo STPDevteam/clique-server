@@ -595,16 +595,16 @@ func (svc *Service) save(blockData []map[string]interface{}, currentBlockNum, ch
 			}
 
 			// for dao order with proposal total
-			var totalProposal int
-			sqlSel = oo.NewSqler().Table(consts.TbNameProposal).Where("deprecated", 0).
-				Where("chain_id", chainId).Where("dao_address", daoAddress).Count()
-			errTx = oo.SqlGet(sqlSel, &totalProposal)
-			if errTx != nil {
-				oo.LogW("SQL err: %v", errTx)
-				return
-			}
+			//var totalProposal int
+			//sqlSel = oo.NewSqler().Table(consts.TbNameProposal).Where("deprecated", 0).
+			//	Where("chain_id", chainId).Where("dao_address", daoAddress).Count()
+			//errTx = oo.SqlGet(sqlSel, &totalProposal)
+			//if errTx != nil {
+			//	oo.LogW("SQL err: %v", errTx)
+			//	return
+			//}
 			var weight = make(map[string]interface{})
-			weight["weight"] = totalProposal
+			weight["weight"] = daoEntity.Weight.Int64 + 1
 			sqlUp = oo.NewSqler().Table(consts.TbNameDao).Where("chain_id", chainId).Where("dao_address", daoAddress).Update(weight)
 			_, errTx = oo.SqlxTxExec(tx, sqlUp)
 			if errTx != nil {
