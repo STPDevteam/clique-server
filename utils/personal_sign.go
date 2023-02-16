@@ -123,5 +123,5 @@ func SignMessage(message, secret string) (string, error) {
 
 	signature := common.Bytes2Hex(sig)
 
-	return signature, nil
+	return fmt.Sprintf("%0130s", signature), nil
 }
