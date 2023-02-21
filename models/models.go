@@ -197,7 +197,7 @@ type ResDaoList struct {
 	// approve:true,not approve:false
 	Approve bool `json:"approve"`
 	// total proposals
-	TotalProposals uint64 `json:"totalProposals"`
+	TotalProposals int64 `json:"totalProposals"`
 	// activity proposals
 	ActiveProposals uint64 `json:"activeProposals"`
 	// soon proposals
@@ -205,7 +205,7 @@ type ResDaoList struct {
 	// closed proposals
 	ClosedProposals uint64 `json:"closedProposals"`
 	// members total
-	Members uint64 `json:"members"`
+	Members int64 `json:"members"`
 	// 0:not joined Dao, 1:joined Dao,default:0
 	JoinSwitch int `json:"joinSwitch"`
 }

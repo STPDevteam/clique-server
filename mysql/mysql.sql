@@ -89,6 +89,8 @@ CREATE TABLE `tb_dao` (
 	`weight` INT,
 	`approve` bool NOT NULL,
 	`deprecated` bool NOT NULL DEFAULT false,
+	`members` INT NOT NULL DEFAULT 0,
+	`total_proposals` INT NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   INDEX `index_dao_address` (`dao_address` ASC),
   INDEX `index_dao_name` (`dao_name` ASC),
@@ -127,6 +129,7 @@ CREATE TABLE `tb_member` (
   INDEX `dao_address` (`dao_address` ASC),
   INDEX `account` (`account` ASC),
   INDEX `chain_id` (`chain_id` ASC),
+  INDEX `join_switch` (`join_switch` ASC),
   UNIQUE INDEX `unique_index_chain_id_dao_address_account` (`chain_id` ASC, `dao_address` ASC, `account` ASC),
   PRIMARY KEY (`id`)
 );
@@ -292,7 +295,9 @@ CREATE TABLE `tb_proposal` (
     INDEX `index_dao_address` (`dao_address` ASC),
     INDEX `index_proposalId` (`proposal_id` ASC),
     INDEX `index_deprecated` (`deprecated` ASC),
-    INDEX `index_block_number` (`block_number` ASC)
+    INDEX `index_block_number` (`block_number` ASC),
+    INDEX `index_start_time` (`start_time` ASC),
+    INDEX `index_end_time` (`end_time` ASC)
 );
 
 CREATE TABLE `tb_proposal_v1` (

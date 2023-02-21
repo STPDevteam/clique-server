@@ -97,18 +97,18 @@ func (svc *Service) httpDaoList(c *gin.Context) {
 	var listModel = make([]models.ResDaoList, 0)
 	for index := range daoListEntity {
 
-		var totalProposals uint64
-		sqlTotal := oo.NewSqler().Table(consts.TbNameProposal).Where("deprecated", 0).
-			Where("chain_id", daoListEntity[index].ChainId).Where("dao_address", daoListEntity[index].DaoAddress).Count()
-		err = oo.SqlGet(sqlTotal, &totalProposals)
-		if err != nil {
-			oo.LogW("SQL err: %v", err)
-			c.JSON(http.StatusInternalServerError, models.Response{
-				Code:    500,
-				Message: "Something went wrong, Please try again later.",
-			})
-			return
-		}
+		//var totalProposals uint64
+		//sqlTotal := oo.NewSqler().Table(consts.TbNameProposal).Where("deprecated", 0).
+		//	Where("chain_id", daoListEntity[index].ChainId).Where("dao_address", daoListEntity[index].DaoAddress).Count()
+		//err = oo.SqlGet(sqlTotal, &totalProposals)
+		//if err != nil {
+		//	oo.LogW("SQL err: %v", err)
+		//	c.JSON(http.StatusInternalServerError, models.Response{
+		//		Code:    500,
+		//		Message: "Something went wrong, Please try again later.",
+		//	})
+		//	return
+		//}
 
 		var activeProposals uint64
 		var now = time.Now().Unix()
@@ -157,7 +157,7 @@ func (svc *Service) httpDaoList(c *gin.Context) {
 		//	return
 		//}
 
-		var members uint64
+		//var members uint64
 		//if daoListEntity[index].TokenChainId == 1 {
 		//	key := fmt.Sprintf(`%d-%s`, daoListEntity[index].TokenChainId, daoListEntity[index].TokenAddress)
 		//	tokenHolders, ok := svc.mCache.Get(key)
@@ -178,19 +178,19 @@ func (svc *Service) httpDaoList(c *gin.Context) {
 		//	}
 		//	members = val
 		//} else {
-		sqlMembers := oo.NewSqler().Table(consts.TbNameMember).
-			Where("dao_address", daoListEntity[index].DaoAddress).
-			Where("chain_id", daoListEntity[index].ChainId).
-			Where("join_switch", 1).Count()
-		err = oo.SqlGet(sqlMembers, &members)
-		if err != nil {
-			oo.LogW("SQL err: %v", err)
-			c.JSON(http.StatusInternalServerError, models.Response{
-				Code:    500,
-				Message: "Something went wrong, Please try again later.",
-			})
-			return
-		}
+		//sqlMembers := oo.NewSqler().Table(consts.TbNameMember).
+		//	Where("dao_address", daoListEntity[index].DaoAddress).
+		//	Where("chain_id", daoListEntity[index].ChainId).
+		//	Where("join_switch", 1).Count()
+		//err = oo.SqlGet(sqlMembers, &members)
+		//if err != nil {
+		//	oo.LogW("SQL err: %v", err)
+		//	c.JSON(http.StatusInternalServerError, models.Response{
+		//		Code:    500,
+		//		Message: "Something went wrong, Please try again later.",
+		//	})
+		//	return
+		//}
 		//}
 
 		var joinSwitch int
@@ -225,11 +225,11 @@ func (svc *Service) httpDaoList(c *gin.Context) {
 			DaoAddress:      daoListEntity[index].DaoAddress,
 			ChainId:         daoListEntity[index].ChainId,
 			Approve:         daoListEntity[index].Approve,
-			TotalProposals:  totalProposals,
+			TotalProposals:  daoListEntity[index].TotalProposals,
 			ActiveProposals: activeProposals,
 			//SoonProposals:   soonProposals,
 			//ClosedProposals: closedProposals,
-			Members:    members,
+			Members:    daoListEntity[index].Members,
 			JoinSwitch: joinSwitch,
 		})
 	}

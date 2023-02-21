@@ -134,6 +134,8 @@ type DaoModel struct {
 	Weight            sql.NullInt64 `db:"weight"`
 	Approve           bool          `db:"approve"`
 	Deprecated        bool          `db:"deprecated"`
+	Members           int64         `db:"members"`
+	TotalProposals    int64         `db:"total_proposals"`
 }
 
 type CategoryModel struct {
