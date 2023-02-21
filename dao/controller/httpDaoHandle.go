@@ -127,35 +127,35 @@ func (svc *Service) httpDaoList(c *gin.Context) {
 			return
 		}
 
-		var soonProposals uint64
-		sqlSoon := oo.NewSqler().Table(consts.TbNameProposal).Where("deprecated", 0).
-			Where("chain_id", daoListEntity[index].ChainId).
-			Where("dao_address", daoListEntity[index].DaoAddress).
-			Where("start_time", ">=", now).Count()
-		err = oo.SqlGet(sqlSoon, &soonProposals)
-		if err != nil {
-			oo.LogW("SQL err: %v", err)
-			c.JSON(http.StatusInternalServerError, models.Response{
-				Code:    500,
-				Message: "Something went wrong, Please try again later.",
-			})
-			return
-		}
+		//var soonProposals uint64
+		//sqlSoon := oo.NewSqler().Table(consts.TbNameProposal).Where("deprecated", 0).
+		//	Where("chain_id", daoListEntity[index].ChainId).
+		//	Where("dao_address", daoListEntity[index].DaoAddress).
+		//	Where("start_time", ">=", now).Count()
+		//err = oo.SqlGet(sqlSoon, &soonProposals)
+		//if err != nil {
+		//	oo.LogW("SQL err: %v", err)
+		//	c.JSON(http.StatusInternalServerError, models.Response{
+		//		Code:    500,
+		//		Message: "Something went wrong, Please try again later.",
+		//	})
+		//	return
+		//}
 
-		var closedProposals uint64
-		sqlClosed := oo.NewSqler().Table(consts.TbNameProposal).Where("deprecated", 0).
-			Where("chain_id", daoListEntity[index].ChainId).
-			Where("dao_address", daoListEntity[index].DaoAddress).
-			Where("end_time", "<=", now).Count()
-		err = oo.SqlGet(sqlClosed, &closedProposals)
-		if err != nil {
-			oo.LogW("SQL err: %v", err)
-			c.JSON(http.StatusInternalServerError, models.Response{
-				Code:    500,
-				Message: "Something went wrong, Please try again later.",
-			})
-			return
-		}
+		//var closedProposals uint64
+		//sqlClosed := oo.NewSqler().Table(consts.TbNameProposal).Where("deprecated", 0).
+		//	Where("chain_id", daoListEntity[index].ChainId).
+		//	Where("dao_address", daoListEntity[index].DaoAddress).
+		//	Where("end_time", "<=", now).Count()
+		//err = oo.SqlGet(sqlClosed, &closedProposals)
+		//if err != nil {
+		//	oo.LogW("SQL err: %v", err)
+		//	c.JSON(http.StatusInternalServerError, models.Response{
+		//		Code:    500,
+		//		Message: "Something went wrong, Please try again later.",
+		//	})
+		//	return
+		//}
 
 		var members uint64
 		//if daoListEntity[index].TokenChainId == 1 {
@@ -227,10 +227,10 @@ func (svc *Service) httpDaoList(c *gin.Context) {
 			Approve:         daoListEntity[index].Approve,
 			TotalProposals:  totalProposals,
 			ActiveProposals: activeProposals,
-			SoonProposals:   soonProposals,
-			ClosedProposals: closedProposals,
-			Members:         members,
-			JoinSwitch:      joinSwitch,
+			//SoonProposals:   soonProposals,
+			//ClosedProposals: closedProposals,
+			Members:    members,
+			JoinSwitch: joinSwitch,
 		})
 	}
 
