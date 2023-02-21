@@ -18,8 +18,8 @@ func daoCountTask() {
 		return
 	}
 
-	for indes := range daoEntity {
-		ls := daoEntity[indes]
+	for index := range daoEntity {
+		ls := daoEntity[index]
 
 		var totalProposals int64
 		sqlSel = oo.NewSqler().Table(consts.TbNameProposal).Where("deprecated", 0).
