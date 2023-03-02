@@ -519,7 +519,7 @@ func (svc *Service) save(blockData []map[string]interface{}, currentBlockNum, ch
 									errTx = errK
 									return
 								}
-								if duration > 10 {
+								if duration > 40 {
 									oo.LogW("query block number failed,duration > 10. timestamp: %v", timestamp)
 									errTx = errors.New("query block number failed,duration > 10")
 									return
