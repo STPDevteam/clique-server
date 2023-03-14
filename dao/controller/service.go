@@ -204,7 +204,7 @@ func (svc *Service) loadGlobalConfig(ctx *cli.Context) error {
 func checkLogin(sign *models.SignData) (ret bool) {
 	ret, errSign := utils.CheckPersonalSign(consts.SignMessagePrefix, sign.Account, sign.Signature)
 	if errSign != nil {
-		oo.LogD("signMessage err %v", errSign)
+		oo.LogD("signMessage err %v, signature: %v", errSign, sign.Signature)
 		return false
 	}
 	if !ret {
