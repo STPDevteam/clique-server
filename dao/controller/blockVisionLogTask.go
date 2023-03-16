@@ -40,7 +40,7 @@ func (svc *Service) scheduledTask() {
 			var latestBlockNum int
 			resBlock, err := utils.QueryLatestBlock(url)
 			if err != nil {
-				oo.LogW("QueryLatestBlock failed. err: %v\n", err)
+				oo.LogW("QueryLatestBlock failed. err: %v chain id: %v", err, chainId)
 				continue
 			}
 			val, ok := resBlock.Result.(string)
@@ -1192,6 +1192,85 @@ func (svc *Service) save(blockData []map[string]interface{}, currentBlockNum, ch
 					oo.LogW("SQL err: %v", errTx)
 					return
 				}
+			}
+		}
+
+		//CreatedSale(uint256 indexed saleId, address indexed saleToken, address indexed receiveToken, uint256 saleAmount, uint256 pricePer, uint256 limitMin, uint256 limitMax, uint256 startTime, uint256 endTime)
+		if blockData[i]["event_type"] == consts.EvCreatedSale {
+			saleId, _ := utils.Hex2Dec(blockData[i]["topic1"].(string))
+			saleToken := utils.FixTo0x40String(blockData[i]["topic2"].(string))
+			receiveToken := utils.FixTo0x40String(blockData[i]["topic3"].(string))
+
+			decode, err := utils.Decode([]string{"uint256", "uint256", "uint256", "uint256", "uint256", "uint256"}, blockData[i]["data"].(string)[2:])
+			if err != nil {
+				oo.LogW("Decode err: %v", err)
+				errTx = err
+				return
+			}
+
+			var v = make(map[string]interface{})
+			v["chain_id"] = chainId
+			v["creator"] = blockData[i]["message_sender"]
+			v["sale_token"] = saleToken
+			v["sale_amount"] = decode[0]
+			v["sale_price"] = decode[1]
+			v["receive_token"] = receiveToken
+			v["limit_min"] = decode[2]
+			v["limit_max"] = decode[3]
+			v["start_time"] = decode[4]
+			v["end_time"] = decode[5]
+			v["status"] = consts.StatusNormal
+			sqlUp = oo.NewSqler().Table(consts.TbNameSwap).Where("id", saleId).Update(v)
+			_, errTx = oo.SqlxTxExec(tx, sqlUp)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+		}
+
+		//Purchased(uint256 indexed saleId, uint256 indexed buyAmount)
+		if blockData[i]["event_type"] == consts.EvPurchased {
+			saleId, _ := utils.Hex2Dec(blockData[i]["topic1"].(string))
+			buyAmount, _ := utils.Hex2BigInt(blockData[i]["topic2"].(string))
+
+			var swapData models.TbSwap
+			sqlSel := oo.NewSqler().Table(consts.TbNameSwap).Where("id", saleId).Select()
+			errTx = oo.SqlGet(sqlSel, &swapData)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+
+			totalAmount, err := utils.StringAddBigInt(swapData.SoldAmount, buyAmount)
+			if err != nil {
+				oo.LogW("utils.StringAddBigInt err: %v", err)
+				errTx = err
+				return
+			}
+
+			var v = make(map[string]interface{})
+			v["sold_amount"] = totalAmount
+			if totalAmount == swapData.SaleAmount {
+				v["status"] = consts.StatusEnded
+			}
+			sqlUp = oo.NewSqler().Table(consts.TbNameSwap).Where("id", saleId).Update(v)
+			_, errTx = oo.SqlxTxExec(tx, sqlUp)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+		}
+
+		if blockData[i]["event_type"] == consts.EvCancelSale {
+			saleId, _ := utils.Hex2Dec(blockData[i]["topic1"].(string))
+
+			var v = make(map[string]interface{})
+			v["status"] = consts.StatusCancel
+			sqlUp = oo.NewSqler().Table(consts.TbNameSwap).Where("id", saleId).Update(v)
+			_, errTx = oo.SqlxTxExec(tx, sqlUp)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
 			}
 		}
 	}
