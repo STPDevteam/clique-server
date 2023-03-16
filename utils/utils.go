@@ -70,6 +70,14 @@ func Dec2BigInt(val string) (dec *big.Int, err error) {
 	return dec, nil
 }
 
+func StringAddBigInt(x string, bigY *big.Int) (dec string, err error) {
+	bigX, err := Dec2BigInt(x)
+	if err != nil {
+		return "", err
+	}
+	return new(big.Int).Add(bigX, bigY).String(), nil
+}
+
 func FixTo0x64String(str string) string {
 	return fmt.Sprintf("0x%064s", strings.TrimPrefix(str, "0x"))
 }

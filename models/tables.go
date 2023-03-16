@@ -355,3 +355,39 @@ type HandleLockModel struct {
 	ChainId      int    `db:"chain_id"`
 	Account      string `db:"account"`
 }
+
+type TbSwap struct {
+	Id               int64  `db:"id,omitempty" sqler:"skips"`
+	CreateTime       string `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime       string `db:"update_time,omitempty" sqler:"skips"`
+	ChainId          int    `db:"chain_id"`
+	Creator          string `db:"creator"`
+	SaleWay          string `db:"sale_way"`
+	SaleToken        string `db:"sale_token"`
+	SaleAmount       string `db:"sale_amount"`
+	SalePrice        string `db:"sale_price"`
+	OriginalDiscount string `db:"original_discount"`
+	ReceiveToken     string `db:"receive_token"`
+	LimitMin         string `db:"limit_min"`
+	LimitMax         string `db:"limit_max"`
+	StartTime        int64  `db:"start_time"`
+	EndTime          int64  `db:"end_time"`
+	WhiteList        string `db:"white_list"`
+	About            string `db:"about"`
+	SoldAmount       string `db:"sold_amount"`
+	Status           string `db:"status"`
+}
+
+type TbSwapToken struct {
+	Id           int64   `db:"id,omitempty" sqler:"skips"`
+	CreateTime   string  `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime   string  `db:"update_time,omitempty" sqler:"skips"`
+	ChainId      int     `db:"chain_id"`
+	TokenAddress string  `db:"token_address"`
+	TokenName    string  `db:"token_name"`
+	Symbol       string  `db:"symbol"`
+	Decimals     int64   `db:"decimals"`
+	CoinIds      string  `db:"coin_ids"`
+	Price        float64 `db:"price"`
+	Img          string  `db:"img"`
+}

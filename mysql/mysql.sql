@@ -486,6 +486,48 @@ CREATE TABLE `tb_handle_lock` (
     INDEX `index_account` (`account` ASC)
 );
 
+CREATE TABLE `tb_swap` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `chain_id` INT NOT NULL,
+    `creator` VARCHAR(44) NOT NULL,
+    `sale_way` VARCHAR(30) NOT NULL COMMENT 'general;discount',
+    `sale_token` VARCHAR(44) NOT NULL,
+    `sale_amount` DECIMAL(65,0) UNSIGNED NOT NULL,
+    `sale_price` DECIMAL(65,0) UNSIGNED NOT NULL,
+    `original_discount` VARCHAR(44) NOT NULL,
+    `receive_token` VARCHAR(44) NOT NULL,
+    `limit_min` DECIMAL(65,0) UNSIGNED NOT NULL,
+    `limit_max` DECIMAL(65,0) UNSIGNED NOT NULL,
+    `start_time` INT NOT NULL,
+    `end_time` INT NOT NULL,
+    `white_list` TEXT NOT NULL,
+    `about` TEXT NOT NULL,
+    `sold_amount` DECIMAL(65,0) UNSIGNED NOT NULL DEFAULT '0',
+    `status` VARCHAR(30) NOT NULL DEFAULT 'pending' COMMENT 'pending;normal;ended;cancel',
+    PRIMARY KEY (`id`),
+    INDEX `index_chain_id` (`chain_id` ASC),
+    INDEX `index_creator` (`creator` ASC)
+);
+
+CREATE TABLE `tb_swap_token` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `chain_id` INT NOT NULL,
+    `token_address` VARCHAR(44) NOT NULL,
+    `token_name` VARCHAR(40) NOT NULL DEFAULT '',
+    `symbol` VARCHAR(40) NOT NULL DEFAULT '',
+    `decimals` INT NOT NULL,
+    `coin_ids` VARCHAR(30) NOT NULL DEFAULT '',
+    `price` FLOAT NOT NULL DEFAULT 0,
+    `img` VARCHAR(100) NOT NULL DEFAULT '',
+    PRIMARY KEY (`id`),
+    INDEX `index_chain_id` (`chain_id` ASC),
+    INDEX `index_token_address` (`token_address` ASC)
+);
+
 # dev
 # INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
 # ('CreateDao','0x18Be998c31815d1C3d1dde881801112D9ee81532',28315453,'0x',80001),
@@ -595,6 +637,15 @@ INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain
 ('CreateAirdrop','0x6d6aFa2C67BE77d440f5cabce62a9AB093B6085A',140075,'0x',1442),
 ('SettleAirdrop','0x6d6aFa2C67BE77d440f5cabce62a9AB093B6085A',140075,'0x',1442),
 ('Claimed','0x6d6aFa2C67BE77d440f5cabce62a9AB093B6085A',140075,'0x',1442);
+
+#Polygon_zkEVM test proxy
+INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
+('CreateDao','0x837614a67877FE0C011d78740febA5b9b3f3B603',140325,'0x',1442),
+('CreateERC20','0x837614a67877FE0C011d78740febA5b9b3f3B603',140325,'0x',1442),
+('ClaimReserve','0x837614a67877FE0C011d78740febA5b9b3f3B603',140325,'0x',1442),
+('CreateAirdrop','0x41526D8dE5ae045aCb88Eb0EedA752874B222ccD',140325,'0x',1442),
+('SettleAirdrop','0x41526D8dE5ae045aCb88Eb0EedA752874B222ccD',140325,'0x',1442),
+('Claimed','0x41526D8dE5ae045aCb88Eb0EedA752874B222ccD',140325,'0x',1442);
 
 #Base dev
 INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES

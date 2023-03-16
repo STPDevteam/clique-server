@@ -263,6 +263,20 @@ func GetTokensId(url string) ([]models.TokensInfo, error) {
 	return data, nil
 }
 
+func GetTokensPrice(url string) (data map[string]map[string]float64, err error) {
+	res, err := DoGet(url)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(res, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
 func GetTokenImg(url string) (data *models.TokenImg, err error) {
 	res, err := DoGet(url)
 	if err != nil {

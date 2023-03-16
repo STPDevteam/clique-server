@@ -33,6 +33,8 @@ const (
 	TbNameNotification        = "tb_notification"
 	TbNameNotificationAccount = "tb_notification_account"
 	TbNameHandleLock          = "tb_handle_lock"
+	TbNameSwap                = "tb_swap"
+	TbNameSwapToken           = "tb_swap_token"
 
 	EvCreateDao            = "CreateDao"
 	EvCreateProposal       = "CreateProposal"
@@ -47,6 +49,9 @@ const (
 	EvCreateAirdrop        = "CreateAirdrop"
 	EvSettleAirdrop        = "SettleAirdrop"
 	EvClaimed              = "Claimed"
+	EvCreatedSale          = "CreatedSale"
+	EvPurchased            = "Purchased"
+	EvCancelSale           = "CancelSale"
 
 	LevelSuperAdmin = "superAdmin"
 	LevelAdmin      = "admin"
@@ -75,6 +80,11 @@ const (
 	KlaytnMainnet8217   = 8217
 	BSCTestnet97        = 97
 	BSCMainnet56        = 56
+
+	StatusPending = "pending"
+	StatusNormal  = "normal"
+	StatusEnded   = "ended"
+	StatusCancel  = "cancel"
 )
 
 func EventTypes(event string) string {
@@ -109,7 +119,12 @@ func EventTypes(event string) string {
 		//Claimed(uint256 indexed airdropId, uint256 index, address account, uint256 amount)
 		claimed = utils.Keccak256("Claimed(uint256,uint256,address,uint256)")
 
-		//event CreateProposal(uint indexed id, address indexed from, address indexed to, uint amount, uint startTime, uint endTime, address daoToken);
+		//CreatedSale(uint256 indexed saleId, address indexed saleToken, address indexed receiveToken, uint256 saleAmount, uint256 pricePer, uint256 limitMin, uint256 limitMax, uint256 startTime, uint256 endTime)
+		createdSale = utils.Keccak256("CreatedSale(uint256,address,address,uint256,uint256,uint256,uint256,uint256,uint256)")
+		//Purchased(uint256 indexed saleId, uint256 indexed buyAmount)
+		purchased = utils.Keccak256("Purchased(uint256,uint256)")
+		//CancelSale(uint256 indexed saleId)
+		cancelSale = utils.Keccak256("CancelSale(uint256)")
 	)
 	switch event {
 	case createDao:
@@ -150,6 +165,15 @@ func EventTypes(event string) string {
 		break
 	case claimed:
 		event = EvClaimed
+		break
+	case createdSale:
+		event = EvCreatedSale
+		break
+	case purchased:
+		event = EvPurchased
+		break
+	case cancelSale:
+		event = EvCancelSale
 		break
 	default:
 		event = "Undefined"

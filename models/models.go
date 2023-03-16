@@ -639,3 +639,45 @@ type ResAccountFollowers struct {
 	// following or mutualFollowing
 	Relation string `json:"relation"`
 }
+
+type ReqCreateSale struct {
+	ChainId int    `json:"chainId"`
+	Creator string `json:"creator"`
+	// SaleWay:general/discount
+	SaleWay      string   `json:"saleWay"`
+	SaleToken    string   `json:"saleToken"`
+	SaleAmount   string   `json:"saleAmount"`
+	SalePrice    string   `json:"salePrice"`
+	ReceiveToken string   `json:"receiveToken"`
+	LimitMin     string   `json:"limitMin"`
+	LimitMax     string   `json:"limitMax"`
+	StartTime    int64    `json:"startTime"`
+	EndTime      int64    `json:"endTime"`
+	WhiteList    []string `json:"whiteList"`
+	About        string   `json:"about"`
+}
+
+type ResCreateSale struct {
+	SaleId    int64  `json:"saleId"`
+	Signature string `json:"signature"`
+}
+
+type ResSwapListPage struct {
+	List  []ResSwapList `json:"list"`
+	Total int64         `json:"total"`
+}
+
+type ResSwapList struct {
+	SaleId           int64  `json:"saleId"`
+	ChainId          int    `json:"chainId"`
+	Creator          string `json:"creator"`
+	SaleToken        string `json:"saleToken"`
+	SaleTokenImg     string `json:"saleTokenImg"`
+	SaleAmount       string `json:"saleAmount"`
+	SalePrice        string `json:"salePrice"`
+	ReceiveToken     string `json:"receiveToken"`
+	ReceiveTokenImg  string `json:"receiveTokenImg"`
+	Status           string `json:"status"`
+	About            string `json:"about"`
+	OriginalDiscount string `json:"originalDiscount"`
+}
