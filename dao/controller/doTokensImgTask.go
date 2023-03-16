@@ -156,8 +156,8 @@ func ownTokensImgSave(contract, tokenAddress, url string, chainId int, tx *sqlx.
 	return nil
 }
 
-func swapTokenPrice() {
-	defer time.AfterFunc(time.Duration(6)*time.Second, swapTokenPrice)
+func (svc *Service) swapTokenPrice() {
+	defer time.AfterFunc(time.Duration(10)*time.Second, svc.swapTokenPrice)
 
 	var swapTokenArr []models.TbSwapToken
 	sqlSel := oo.NewSqler().Table(consts.TbNameSwapToken).Select()
@@ -167,10 +167,17 @@ func swapTokenPrice() {
 		return
 	}
 
-	resId, err := utils.GetTokensId("https://api.coingecko.com/api/v3/coins/list?include_platform=true")
-	if err != nil {
-		oo.LogW("GetTokensId failed error: %v", err)
-		return
+	var resId []models.TokensInfo
+	res, ok := svc.mCache.Get("swap_token_price")
+	if !ok {
+		resId, err = utils.GetTokensId("https://api.coingecko.com/api/v3/coins/list?include_platform=true")
+		if err != nil {
+			oo.LogW("GetTokensId failed error: %v", err)
+			return
+		}
+		svc.mCache.Set("swap_token_price", resId, time.Duration(60)*time.Minute)
+	} else {
+		resId = res.([]models.TokensInfo)
 	}
 
 	var ids string
@@ -181,8 +188,16 @@ func swapTokenPrice() {
 			platforms := platform(ls.ChainId)
 			for indexId := range resId {
 				if resId[indexId].Platforms[platforms] == strings.ToLower(ls.TokenAddress) {
+					imgStr := fmt.Sprintf(`https://api.coingecko.com/api/v3/coins/%s?localization=false&tickers=false&market_data=false&community_data=false&developer_data=false&sparkline=false`, resId[indexId].Id)
+					resImg, err := utils.GetTokenImg(imgStr)
+					if err != nil {
+						oo.LogW("GetTokenImg failed error: %v", err)
+						return
+					}
+
 					var v = make(map[string]interface{})
 					v["coin_ids"] = resId[indexId].Id
+					v["img"] = resImg.Image.Large
 					sqlUpd := oo.NewSqler().Table(consts.TbNameSwapToken).Where("id", ls.Id).Update(v)
 					err = oo.SqlExec(sqlUpd)
 					if err != nil {
@@ -200,27 +215,27 @@ func swapTokenPrice() {
 		}
 	}
 
-	time.Sleep(time.Duration(6) * time.Second)
-	url := fmt.Sprintf("https://api.coingecko.com/api/v3/simple/price?ids=%s&vs_currencies=usd", ids)
-	price, err := utils.GetTokensPrice(url)
-	if err != nil {
-		oo.LogW("utils.GetTokensPrice err: %v", err)
-		return
-	}
-
-	for index := range swapTokenArr {
-		ls := swapTokenArr[index]
-
-		var v = make(map[string]interface{})
-		v["price"] = price[ls.CoinIds]["usd"]
-		sqlUpd := oo.NewSqler().Table(consts.TbNameSwapToken).Where("id", ls.Id).Update(v)
-		err = oo.SqlExec(sqlUpd)
+	if ids != "" {
+		url := fmt.Sprintf("https://api.coingecko.com/api/v3/simple/price?ids=%s&vs_currencies=usd", ids)
+		price, err := utils.GetTokensPrice(url)
 		if err != nil {
-			oo.LogW("SQL err: %v", err)
-			continue
+			oo.LogW("utils.GetTokensPrice err: %v, price: %v", err, price)
+			return
+		}
+
+		for index := range swapTokenArr {
+			ls := swapTokenArr[index]
+
+			var v = make(map[string]interface{})
+			v["price"] = price[ls.CoinIds]["usd"]
+			sqlUpd := oo.NewSqler().Table(consts.TbNameSwapToken).Where("id", ls.Id).Update(v)
+			err = oo.SqlExec(sqlUpd)
+			if err != nil {
+				oo.LogW("SQL err: %v", err)
+				continue
+			}
 		}
 	}
-
 }
 
 func platform(tokenChainId int) (p string) {

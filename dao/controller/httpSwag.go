@@ -114,10 +114,12 @@ func (svc *Service) createSwap(c *gin.Context) {
 	v["creator"] = params.Creator
 	v["sale_way"] = params.SaleWay
 	v["sale_token"] = params.SaleToken
+	v["sale_token_img"] = salePriceData.Img
 	v["sale_amount"] = params.SaleAmount
 	v["sale_price"] = params.SalePrice
 	v["original_discount"] = discount
 	v["receive_token"] = params.ReceiveToken
+	v["receive_token_img"] = receivePriceData.Img
 	v["limit_min"] = params.LimitMin
 	v["limit_max"] = params.LimitMax
 	v["start_time"] = params.StartTime
@@ -221,14 +223,19 @@ func swapList(c *gin.Context) {
 		ls := swapArr[index]
 
 		data = append(data, models.ResSwapList{
-			SaleId:    ls.Id,
-			ChainId:   ls.ChainId,
-			Creator:   ls.Creator,
-			SaleToken: ls.SaleToken,
-			//SaleTokenImg: ls.
+			SaleId:           ls.Id,
+			ChainId:          ls.ChainId,
+			Creator:          ls.Creator,
+			SaleToken:        ls.SaleToken,
+			SaleTokenImg:     ls.SaleTokenImg,
 			SaleAmount:       ls.SaleAmount,
 			SalePrice:        ls.SalePrice,
 			ReceiveToken:     ls.ReceiveToken,
+			ReceiveTokenImg:  ls.ReceiveTokenImg,
+			LimitMin:         ls.LimitMin,
+			LimitMax:         ls.LimitMax,
+			StartTime:        ls.StartTime,
+			EndTime:          ls.EndTime,
 			Status:           ls.Status,
 			About:            ls.About,
 			OriginalDiscount: ls.OriginalDiscount,

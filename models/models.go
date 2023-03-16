@@ -677,6 +677,10 @@ type ResSwapList struct {
 	SalePrice        string `json:"salePrice"`
 	ReceiveToken     string `json:"receiveToken"`
 	ReceiveTokenImg  string `json:"receiveTokenImg"`
+	LimitMin         string `json:"limitMin"`
+	LimitMax         string `json:"limitMax"`
+	StartTime        int64  `json:"startTime"`
+	EndTime          int64  `json:"endTime"`
 	Status           string `json:"status"`
 	About            string `json:"about"`
 	OriginalDiscount string `json:"originalDiscount"`

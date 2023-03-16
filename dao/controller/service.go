@@ -63,7 +63,7 @@ func (svc *Service) Start(ctx *cli.Context) error {
 	go updateNotification()
 	go updateAccountRecord()
 	go daoCountTask()
-	go swapTokenPrice()
+	go svc.swapTokenPrice()
 	//go svc.getV1Proposal()
 	//go svc.getEthTokenHoldersTotal()
 

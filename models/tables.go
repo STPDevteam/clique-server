@@ -364,10 +364,12 @@ type TbSwap struct {
 	Creator          string `db:"creator"`
 	SaleWay          string `db:"sale_way"`
 	SaleToken        string `db:"sale_token"`
+	SaleTokenImg     string `db:"sale_token_img"`
 	SaleAmount       string `db:"sale_amount"`
 	SalePrice        string `db:"sale_price"`
 	OriginalDiscount string `db:"original_discount"`
 	ReceiveToken     string `db:"receive_token"`
+	ReceiveTokenImg  string `db:"receive_token_img"`
 	LimitMin         string `db:"limit_min"`
 	LimitMax         string `db:"limit_max"`
 	StartTime        int64  `db:"start_time"`
