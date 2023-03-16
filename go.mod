@@ -10,6 +10,7 @@ require (
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pborman/uuid v1.2.0
+	github.com/shopspring/decimal v1.2.0
 	github.com/swaggo/files v0.0.0-20220728132757-551d4a08d97a
 	github.com/swaggo/gin-swagger v1.5.1
 	github.com/swaggo/swag v1.8.1
