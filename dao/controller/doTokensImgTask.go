@@ -35,21 +35,7 @@ func tokensImgTask() {
 		//tokenChainId = 1
 		//tokenAddress = "0xe41d2489571d322189246dafa5ebde1f4699f498"
 
-		var platforms string
-		switch tokenChainId {
-		case 1:
-			platforms = "ethereum"
-			break
-		case 56:
-			platforms = "binance-smart-chain"
-			break
-		case 137:
-			platforms = "polygon-pos"
-			break
-		default:
-			platforms = "Undefined"
-			break
-		}
+		platforms := platform(tokenChainId)
 		if platforms == "Undefined" {
 			continue
 		}
@@ -168,4 +154,91 @@ func ownTokensImgSave(contract, tokenAddress, url string, chainId int, tx *sqlx.
 	}
 
 	return nil
+}
+
+func swapTokenPrice() {
+	defer time.AfterFunc(time.Duration(6)*time.Second, swapTokenPrice)
+
+	var swapTokenArr []models.TbSwapToken
+	sqlSel := oo.NewSqler().Table(consts.TbNameSwapToken).Select()
+	err := oo.SqlSelect(sqlSel, &swapTokenArr)
+	if err != nil {
+		oo.LogW("SQL failed. err: %v", err)
+		return
+	}
+
+	resId, err := utils.GetTokensId("https://api.coingecko.com/api/v3/coins/list?include_platform=true")
+	if err != nil {
+		oo.LogW("GetTokensId failed error: %v", err)
+		return
+	}
+
+	var ids string
+	for index := range swapTokenArr {
+		ls := swapTokenArr[index]
+
+		if ls.CoinIds == "" {
+			platforms := platform(ls.ChainId)
+			for indexId := range resId {
+				if resId[indexId].Platforms[platforms] == strings.ToLower(ls.TokenAddress) {
+					var v = make(map[string]interface{})
+					v["coin_ids"] = resId[indexId].Id
+					sqlUpd := oo.NewSqler().Table(consts.TbNameSwapToken).Where("id", ls.Id).Update(v)
+					err = oo.SqlExec(sqlUpd)
+					if err != nil {
+						oo.LogW("SQL err: %v", err)
+						continue
+					}
+				}
+			}
+		}
+
+		if ids == "" {
+			ids = ls.CoinIds
+		} else {
+			ids = fmt.Sprintf("%s,%s", ids, ls.CoinIds)
+		}
+	}
+
+	time.Sleep(time.Duration(6) * time.Second)
+	url := fmt.Sprintf("https://api.coingecko.com/api/v3/simple/price?ids=%s&vs_currencies=usd", ids)
+	price, err := utils.GetTokensPrice(url)
+	if err != nil {
+		oo.LogW("utils.GetTokensPrice err: %v", err)
+		return
+	}
+
+	for index := range swapTokenArr {
+		ls := swapTokenArr[index]
+
+		var v = make(map[string]interface{})
+		v["price"] = price[ls.CoinIds]["usd"]
+		sqlUpd := oo.NewSqler().Table(consts.TbNameSwapToken).Where("id", ls.Id).Update(v)
+		err = oo.SqlExec(sqlUpd)
+		if err != nil {
+			oo.LogW("SQL err: %v", err)
+			continue
+		}
+	}
+
+}
+
+func platform(tokenChainId int) (p string) {
+	switch tokenChainId {
+	case 1:
+		p = "ethereum"
+		return p
+	case 56:
+		p = "binance-smart-chain"
+		return p
+	case 137:
+		p = "polygon-pos"
+		return p
+	case 8217:
+		p = "klay-token"
+		return p
+	default:
+		p = "Undefined"
+		return p
+	}
 }
