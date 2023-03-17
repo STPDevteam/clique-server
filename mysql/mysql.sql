@@ -494,12 +494,12 @@ CREATE TABLE `tb_swap` (
     `creator` VARCHAR(44) NOT NULL,
     `sale_way` VARCHAR(30) NOT NULL COMMENT 'general;discount',
     `sale_token` VARCHAR(44) NOT NULL,
-    `sale_token_img` VARCHAR(60) NOT NULL,
+    `sale_token_img` VARCHAR(200) NOT NULL,
     `sale_amount` DECIMAL(65,0) UNSIGNED NOT NULL,
     `sale_price` DECIMAL(65,0) UNSIGNED NOT NULL,
     `original_discount` VARCHAR(44) NOT NULL,
     `receive_token` VARCHAR(44) NOT NULL,
-    `receive_token_img` VARCHAR(60) NOT NULL,
+    `receive_token_img` VARCHAR(200) NOT NULL,
     `limit_min` DECIMAL(65,0) UNSIGNED NOT NULL,
     `limit_max` DECIMAL(65,0) UNSIGNED NOT NULL,
     `start_time` INT NOT NULL,
@@ -523,11 +523,31 @@ CREATE TABLE `tb_swap_token` (
     `symbol` VARCHAR(40) NOT NULL DEFAULT '',
     `decimals` INT NOT NULL,
     `coin_ids` VARCHAR(30) NOT NULL DEFAULT '',
-    `price` FLOAT NOT NULL DEFAULT 0,
-    `img` VARCHAR(100) NOT NULL DEFAULT '',
+    `price` FLOAT NOT NULL DEFAULT -1,
+    `img` VARCHAR(200) NOT NULL DEFAULT '',
     PRIMARY KEY (`id`),
     INDEX `index_chain_id` (`chain_id` ASC),
     INDEX `index_token_address` (`token_address` ASC)
+);
+
+INSERT INTO tb_swap_token (chain_id,token_address,token_name,symbol,decimals,coin_ids,price,img) VALUES
+(1,'0xde7d85157d9714eadf595045cc12ca4a5f3e2adb','STP','stpt',18,'stp-network',0,''),
+(1,'0x006bea43baa3f7a6f765f14f10a1a1b08334ef45','Stox','stx',18,'stox',0,'');
+
+CREATE TABLE `tb_swap_transaction` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `sale_id` INT NOT NULL,
+    `buyer` VARCHAR(44) NOT NULL,
+    `buy_amount` DECIMAL(65,0) UNSIGNED NOT NULL,
+    `pay_amount` DECIMAL(65,0) UNSIGNED NOT NULL,
+    `time` INT NOT NULL,
+    `chain_id` INT NOT NULL,
+    `buy_token` VARCHAR(44) NOT NULL,
+    `pay_token` VARCHAR(44) NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `index_sale_id` (`sale_id` ASC)
 );
 
 # dev

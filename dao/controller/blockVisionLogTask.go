@@ -1232,6 +1232,7 @@ func (svc *Service) save(blockData []map[string]interface{}, currentBlockNum, ch
 		if blockData[i]["event_type"] == consts.EvPurchased {
 			saleId, _ := utils.Hex2Dec(blockData[i]["topic1"].(string))
 			buyAmount, _ := utils.Hex2BigInt(blockData[i]["topic2"].(string))
+			payAmount, _ := utils.Hex2BigInt(blockData[i]["topic3"].(string))
 
 			var swapData models.TbSwap
 			sqlSel := oo.NewSqler().Table(consts.TbNameSwap).Where("id", saleId).Select()
@@ -1255,6 +1256,24 @@ func (svc *Service) save(blockData []map[string]interface{}, currentBlockNum, ch
 			}
 			sqlUp = oo.NewSqler().Table(consts.TbNameSwap).Where("id", saleId).Update(v)
 			_, errTx = oo.SqlxTxExec(tx, sqlUp)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+
+			var mTran = make([]map[string]interface{}, 0)
+			var vTran = make(map[string]interface{})
+			vTran["sale_id"] = saleId
+			vTran["buyer"] = blockData[i]["message_sender"]
+			vTran["buy_amount"] = buyAmount
+			vTran["pay_amount"] = payAmount
+			vTran["time"] = blockData[i]["time_stamp"]
+			vTran["chain_id"] = chainId
+			vTran["buy_token"] = swapData.SaleToken
+			vTran["pay_token"] = swapData.ReceiveToken
+			mTran = append(mTran, vTran)
+			sqlIns := oo.NewSqler().Table(consts.TbNameSwapTransaction).Insert(mTran)
+			_, errTx = oo.SqlxTxExec(tx, sqlIns)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return

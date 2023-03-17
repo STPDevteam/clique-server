@@ -35,6 +35,7 @@ const (
 	TbNameHandleLock          = "tb_handle_lock"
 	TbNameSwap                = "tb_swap"
 	TbNameSwapToken           = "tb_swap_token"
+	TbNameSwapTransaction     = "tb_swap_transaction"
 
 	EvCreateDao            = "CreateDao"
 	EvCreateProposal       = "CreateProposal"

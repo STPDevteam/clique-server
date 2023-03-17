@@ -393,3 +393,17 @@ type TbSwapToken struct {
 	Price        float64 `db:"price"`
 	Img          string  `db:"img"`
 }
+
+type TbSwapTransaction struct {
+	Id         int64  `db:"id,omitempty" sqler:"skips"`
+	CreateTime string `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime string `db:"update_time,omitempty" sqler:"skips"`
+	SaleId     int64  `db:"sale_id"`
+	Buyer      string `db:"buyer"`
+	BuyAmount  string `db:"buy_amount"`
+	PayAmount  string `db:"pay_amount"`
+	Time       int64  `db:"time"`
+	ChainId    int64  `db:"chain_id"`
+	BuyToken   string `db:"buy_token"`
+	PayToken   string `db:"pay_token"`
+}

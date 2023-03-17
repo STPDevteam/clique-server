@@ -146,10 +146,12 @@ func (svc *Service) Start(ctx *cli.Context) error {
 	{
 		r12.GET("/total", svc.httpRecordTotal)
 	}
-	r13 := router.Group(path.Join(basePath, "/swag"))
+	r13 := router.Group(path.Join(basePath, "/swap"))
 	{
 		r13.POST("/create", svc.createSwap)
+		r13.POST("/purchased", svc.purchasedSwap)
 		r13.GET("/list", swapList)
+		r13.GET("/transactions", swapTransactionsList)
 	}
 
 	url := ginSwagger.URL(svc.appConfig.SwaggerUrl)

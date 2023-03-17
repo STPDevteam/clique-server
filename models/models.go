@@ -662,6 +662,16 @@ type ResCreateSale struct {
 	Signature string `json:"signature"`
 }
 
+type ReqPurchased struct {
+	SaleId    int64  `json:"saleId"`
+	Account   string `json:"account"`
+	BuyAmount string `json:"buyAmount"`
+}
+
+type ResPurchased struct {
+	Signature string `json:"signature"`
+}
+
 type ResSwapListPage struct {
 	List  []ResSwapList `json:"list"`
 	Total int64         `json:"total"`
@@ -684,4 +694,19 @@ type ResSwapList struct {
 	Status           string `json:"status"`
 	About            string `json:"about"`
 	OriginalDiscount string `json:"originalDiscount"`
+}
+
+type ResSwapTransactionListPage struct {
+	List  []ResSwapTransactionList `json:"list"`
+	Total int64                    `json:"total"`
+}
+
+type ResSwapTransactionList struct {
+	SaleId       int64  `json:"saleId"`
+	Buyer        string `json:"buyer"`
+	BuyAmount    string `json:"buy_amount"`
+	PayAmount    string `json:"payAmount"`
+	Time         int64  `json:"time"`
+	BuyTokenName string `json:"buyTokenName"`
+	PayTokenName string `json:"payTokenName"`
 }
