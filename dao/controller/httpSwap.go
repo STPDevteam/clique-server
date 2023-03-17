@@ -245,7 +245,9 @@ func (svc *Service) purchasedSwap(c *gin.Context) {
 	buyAmountD, err1 := decimal.NewFromString(params.BuyAmount)
 	saleAmountD, err2 := decimal.NewFromString(swapData.SaleAmount)
 	soleAmountD, err3 := decimal.NewFromString(swapData.SoldAmount)
-	if err1 != nil || err2 != nil || err3 != nil {
+	limitMinD, err4 := decimal.NewFromString(swapData.LimitMin)
+	limitMaxD, err5 := decimal.NewFromString(swapData.LimitMax)
+	if err1 != nil || err2 != nil || err3 != nil || err4 != nil || err5 != nil {
 		c.JSON(http.StatusOK, models.Response{
 			Code:    http.StatusInternalServerError,
 			Message: "Something went wrong, Please try again later.",
@@ -253,7 +255,7 @@ func (svc *Service) purchasedSwap(c *gin.Context) {
 		return
 	}
 
-	if !buyAmountD.LessThanOrEqual(saleAmountD.Sub(soleAmountD)) {
+	if !buyAmountD.LessThanOrEqual(saleAmountD.Sub(soleAmountD)) || !buyAmountD.LessThanOrEqual(limitMaxD) || !buyAmountD.GreaterThanOrEqual(limitMinD) {
 		c.JSON(http.StatusOK, models.Response{
 			Code:    http.StatusBadRequest,
 			Message: "Not enough balance.",

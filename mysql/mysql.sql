@@ -531,8 +531,8 @@ CREATE TABLE `tb_swap_token` (
 );
 
 INSERT INTO tb_swap_token (chain_id,token_address,token_name,symbol,decimals,coin_ids,price,img) VALUES
-(1,'0xde7d85157d9714eadf595045cc12ca4a5f3e2adb','STP','stpt',18,'stp-network',0,''),
-(1,'0x006bea43baa3f7a6f765f14f10a1a1b08334ef45','Stox','stx',18,'stox',0,'');
+(1,'0xde7d85157d9714eadf595045cc12ca4a5f3e2adb','STP','stpt',18,'',-1,''),
+(1,'0x006bea43baa3f7a6f765f14f10a1a1b08334ef45','Stox','stx',18,'',-1,'');
 
 CREATE TABLE `tb_swap_transaction` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
