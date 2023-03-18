@@ -226,13 +226,15 @@ func (svc *Service) swapTokenPrice() {
 		for index := range swapTokenArr {
 			ls := swapTokenArr[index]
 
-			var v = make(map[string]interface{})
-			v["price"] = price[ls.CoinIds]["usd"]
-			sqlUpd := oo.NewSqler().Table(consts.TbNameSwapToken).Where("id", ls.Id).Update(v)
-			err = oo.SqlExec(sqlUpd)
-			if err != nil {
-				oo.LogW("SQL err: %v", err)
-				continue
+			if price[ls.CoinIds]["usd"] != 0 {
+				var v = make(map[string]interface{})
+				v["price"] = price[ls.CoinIds]["usd"]
+				sqlUpd := oo.NewSqler().Table(consts.TbNameSwapToken).Where("id", ls.Id).Update(v)
+				err = oo.SqlExec(sqlUpd)
+				if err != nil {
+					oo.LogW("SQL err: %v", err)
+					continue
+				}
 			}
 		}
 	}

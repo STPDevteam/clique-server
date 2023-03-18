@@ -459,3 +459,50 @@ func swapTransactionsList(c *gin.Context) {
 		},
 	})
 }
+
+// @Summary prices
+// @Tags swap
+// @version 0.0.1
+// @description prices
+// @Produce json
+// @Param chainId query int true "chainId"
+// @Param tokens query  string true "tokens, separate by comma"
+// @Success 200 {object} models.ResSwapPrices
+// @Router /stpdao/v2/swap/prices [get]
+func swapPrices(c *gin.Context) {
+	chainId := c.Query("chainId")
+	tokensParam := c.Query("tokens")
+	chainIdParam, _ := strconv.Atoi(chainId)
+
+	var data = make([]models.ResSwapPrices, 0)
+	tokens := strings.Split(tokensParam, ",")
+	for _, token := range tokens {
+		var tbToken models.TbSwapToken
+		sqlSel := oo.NewSqler().Table(consts.TbNameSwapToken).Where("chain_id", chainIdParam).Where("token_address", token).Select()
+		err := oo.SqlGet(sqlSel, &tbToken)
+		if err != nil {
+			oo.LogW("SQL err: %v, str: %s", err, sqlSel)
+			c.JSON(http.StatusOK, models.Response{
+				Code:    http.StatusInternalServerError,
+				Message: "Something went wrong, Please try again later.",
+			})
+			return
+		}
+
+		data = append(data, models.ResSwapPrices{
+			ChainId:      tbToken.ChainId,
+			TokenAddress: tbToken.TokenAddress,
+			Price:        tbToken.Price,
+			Img:          tbToken.Img,
+			TokenName:    tbToken.TokenName,
+			Symbol:       tbToken.Symbol,
+			Decimals:     tbToken.Decimals,
+		})
+	}
+
+	c.JSON(http.StatusOK, models.Response{
+		Code:    http.StatusOK,
+		Message: "ok",
+		Data:    data,
+	})
+}

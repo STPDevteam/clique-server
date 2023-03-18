@@ -710,3 +710,13 @@ type ResSwapTransactionList struct {
 	BuyTokenName string `json:"buyTokenName"`
 	PayTokenName string `json:"payTokenName"`
 }
+
+type ResSwapPrices struct {
+	ChainId      int     `json:"chainId"`
+	TokenAddress string  `json:"tokenAddress"`
+	Price        float64 `json:"price"`
+	Img          string  `json:"img"`
+	TokenName    string  `json:"tokenName"`
+	Symbol       string  `json:"symbol"`
+	Decimals     int64   `json:"decimals"`
+}

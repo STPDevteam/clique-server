@@ -532,7 +532,12 @@ CREATE TABLE `tb_swap_token` (
 
 INSERT INTO tb_swap_token (chain_id,token_address,token_name,symbol,decimals,coin_ids,price,img) VALUES
 (1,'0xde7d85157d9714eadf595045cc12ca4a5f3e2adb','STP','stpt',18,'',-1,''),
-(1,'0x006bea43baa3f7a6f765f14f10a1a1b08334ef45','Stox','stx',18,'',-1,'');
+(1,'0x006bea43baa3f7a6f765f14f10a1a1b08334ef45','Stox','stx',18,'',-1,''),
+(5,'0x3c0837064c3a440fe44c9002c743dcab94e16454','A','A',18,'a',1.5,''),
+(5,'0x2358fbd8a8e0470b593328503c0f9666540339a1','B','B',18,'b',0.5,''),
+(5,'0xe8a67c44933b8750204ca4ddd2307aab0547310d','C','C',18,'c',3,''),
+(5,'0x89e9f4804de1ee4a4296218626662ac1f4b8361e','D','D',6,'d',10,''),
+(5,'0x2ad56852b4b0208d0d5fe56aca3a23707fc92c9e','E','E',6,'e',5,'');
 
 CREATE TABLE `tb_swap_transaction` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -677,3 +682,8 @@ INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain
 ('CreateAirdrop','0xE663f23F7326C5fdc884613FC53bC94c65F6C856',1500223,'0x',84531),
 ('SettleAirdrop','0xE663f23F7326C5fdc884613FC53bC94c65F6C856',1500223,'0x',84531),
 ('Claimed','0xE663f23F7326C5fdc884613FC53bC94c65F6C856',1500223,'0x',84531);
+
+INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
+('CreatedSale','0x626f936D28D758c9566d3EBC3A79491C23EB1015',8669039,'0x',5),
+('Purchased','0x626f936D28D758c9566d3EBC3A79491C23EB1015',8669039,'0x',5),
+('CancelSale','0x626f936D28D758c9566d3EBC3A79491C23EB1015',8669039,'0x',5);
