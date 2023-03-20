@@ -536,8 +536,8 @@ INSERT INTO tb_swap_token (chain_id,token_address,token_name,symbol,decimals,coi
 (5,'0x3c0837064c3a440fe44c9002c743dcab94e16454','A','A',18,'a',1.5,''),
 (5,'0x2358fbd8a8e0470b593328503c0f9666540339a1','B','B',18,'b',0.5,''),
 (5,'0xe8a67c44933b8750204ca4ddd2307aab0547310d','C','C',18,'c',3,''),
-(5,'0x89e9f4804de1ee4a4296218626662ac1f4b8361e','D','D',6,'d',10,''),
-(5,'0x2ad56852b4b0208d0d5fe56aca3a23707fc92c9e','E','E',6,'e',5,'');
+(5,'0x57F013F27360E62efc1904D8c4f4021648ABa7a9','D','D',6,'d',10,''),
+(5,'0x53C0475aa628D9C8C5724A2eb8B5Fd81c32a9267','E','E',18,'e',5,'');
 
 CREATE TABLE `tb_swap_transaction` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,

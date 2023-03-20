@@ -38,6 +38,7 @@ func (svc *Service) createSwap(c *gin.Context) {
 	sqlSel := oo.NewSqler().Table(consts.TbNameSwapToken).Where("chain_id", params.ChainId).Where("token_address", params.SaleToken).Select()
 	err = oo.SqlGet(sqlSel, &salePriceData)
 	if err != nil {
+		oo.LogW("SQL err: %v", err)
 		c.JSON(http.StatusOK, models.Response{
 			Code:    http.StatusInternalServerError,
 			Message: "Something went wrong, Please try again later.",
@@ -49,6 +50,7 @@ func (svc *Service) createSwap(c *gin.Context) {
 	sqlSel = oo.NewSqler().Table(consts.TbNameSwapToken).Where("chain_id", params.ChainId).Where("token_address", params.ReceiveToken).Select()
 	err = oo.SqlGet(sqlSel, &receivePriceData)
 	if err != nil {
+		oo.LogW("SQL err: %v", err)
 		c.JSON(http.StatusOK, models.Response{
 			Code:    http.StatusInternalServerError,
 			Message: "Something went wrong, Please try again later.",
@@ -77,9 +79,10 @@ func (svc *Service) createSwap(c *gin.Context) {
 
 		dis := modelTo.Div(modelFrom)
 		if !dis.LessThanOrEqual(decimal.NewFromFloat(0.9)) {
+			oo.LogW(fmt.Sprintf("At least 10%% off is required, now is %s", dis.String()))
 			c.JSON(http.StatusOK, models.Response{
 				Code:    http.StatusBadRequest,
-				Message: fmt.Sprintf("At least 10%% off is required, now is %s", discount),
+				Message: fmt.Sprintf("At least 10%% off is required, now is %s", dis.String()),
 			})
 			return
 		}
@@ -90,6 +93,7 @@ func (svc *Service) createSwap(c *gin.Context) {
 	var signature string
 	tx, errTx := oo.NewSqlxTx()
 	if errTx != nil {
+		oo.LogW("SQL err: %v", err)
 		c.JSON(http.StatusOK, models.Response{
 			Code:    http.StatusInternalServerError,
 			Message: "Something went wrong, Please try again later.",
@@ -104,7 +108,7 @@ func (svc *Service) createSwap(c *gin.Context) {
 				Message: "ok",
 				Data: models.ResCreateSale{
 					SaleId:    lastId,
-					Signature: signature,
+					Signature: fmt.Sprintf("0x%s", signature),
 				},
 			})
 		}
@@ -161,6 +165,8 @@ func (svc *Service) createSwap(c *gin.Context) {
 
 	saleAmount, _ := new(big.Int).SetString(params.SaleAmount, 10)
 	salePrice, _ := new(big.Int).SetString(params.SalePrice, 10)
+	limitMin, _ := new(big.Int).SetString(params.LimitMin, 10)
+	limitMax, _ := new(big.Int).SetString(params.LimitMax, 10)
 	message := fmt.Sprintf(
 		"%s%s%s%s%s%s%s%s%s%s",
 		strings.TrimPrefix(params.Creator, "0x"),
@@ -169,8 +175,8 @@ func (svc *Service) createSwap(c *gin.Context) {
 		fmt.Sprintf("%064s", fmt.Sprintf("%x", saleAmount)),
 		strings.TrimPrefix(params.ReceiveToken, "0x"),
 		fmt.Sprintf("%064s", fmt.Sprintf("%x", salePrice)),
-		fmt.Sprintf("%064x", params.LimitMin),
-		fmt.Sprintf("%064x", params.LimitMax),
+		fmt.Sprintf("%064s", fmt.Sprintf("%x", limitMin)),
+		fmt.Sprintf("%064s", fmt.Sprintf("%x", limitMax)),
 		fmt.Sprintf("%064x", params.StartTime),
 		fmt.Sprintf("%064x", params.EndTime),
 	)
@@ -209,6 +215,7 @@ func (svc *Service) purchasedSwap(c *gin.Context) {
 	sqlSel := oo.NewSqler().Table(consts.TbNameSwap).Where("id", params.SaleId).Select()
 	err = oo.SqlGet(sqlSel, &swapData)
 	if err != nil {
+		oo.LogW("SQL err: %v", err)
 		c.JSON(http.StatusOK, models.Response{
 			Code:    http.StatusInternalServerError,
 			Message: "Something went wrong, Please try again later.",
@@ -248,6 +255,7 @@ func (svc *Service) purchasedSwap(c *gin.Context) {
 	limitMinD, err4 := decimal.NewFromString(swapData.LimitMin)
 	limitMaxD, err5 := decimal.NewFromString(swapData.LimitMax)
 	if err1 != nil || err2 != nil || err3 != nil || err4 != nil || err5 != nil {
+		oo.LogW("decimal.NewFromString err1: %v,err2: %v,err3: %v,err4: %v,err5: %v", err1, err2, err3, err4, err5)
 		c.JSON(http.StatusOK, models.Response{
 			Code:    http.StatusInternalServerError,
 			Message: "Something went wrong, Please try again later.",
@@ -285,7 +293,7 @@ func (svc *Service) purchasedSwap(c *gin.Context) {
 		Code:    http.StatusOK,
 		Message: "ok",
 		Data: models.ResPurchased{
-			Signature: signature,
+			Signature: fmt.Sprintf("0x%s", signature),
 		},
 	})
 }
@@ -346,6 +354,7 @@ func swapList(c *gin.Context) {
 
 		data = append(data, models.ResSwapList{
 			SaleId:           ls.Id,
+			SaleWay:          ls.SaleWay,
 			ChainId:          ls.ChainId,
 			Creator:          ls.Creator,
 			SaleToken:        ls.SaleToken,
@@ -421,6 +430,7 @@ func swapTransactionsList(c *gin.Context) {
 		sqlSel = oo.NewSqler().Table(consts.TbNameSwapToken).Where("chain_id", ls.ChainId).Where("token_address", ls.BuyToken).Select()
 		err = oo.SqlGet(sqlSel, &buyToken)
 		if err != nil {
+			oo.LogW("SQL err: %v", err)
 			c.JSON(http.StatusOK, models.Response{
 				Code:    http.StatusInternalServerError,
 				Message: "Something went wrong, Please try again later.",
@@ -432,6 +442,7 @@ func swapTransactionsList(c *gin.Context) {
 		sqlSel = oo.NewSqler().Table(consts.TbNameSwapToken).Where("chain_id", ls.ChainId).Where("token_address", ls.PayToken).Select()
 		err = oo.SqlGet(sqlSel, &payToken)
 		if err != nil {
+			oo.LogW("SQL err: %v", err)
 			c.JSON(http.StatusOK, models.Response{
 				Code:    http.StatusInternalServerError,
 				Message: "Something went wrong, Please try again later.",
