@@ -1219,7 +1219,7 @@ func (svc *Service) save(blockData []map[string]interface{}, currentBlockNum, ch
 			v["limit_max"] = decode[3]
 			v["start_time"] = decode[4]
 			v["end_time"] = decode[5]
-			v["status"] = consts.StatusNormal
+			v["status"] = consts.StatusSoon
 			sqlUp = oo.NewSqler().Table(consts.TbNameSwap).Where("id", saleId).Update(v)
 			_, errTx = oo.SqlxTxExec(tx, sqlUp)
 			if errTx != nil {

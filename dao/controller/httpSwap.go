@@ -345,16 +345,12 @@ func swapList(c *gin.Context) {
 	for index := range swapArr {
 		ls := swapArr[index]
 
-		var status string
-		if ls.EndTime < time.Now().Unix() {
-			status = consts.StatusEnded
-		} else {
-			status = ls.Status
-		}
+		createTime, _ := time.Parse("2006-01-02 15:04:05", ls.CreateTime)
 
 		data = append(data, models.ResSwapList{
 			SaleId:           ls.Id,
 			SaleWay:          ls.SaleWay,
+			CreateTime:       createTime.Unix(),
 			ChainId:          ls.ChainId,
 			Creator:          ls.Creator,
 			SaleToken:        ls.SaleToken,
@@ -367,7 +363,7 @@ func swapList(c *gin.Context) {
 			LimitMax:         ls.LimitMax,
 			StartTime:        ls.StartTime,
 			EndTime:          ls.EndTime,
-			Status:           status,
+			Status:           ls.Status,
 			About:            ls.About,
 			OriginalDiscount: ls.OriginalDiscount,
 		})

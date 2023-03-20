@@ -680,6 +680,7 @@ type ResSwapListPage struct {
 type ResSwapList struct {
 	SaleId           int64  `json:"saleId"`
 	SaleWay          string `json:"saleWay"`
+	CreateTime       int64  `json:"createTime"`
 	ChainId          int    `json:"chainId"`
 	Creator          string `json:"creator"`
 	SaleToken        string `json:"saleToken"`

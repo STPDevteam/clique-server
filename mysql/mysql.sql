@@ -507,7 +507,7 @@ CREATE TABLE `tb_swap` (
     `white_list` TEXT NOT NULL,
     `about` TEXT NOT NULL,
     `sold_amount` DECIMAL(65,0) UNSIGNED NOT NULL DEFAULT '0',
-    `status` VARCHAR(30) NOT NULL DEFAULT 'pending' COMMENT 'pending;normal;ended;cancel',
+    `status` VARCHAR(30) NOT NULL DEFAULT 'pending' COMMENT 'pending;soon;normal;ended;cancel',
     PRIMARY KEY (`id`),
     INDEX `index_chain_id` (`chain_id` ASC),
     INDEX `index_creator` (`creator` ASC)

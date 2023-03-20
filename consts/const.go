@@ -83,6 +83,7 @@ const (
 	BSCMainnet56        = 56
 
 	StatusPending = "pending"
+	StatusSoon    = "soon"
 	StatusNormal  = "normal"
 	StatusEnded   = "ended"
 	StatusCancel  = "cancel"
