@@ -305,7 +305,7 @@ func (svc *Service) purchasedSwap(c *gin.Context) {
 // @Produce json
 // @Param saleId query int false "saleId"
 // @Param offset query  int true "offset,page"
-// @Param count query  int true "count,page"
+// @Param limit query  int true "limit,page"
 // @Success 200 {object} models.ResSwapListPage
 // @Router /stpdao/v2/swap/list [get]
 func swapList(c *gin.Context) {
@@ -366,6 +366,7 @@ func swapList(c *gin.Context) {
 			Status:           ls.Status,
 			About:            ls.About,
 			OriginalDiscount: ls.OriginalDiscount,
+			SoldAmount:       ls.SoldAmount,
 		})
 	}
 
@@ -386,7 +387,7 @@ func swapList(c *gin.Context) {
 // @Produce json
 // @Param saleId query int true "saleId"
 // @Param offset query  int true "offset,page"
-// @Param count query  int true "count,page"
+// @Param limit query  int true "limit,page"
 // @Success 200 {object} models.ResSwapTransactionListPage
 // @Router /stpdao/v2/swap/transactions [get]
 func swapTransactionsList(c *gin.Context) {

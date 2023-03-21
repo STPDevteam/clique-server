@@ -696,6 +696,7 @@ type ResSwapList struct {
 	Status           string `json:"status"`
 	About            string `json:"about"`
 	OriginalDiscount string `json:"originalDiscount"`
+	SoldAmount       string `json:"soldAmount"`
 }
 
 type ResSwapTransactionListPage struct {

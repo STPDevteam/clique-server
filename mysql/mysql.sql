@@ -683,7 +683,14 @@ INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain
 ('SettleAirdrop','0xE663f23F7326C5fdc884613FC53bC94c65F6C856',1500223,'0x',84531),
 ('Claimed','0xE663f23F7326C5fdc884613FC53bC94c65F6C856',1500223,'0x',84531);
 
+# goeril dev
 INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
 ('CreatedSale','0x626f936D28D758c9566d3EBC3A79491C23EB1015',8669039,'0x',5),
 ('Purchased','0x626f936D28D758c9566d3EBC3A79491C23EB1015',8669039,'0x',5),
 ('CancelSale','0x626f936D28D758c9566d3EBC3A79491C23EB1015',8669039,'0x',5);
+
+# sep dev
+INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
+('CreatedSale','0x8c4591ca2EaeC3698200C76d242782E1aC286c1E',3128425,'0x',11155111),
+('Purchased','0x8c4591ca2EaeC3698200C76d242782E1aC286c1E',3128425,'0x',11155111),
+('CancelSale','0x8c4591ca2EaeC3698200C76d242782E1aC286c1E',3128425,'0x',11155111);
