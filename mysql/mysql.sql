@@ -531,6 +531,9 @@ CREATE TABLE `tb_swap_token` (
 );
 
 INSERT INTO tb_swap_token (chain_id,token_address,token_name,symbol,decimals,coin_ids,price,img) VALUES
+(11155111,'0x41526D8dE5ae045aCb88Eb0EedA752874B222ccD','18spt','18spt',18,'18spt',0.1,''),
+(11155111,'0x0090847C22856a346C6069B8d1ed08A4A1D18241','18RAI','18RAI',18,'18RAI',0.001,''),
+(11155111,'0x5c58eC0b4A18aFB85f9D6B02FE3e6454f988436E','6USDT','6USDT',6,'6USDT',0.1,''),
 (1,'0xde7d85157d9714eadf595045cc12ca4a5f3e2adb','STP','stpt',18,'',-1,''),
 (1,'0x006bea43baa3f7a6f765f14f10a1a1b08334ef45','Stox','stx',18,'',-1,''),
 (5,'0x3c0837064c3a440fe44c9002c743dcab94e16454','A','A',18,'a',1.5,''),

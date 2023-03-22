@@ -204,6 +204,7 @@ func (svc *Service) purchasedSwap(c *gin.Context) {
 	var params models.ReqPurchased
 	err := c.ShouldBindJSON(&params)
 	if err != nil {
+		oo.LogW("params err:%v", params)
 		c.JSON(http.StatusOK, models.Response{
 			Code:    http.StatusBadRequest,
 			Message: "Invalid parameters.",
@@ -232,13 +233,13 @@ func (svc *Service) purchasedSwap(c *gin.Context) {
 				break
 			}
 		}
-	}
-	if !isWhite {
-		c.JSON(http.StatusOK, models.Response{
-			Code:    http.StatusBadRequest,
-			Message: "Not whitelist.",
-		})
-		return
+		if !isWhite {
+			c.JSON(http.StatusOK, models.Response{
+				Code:    http.StatusBadRequest,
+				Message: "Not whitelist.",
+			})
+			return
+		}
 	}
 
 	if swapData.Status != consts.StatusNormal || swapData.EndTime <= time.Now().Unix() {
