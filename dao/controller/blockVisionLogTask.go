@@ -1267,7 +1267,7 @@ func (svc *Service) save(blockData []map[string]interface{}, currentBlockNum, ch
 			vTran["buyer"] = blockData[i]["message_sender"]
 			vTran["buy_amount"] = buyAmount
 			vTran["pay_amount"] = payAmount
-			vTran["time"] = blockData[i]["time_stamp"]
+			vTran["time"], _ = utils.Hex2Int64(blockData[i]["time_stamp"].(string))
 			vTran["chain_id"] = chainId
 			vTran["buy_token"] = swapData.SaleToken
 			vTran["pay_token"] = swapData.ReceiveToken

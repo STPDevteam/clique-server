@@ -124,7 +124,7 @@ func EventTypes(event string) string {
 		//CreatedSale(uint256 indexed saleId, address indexed saleToken, address indexed receiveToken, uint256 saleAmount, uint256 pricePer, uint256 limitMin, uint256 limitMax, uint256 startTime, uint256 endTime)
 		createdSale = utils.Keccak256("CreatedSale(uint256,address,address,uint256,uint256,uint256,uint256,uint256,uint256)")
 		//Purchased(uint256 indexed saleId, uint256 indexed buyAmount)
-		purchased = utils.Keccak256("Purchased(uint256,uint256)")
+		purchased = utils.Keccak256("Purchased(uint256,uint256,uint256)")
 		//CancelSale(uint256 indexed saleId)
 		cancelSale = utils.Keccak256("CancelSale(uint256)")
 	)

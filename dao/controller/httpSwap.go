@@ -78,14 +78,14 @@ func (svc *Service) createSwap(c *gin.Context) {
 		modelFrom := outAmountD.Mul(decimal.NewFromFloat(salePriceData.Price))
 
 		dis := modelTo.Div(modelFrom)
-		if !dis.LessThanOrEqual(decimal.NewFromFloat(0.9)) {
-			oo.LogW(fmt.Sprintf("At least 10%% off is required, now is %s", dis.String()))
-			c.JSON(http.StatusOK, models.Response{
-				Code:    http.StatusBadRequest,
-				Message: fmt.Sprintf("At least 10%% off is required, now is %s", dis.String()),
-			})
-			return
-		}
+		//if !dis.LessThanOrEqual(decimal.NewFromFloat(0.9)) {
+		//	oo.LogW(fmt.Sprintf("At least 10%% off is required, now is %s", dis.String()))
+		//	c.JSON(http.StatusOK, models.Response{
+		//		Code:    http.StatusBadRequest,
+		//		Message: fmt.Sprintf("At least 10%% off is required, now is %s", dis.String()),
+		//	})
+		//	return
+		//}
 		discount = dis.String()
 	}
 
