@@ -4,12 +4,6 @@ import (
 	_ "crypto/ecdsa"
 	"encoding/json"
 	"fmt"
-	oo "github.com/Anna2024/liboo"
-	"github.com/gin-gonic/gin"
-	"github.com/patrickmn/go-cache"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
-	"github.com/urfave/cli"
 	"os"
 	"path"
 	"path/filepath"
@@ -20,6 +14,13 @@ import (
 	"stp_dao_v2/utils"
 	"strings"
 	"time"
+
+	oo "github.com/Anna2024/liboo"
+	"github.com/gin-gonic/gin"
+	"github.com/patrickmn/go-cache"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/urfave/cli"
 )
 
 type Service struct {
@@ -29,6 +30,7 @@ type Service struct {
 	appConfig  *config.AppConfig
 	scanInfo   []*config.ScanInfoConfig
 	mCache     *cache.Cache
+	pushConfig *config.PushConfig
 }
 
 func NewService() *Service {
@@ -65,6 +67,7 @@ func (svc *Service) Start(ctx *cli.Context) error {
 	go daoCountTask()
 	go svc.swapTokenPrice()
 	go updateSwapStatus()
+	go svc.doPush()
 	//go svc.getV1Proposal()
 	//go svc.getEthTokenHoldersTotal()
 
@@ -206,6 +209,9 @@ func (svc *Service) loadGlobalConfig(ctx *cli.Context) error {
 			}
 			svc.scanInfo = append(svc.scanInfo, scanInfo)
 		}
+	}
+	if err = svc.gConfig.SessDecode("push", &svc.pushConfig); err != nil {
+		return err
 	}
 
 	return nil

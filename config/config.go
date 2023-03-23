@@ -34,3 +34,11 @@ type ScanInfoConfig struct {
 	DelayedBlockNumber  []int    `mapstructure:"delayed_block_number" toml:"delayed_block_number"`
 	QueryBlockNumberUrl []string `mapstructure:"query_block_number_url" toml:"query_block_number_url"`
 }
+
+type PushConfig struct {
+	StartId        string `mapstructure:"startId" toml:"startId"`
+	Endpoint       string `mapstructure:"endpoint" toml:"endpoint"`
+	Source         string `mapstructure:"source" toml:"source"`
+	ChannelAddress string `mapstructure:"channel_address" toml:"channel_address"`
+	ChainId        int64  `mapstructure:"channel_chain_id" toml:"channel_chain_id"`
+}
