@@ -59,35 +59,43 @@ func (svc *Service) createSwap(c *gin.Context) {
 	}
 
 	var discount string
-	if params.SaleWay == "discount" {
-		outAmountD, err1 := decimal.NewFromString(params.SaleAmount)
-		salePriceD, err2 := decimal.NewFromString(params.SalePrice)
-		if err1 != nil || err2 != nil {
-			oo.LogW("decimal.NewFromString err1: %v, err2: %v", err1, err2)
-			c.JSON(http.StatusOK, models.Response{
-				Code:    http.StatusBadRequest,
-				Message: "Invalid parameters.",
-			})
-			return
-		}
-
-		e := decimal.NewFromInt(10).Pow(decimal.NewFromInt(receivePriceData.Decimals))
-		inAmountD := outAmountD.Mul(salePriceD).Div(e)
-
-		modelTo := inAmountD.Mul(decimal.NewFromFloat(receivePriceData.Price))
-		modelFrom := outAmountD.Mul(decimal.NewFromFloat(salePriceData.Price))
-
-		dis := modelTo.Div(modelFrom)
-		//if !dis.LessThanOrEqual(decimal.NewFromFloat(0.9)) {
-		//	oo.LogW(fmt.Sprintf("At least 10%% off is required, now is %s", dis.String()))
-		//	c.JSON(http.StatusOK, models.Response{
-		//		Code:    http.StatusBadRequest,
-		//		Message: fmt.Sprintf("At least 10%% off is required, now is %s", dis.String()),
-		//	})
-		//	return
-		//}
-		discount = dis.String()
+	//if params.SaleWay == "discount" {
+	outAmountD, err1 := decimal.NewFromString(params.SaleAmount)
+	salePriceD, err2 := decimal.NewFromString(params.SalePrice)
+	limitMinD, err3 := decimal.NewFromString(params.LimitMin)
+	if err1 != nil || err2 != nil || err3 != nil {
+		oo.LogW("decimal.NewFromString err1: %v, err2: %v", err1, err2)
+		c.JSON(http.StatusOK, models.Response{
+			Code:    http.StatusBadRequest,
+			Message: "Invalid parameters.",
+		})
+		return
 	}
+	if outAmountD.LessThan(limitMinD) {
+		c.JSON(http.StatusOK, models.Response{
+			Code:    http.StatusBadRequest,
+			Message: "limit min more than the sale amount.",
+		})
+		return
+	}
+
+	e := decimal.NewFromInt(10).Pow(decimal.NewFromInt(receivePriceData.Decimals))
+	inAmountD := outAmountD.Mul(salePriceD).Div(e)
+
+	modelTo := inAmountD.Mul(decimal.NewFromFloat(receivePriceData.Price))
+	modelFrom := outAmountD.Mul(decimal.NewFromFloat(salePriceData.Price))
+
+	dis := modelTo.Div(modelFrom)
+	//if !dis.LessThanOrEqual(decimal.NewFromFloat(0.9)) {
+	//	oo.LogW(fmt.Sprintf("At least 10%% off is required, now is %s", dis.String()))
+	//	c.JSON(http.StatusOK, models.Response{
+	//		Code:    http.StatusBadRequest,
+	//		Message: fmt.Sprintf("At least 10%% off is required, now is %s", dis.String()),
+	//	})
+	//	return
+	//}
+	discount = dis.String()
+	//}
 
 	var lastId int64
 	var signature string
@@ -264,11 +272,19 @@ func (svc *Service) purchasedSwap(c *gin.Context) {
 		return
 	}
 
-	if !buyAmountD.LessThanOrEqual(saleAmountD.Sub(soleAmountD)) || !buyAmountD.LessThanOrEqual(limitMaxD) || !buyAmountD.GreaterThanOrEqual(limitMinD) {
+	if !buyAmountD.LessThanOrEqual(saleAmountD.Sub(soleAmountD)) {
 		oo.LogW("buyAmountD: %s, saleAmountD: %s, soleAmountD: %s, limitMinD: %s, limitMaxD: %s", buyAmountD.String(), saleAmountD.String(), soleAmountD.String(), limitMinD.String(), limitMaxD.String())
 		c.JSON(http.StatusOK, models.Response{
 			Code:    http.StatusBadRequest,
-			Message: "Not enough balance for swap.",
+			Message: "not enough stock for swap.",
+		})
+		return
+	}
+	if !buyAmountD.LessThanOrEqual(limitMaxD) || !buyAmountD.GreaterThanOrEqual(limitMinD) {
+		oo.LogW("buyAmountD: %s, saleAmountD: %s, soleAmountD: %s, limitMinD: %s, limitMaxD: %s", buyAmountD.String(), saleAmountD.String(), soleAmountD.String(), limitMinD.String(), limitMaxD.String())
+		c.JSON(http.StatusOK, models.Response{
+			Code:    http.StatusBadRequest,
+			Message: "Not in sales limit.",
 		})
 		return
 	}
