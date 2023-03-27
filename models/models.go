@@ -642,6 +642,7 @@ type ResAccountFollowers struct {
 
 type ReqCreateSale struct {
 	ChainId int    `json:"chainId"`
+	Title   string `json:"title"`
 	Creator string `json:"creator"`
 	// SaleWay:general/discount
 	SaleWay      string   `json:"saleWay"`
@@ -680,6 +681,7 @@ type ResSwapListPage struct {
 type ResSwapList struct {
 	SaleId           int64  `json:"saleId"`
 	SaleWay          string `json:"saleWay"`
+	Title            string `json:"title"`
 	CreateTime       int64  `json:"createTime"`
 	ChainId          int    `json:"chainId"`
 	Creator          string `json:"creator"`

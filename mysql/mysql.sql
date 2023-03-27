@@ -491,6 +491,7 @@ CREATE TABLE `tb_swap` (
     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `chain_id` INT NOT NULL,
+    `title` VARCHAR(200) NOT NULL,
     `creator` VARCHAR(44) NOT NULL,
     `sale_way` VARCHAR(30) NOT NULL COMMENT 'general;discount',
     `sale_token` VARCHAR(44) NOT NULL,

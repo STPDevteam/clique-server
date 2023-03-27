@@ -361,6 +361,7 @@ type TbSwap struct {
 	CreateTime       string `db:"create_time,omitempty" sqler:"skips"`
 	UpdateTime       string `db:"update_time,omitempty" sqler:"skips"`
 	ChainId          int    `db:"chain_id"`
+	Title            string `db:"title"`
 	Creator          string `db:"creator"`
 	SaleWay          string `db:"sale_way"`
 	SaleToken        string `db:"sale_token"`

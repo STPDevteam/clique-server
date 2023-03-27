@@ -134,6 +134,7 @@ func (svc *Service) createSwap(c *gin.Context) {
 	var m = make([]map[string]interface{}, 0)
 	var v = make(map[string]interface{})
 	v["chain_id"] = params.ChainId
+	v["title"] = params.Title
 	v["creator"] = params.Creator
 	v["sale_way"] = params.SaleWay
 	v["sale_token"] = params.SaleToken
@@ -321,6 +322,7 @@ func (svc *Service) purchasedSwap(c *gin.Context) {
 // @version 0.0.1
 // @description sale list
 // @Produce json
+// @Param status query string false "status: soon/normal/ended"
 // @Param saleId query int false "saleId"
 // @Param offset query  int true "offset,page"
 // @Param limit query  int true "limit,page"
@@ -330,6 +332,7 @@ func swapList(c *gin.Context) {
 	limit := c.Query("limit")
 	offset := c.Query("offset")
 	saleId := c.Query("saleId")
+	statusParam := c.Query("status")
 	limitParam, _ := strconv.Atoi(limit)
 	offsetParam, _ := strconv.Atoi(offset)
 	saleIdParam, _ := strconv.Atoi(saleId)
@@ -339,6 +342,9 @@ func swapList(c *gin.Context) {
 
 	if saleId != "" {
 		sqler.Where("id", saleIdParam)
+	}
+	if statusParam != "" {
+		sqler.Where("status", statusParam)
 	}
 
 	var total int64
@@ -368,6 +374,7 @@ func swapList(c *gin.Context) {
 		data = append(data, models.ResSwapList{
 			SaleId:           ls.Id,
 			SaleWay:          ls.SaleWay,
+			Title:            ls.Title,
 			CreateTime:       createTime.Unix(),
 			ChainId:          ls.ChainId,
 			Creator:          ls.Creator,
