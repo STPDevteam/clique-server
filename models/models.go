@@ -727,3 +727,7 @@ type ResSwapPrices struct {
 	Symbol           string  `json:"symbol"`
 	Decimals         int64   `json:"decimals"`
 }
+
+type ResIsWhite struct {
+	IsWhite bool `json:"isWhite"`
+}

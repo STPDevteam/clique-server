@@ -570,3 +570,51 @@ func swapPrices(c *gin.Context) {
 		Data:    data,
 	})
 }
+
+// @Summary prices
+// @Tags swap
+// @version 0.0.1
+// @description prices
+// @Produce json
+// @Param account query string true "account"
+// @Param saleId query int true "saleId"
+// @Success 200 {object} models.ResIsWhite
+// @Router /stpdao/v2/swap/isWhite [get]
+func swapIsWhite(c *gin.Context) {
+	saleId := c.Query("saleId")
+	accountParam := c.Query("account")
+	saleIdParam, _ := strconv.Atoi(saleId)
+
+	var swapData models.TbSwap
+	sqlSel := oo.NewSqler().Table(consts.TbNameSwap).Where("id", saleIdParam).Select()
+	err := oo.SqlGet(sqlSel, &swapData)
+	if err != nil {
+		oo.LogW("SQL err: %v", err)
+		c.JSON(http.StatusOK, models.Response{
+			Code:    http.StatusInternalServerError,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+
+	var isWhite bool
+	if swapData.WhiteList != "" {
+		arr := strings.Split(swapData.WhiteList, ",")
+		for i := range arr {
+			if strings.ToLower(arr[i]) == strings.ToLower(accountParam) {
+				isWhite = true
+				break
+			}
+		}
+	} else {
+		isWhite = true
+	}
+
+	c.JSON(http.StatusOK, models.Response{
+		Code:    http.StatusOK,
+		Message: "ok",
+		Data: models.ResIsWhite{
+			IsWhite: isWhite,
+		},
+	})
+}
