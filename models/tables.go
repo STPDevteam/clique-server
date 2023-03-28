@@ -382,18 +382,20 @@ type TbSwap struct {
 }
 
 type TbSwapToken struct {
-	Id           int64   `db:"id,omitempty" sqler:"skips"`
-	CreateTime   string  `db:"create_time,omitempty" sqler:"skips"`
-	UpdateTime   string  `db:"update_time,omitempty" sqler:"skips"`
-	ChainId      int     `db:"chain_id"`
-	TokenAddress string  `db:"token_address"`
-	TokenName    string  `db:"token_name"`
-	Symbol       string  `db:"symbol"`
-	Decimals     int64   `db:"decimals"`
-	CoinIds      string  `db:"coin_ids"`
-	Price        float64 `db:"price"`
-	Img          string  `db:"img"`
-	IsSync       bool    `db:"isSync"`
+	Id               int64   `db:"id,omitempty" sqler:"skips"`
+	CreateTime       string  `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime       string  `db:"update_time,omitempty" sqler:"skips"`
+	ChainId          int     `db:"chain_id"`
+	TokenAddress     string  `db:"token_address"`
+	TokenName        string  `db:"token_name"`
+	Symbol           string  `db:"symbol"`
+	Decimals         int64   `db:"decimals"`
+	CoinIds          string  `db:"coin_ids"`
+	Price            float64 `db:"price"`
+	Img              string  `db:"img"`
+	UrlCoingecko     string  `db:"url_coingecko"`
+	UrlCoinmarketcap string  `db:"url_coinmarketcap"`
+	IsSync           bool    `db:"isSync"`
 }
 
 type TbSwapTransaction struct {

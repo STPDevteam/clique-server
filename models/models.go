@@ -717,11 +717,13 @@ type ResSwapTransactionList struct {
 }
 
 type ResSwapPrices struct {
-	ChainId      int     `json:"chainId"`
-	TokenAddress string  `json:"tokenAddress"`
-	Price        float64 `json:"price"`
-	Img          string  `json:"img"`
-	TokenName    string  `json:"tokenName"`
-	Symbol       string  `json:"symbol"`
-	Decimals     int64   `json:"decimals"`
+	ChainId          int     `json:"chainId"`
+	TokenAddress     string  `json:"tokenAddress"`
+	Price            float64 `json:"price"`
+	Img              string  `json:"img"`
+	UrlCoingecko     string  `json:"urlCoingecko"`
+	UrlCoinmarketcap string  `json:"urlCoinmarketcap"`
+	TokenName        string  `json:"tokenName"`
+	Symbol           string  `json:"symbol"`
+	Decimals         int64   `json:"decimals"`
 }

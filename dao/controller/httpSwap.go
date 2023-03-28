@@ -524,13 +524,15 @@ func swapPrices(c *gin.Context) {
 			ls := tokenList[i]
 
 			data = append(data, models.ResSwapPrices{
-				ChainId:      ls.ChainId,
-				TokenAddress: ls.TokenAddress,
-				Price:        ls.Price,
-				Img:          ls.Img,
-				TokenName:    ls.TokenName,
-				Symbol:       ls.Symbol,
-				Decimals:     ls.Decimals,
+				ChainId:          ls.ChainId,
+				TokenAddress:     ls.TokenAddress,
+				Price:            ls.Price,
+				Img:              ls.Img,
+				UrlCoingecko:     ls.UrlCoingecko,
+				UrlCoinmarketcap: ls.UrlCoinmarketcap,
+				TokenName:        ls.TokenName,
+				Symbol:           ls.Symbol,
+				Decimals:         ls.Decimals,
 			})
 		}
 	} else {
@@ -549,13 +551,15 @@ func swapPrices(c *gin.Context) {
 			}
 
 			data = append(data, models.ResSwapPrices{
-				ChainId:      tbToken.ChainId,
-				TokenAddress: tbToken.TokenAddress,
-				Price:        tbToken.Price,
-				Img:          tbToken.Img,
-				TokenName:    tbToken.TokenName,
-				Symbol:       tbToken.Symbol,
-				Decimals:     tbToken.Decimals,
+				ChainId:          tbToken.ChainId,
+				TokenAddress:     tbToken.TokenAddress,
+				Price:            tbToken.Price,
+				Img:              tbToken.Img,
+				UrlCoingecko:     tbToken.UrlCoingecko,
+				UrlCoinmarketcap: tbToken.UrlCoinmarketcap,
+				TokenName:        tbToken.TokenName,
+				Symbol:           tbToken.Symbol,
+				Decimals:         tbToken.Decimals,
 			})
 		}
 	}
