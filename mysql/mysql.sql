@@ -526,11 +526,21 @@ CREATE TABLE `tb_swap_token` (
     `coin_ids` VARCHAR(30) NOT NULL DEFAULT '',
     `price` FLOAT NOT NULL DEFAULT -1,
     `img` VARCHAR(200) NOT NULL DEFAULT '',
+    `isSync` BOOL NOT NULL DEFAULT false,
     PRIMARY KEY (`id`),
     INDEX `index_chain_id` (`chain_id` ASC),
     INDEX `index_token_address` (`token_address` ASC)
 );
 
+ALTER TABLE tb_swap_token add `isSync` BOOL NOT NULL DEFAULT false;
+
+# token list main
+INSERT INTO tb_swap_token (chain_id,token_address,token_name,symbol,decimals,coin_ids,price,img) VALUES
+(1,'0xde7d85157d9714eadf595045cc12ca4a5f3e2adb','STP','STPT',18,'stp-network',0,'https://s2.coinmarketcap.com/static/img/coins/128x128/4006.png'),
+(1,'0xb49fa25978abf9a248b8212ab4b87277682301c0','RAI Finance','SOFI',18,'rai-finance',0,'https://s2.coinmarketcap.com/static/img/coins/128x128/16552.png'),
+(1,'0x62959c699a52ec647622c91e79ce73344e4099f5','DeFine','DFA',18,'define',0,'https://s2.coinmarketcap.com/static/img/coins/128x128/11150.png');
+
+# token list test
 INSERT INTO tb_swap_token (chain_id,token_address,token_name,symbol,decimals,coin_ids,price,img) VALUES
 (11155111,'0x41526D8dE5ae045aCb88Eb0EedA752874B222ccD','18spt','18spt',18,'18spt',0.1,''),
 (11155111,'0x0090847C22856a346C6069B8d1ed08A4A1D18241','18RAI','18RAI',18,'18RAI',0.001,''),

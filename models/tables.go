@@ -393,6 +393,7 @@ type TbSwapToken struct {
 	CoinIds      string  `db:"coin_ids"`
 	Price        float64 `db:"price"`
 	Img          string  `db:"img"`
+	IsSync       bool    `db:"isSync"`
 }
 
 type TbSwapTransaction struct {

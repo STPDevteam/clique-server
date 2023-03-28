@@ -160,7 +160,7 @@ func (svc *Service) swapTokenPrice() {
 	defer time.AfterFunc(time.Duration(10)*time.Second, svc.swapTokenPrice)
 
 	var swapTokenArr []models.TbSwapToken
-	sqlSel := oo.NewSqler().Table(consts.TbNameSwapToken).Select()
+	sqlSel := oo.NewSqler().Table(consts.TbNameSwapToken).Where("isSync", 1).Select()
 	err := oo.SqlSelect(sqlSel, &swapTokenArr)
 	if err != nil {
 		oo.LogW("SQL failed. err: %v", err)
