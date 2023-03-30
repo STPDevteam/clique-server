@@ -86,14 +86,14 @@ func (svc *Service) createSwap(c *gin.Context) {
 	modelFrom := outAmountD.Mul(decimal.NewFromFloat(salePriceData.Price))
 
 	dis := modelTo.Div(modelFrom)
-	if !dis.LessThanOrEqual(decimal.NewFromFloat(2)) {
-		oo.LogW(fmt.Sprintf("Cannot increase the price by more than 2 times, now is %s", dis.String()))
-		c.JSON(http.StatusOK, models.Response{
-			Code:    http.StatusBadRequest,
-			Message: fmt.Sprintf("Cannot increase the price by more than 2 times"),
-		})
-		return
-	}
+	//if !dis.LessThanOrEqual(decimal.NewFromFloat(2)) {
+	//	oo.LogW(fmt.Sprintf("Cannot increase the price by more than 2 times, now is %s", dis.String()))
+	//	c.JSON(http.StatusOK, models.Response{
+	//		Code:    http.StatusBadRequest,
+	//		Message: fmt.Sprintf("Cannot increase the price by more than 2 times"),
+	//	})
+	//	return
+	//}
 	discount = dis.String()
 	//}
 
