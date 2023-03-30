@@ -86,14 +86,14 @@ func (svc *Service) createSwap(c *gin.Context) {
 	modelFrom := outAmountD.Mul(decimal.NewFromFloat(salePriceData.Price))
 
 	dis := modelTo.Div(modelFrom)
-	//if !dis.LessThanOrEqual(decimal.NewFromFloat(0.9)) {
-	//	oo.LogW(fmt.Sprintf("At least 10%% off is required, now is %s", dis.String()))
-	//	c.JSON(http.StatusOK, models.Response{
-	//		Code:    http.StatusBadRequest,
-	//		Message: fmt.Sprintf("At least 10%% off is required, now is %s", dis.String()),
-	//	})
-	//	return
-	//}
+	if !dis.LessThanOrEqual(decimal.NewFromFloat(2)) {
+		oo.LogW(fmt.Sprintf("Cannot increase the price by more than 2 times, now is %s", dis.String()))
+		c.JSON(http.StatusOK, models.Response{
+			Code:    http.StatusBadRequest,
+			Message: fmt.Sprintf("Cannot increase the price by more than 2 times"),
+		})
+		return
+	}
 	discount = dis.String()
 	//}
 
@@ -131,6 +131,16 @@ func (svc *Service) createSwap(c *gin.Context) {
 		}
 	}
 
+	discountFloat, err := strconv.ParseFloat(discount, 64)
+	if err != nil {
+		oo.LogW("strconv.ParseFloat err: %v", err)
+		c.JSON(http.StatusOK, models.Response{
+			Code:    http.StatusInternalServerError,
+			Message: "discount calculation failed.",
+		})
+		return
+	}
+
 	var m = make([]map[string]interface{}, 0)
 	var v = make(map[string]interface{})
 	v["chain_id"] = params.ChainId
@@ -141,7 +151,7 @@ func (svc *Service) createSwap(c *gin.Context) {
 	v["sale_token_img"] = salePriceData.Img
 	v["sale_amount"] = params.SaleAmount
 	v["sale_price"] = params.SalePrice
-	v["original_discount"] = discount
+	v["original_discount"] = fmt.Sprintf("%.4f", discountFloat)
 	v["receive_token"] = params.ReceiveToken
 	v["receive_token_img"] = receivePriceData.Img
 	v["limit_min"] = params.LimitMin
@@ -571,10 +581,10 @@ func swapPrices(c *gin.Context) {
 	})
 }
 
-// @Summary prices
+// @Summary isWhite
 // @Tags swap
 // @version 0.0.1
-// @description prices
+// @description isWhite
 // @Produce json
 // @Param account query string true "account"
 // @Param saleId query int true "saleId"
