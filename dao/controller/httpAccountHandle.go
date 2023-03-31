@@ -823,3 +823,66 @@ func httpAccountRelation(c *gin.Context) {
 		Data:    isFollowing,
 	})
 }
+
+// @Summary update push switch
+// @Tags account
+// @version 0.0.1
+// @description update push switch
+// @Produce json
+// @Param request body models.UpdateAccountPushSwitchParam true "request"
+// @Success 200 {object} models.Response
+// @Router /stpdao/v2/account/push/setting [post]
+func httpPushSetting(c *gin.Context) {
+	var params models.UpdateAccountPushSwitchParam
+	err := c.ShouldBindJSON(&params)
+	if err != nil {
+		oo.LogW("%v", err)
+		c.JSON(http.StatusOK, models.Response{
+			Code:    http.StatusBadRequest,
+			Message: "Invalid parameters.",
+		})
+		return
+	}
+
+	if !checkLogin(&params.Sign) {
+		oo.LogD("SignData err not auth")
+		c.JSON(http.StatusUnauthorized, models.Response{
+			Code:    http.StatusUnauthorized,
+			Data:    models.ResResult{Success: false},
+			Message: "SignData err not auth",
+		})
+		return
+	}
+
+	pushSwitch := 0b0
+	if params.AllDaosICreateOrJoin {
+		pushSwitch = pushSwitch | (1 << 0)
+	}
+	if params.NewDao {
+		pushSwitch = pushSwitch | (1 << 1)
+	}
+	if params.AllDaoAirdrop {
+		pushSwitch = pushSwitch | (1 << 2)
+	}
+	if params.AllDaoProposal {
+		pushSwitch = pushSwitch | (1 << 3)
+	}
+
+	var v = make(map[string]interface{})
+	v["push_switch"] = pushSwitch
+	sqler := oo.NewSqler().Table(consts.TbNameAccount).Where("account", params.Sign.Account).Update(v)
+	err = oo.SqlExec(sqler)
+	if err != nil {
+		oo.LogW("SQL err: %v", err)
+		c.JSON(http.StatusInternalServerError, models.Response{
+			Code:    500,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, models.Response{
+		Code:    http.StatusOK,
+		Message: "ok",
+	})
+}

@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	oo "github.com/Anna2024/liboo"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/common/math"
@@ -108,8 +109,8 @@ func (api *PushAPI) GetAddress() string {
 	return crypto.PubkeyToAddress(api.Signer.PublicKey).String()
 }
 
-func (api *PushAPI) GetCAIPAddress() string {
-	return fmt.Sprintf("eip155:%d:%s", api.ChainId, api.GetAddress())
+func (api *PushAPI) GetCAIPAddress(address string) string {
+	return fmt.Sprintf("eip155:%d:%s", api.ChainId, address)
 }
 
 func (api *PushAPI) GetChannel() string {
@@ -124,7 +125,7 @@ func (api *PushAPI) GetFeeds(page, pageSize uint64) (ret *PageFeeds, err error) 
 	var url = fmt.Sprintf(
 		"%s/v1/users/%s/feeds?page=%d&limit=%d",
 		api.EndPoint,
-		api.GetCAIPAddress(),
+		api.GetCAIPAddress(api.GetAddress()),
 		page,
 		pageSize,
 	)
@@ -138,9 +139,48 @@ func (api *PushAPI) GetFeeds(page, pageSize uint64) (ret *PageFeeds, err error) 
 	return ret, nil
 }
 
-func (api *PushAPI) SendNotification(uid string, payload map[string]interface{}) (err error) {
+func (api *PushAPI) getRecipients(notificationType int, recipients *[]string) (interface{}, error) {
+	if notificationType == 1 {
+		return api.GetChannelCAIPAddress(), nil
+	}
+	if notificationType == 4 {
+		if recipients != nil {
+			var ret []string = make([]string, 0)
+			for _, recipient := range *recipients {
+				ret = append(ret, api.GetCAIPAddress(recipient))
+			}
+			return ret, nil
+		}
+	}
+	return nil, fmt.Errorf("recipients was empty")
+}
+
+// 1: broadcast; 4: subset;
+func (api *PushAPI) SendNotification(notificationType int, uid string, title, body string, recipients *[]string) (err error) {
+	if !oo.InArray(notificationType, []int{1, 4}) {
+		return fmt.Errorf("notification type was unexpected")
+	}
+
+	var recipientObject interface{}
+	if recipientObject, err = api.getRecipients(notificationType, recipients); err != nil {
+		return err
+	}
+
 	var msgBytes []byte
-	if msgBytes, err = json.Marshal(payload); err != nil {
+	if msgBytes, err = json.Marshal(map[string]interface{}{
+		"notification": map[string]string{
+			"title": title,
+			"body":  body,
+		},
+		"data": map[string]string{
+			"acta": "",
+			"aimg": "",
+			"amsg": "",
+			"asub": "",
+			"type": fmt.Sprintf("%d", notificationType),
+		},
+		"recipients": recipientObject,
+	}); err != nil {
 		return err
 	}
 	data := apitypes.TypedData{

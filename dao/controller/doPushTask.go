@@ -60,22 +60,9 @@ func (svc *Service) doPush() {
 					datum.Id,
 					utils.Keccak256(fmt.Sprintf("%s-%s-%s", datum.BlockNumber, datum.TransactionHash, datum.LogIndex)),
 				)
-				payload := map[string]interface{}{
-					"notification": map[string]string{
-						"title": fmt.Sprintf("[MyClique] %s", datum.EventType),
-						"body":  fmt.Sprintf("%s %s at tx: %s", datum.MessageSender, datum.EventType, datum.TransactionHash),
-					},
-					"data": map[string]string{
-						"acta": "",
-						"aimg": "",
-						"amsg": "",
-						"asub": "",
-						"type": "1",
-					},
-					"recipients": api.GetChannelCAIPAddress(),
-				}
-
-				if err = api.SendNotification(uid, payload); err == nil {
+				title := fmt.Sprintf("[MyClique] %s", datum.EventType)
+				body := fmt.Sprintf("%s %s at tx: %s", datum.MessageSender, datum.EventType, datum.TransactionHash)
+				if err = api.SendNotification(1, uid, title, body, nil); err == nil {
 					lastId = fmt.Sprintf("%d", datum.Id)
 				}
 			}

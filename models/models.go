@@ -731,3 +731,11 @@ type ResSwapPrices struct {
 type ResIsWhite struct {
 	IsWhite bool `json:"isWhite"`
 }
+
+type UpdateAccountPushSwitchParam struct {
+	Sign                 SignData `json:"sign"`
+	AllDaosICreateOrJoin bool     `json:"allDaosICreateOrJoin"`
+	NewDao               bool     `json:"newDao"`
+	AllDaoAirdrop        bool     `json:"allDaoAirdrop"`
+	AllDaoProposal       bool     `json:"allDaoProposal"`
+}

@@ -116,6 +116,7 @@ func (svc *Service) Start(ctx *cli.Context) error {
 		r6.GET("/following/list", httpAccountFollowingList)
 		r6.GET("/followers/list", httpAccountFollowersList)
 		r6.GET("/relation", httpAccountRelation)
+		r6.GET("/push/setting", httpPushSetting)
 	}
 	r7 := router.Group(path.Join(basePath, "/token"))
 	{
