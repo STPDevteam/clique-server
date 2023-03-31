@@ -6,13 +6,14 @@ import (
 )
 
 const (
-	TbNameEventHistorical     = "event_historical_data"
-	TbNameScanTask            = "scan_task"
+	TbNameEventHistorical = "event_historical_data"
+	TbNameScanTask        = "scan_task"
+	TbSysConfig           = "sysconfig"
+
 	TbNameAccount             = "tb_account"
 	TbNameAccountFollow       = "tb_account_follow"
 	TbNameAccountRecord       = "tb_account_record"
 	TbNameAccountSign         = "tb_account_sign"
-	TbNameNonce               = "tb_nonce"
 	TbNameMember              = "tb_member"
 	TbNameDao                 = "tb_dao"
 	TbNameCategory            = "tb_category"

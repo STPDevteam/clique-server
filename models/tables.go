@@ -411,3 +411,14 @@ type TbSwapTransaction struct {
 	BuyToken   string `db:"buy_token"`
 	PayToken   string `db:"pay_token"`
 }
+
+type TbSysConfig struct {
+	Id           int64  `db:"id,omitempty" sqler:"skips"`
+	CreateTime   string `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime   string `db:"update_time,omitempty" sqler:"skips"`
+	CfgName      string `db:"cfg_name"`
+	CfgVal       string `db:"cfg_val"`
+	CfgType      string `db:"cfg_type"`
+	CfgComment   string `db:"cfg_comment"`
+	CfgIsEnabled bool   `db:"cfg_is_enabled"`
+}

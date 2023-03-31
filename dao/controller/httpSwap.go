@@ -34,8 +34,38 @@ func (svc *Service) createSwap(c *gin.Context) {
 		return
 	}
 
+	var tbSysConfig models.TbSysConfig
+	sqlSel := oo.NewSqler().Table(consts.TbSysConfig).Where("cfg_name", "cfg_swap_creator_white_list").Select()
+	err = oo.SqlGet(sqlSel, &tbSysConfig)
+	if err != nil && err != oo.ErrNoRows {
+		oo.LogW("SQL err: %v", err)
+		c.JSON(http.StatusOK, models.Response{
+			Code:    http.StatusInternalServerError,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+
+	var isApproved bool
+	if tbSysConfig.CfgIsEnabled {
+		sliceVal := strings.Split(tbSysConfig.CfgVal, ",")
+		for _, v := range sliceVal {
+			if strings.ToLower(v) == strings.ToLower(params.Creator) {
+				isApproved = true
+				break
+			}
+		}
+		if !isApproved {
+			c.JSON(http.StatusOK, models.Response{
+				Code:    http.StatusBadRequest,
+				Message: "Not creator whitelist.",
+			})
+			return
+		}
+	}
+
 	var salePriceData models.TbSwapToken
-	sqlSel := oo.NewSqler().Table(consts.TbNameSwapToken).Where("chain_id", params.ChainId).Where("token_address", params.SaleToken).Select()
+	sqlSel = oo.NewSqler().Table(consts.TbNameSwapToken).Where("chain_id", params.ChainId).Where("token_address", params.SaleToken).Select()
 	err = oo.SqlGet(sqlSel, &salePriceData)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)

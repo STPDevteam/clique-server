@@ -571,6 +571,22 @@ CREATE TABLE `tb_swap_transaction` (
     INDEX `index_sale_id` (`sale_id` ASC)
 );
 
+CREATE TABLE `sysconfig` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `cfg_name` VARCHAR(128) NULL DEFAULT '',#cfg_swap_creator_white_list
+    `cfg_val` TEXT NULL,
+    `cfg_type` VARCHAR(128) NULL DEFAULT '',
+    `cfg_comment` VARCHAR(128) NULL DEFAULT '',
+    `cfg_is_enabled` BOOL NOT NULL DEFAULT false,
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `cfg_name_UNIQUE` (`cfg_name` ASC)
+);
+INSERT INTO sysconfig (cfg_name,cfg_val,cfg_type,cfg_comment,cfg_is_enabled) VALUES
+('cfg_swap_creator_white_list','0x5aaB9eB79d9E80019f79487FCD0F59ce483c9Ffb','','',1),
+
+
 # dev
 # INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
 # ('CreateDao','0x18Be998c31815d1C3d1dde881801112D9ee81532',28315453,'0x',80001),
