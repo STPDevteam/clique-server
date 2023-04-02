@@ -481,6 +481,7 @@ type NotificationInfo struct {
 	ProposalName string `json:"proposalName"` // NewProposal
 	ActivityId   int    `json:"activityId"`   // Airdrop
 	ActivityName string `json:"activityName"` // Airdrop
+	TokenLogo    string `json:"tokenLogo"`    //PublicSale
 	//StartTime    int64  `json:"startTime"`
 }
 

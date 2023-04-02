@@ -158,10 +158,6 @@ func updateNotification() {
 					}
 				}
 			}
-
-			if entities[index].Types == consts.TypesNamePublicSale {
-
-			}
 		}
 	}
 }

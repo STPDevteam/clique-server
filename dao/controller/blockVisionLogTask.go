@@ -1226,6 +1226,48 @@ func (svc *Service) save(blockData []map[string]interface{}, currentBlockNum, ch
 				oo.LogW("SQL err: %v", errTx)
 				return
 			}
+
+			//for notification
+			var swapData models.TbSwap
+			sqlSel := oo.NewSqler().Table(consts.TbNameSwap).Where("id", saleId).Select()
+			errTx = oo.SqlGet(sqlSel, &swapData)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+			var notificationData = make([]map[string]interface{}, 0)
+			var values = make(map[string]interface{})
+			values["chain_id"] = chainId
+			values["dao_address"] = saleToken
+			values["types"] = consts.TypesNamePublicSaleCreated
+			values["activity_id"] = swapData.Id
+			values["dao_logo"] = swapData.SaleTokenImg
+			values["dao_name"] = ""
+			values["activity_name"] = swapData.Title
+			values["start_time"] = swapData.StartTime
+			values["update_bool"] = 0
+			notificationData = append(notificationData, values)
+			sqlIns := oo.NewSqler().Table(consts.TbNameNotification).Insert(notificationData)
+			var result sql.Result
+			result, errTx = oo.SqlxTxExec(tx, sqlIns)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+
+			var m = make([]map[string]interface{}, 0)
+			var val = make(map[string]interface{})
+			val["notification_id"], _ = result.LastInsertId()
+			val["account"] = blockData[i]["message_sender"]
+			val["already_read"] = 0
+			val["notification_time"] = time.Now().Unix()
+			m = append(m, val)
+			sqlIns = oo.NewSqler().Table(consts.TbNameNotificationAccount).Insert(m)
+			_, errTx = oo.SqlxTxExec(tx, sqlIns)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
 		}
 
 		//Purchased(uint256 indexed saleId, uint256 indexed buyAmount)
@@ -1278,6 +1320,47 @@ func (svc *Service) save(blockData []map[string]interface{}, currentBlockNum, ch
 				oo.LogW("SQL err: %v", errTx)
 				return
 			}
+
+			//for notification
+			var t = time.Now().Unix()
+			var notificationData = make([]map[string]interface{}, 0)
+			var values = make(map[string]interface{})
+			values["chain_id"] = chainId
+			values["dao_address"] = swapData.SaleToken
+			values["types"] = consts.TypesNamePublicSalePurchased
+			values["activity_id"] = swapData.Id
+			values["dao_logo"] = swapData.SaleTokenImg
+			values["dao_name"] = ""
+			values["activity_name"] = swapData.Title
+			values["start_time"] = t
+			values["update_bool"] = 0
+			notificationData = append(notificationData, values)
+			sqlIns = oo.NewSqler().Table(consts.TbNameNotification).Insert(notificationData)
+			var result sql.Result
+			result, errTx = oo.SqlxTxExec(tx, sqlIns)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+
+			var m = make([]map[string]interface{}, 0)
+			var val = make(map[string]interface{})
+			val["notification_id"], _ = result.LastInsertId()
+			val["account"] = blockData[i]["message_sender"]
+			val["already_read"] = 0
+			val["notification_time"] = t
+			m = append(m, val)
+			val["notification_id"], _ = result.LastInsertId()
+			val["account"] = swapData.Creator
+			val["already_read"] = 0
+			val["notification_time"] = t
+			m = append(m, val)
+			sqlIns = oo.NewSqler().Table(consts.TbNameNotificationAccount).InsertBatch(m)
+			_, errTx = oo.SqlxTxExec(tx, sqlIns)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
 		}
 
 		if blockData[i]["event_type"] == consts.EvCancelSale {
@@ -1287,6 +1370,49 @@ func (svc *Service) save(blockData []map[string]interface{}, currentBlockNum, ch
 			v["status"] = consts.StatusCancel
 			sqlUp = oo.NewSqler().Table(consts.TbNameSwap).Where("id", saleId).Update(v)
 			_, errTx = oo.SqlxTxExec(tx, sqlUp)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+
+			//for notification
+			var swapData models.TbSwap
+			sqlSel := oo.NewSqler().Table(consts.TbNameSwap).Where("id", saleId).Select()
+			errTx = oo.SqlGet(sqlSel, &swapData)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+			var t = time.Now().Unix()
+			var notificationData = make([]map[string]interface{}, 0)
+			var values = make(map[string]interface{})
+			values["chain_id"] = chainId
+			values["dao_address"] = swapData.SaleToken
+			values["types"] = consts.TypesNamePublicSaleCanceled
+			values["activity_id"] = swapData.Id
+			values["dao_logo"] = swapData.SaleTokenImg
+			values["dao_name"] = ""
+			values["activity_name"] = swapData.Title
+			values["start_time"] = t
+			values["update_bool"] = 0
+			notificationData = append(notificationData, values)
+			sqlIns := oo.NewSqler().Table(consts.TbNameNotification).Insert(notificationData)
+			var result sql.Result
+			result, errTx = oo.SqlxTxExec(tx, sqlIns)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+
+			var m = make([]map[string]interface{}, 0)
+			var val = make(map[string]interface{})
+			val["notification_id"], _ = result.LastInsertId()
+			val["account"] = swapData.Creator
+			val["already_read"] = 0
+			val["notification_time"] = t
+			m = append(m, val)
+			sqlIns = oo.NewSqler().Table(consts.TbNameNotificationAccount).Insert(m)
+			_, errTx = oo.SqlxTxExec(tx, sqlIns)
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return

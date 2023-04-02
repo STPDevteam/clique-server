@@ -60,10 +60,12 @@ const (
 	LevelMember     = "member"
 	LevelNoRole     = "noRole"
 
-	TypesNameAirdrop      = "Airdrop"
-	TypesNamePublicSale   = "PublicSale" // notification
-	TypesNameNewProposal  = "NewProposal"
-	TypesNameReserveToken = "ReserveToken"
+	TypesNameAirdrop             = "Airdrop"
+	TypesNamePublicSaleCreated   = "PublicSaleCreated"   // notification
+	TypesNamePublicSalePurchased = "PublicSalePurchased" // notification
+	TypesNamePublicSaleCanceled  = "PublicSaleCanceled"  // notification
+	TypesNameNewProposal         = "NewProposal"
+	TypesNameReserveToken        = "ReserveToken"
 
 	MaxValue        = 0x7fffffff
 	MaxIntUnsigned  = 4294967295

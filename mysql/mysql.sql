@@ -584,7 +584,7 @@ CREATE TABLE `sysconfig` (
     UNIQUE INDEX `cfg_name_UNIQUE` (`cfg_name` ASC)
 );
 INSERT INTO sysconfig (cfg_name,cfg_val,cfg_type,cfg_comment,cfg_is_enabled) VALUES
-('cfg_swap_creator_white_list','0x5aaB9eB79d9E80019f79487FCD0F59ce483c9Ffb','','',1),
+('cfg_swap_creator_white_list','0x5aaB9eB79d9E80019f79487FCD0F59ce483c9Ffb','','',1);
 
 
 # dev

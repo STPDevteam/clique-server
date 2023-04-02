@@ -103,8 +103,14 @@ func httpNotificationList(c *gin.Context) {
 				ChainId:      dataIndex.ChainId,
 				TokenAddress: dataIndex.DaoAddress,
 			})
-		} else if dataIndex.Types == consts.TypesNamePublicSale {
-
+		} else if dataIndex.Types == consts.TypesNamePublicSaleCreated || dataIndex.Types == consts.TypesNamePublicSalePurchased || dataIndex.Types == consts.TypesNamePublicSaleCanceled {
+			info = append(info, models.NotificationInfo{
+				ChainId:      dataIndex.ChainId,
+				TokenAddress: dataIndex.DaoAddress,
+				ActivityId:   dataIndex.ActivityId,
+				ActivityName: dataIndex.ActivityName,
+				TokenLogo:    dataIndex.DaoLogo,
+			})
 		}
 
 		data = append(data, models.ResNotification{
