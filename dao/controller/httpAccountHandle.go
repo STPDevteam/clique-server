@@ -26,7 +26,7 @@ func httpQueryAccount(c *gin.Context) {
 	err := c.ShouldBindJSON(&params)
 	if err != nil {
 		oo.LogW("%v", err)
-		c.JSON(http.StatusBadRequest, models.Response{
+		c.JSON(http.StatusOK, models.Response{
 			Code:    http.StatusBadRequest,
 			Message: "Invalid parameters.",
 		})
@@ -38,7 +38,7 @@ func httpQueryAccount(c *gin.Context) {
 	err = oo.SqlGet(sqlCount, &counts)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)
-		c.JSON(http.StatusInternalServerError, models.Response{
+		c.JSON(http.StatusOK, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",
 		})
@@ -54,7 +54,7 @@ func httpQueryAccount(c *gin.Context) {
 		err = oo.SqlExec(sqlIns)
 		if err != nil {
 			oo.LogW("SQL err: %v", err)
-			c.JSON(http.StatusInternalServerError, models.Response{
+			c.JSON(http.StatusOK, models.Response{
 				Code:    500,
 				Message: "Something went wrong, Please try again later.",
 			})
@@ -67,7 +67,7 @@ func httpQueryAccount(c *gin.Context) {
 	err = oo.SqlGet(sqlSel, &entity)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)
-		c.JSON(http.StatusInternalServerError, models.Response{
+		c.JSON(http.StatusOK, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",
 		})
@@ -101,7 +101,7 @@ func httpQueryAccount(c *gin.Context) {
 	err = oo.SqlSelect(sqlSel, &adminDaoEntities)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)
-		c.JSON(http.StatusInternalServerError, models.Response{
+		c.JSON(http.StatusOK, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",
 		})
@@ -114,22 +114,23 @@ func httpQueryAccount(c *gin.Context) {
 		err = oo.SqlSelect(sqlSel, &daoEntity)
 		if err != nil {
 			oo.LogW("SQL err: %v", err)
-			c.JSON(http.StatusInternalServerError, models.Response{
+			c.JSON(http.StatusOK, models.Response{
 				Code:    500,
 				Message: "Something went wrong, Please try again later.",
 			})
 			return
 		}
-		if !daoEntity[0].Deprecated {
-			dataAdmin = append(dataAdmin, models.ResDao{
-				DaoAddress:   adminDaoEntities[index].DaoAddress,
-				ChainId:      adminDaoEntities[index].ChainId,
-				AccountLevel: adminDaoEntities[index].AccountLevel,
-				DaoName:      daoEntity[0].DaoName,
-				DaoLogo:      daoEntity[0].DaoLogo,
-			})
+		if len(daoEntity) > 0 {
+			if !daoEntity[0].Deprecated {
+				dataAdmin = append(dataAdmin, models.ResDao{
+					DaoAddress:   adminDaoEntities[index].DaoAddress,
+					ChainId:      adminDaoEntities[index].ChainId,
+					AccountLevel: adminDaoEntities[index].AccountLevel,
+					DaoName:      daoEntity[0].DaoName,
+					DaoLogo:      daoEntity[0].DaoLogo,
+				})
+			}
 		}
-
 	}
 
 	var memberEntities []models.MemberModel
@@ -137,7 +138,7 @@ func httpQueryAccount(c *gin.Context) {
 	err = oo.SqlSelect(sqlSel, &memberEntities)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)
-		c.JSON(http.StatusInternalServerError, models.Response{
+		c.JSON(http.StatusOK, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",
 		})
@@ -158,20 +159,22 @@ func httpQueryAccount(c *gin.Context) {
 			err = oo.SqlSelect(sqlSel, &daoEntity)
 			if err != nil {
 				oo.LogW("SQL err: %v", err)
-				c.JSON(http.StatusInternalServerError, models.Response{
+				c.JSON(http.StatusOK, models.Response{
 					Code:    500,
 					Message: "Something went wrong, Please try again later.",
 				})
 				return
 			}
-			if !daoEntity[0].Deprecated {
-				dataMember = append(dataMember, models.ResDao{
-					DaoAddress:   memberEntities[index].DaoAddress,
-					ChainId:      memberEntities[index].ChainId,
-					AccountLevel: consts.LevelMember,
-					DaoName:      daoEntity[0].DaoName,
-					DaoLogo:      daoEntity[0].DaoLogo,
-				})
+			if len(daoEntity) > 0 {
+				if !daoEntity[0].Deprecated {
+					dataMember = append(dataMember, models.ResDao{
+						DaoAddress:   memberEntities[index].DaoAddress,
+						ChainId:      memberEntities[index].ChainId,
+						AccountLevel: consts.LevelMember,
+						DaoName:      daoEntity[0].DaoName,
+						DaoLogo:      daoEntity[0].DaoLogo,
+					})
+				}
 			}
 		}
 	}
@@ -181,7 +184,7 @@ func httpQueryAccount(c *gin.Context) {
 	err = oo.SqlGet(sqlSel, &followersCount)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)
-		c.JSON(http.StatusInternalServerError, models.Response{
+		c.JSON(http.StatusOK, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",
 		})
@@ -193,7 +196,7 @@ func httpQueryAccount(c *gin.Context) {
 	err = oo.SqlGet(sqlSel, &followingCount)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)
-		c.JSON(http.StatusInternalServerError, models.Response{
+		c.JSON(http.StatusOK, models.Response{
 			Code:    500,
 			Message: "Something went wrong, Please try again later.",
 		})
@@ -203,23 +206,6 @@ func httpQueryAccount(c *gin.Context) {
 	var email string
 	if checkLogin(&params) {
 		email = entity.Email.String
-	}
-
-	var allDaosICreateOrJoin bool
-	if entity.PushSwitch&(1<<0) > 0 {
-		allDaosICreateOrJoin = true
-	}
-	var newDao bool
-	if entity.PushSwitch&(1<<1) > 0 {
-		newDao = true
-	}
-	var allDaoAirdrop bool
-	if entity.PushSwitch&(1<<2) > 0 {
-		allDaoAirdrop = true
-	}
-	var allDaoProposal bool
-	if entity.PushSwitch&(1<<3) > 0 {
-		allDaoProposal = true
 	}
 
 	c.JSON(http.StatusOK, models.Response{
@@ -242,10 +228,10 @@ func httpQueryAccount(c *gin.Context) {
 			//MyTokens:     dataMyTokens,
 			AdminDao:             dataAdmin,
 			MemberDao:            dataMember,
-			AllDaosICreateOrJoin: allDaosICreateOrJoin,
-			NewDao:               newDao,
-			AllDaoAirdrop:        allDaoAirdrop,
-			AllDaoProposal:       allDaoProposal,
+			AllDaosICreateOrJoin: entity.PushSwitch&(1<<0) > 0,
+			NewDao:               entity.PushSwitch&(1<<1) > 0,
+			AllDaoAirdrop:        entity.PushSwitch&(1<<2) > 0,
+			AllDaoProposal:       entity.PushSwitch&(1<<3) > 0,
 		},
 	})
 }

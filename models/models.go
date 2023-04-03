@@ -487,6 +487,8 @@ type NotificationInfo struct {
 	ActivityName string `json:"activityName"` // Airdrop
 	TokenLogo    string `json:"tokenLogo"`    //PublicSale
 	//StartTime    int64  `json:"startTime"`
+	Creator string `json:"creator"` //PublicSaleCreator
+	Buyer   string `json:"buyer"`
 }
 
 type NotificationReadParam struct {

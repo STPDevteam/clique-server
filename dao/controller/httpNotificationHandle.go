@@ -103,13 +103,45 @@ func httpNotificationList(c *gin.Context) {
 				ChainId:      dataIndex.ChainId,
 				TokenAddress: dataIndex.DaoAddress,
 			})
-		} else if dataIndex.Types == consts.TypesNamePublicSaleCreated || dataIndex.Types == consts.TypesNamePublicSalePurchased || dataIndex.Types == consts.TypesNamePublicSaleCanceled {
+		} else if dataIndex.Types == consts.TypesNamePublicSaleCreated || dataIndex.Types == consts.TypesNamePublicSaleCanceled {
 			info = append(info, models.NotificationInfo{
 				ChainId:      dataIndex.ChainId,
 				TokenAddress: dataIndex.DaoAddress,
 				ActivityId:   dataIndex.ActivityId,
 				ActivityName: dataIndex.ActivityName,
 				TokenLogo:    dataIndex.DaoLogo,
+			})
+		} else if dataIndex.Types == consts.TypesNamePublicSalePurchased {
+			var swapData models.TbSwap
+			sqlSel = oo.NewSqler().Table(consts.TbNameSwap).Where("id", dataIndex.ActivityId).Select()
+			err = oo.SqlGet(sqlSel, &swapData)
+			if err != nil {
+				oo.LogW("SQL err: %v", err)
+				c.JSON(http.StatusInternalServerError, models.Response{
+					Code:    500,
+					Message: "Something went wrong, Please try again later.",
+				})
+				return
+			}
+			var tranData models.TbSwapTransaction
+			sqlSel = oo.NewSqler().Table(consts.TbNameSwapTransaction).Where("sale_id", dataIndex.ActivityId).Select()
+			err = oo.SqlGet(sqlSel, &tranData)
+			if err != nil {
+				oo.LogW("SQL err: %v", err)
+				c.JSON(http.StatusInternalServerError, models.Response{
+					Code:    500,
+					Message: "Something went wrong, Please try again later.",
+				})
+				return
+			}
+			info = append(info, models.NotificationInfo{
+				ChainId:      dataIndex.ChainId,
+				TokenAddress: dataIndex.DaoAddress,
+				ActivityId:   dataIndex.ActivityId,
+				ActivityName: dataIndex.ActivityName,
+				TokenLogo:    dataIndex.DaoLogo,
+				Creator:      swapData.Creator,
+				Buyer:        tranData.Buyer,
 			})
 		}
 
