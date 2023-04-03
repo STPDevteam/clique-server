@@ -205,6 +205,23 @@ func httpQueryAccount(c *gin.Context) {
 		email = entity.Email.String
 	}
 
+	var allDaosICreateOrJoin bool
+	if entity.PushSwitch&(1<<0) > 0 {
+		allDaosICreateOrJoin = true
+	}
+	var newDao bool
+	if entity.PushSwitch&(1<<1) > 0 {
+		newDao = true
+	}
+	var allDaoAirdrop bool
+	if entity.PushSwitch&(1<<2) > 0 {
+		allDaoAirdrop = true
+	}
+	var allDaoProposal bool
+	if entity.PushSwitch&(1<<3) > 0 {
+		allDaoProposal = true
+	}
+
 	c.JSON(http.StatusOK, models.Response{
 		Code:    http.StatusOK,
 		Message: "ok",
@@ -223,8 +240,12 @@ func httpQueryAccount(c *gin.Context) {
 			Youtube:      entity.Youtube.String,
 			Opensea:      entity.Opensea.String,
 			//MyTokens:     dataMyTokens,
-			AdminDao:  dataAdmin,
-			MemberDao: dataMember,
+			AdminDao:             dataAdmin,
+			MemberDao:            dataMember,
+			AllDaosICreateOrJoin: allDaosICreateOrJoin,
+			NewDao:               newDao,
+			AllDaoAirdrop:        allDaoAirdrop,
+			AllDaoProposal:       allDaoProposal,
 		},
 	})
 }
@@ -857,15 +878,23 @@ func httpPushSetting(c *gin.Context) {
 	pushSwitch := 0b0
 	if params.AllDaosICreateOrJoin {
 		pushSwitch = pushSwitch | (1 << 0)
+	} else {
+		pushSwitch = pushSwitch & ^(1 << 0)
 	}
 	if params.NewDao {
 		pushSwitch = pushSwitch | (1 << 1)
+	} else {
+		pushSwitch = pushSwitch & ^(1 << 1)
 	}
 	if params.AllDaoAirdrop {
 		pushSwitch = pushSwitch | (1 << 2)
+	} else {
+		pushSwitch = pushSwitch & ^(1 << 2)
 	}
 	if params.AllDaoProposal {
 		pushSwitch = pushSwitch | (1 << 3)
+	} else {
+		pushSwitch = pushSwitch & ^(1 << 3)
 	}
 
 	var v = make(map[string]interface{})

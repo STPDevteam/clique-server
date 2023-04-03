@@ -8,16 +8,22 @@ import (
 )
 
 func TestPersonalSign(t *testing.T) {
-	var (
-		message = "Welcome come Clique"
-		pri_key = "57437f659873be891d0adf7515ba7bd95e3cdb0d2285ef2e7ba242129285edf0"
-	)
-	address, signature, err := PersonalSign(pri_key, message)
-	if nil != err {
-		t.Fatal(err)
-	}
-	t.Logf("address = %s", address)
-	t.Logf("signature = %s", signature)
+	//a := 0b0
+	//a = a | (1 << 0)
+	//a = a | (1 << 1)
+	//a = a | (1 << 2)
+	//a = a | (1 << 3)
+	//fmt.Printf("%b\n", a)
+	//a = a & ^(1 << 0)
+	//a = a & ^(1 << 1)
+	//a = a & ^(1 << 2)
+	//a = a & ^(1 << 3)
+	//fmt.Printf("%b\n", a)
+
+	b := 0b1110
+	ba := (b & (1 << 0)) > 0
+	println(ba)
+	fmt.Printf("%b\n", b)
 }
 
 func TestCheckPersonalSign(t *testing.T) {

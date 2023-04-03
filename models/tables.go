@@ -50,6 +50,7 @@ type AccountModel struct {
 	Country      sql.NullString `db:"country"`
 	Youtube      sql.NullString `db:"youtube"`
 	Opensea      sql.NullString `db:"opensea"`
+	PushSwitch   int            `db:"push_switch"`
 }
 
 type AccountFollowModel struct {

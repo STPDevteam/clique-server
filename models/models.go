@@ -139,8 +139,12 @@ type ResQueryAccount struct {
 	Youtube      string `json:"youtube"`
 	Opensea      string `json:"opensea"`
 	//MyTokens     []ResMyTokens `json:"myTokens"`
-	AdminDao  []ResDao `json:"adminDao"`
-	MemberDao []ResDao `json:"memberDao"`
+	AdminDao             []ResDao `json:"adminDao"`
+	MemberDao            []ResDao `json:"memberDao"`
+	AllDaosICreateOrJoin bool     `json:"allDaosICreateOrJoin"`
+	NewDao               bool     `json:"newDao"`
+	AllDaoAirdrop        bool     `json:"allDaoAirdrop"`
+	AllDaoProposal       bool     `json:"allDaoProposal"`
 }
 
 //type ResMyTokens struct {
