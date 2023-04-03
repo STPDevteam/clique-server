@@ -1344,17 +1344,18 @@ func (svc *Service) save(blockData []map[string]interface{}, currentBlockNum, ch
 			}
 
 			var m = make([]map[string]interface{}, 0)
-			var val = make(map[string]interface{})
-			val["notification_id"], _ = result.LastInsertId()
-			val["account"] = blockData[i]["message_sender"]
-			val["already_read"] = 0
-			val["notification_time"] = t
-			m = append(m, val)
-			val["notification_id"], _ = result.LastInsertId()
-			val["account"] = swapData.Creator
-			val["already_read"] = 0
-			val["notification_time"] = t
-			m = append(m, val)
+			var val1 = make(map[string]interface{})
+			val1["notification_id"], _ = result.LastInsertId()
+			val1["account"] = blockData[i]["message_sender"]
+			val1["already_read"] = 0
+			val1["notification_time"] = t
+			m = append(m, val1)
+			var val2 = make(map[string]interface{})
+			val2["notification_id"], _ = result.LastInsertId()
+			val2["account"] = swapData.Creator
+			val2["already_read"] = 0
+			val2["notification_time"] = t
+			m = append(m, val2)
 			sqlIns = oo.NewSqler().Table(consts.TbNameNotificationAccount).InsertBatch(m)
 			_, errTx = oo.SqlxTxExec(tx, sqlIns)
 			if errTx != nil {
