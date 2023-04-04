@@ -157,7 +157,7 @@ func ownTokensImgSave(contract, tokenAddress, url string, chainId int, tx *sqlx.
 }
 
 func (svc *Service) swapTokenPrice() {
-	defer time.AfterFunc(time.Duration(60)*time.Second, svc.swapTokenPrice)
+	defer time.AfterFunc(time.Duration(600)*time.Second, svc.swapTokenPrice)
 
 	var swapTokenArr []models.TbSwapToken
 	sqlSel := oo.NewSqler().Table(consts.TbNameSwapToken).Where("isSync", 1).Select()

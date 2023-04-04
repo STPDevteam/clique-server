@@ -733,6 +733,7 @@ type ResSwapPrices struct {
 	TokenName        string  `json:"tokenName"`
 	Symbol           string  `json:"symbol"`
 	Decimals         int64   `json:"decimals"`
+	UpdateAt         int64   `json:"updateAt"`
 }
 
 type ResIsWhite struct {

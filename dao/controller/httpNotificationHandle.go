@@ -123,17 +123,6 @@ func httpNotificationList(c *gin.Context) {
 				})
 				return
 			}
-			var tranData models.TbSwapTransaction
-			sqlSel = oo.NewSqler().Table(consts.TbNameSwapTransaction).Where("sale_id", dataIndex.ActivityId).Select()
-			err = oo.SqlGet(sqlSel, &tranData)
-			if err != nil {
-				oo.LogW("SQL err: %v", err)
-				c.JSON(http.StatusInternalServerError, models.Response{
-					Code:    500,
-					Message: "Something went wrong, Please try again later.",
-				})
-				return
-			}
 			info = append(info, models.NotificationInfo{
 				ChainId:      dataIndex.ChainId,
 				TokenAddress: dataIndex.DaoAddress,
@@ -141,7 +130,7 @@ func httpNotificationList(c *gin.Context) {
 				ActivityName: dataIndex.ActivityName,
 				TokenLogo:    dataIndex.DaoLogo,
 				Creator:      swapData.Creator,
-				Buyer:        tranData.Buyer,
+				Buyer:        dataIndex.DaoName,
 			})
 		}
 

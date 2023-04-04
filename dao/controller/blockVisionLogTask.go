@@ -1330,7 +1330,7 @@ func (svc *Service) save(blockData []map[string]interface{}, currentBlockNum, ch
 			values["types"] = consts.TypesNamePublicSalePurchased
 			values["activity_id"] = swapData.Id
 			values["dao_logo"] = swapData.SaleTokenImg
-			values["dao_name"] = ""
+			values["dao_name"] = blockData[i]["message_sender"]
 			values["activity_name"] = swapData.Title
 			values["start_time"] = t
 			values["update_bool"] = 0

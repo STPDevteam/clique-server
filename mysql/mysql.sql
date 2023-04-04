@@ -448,7 +448,7 @@ CREATE TABLE `tb_notification` (
     `types` VARCHAR(30) NOT NULL,
     `activity_id` INT NOT NULL,
     `dao_logo` VARCHAR(500) NOT NULL,
-    `dao_name` VARCHAR(30) NOT NULL,
+    `dao_name` VARCHAR(200) NOT NULL,
     `activity_name` VARCHAR(500) NOT NULL,
     `start_time` INT NOT NULL,
     `update_bool` bool NOT NULL,
@@ -584,7 +584,7 @@ CREATE TABLE `sysconfig` (
     UNIQUE INDEX `cfg_name_UNIQUE` (`cfg_name` ASC)
 );
 INSERT INTO sysconfig (cfg_name,cfg_val,cfg_type,cfg_comment,cfg_is_enabled) VALUES
-('cfg_swap_creator_white_list','0x5aaB9eB79d9E80019f79487FCD0F59ce483c9Ffb','','',1);
+('cfg_swap_creator_white_list','0x5aEFAA34EaDaC483ea542077D30505eF2472cfe3','','',1);
 
 
 # dev
@@ -726,3 +726,9 @@ INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain
 ('CreatedSale','0x8c4591ca2EaeC3698200C76d242782E1aC286c1E',3128425,'0x',11155111),
 ('Purchased','0x8c4591ca2EaeC3698200C76d242782E1aC286c1E',3128425,'0x',11155111),
 ('CancelSale','0x8c4591ca2EaeC3698200C76d242782E1aC286c1E',3128425,'0x',11155111);
+
+# main pre
+INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
+('CreatedSale','0xf161dF89C31c63f3a8DC60cAcceFC78FD53f1AFA',16972769,'0x',1),
+('Purchased','0xf161dF89C31c63f3a8DC60cAcceFC78FD53f1AFA',16972769,'0x',1),
+('CancelSale','0xf161dF89C31c63f3a8DC60cAcceFC78FD53f1AFA',16972769,'0x',1);

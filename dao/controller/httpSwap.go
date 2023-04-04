@@ -563,6 +563,7 @@ func swapPrices(c *gin.Context) {
 		for i := range tokenList {
 			ls := tokenList[i]
 
+			updateAt, _ := time.Parse("2006-01-02 15:04:05", ls.UpdateTime)
 			data = append(data, models.ResSwapPrices{
 				ChainId:          ls.ChainId,
 				TokenAddress:     ls.TokenAddress,
@@ -573,6 +574,7 @@ func swapPrices(c *gin.Context) {
 				TokenName:        ls.TokenName,
 				Symbol:           ls.Symbol,
 				Decimals:         ls.Decimals,
+				UpdateAt:         updateAt.Unix(),
 			})
 		}
 	} else {
@@ -590,6 +592,7 @@ func swapPrices(c *gin.Context) {
 				return
 			}
 
+			updateAt, _ := time.Parse("2006-01-02 15:04:05", tbToken.UpdateTime)
 			data = append(data, models.ResSwapPrices{
 				ChainId:          tbToken.ChainId,
 				TokenAddress:     tbToken.TokenAddress,
@@ -600,6 +603,7 @@ func swapPrices(c *gin.Context) {
 				TokenName:        tbToken.TokenName,
 				Symbol:           tbToken.Symbol,
 				Decimals:         tbToken.Decimals,
+				UpdateAt:         updateAt.Unix(),
 			})
 		}
 	}
@@ -655,6 +659,54 @@ func swapIsWhite(c *gin.Context) {
 		Message: "ok",
 		Data: models.ResIsWhite{
 			IsWhite: isWhite,
+		},
+	})
+}
+
+// @Summary IsCreatorWhite
+// @Tags swap
+// @version 0.0.1
+// @description IsCreatorWhite
+// @Produce json
+// @Param account query string true "account"
+// @Success 200 {object} models.ResIsWhite
+// @Router /stpdao/v2/swap/isCreatorWhite [get]
+func swapIsCreatorWhite(c *gin.Context) {
+	accountParam := c.Query("account")
+
+	var tbSysConfig models.TbSysConfig
+	sqlSel := oo.NewSqler().Table(consts.TbSysConfig).Where("cfg_name", "cfg_swap_creator_white_list").Select()
+	err := oo.SqlGet(sqlSel, &tbSysConfig)
+	if err != nil && err != oo.ErrNoRows {
+		oo.LogW("SQL err: %v", err)
+		c.JSON(http.StatusOK, models.Response{
+			Code:    http.StatusInternalServerError,
+			Message: "Something went wrong, Please try again later.",
+		})
+		return
+	}
+
+	var isCreatorWhite bool
+	if tbSysConfig.CfgIsEnabled {
+		sliceVal := strings.Split(tbSysConfig.CfgVal, ",")
+		for _, v := range sliceVal {
+			if strings.ToLower(v) == strings.ToLower(accountParam) {
+				isCreatorWhite = true
+				break
+			}
+		}
+	} else {
+		isCreatorWhite = true
+	}
+	if tbSysConfig.CfgVal == "" {
+		isCreatorWhite = true
+	}
+
+	c.JSON(http.StatusOK, models.Response{
+		Code:    http.StatusOK,
+		Message: "ok",
+		Data: models.ResIsWhite{
+			IsWhite: isCreatorWhite,
 		},
 	})
 }

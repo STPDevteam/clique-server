@@ -16,7 +16,6 @@ type AppConfig struct {
 	PolygonQuickNodeRPC     string   `mapstructure:"polygon_quick_node_rpc" toml:"polygon_quick_node_rpc"`
 	MainnetChainstackRPC    string   `mapstructure:"mainnet_chainstack_rpc" toml:"mainnet_chainstack_rpc"`
 	BSCQuickNodeRPC         string   `mapstructure:"bsc_quick_node_rpc" toml:"bsc_quick_node_rpc"`
-	Key                     string   `mapstructure:"key" toml:"key"`
 }
 
 type MysqlConfig struct {

@@ -159,6 +159,7 @@ func (svc *Service) Start(ctx *cli.Context) error {
 		r13.GET("/transactions", swapTransactionsList)
 		r13.GET("/prices", swapPrices)
 		r13.GET("/isWhite", swapIsWhite)
+		r13.GET("/isCreatorWhite", swapIsCreatorWhite)
 	}
 
 	url := ginSwagger.URL(svc.appConfig.SwaggerUrl)
