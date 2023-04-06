@@ -38,11 +38,11 @@ func Router() {
 	basePath = viper.GetString("app.base_path")
 	router := GinEngine.Group(path.Join(basePath))
 	{
-		r1 := router.Group(path.Join(basePath, "/img"))
+		r1 := router.Group("/img")
 		{
 			r1.POST("/upload", handlers.HttpUploadImg)
 		}
-		r2 := router.Group(path.Join(basePath, "/dao"))
+		r2 := router.Group("/dao")
 		{
 			r2.GET("/list", handlers.HttpDaoList)
 			r2.POST("/member", handlers.HttpDaoJoinOrQuit)
@@ -50,24 +50,24 @@ func Router() {
 			r2.GET("/info", handlers.HttpDaoInfo)
 			r2.GET("/admins", handlers.HttpDaoAdmins)
 		}
-		r3 := router.Group(path.Join(basePath, "/proposal"))
+		r3 := router.Group("/proposal")
 		{
 			r3.GET("/list", handlers.HttpProposalsList)
 			r3.POST("/save", handlers.HttpSaveProposal)
 			r3.GET("/query", handlers.HttpQueryProposal)
 			r3.GET("/snapshot", handlers.HttpQuerySnapshot)
 		}
-		r4 := router.Group(path.Join(basePath, "/votes"))
+		r4 := router.Group("/votes")
 		{
 			r4.GET("/list", handlers.HttpVotesList)
 		}
-		r5 := router.Group(path.Join(basePath, "/sign"))
+		r5 := router.Group("/sign")
 		{
 			r5.POST("/create", handlers.HttpCreateSign)
 			r5.POST("/lock/handle", handlers.HttpLockDaoHandleSign)
 			r5.GET("/query/handle", handlers.HttpQueryDaoHandle)
 		}
-		r6 := router.Group(path.Join(basePath, "/account"))
+		r6 := router.Group("/account")
 		{
 			r6.POST("/query", handlers.HttpQueryAccount)
 			r6.POST("/update", handlers.HttpUpdateAccount)
@@ -80,16 +80,16 @@ func Router() {
 			r6.GET("/relation", handlers.HttpAccountRelation)
 			r6.GET("/push/setting", handlers.HttpPushSetting)
 		}
-		r7 := router.Group(path.Join(basePath, "/token"))
+		r7 := router.Group("/token")
 		{
 			r7.GET("/list", handlers.HttpTokenList)
 			r7.GET("/img", handlers.HttpTokenImg)
 		}
-		r8 := router.Group(path.Join(basePath, "/error"))
+		r8 := router.Group("/error")
 		{
 			r8.POST("/info", handlers.HttpErrorInfo)
 		}
-		r9 := router.Group(path.Join(basePath, "/airdrop"))
+		r9 := router.Group("/airdrop")
 		{
 			r9.POST("/create", handlers.HttpCreateAirdrop)
 			r9.GET("/collect", handlers.HttpCollectInformation)
@@ -99,21 +99,21 @@ func Router() {
 			r9.GET("/address/list", handlers.HttpAirdropAddressList)
 			r9.GET("/proof", handlers.HttpClaimAirdrop)
 		}
-		r10 := router.Group(path.Join(basePath, "/activity"))
+		r10 := router.Group("/activity")
 		{
 			r10.GET("/list", handlers.HttpActivity)
 		}
-		r11 := router.Group(path.Join(basePath, "/notification"))
+		r11 := router.Group("/notification")
 		{
 			r11.GET("/list", handlers.HttpNotificationList)
 			r11.POST("/read", handlers.HttpNotificationRead)
 			r11.GET("/unread/total", handlers.HttpNotificationUnreadTotal)
 		}
-		r12 := router.Group(path.Join(basePath, "/overview"))
+		r12 := router.Group("/overview")
 		{
 			r12.GET("/total", handlers.HttpRecordTotal)
 		}
-		r13 := router.Group(path.Join(basePath, "/swap"))
+		r13 := router.Group("/swap")
 		{
 			r13.POST("/create", handlers.CreateSwap)
 			r13.POST("/purchased", handlers.PurchasedSwap)
