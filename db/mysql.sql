@@ -1,5 +1,5 @@
-CREATE SCHEMA IF NOT EXISTS `stp_dao_v2_pre_bsc` DEFAULT CHARACTER SET utf8mb4 ;
-USE `stp_dao_v2_pre_bsc`;
+CREATE SCHEMA IF NOT EXISTS `stp_dao_v2` DEFAULT CHARACTER SET utf8mb4 ;
+USE `stp_dao_v2`;
 
 SET GLOBAL TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
 SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
@@ -543,17 +543,17 @@ INSERT INTO tb_swap_token (chain_id,token_address,token_name,symbol,decimals,coi
 (1,'0x0000000000000000000000000000000000000000','ETH','ETH',18,'ethereum',0,'https://etherscan.io/images/svg/brands/ethereum-original.svg','https://www.coingecko.com/en/coins/ethereum','https://coinmarketcap.com/currencies/ethereum',1);
 
 # token list test
-INSERT INTO tb_swap_token (chain_id,token_address,token_name,symbol,decimals,coin_ids,price,img) VALUES
-(11155111,'0x41526D8dE5ae045aCb88Eb0EedA752874B222ccD','18spt','18spt',18,'18spt',0.1,''),
-(11155111,'0x0090847C22856a346C6069B8d1ed08A4A1D18241','18RAI','18RAI',18,'18RAI',0.001,''),
-(11155111,'0x5c58eC0b4A18aFB85f9D6B02FE3e6454f988436E','6USDT','6USDT',6,'6USDT',0.1,''),
-(1,'0xde7d85157d9714eadf595045cc12ca4a5f3e2adb','STP','stpt',18,'',-1,''),
-(1,'0x006bea43baa3f7a6f765f14f10a1a1b08334ef45','Stox','stx',18,'',-1,''),
-(5,'0x3c0837064c3a440fe44c9002c743dcab94e16454','A','A',18,'a',1.5,''),
-(5,'0x2358fbd8a8e0470b593328503c0f9666540339a1','B','B',18,'b',0.5,''),
-(5,'0xe8a67c44933b8750204ca4ddd2307aab0547310d','C','C',18,'c',3,''),
-(5,'0x57F013F27360E62efc1904D8c4f4021648ABa7a9','D','D',6,'d',10,''),
-(5,'0x53C0475aa628D9C8C5724A2eb8B5Fd81c32a9267','E','E',18,'e',5,'');
+# INSERT INTO tb_swap_token (chain_id,token_address,token_name,symbol,decimals,coin_ids,price,img) VALUES
+# (11155111,'0x41526D8dE5ae045aCb88Eb0EedA752874B222ccD','18spt','18spt',18,'18spt',0.1,''),
+# (11155111,'0x0090847C22856a346C6069B8d1ed08A4A1D18241','18RAI','18RAI',18,'18RAI',0.001,''),
+# (11155111,'0x5c58eC0b4A18aFB85f9D6B02FE3e6454f988436E','6USDT','6USDT',6,'6USDT',0.1,''),
+# (1,'0xde7d85157d9714eadf595045cc12ca4a5f3e2adb','STP','stpt',18,'',-1,''),
+# (1,'0x006bea43baa3f7a6f765f14f10a1a1b08334ef45','Stox','stx',18,'',-1,''),
+# (5,'0x3c0837064c3a440fe44c9002c743dcab94e16454','A','A',18,'a',1.5,''),
+# (5,'0x2358fbd8a8e0470b593328503c0f9666540339a1','B','B',18,'b',0.5,''),
+# (5,'0xe8a67c44933b8750204ca4ddd2307aab0547310d','C','C',18,'c',3,''),
+# (5,'0x57F013F27360E62efc1904D8c4f4021648ABa7a9','D','D',6,'d',10,''),
+# (5,'0x53C0475aa628D9C8C5724A2eb8B5Fd81c32a9267','E','E',18,'e',5,'');
 
 CREATE TABLE `tb_swap_transaction` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,

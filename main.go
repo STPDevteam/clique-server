@@ -5,6 +5,7 @@ import (
 	"github.com/patrickmn/go-cache"
 	"github.com/spf13/viper"
 	"stp_dao_v2/config"
+	"stp_dao_v2/routers"
 	"stp_dao_v2/tasks"
 	"time"
 
@@ -18,7 +19,7 @@ func init() {
 
 func main() {
 	var err error
-	viper.SetConfigFile("./config/config.toml")
+	viper.SetConfigFile(config.ConfigFile)
 	err = viper.ReadInConfig()
 	if err != nil {
 		oo.LogW("viper.ReadInConfig err %v", err)
@@ -60,6 +61,8 @@ func main() {
 	go tasks.UpdateSwapStatus()
 	go tasks.DoPush()
 	//go tasks.GetV1Proposal()
+
+	go oo.SafeGuardTask(func() { routers.Router() }, time.Second*10)
 
 	oo.WaitExitSignal()
 }
