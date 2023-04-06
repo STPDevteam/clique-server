@@ -1,0 +1,2117 @@
+definitions:
+  models.AirdropAddressArray:
+    properties:
+      address:
+        items:
+          type: string
+        type: array
+      amount:
+        items:
+          type: string
+        type: array
+    type: object
+  models.AirdropAdminSignData:
+    properties:
+      account:
+        description: personal_sign address,0x
+        type: string
+      airdropId:
+        description: airdrop2/airdropDownload:need AirdropId
+        type: integer
+      array:
+        $ref: '#/definitions/models.AirdropAddressArray'
+        description: airdrop2:need Array
+      chainId:
+        description: airdrop1:need ChainId
+        type: integer
+      daoAddress:
+        description: airdrop1:need DaoAddress
+        type: string
+      message:
+        description: '{"expired":1244,"root": "","type":"airdrop1/airdrop2/airdropDownload"}'
+        type: string
+      signature:
+        description: personal_sign sign result,no 0x
+        type: string
+    type: object
+  models.CollectInfo:
+    properties:
+      name:
+        type: string
+      required:
+        type: boolean
+    type: object
+  models.CreateAirdropParam:
+    properties:
+      airdropEndTime:
+        type: integer
+      airdropStartTime:
+        type: integer
+      collectInformation:
+        items:
+          $ref: '#/definitions/models.CollectInfo'
+        type: array
+      description:
+        type: string
+      endTime:
+        type: integer
+      maxAirdropAmount:
+        type: string
+      sign:
+        $ref: '#/definitions/models.AirdropAdminSignData'
+      startTime:
+        type: integer
+      title:
+        type: string
+      tokenAddress:
+        type: string
+      tokenChainId:
+        type: integer
+    type: object
+  models.ErrorInfoParam:
+    properties:
+      content:
+        type: string
+      func:
+        type: string
+      params:
+        type: string
+      title:
+        type: string
+    type: object
+  models.FollowParam:
+    properties:
+      followAccount:
+        type: string
+      status:
+        description: 'status false: unfollow true: follow'
+        type: boolean
+    type: object
+  models.FollowWithSignParam:
+    properties:
+      params:
+        $ref: '#/definitions/models.FollowParam'
+      sign:
+        $ref: '#/definitions/models.SignData'
+    type: object
+  models.JoinDaoParam:
+    properties:
+      chainId:
+        type: integer
+      daoAddress:
+        type: string
+      joinSwitch:
+        description: join/quit
+        type: string
+      timestamp:
+        type: integer
+    type: object
+  models.JoinDaoWithSignParam:
+    properties:
+      params:
+        $ref: '#/definitions/models.JoinDaoParam'
+      sign:
+        $ref: '#/definitions/models.SignData'
+    type: object
+  models.JsonRPCAccountNFT:
+    properties:
+      id:
+        type: integer
+      jsonrpc:
+        type: string
+      result:
+        properties:
+          data:
+            items:
+              properties:
+                amount:
+                  type: number
+                contractAddress:
+                  type: string
+                currency:
+                  type: string
+                metadata:
+                  properties:
+                    collectionName:
+                      type: string
+                    gatewayImageURL:
+                      type: string
+                    imageURL:
+                      type: string
+                    name:
+                      type: string
+                  type: object
+                quantity:
+                  type: integer
+                standard:
+                  type: string
+                tokenId:
+                  type: string
+                usdAmount:
+                  type: number
+              type: object
+            type: array
+          nextPageIndex:
+            type: integer
+          total:
+            type: integer
+        type: object
+    type: object
+  models.NotificationInfo:
+    properties:
+      activityId:
+        description: Airdrop
+        type: integer
+      activityName:
+        description: Airdrop
+        type: string
+      buyer:
+        type: string
+      chainId:
+        type: integer
+      creator:
+        description: StartTime    int64  `json:"startTime"`
+        type: string
+      daoAddress:
+        type: string
+      daoLogo:
+        type: string
+      daoName:
+        type: string
+      proposalId:
+        description: NewProposal
+        type: integer
+      proposalName:
+        description: NewProposal
+        type: string
+      tokenAddress:
+        description: ReserveToken
+        type: string
+      tokenLogo:
+        description: PublicSale
+        type: string
+    type: object
+  models.NotificationReadParam:
+    properties:
+      account:
+        type: string
+      notificationId:
+        type: integer
+      readAll:
+        description: read all:true
+        type: boolean
+    type: object
+  models.ProposalInfoParam:
+    properties:
+      content:
+        type: string
+    type: object
+  models.ReqCreateSale:
+    properties:
+      about:
+        type: string
+      chainId:
+        type: integer
+      creator:
+        type: string
+      endTime:
+        type: integer
+      limitMax:
+        type: string
+      limitMin:
+        type: string
+      receiveToken:
+        type: string
+      saleAmount:
+        type: string
+      salePrice:
+        type: string
+      saleToken:
+        type: string
+      saleWay:
+        description: SaleWay:general/discount
+        type: string
+      startTime:
+        type: integer
+      title:
+        type: string
+      whiteList:
+        items:
+          type: string
+        type: array
+    type: object
+  models.ReqPurchased:
+    properties:
+      account:
+        type: string
+      buyAmount:
+        type: string
+      saleId:
+        type: integer
+    type: object
+  models.ResAccountFollow:
+    properties:
+      account:
+        type: string
+      accountLogo:
+        type: string
+      followTime:
+        type: string
+      following:
+        type: string
+      nickname:
+        type: string
+      relation:
+        description: following or mutualFollowing
+        type: string
+    type: object
+  models.ResAccountFollowPage:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/models.ResAccountFollow'
+        type: array
+      total:
+        type: integer
+    type: object
+  models.ResAccountFollowers:
+    properties:
+      account:
+        type: string
+      accountLogo:
+        type: string
+      followTime:
+        type: string
+      followers:
+        type: string
+      nickname:
+        type: string
+      relation:
+        description: following or mutualFollowing
+        type: string
+    type: object
+  models.ResAccountFollowersPage:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/models.ResAccountFollowers'
+        type: array
+      total:
+        type: integer
+    type: object
+  models.ResAccountRecord:
+    properties:
+      activityId:
+        type: integer
+      address:
+        type: string
+      avatar:
+        type: string
+      chainId:
+        type: integer
+      creator:
+        type: string
+      daoName:
+        type: string
+      time:
+        type: integer
+      titles:
+        type: string
+      types:
+        type: string
+    type: object
+  models.ResAccountRecordPage:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/models.ResAccountRecord'
+        type: array
+      total:
+        type: integer
+    type: object
+  models.ResAccountSign:
+    properties:
+      account:
+        type: string
+      accountLogo:
+        type: string
+      chainId:
+        type: integer
+      daoAddress:
+        type: string
+      message:
+        type: string
+      operate:
+        type: string
+      signature:
+        type: string
+      timestamp:
+        type: integer
+    type: object
+  models.ResAccountSignPage:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/models.ResAccountSign'
+        type: array
+      total:
+        type: integer
+    type: object
+  models.ResActivityList:
+    properties:
+      activityId:
+        type: integer
+      airdropEndTime:
+        type: integer
+      airdropNumber:
+        type: integer
+      airdropStartTime:
+        type: integer
+      chainId:
+        type: integer
+      claimedPercentage:
+        type: number
+      creator:
+        type: string
+      daoAddress:
+        type: string
+      endTime:
+        type: integer
+      price:
+        type: string
+      publishTime:
+        type: integer
+      stakingAmount:
+        type: string
+      startTime:
+        type: integer
+      title:
+        type: string
+      tokenAddress:
+        type: string
+      tokenChainId:
+        type: integer
+      types:
+        type: string
+    type: object
+  models.ResActivityPage:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/models.ResActivityList'
+        type: array
+      total:
+        type: integer
+    type: object
+  models.ResAdminsList:
+    properties:
+      account:
+        type: string
+    type: object
+  models.ResAirdropId:
+    properties:
+      airdropId:
+        type: integer
+      signature:
+        type: string
+    type: object
+  models.ResAirdropInfo:
+    properties:
+      addressNum:
+        type: integer
+      airdropEndTime:
+        type: integer
+      airdropStartTime:
+        type: integer
+      chainId:
+        type: integer
+      collect:
+        items:
+          $ref: '#/definitions/models.CollectInfo'
+        type: array
+      collectCount:
+        type: integer
+      creator:
+        type: string
+      daoAddress:
+        type: string
+      description:
+        type: string
+      endTime:
+        type: integer
+      startTime:
+        type: integer
+      title:
+        type: string
+      tokenAddress:
+        type: string
+      tokenChainId:
+        type: integer
+    type: object
+  models.ResCreateSale:
+    properties:
+      saleId:
+        type: integer
+      signature:
+        type: string
+    type: object
+  models.ResDao:
+    properties:
+      accountLevel:
+        type: string
+      chainId:
+        type: integer
+      daoAddress:
+        type: string
+      daoLogo:
+        type: string
+      daoName:
+        type: string
+    type: object
+  models.ResDaoInfo:
+    properties:
+      approve:
+        description: approve:true,not approve:false
+        type: boolean
+      joinSwitch:
+        description: 0:not joined Dao, 1:joined Dao,default:0
+        type: integer
+      members:
+        type: integer
+    type: object
+  models.ResDaoList:
+    properties:
+      activeProposals:
+        description: activity proposals
+        type: integer
+      approve:
+        description: approve:true,not approve:false
+        type: boolean
+      chainId:
+        type: integer
+      closedProposals:
+        description: closed proposals
+        type: integer
+      daoAddress:
+        type: string
+      daoLogo:
+        type: string
+      daoName:
+        type: string
+      joinSwitch:
+        description: 0:not joined Dao, 1:joined Dao,default:0
+        type: integer
+      members:
+        description: members total
+        type: integer
+      soonProposals:
+        description: soon proposals
+        type: integer
+      totalProposals:
+        description: total proposals
+        type: integer
+    type: object
+  models.ResDaoListPage:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/models.ResDaoList'
+        type: array
+      total:
+        type: integer
+    type: object
+  models.ResIsWhite:
+    properties:
+      isWhite:
+        type: boolean
+    type: object
+  models.ResLeftDaoCreator:
+    properties:
+      account:
+        type: string
+      chainId:
+        type: integer
+      daoAddress:
+        type: string
+      role:
+        type: string
+    type: object
+  models.ResNotification:
+    properties:
+      account:
+        type: string
+      alreadyRead:
+        description: true:have read
+        type: boolean
+      info:
+        $ref: '#/definitions/models.NotificationInfo'
+      notificationId:
+        type: integer
+      notificationTime:
+        type: integer
+      types:
+        description: Airdrop PublicSale NewProposal ReserveToken
+        type: string
+    type: object
+  models.ResNotificationPage:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/models.ResNotification'
+        type: array
+      total:
+        type: integer
+      unreadTotal:
+        type: integer
+    type: object
+  models.ResOverview:
+    properties:
+      totalAccount:
+        type: integer
+      totalApproveDao:
+        type: integer
+      totalDao:
+        type: integer
+      totalProposal:
+        type: integer
+    type: object
+  models.ResProof:
+    properties:
+      airdropNumber:
+        type: integer
+      airdropTotalAmount:
+        type: string
+      amount:
+        type: string
+      index:
+        type: integer
+      proof:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+    type: object
+  models.ResProposalContent:
+    properties:
+      content:
+        type: string
+    type: object
+  models.ResProposalsList:
+    properties:
+      chainId:
+        type: integer
+      contentV1:
+        type: string
+      daoAddress:
+        type: string
+      daoAddressV1:
+        type: string
+      endTime:
+        type: integer
+      proposalId:
+        type: integer
+      proposer:
+        type: string
+      startTime:
+        type: integer
+      title:
+        type: string
+      version:
+        type: string
+    type: object
+  models.ResProposalsListPage:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/models.ResProposalsList'
+        type: array
+      total:
+        type: integer
+    type: object
+  models.ResPurchased:
+    properties:
+      signature:
+        type: string
+    type: object
+  models.ResQueryAccount:
+    properties:
+      account:
+        type: string
+      accountLogo:
+        type: string
+      adminDao:
+        description: MyTokens     []ResMyTokens `json:"myTokens"`
+        items:
+          $ref: '#/definitions/models.ResDao'
+        type: array
+      allDaoAirdrop:
+        type: boolean
+      allDaoProposal:
+        type: boolean
+      allDaosICreateOrJoin:
+        type: boolean
+      country:
+        type: string
+      discord:
+        type: string
+      email:
+        type: string
+      followers:
+        type: integer
+      following:
+        type: integer
+      github:
+        type: string
+      introduction:
+        type: string
+      memberDao:
+        items:
+          $ref: '#/definitions/models.ResDao'
+        type: array
+      newDao:
+        type: boolean
+      nickname:
+        type: string
+      opensea:
+        type: string
+      twitter:
+        type: string
+      youtube:
+        type: string
+    type: object
+  models.ResResult:
+    properties:
+      success:
+        type: boolean
+    type: object
+  models.ResSignCreateData:
+    properties:
+      account:
+        type: string
+      balance:
+        type: string
+      deadline:
+        type: integer
+      signature:
+        type: string
+      tokenAddress:
+        type: string
+      tokenChainId:
+        type: integer
+    type: object
+  models.ResSignDaoHandleData:
+    properties:
+      account:
+        type: string
+      chainId:
+        type: integer
+      lockBlockNum:
+        type: integer
+      signature:
+        type: string
+    type: object
+  models.ResSwapList:
+    properties:
+      about:
+        type: string
+      chainId:
+        type: integer
+      createTime:
+        type: integer
+      creator:
+        type: string
+      endTime:
+        type: integer
+      limitMax:
+        type: string
+      limitMin:
+        type: string
+      originalDiscount:
+        type: string
+      receiveToken:
+        type: string
+      receiveTokenImg:
+        type: string
+      saleAmount:
+        type: string
+      saleId:
+        type: integer
+      salePrice:
+        type: string
+      saleToken:
+        type: string
+      saleTokenImg:
+        type: string
+      saleWay:
+        type: string
+      soldAmount:
+        type: string
+      startTime:
+        type: integer
+      status:
+        type: string
+      title:
+        type: string
+    type: object
+  models.ResSwapListPage:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/models.ResSwapList'
+        type: array
+      total:
+        type: integer
+    type: object
+  models.ResSwapPrices:
+    properties:
+      chainId:
+        type: integer
+      decimals:
+        type: integer
+      img:
+        type: string
+      price:
+        type: number
+      symbol:
+        type: string
+      tokenAddress:
+        type: string
+      tokenName:
+        type: string
+      updateAt:
+        type: integer
+      urlCoingecko:
+        type: string
+      urlCoinmarketcap:
+        type: string
+    type: object
+  models.ResSwapTransactionList:
+    properties:
+      buy_amount:
+        type: string
+      buyTokenName:
+        type: string
+      buyer:
+        type: string
+      payAmount:
+        type: string
+      payTokenName:
+        type: string
+      saleId:
+        type: integer
+      time:
+        type: integer
+    type: object
+  models.ResSwapTransactionListPage:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/models.ResSwapTransactionList'
+        type: array
+      total:
+        type: integer
+    type: object
+  models.ResTokenImg:
+    properties:
+      large:
+        type: string
+      ownImg:
+        type: string
+      small:
+        type: string
+      thumb:
+        type: string
+      tokenAddress:
+        type: string
+      tokenChainId:
+        type: integer
+    type: object
+  models.ResTokenList:
+    properties:
+      chainId:
+        type: integer
+      contractAddress:
+        type: string
+      daoName:
+        items:
+          type: string
+        type: array
+      tokenAddress:
+        type: string
+      totalSupply:
+        type: string
+    type: object
+  models.ResTokenListPage:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/models.ResTokenList'
+        type: array
+      total:
+        type: integer
+    type: object
+  models.ResTreeRoot:
+    properties:
+      root:
+        type: string
+    type: object
+  models.ResUploadAddressList:
+    properties:
+      address:
+        type: string
+      amount:
+        type: string
+    type: object
+  models.ResVotesList:
+    properties:
+      amount:
+        type: string
+      optionIndex:
+        type: integer
+      proposalId:
+        type: integer
+      voter:
+        type: string
+    type: object
+  models.ResVotesListPage:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/models.ResVotesList'
+        type: array
+      total:
+        type: integer
+    type: object
+  models.Response:
+    properties:
+      code:
+        type: integer
+      data: {}
+      msg:
+        type: string
+    type: object
+  models.SignCreateDataParam:
+    properties:
+      account:
+        type: string
+      chainId:
+        type: integer
+      daoAddress:
+        type: string
+      proposalId:
+        description: if SignType:"1":Vote,need proposalId
+        type: integer
+      signType:
+        description: SignType:"0":CreateProposal,"1":Vote
+        type: string
+    type: object
+  models.SignDaoHandleParam:
+    properties:
+      account:
+        type: string
+      chainId:
+        type: integer
+      handle:
+        type: string
+    type: object
+  models.SignData:
+    properties:
+      account:
+        description: personal_sign address,0x
+        type: string
+      signature:
+        description: personal_sign sign result,no 0x
+        type: string
+    type: object
+  models.UpdateAccountParam:
+    properties:
+      accountLogo:
+        type: string
+      country:
+        type: string
+      discord:
+        type: string
+      email:
+        type: string
+      github:
+        type: string
+      introduction:
+        type: string
+      nickname:
+        type: string
+      opensea:
+        type: string
+      twitter:
+        type: string
+      youtube:
+        type: string
+    type: object
+  models.UpdateAccountPushSwitchParam:
+    properties:
+      allDaoAirdrop:
+        type: boolean
+      allDaoProposal:
+        type: boolean
+      allDaosICreateOrJoin:
+        type: boolean
+      newDao:
+        type: boolean
+      sign:
+        $ref: '#/definitions/models.SignData'
+    type: object
+  models.UpdateAccountWithSignParam:
+    properties:
+      param:
+        $ref: '#/definitions/models.UpdateAccountParam'
+      sign:
+        $ref: '#/definitions/models.SignData'
+    type: object
+  models.UserInformationParam:
+    properties:
+      account:
+        type: string
+      airdropId:
+        type: integer
+      userSubmit:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /stpdao/v2/account/followers/list:
+    get:
+      description: account followers list
+      parameters:
+      - description: offset,page
+        in: query
+        name: offset
+        required: true
+        type: integer
+      - description: count,page
+        in: query
+        name: count
+        required: true
+        type: integer
+      - description: account
+        in: query
+        name: account
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResAccountFollowersPage'
+      summary: account followers list
+      tags:
+      - account
+  /stpdao/v2/account/following/list:
+    get:
+      description: account following list
+      parameters:
+      - description: offset,page
+        in: query
+        name: offset
+        required: true
+        type: integer
+      - description: count,page
+        in: query
+        name: count
+        required: true
+        type: integer
+      - description: account
+        in: query
+        name: account
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResAccountFollowPage'
+      summary: account following list
+      tags:
+      - account
+  /stpdao/v2/account/nfts:
+    get:
+      description: account NFTs
+      parameters:
+      - description: chainId 1 or 56
+        in: query
+        name: chainId
+        required: true
+        type: integer
+      - description: account
+        in: query
+        name: account
+        required: true
+        type: string
+      - description: size,page default 20
+        in: query
+        name: size
+        required: true
+        type: integer
+      - description: index,page default 1
+        in: query
+        name: index
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.JsonRPCAccountNFT'
+      summary: account NFTs
+      tags:
+      - account
+  /stpdao/v2/account/push/setting:
+    post:
+      description: update push switch
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateAccountPushSwitchParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: update push switch
+      tags:
+      - account
+  /stpdao/v2/account/query:
+    post:
+      description: account info
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.SignData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResQueryAccount'
+      summary: account info
+      tags:
+      - account
+  /stpdao/v2/account/record:
+    get:
+      description: account record list
+      parameters:
+      - description: account address
+        in: query
+        name: account
+        required: true
+        type: string
+      - description: offset,page
+        in: query
+        name: offset
+        required: true
+        type: integer
+      - description: count,page
+        in: query
+        name: count
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResAccountRecordPage'
+      summary: account record list
+      tags:
+      - account
+  /stpdao/v2/account/relation:
+    get:
+      description: account relation
+      parameters:
+      - description: myself
+        in: query
+        name: myself
+        required: true
+        type: string
+      - description: others
+        in: query
+        name: others
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: account relation
+      tags:
+      - account
+  /stpdao/v2/account/sign/list:
+    get:
+      description: account sign record list
+      parameters:
+      - description: chainId
+        in: query
+        name: chainId
+        type: integer
+      - description: daoAddress
+        in: query
+        name: daoAddress
+        type: string
+      - description: offset,page
+        in: query
+        name: offset
+        required: true
+        type: integer
+      - description: count,page
+        in: query
+        name: count
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResAccountSignPage'
+      summary: account sign record list
+      tags:
+      - account
+  /stpdao/v2/account/update:
+    post:
+      description: update account info
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateAccountWithSignParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: update account info
+      tags:
+      - account
+  /stpdao/v2/account/update/follow:
+    post:
+      description: account follow
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.FollowWithSignParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: account follow
+      tags:
+      - account
+  /stpdao/v2/activity/list:
+    get:
+      description: query activity list
+      parameters:
+      - description: chainId
+        in: query
+        name: chainId
+        type: integer
+      - description: Dao address
+        in: query
+        name: daoAddress
+        type: string
+      - description: status:Soon→Open→Ended→Airdrop→Closed
+        in: query
+        name: status
+        type: string
+      - description: types:Airdrop,PublicSale
+        in: query
+        name: types
+        type: string
+      - description: offset,page
+        in: query
+        name: offset
+        required: true
+        type: integer
+      - description: count,page
+        in: query
+        name: count
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResActivityPage'
+      summary: query activity list
+      tags:
+      - activity
+  /stpdao/v2/airdrop/address:
+    post:
+      description: save airdrop address
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.AirdropAdminSignData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResTreeRoot'
+      summary: save airdrop address
+      tags:
+      - Airdrop
+  /stpdao/v2/airdrop/address/list:
+    get:
+      description: upload airdrop address list
+      parameters:
+      - description: airdropId
+        in: query
+        name: airdropId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResUploadAddressList'
+      summary: upload airdrop address list
+      tags:
+      - Airdrop
+  /stpdao/v2/airdrop/collect:
+    get:
+      description: airdrop need collect information
+      parameters:
+      - description: id
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResAirdropInfo'
+      summary: airdrop need collect information
+      tags:
+      - Airdrop
+  /stpdao/v2/airdrop/create:
+    post:
+      description: create airdrop
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateAirdropParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResAirdropId'
+      summary: create airdrop
+      tags:
+      - Airdrop
+  /stpdao/v2/airdrop/proof:
+    get:
+      description: claim airdrop address
+      parameters:
+      - description: address
+        in: query
+        name: address
+        required: true
+        type: string
+      - description: id
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResProof'
+      summary: claim airdrop address
+      tags:
+      - Airdrop
+  /stpdao/v2/airdrop/save/user:
+    post:
+      description: airdrop collect user information
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserInformationParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: airdrop collect user information
+      tags:
+      - Airdrop
+  /stpdao/v2/airdrop/user/download:
+    post:
+      description: airdrop download user information
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.AirdropAdminSignData'
+      produces:
+      - application/json
+      responses: {}
+      summary: airdrop download user information
+      tags:
+      - Airdrop
+  /stpdao/v2/dao/admins:
+    get:
+      description: Dao admins
+      parameters:
+      - description: dao Address
+        in: query
+        name: daoAddress
+        required: true
+        type: string
+      - description: chainId
+        in: query
+        name: chainId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResAdminsList'
+      summary: Dao admins
+      tags:
+      - Dao
+  /stpdao/v2/dao/info:
+    get:
+      description: Dao info
+      parameters:
+      - description: account address
+        in: query
+        name: account
+        type: string
+      - description: dao Address
+        in: query
+        name: daoAddress
+        required: true
+        type: string
+      - description: chainId
+        in: query
+        name: chainId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResDaoInfo'
+      summary: Dao info
+      tags:
+      - Dao
+  /stpdao/v2/dao/left:
+    get:
+      description: Dao Creator-Left
+      parameters:
+      - description: account address
+        in: query
+        name: account
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResLeftDaoCreator'
+      summary: Dao Creator-Left
+      tags:
+      - Dao
+  /stpdao/v2/dao/list:
+    get:
+      description: query Dao list
+      parameters:
+      - description: 'customizeOrderProposal: ASC'
+        in: query
+        name: customizeOrderProposal
+        type: string
+      - description: 'customizeOrderCreateTime: ASC'
+        in: query
+        name: customizeOrderCreateTime
+        type: string
+      - description: account address
+        in: query
+        name: order
+        type: string
+      - description: account address
+        in: query
+        name: account
+        type: string
+      - description: query keyword:Dao name,Dao address,Token address
+        in: query
+        name: keyword
+        type: string
+      - description: category
+        in: query
+        name: category
+        type: string
+      - description: offset,page
+        in: query
+        name: offset
+        required: true
+        type: integer
+      - description: count,page
+        in: query
+        name: count
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResDaoListPage'
+      summary: query Dao list
+      tags:
+      - Dao
+  /stpdao/v2/dao/member:
+    post:
+      description: join or quit Dao
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.JoinDaoWithSignParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: join or quit Dao
+      tags:
+      - Dao
+  /stpdao/v2/error/info:
+    post:
+      description: error info
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ErrorInfoParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: error info
+      tags:
+      - Error
+  /stpdao/v2/img/upload:
+    post:
+      description: update img
+      parameters:
+      - description: file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: update img
+      tags:
+      - img
+  /stpdao/v2/notification/list:
+    get:
+      description: notification list
+      parameters:
+      - description: account address
+        in: query
+        name: account
+        required: true
+        type: string
+      - description: offset,page
+        in: query
+        name: offset
+        required: true
+        type: integer
+      - description: count,page
+        in: query
+        name: count
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResNotificationPage'
+      summary: notification list
+      tags:
+      - notification
+  /stpdao/v2/notification/read:
+    post:
+      description: notification read
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.NotificationReadParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: notification read
+      tags:
+      - notification
+  /stpdao/v2/notification/unread/total:
+    get:
+      description: notification unread total
+      parameters:
+      - description: account address
+        in: query
+        name: account
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResNotificationPage'
+      summary: notification unread total
+      tags:
+      - notification
+  /stpdao/v2/overview/total:
+    get:
+      description: overview total
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResOverview'
+      summary: overview total
+      tags:
+      - overview
+  /stpdao/v2/proposal/list:
+    get:
+      description: query proposal list
+      parameters:
+      - description: 'version: v1/v2'
+        in: query
+        name: version
+        type: string
+      - description: status:Soon:1,Open:2,Closed:3
+        in: query
+        name: status
+        type: integer
+      - description: Dao address
+        in: query
+        name: daoAddress
+        required: true
+        type: string
+      - description: chainId
+        in: query
+        name: chainId
+        required: true
+        type: integer
+      - description: offset,page
+        in: query
+        name: offset
+        required: true
+        type: integer
+      - description: count,page
+        in: query
+        name: count
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResProposalsListPage'
+      summary: query proposal list
+      tags:
+      - proposal
+  /stpdao/v2/proposal/query:
+    get:
+      description: query proposal info
+      parameters:
+      - description: uuid
+        in: query
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResProposalContent'
+      summary: query proposal info
+      tags:
+      - proposal
+  /stpdao/v2/proposal/save:
+    post:
+      description: save proposal info
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProposalInfoParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: save proposal info
+      tags:
+      - proposal
+  /stpdao/v2/proposal/snapshot:
+    get:
+      description: query proposal snapshot
+      parameters:
+      - description: chainId
+        in: query
+        name: chainId
+        required: true
+        type: integer
+      - description: daoAddress
+        in: query
+        name: daoAddress
+        required: true
+        type: string
+      - description: proposalId
+        in: query
+        name: proposalId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResProposalContent'
+      summary: query proposal snapshot
+      tags:
+      - proposal
+  /stpdao/v2/sign/create:
+    post:
+      description: sign
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.SignCreateDataParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResSignCreateData'
+      summary: sign
+      tags:
+      - sign
+  /stpdao/v2/sign/lock/handle:
+    post:
+      description: sign lock dao handle
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.SignDaoHandleParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResSignDaoHandleData'
+      summary: sign lock dao handle
+      tags:
+      - sign
+  /stpdao/v2/sign/query/handle:
+    get:
+      description: sign query dao handle
+      parameters:
+      - description: handle
+        in: query
+        name: handle
+        required: true
+        type: string
+      - description: chainId
+        in: query
+        name: chainId
+        required: true
+        type: integer
+      - description: account
+        in: query
+        name: account
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResResult'
+      summary: sign query dao handle
+      tags:
+      - sign
+  /stpdao/v2/swap/create:
+    post:
+      description: create sale
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ReqCreateSale'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResCreateSale'
+      summary: create sale
+      tags:
+      - swap
+  /stpdao/v2/swap/isCreatorWhite:
+    get:
+      description: IsCreatorWhite
+      parameters:
+      - description: account
+        in: query
+        name: account
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResIsWhite'
+      summary: IsCreatorWhite
+      tags:
+      - swap
+  /stpdao/v2/swap/isWhite:
+    get:
+      description: isWhite
+      parameters:
+      - description: account
+        in: query
+        name: account
+        required: true
+        type: string
+      - description: saleId
+        in: query
+        name: saleId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResIsWhite'
+      summary: isWhite
+      tags:
+      - swap
+  /stpdao/v2/swap/list:
+    get:
+      description: sale list
+      parameters:
+      - description: 'status: soon/normal/ended'
+        in: query
+        name: status
+        type: string
+      - description: saleId
+        in: query
+        name: saleId
+        type: integer
+      - description: offset,page
+        in: query
+        name: offset
+        required: true
+        type: integer
+      - description: limit,page
+        in: query
+        name: limit
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResSwapListPage'
+      summary: sale list
+      tags:
+      - swap
+  /stpdao/v2/swap/prices:
+    get:
+      description: prices
+      parameters:
+      - description: chainId
+        in: query
+        name: chainId
+        required: true
+        type: integer
+      - description: tokens, separate by comma, if nil, return all
+        in: query
+        name: tokens
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResSwapPrices'
+      summary: prices
+      tags:
+      - swap
+  /stpdao/v2/swap/purchased:
+    post:
+      description: purchased sale
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ReqPurchased'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResPurchased'
+      summary: purchased sale
+      tags:
+      - swap
+  /stpdao/v2/swap/transactions:
+    get:
+      description: transactions list
+      parameters:
+      - description: saleId
+        in: query
+        name: saleId
+        required: true
+        type: integer
+      - description: offset,page
+        in: query
+        name: offset
+        required: true
+        type: integer
+      - description: limit,page
+        in: query
+        name: limit
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResSwapTransactionListPage'
+      summary: transactions list
+      tags:
+      - swap
+  /stpdao/v2/token/img:
+    get:
+      description: query Token img
+      parameters:
+      - description: tokenChainId
+        in: query
+        name: tokenChainId
+        required: true
+        type: integer
+      - description: tokenAddress
+        in: query
+        name: tokenAddress
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResTokenImg'
+      summary: query Token img
+      tags:
+      - Token
+  /stpdao/v2/token/list:
+    get:
+      description: query Token list
+      parameters:
+      - description: chainId
+        in: query
+        name: chainId
+        type: string
+      - description: creator
+        in: query
+        name: creator
+        type: string
+      - description: offset,page
+        in: query
+        name: offset
+        required: true
+        type: integer
+      - description: count,page
+        in: query
+        name: count
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResTokenListPage'
+      summary: query Token list
+      tags:
+      - Token
+  /stpdao/v2/votes/list:
+    get:
+      description: query votes list
+      parameters:
+      - description: chainId
+        in: query
+        name: chainId
+        required: true
+        type: integer
+      - description: proposalId
+        in: query
+        name: proposalId
+        required: true
+        type: string
+      - description: Dao address
+        in: query
+        name: daoAddress
+        required: true
+        type: string
+      - description: offset,page
+        in: query
+        name: offset
+        required: true
+        type: integer
+      - description: count,page
+        in: query
+        name: count
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResVotesListPage'
+      summary: query votes list
+      tags:
+      - votes
+swagger: "2.0"
