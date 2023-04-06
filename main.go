@@ -5,7 +5,7 @@ import (
 	"github.com/patrickmn/go-cache"
 	"github.com/spf13/viper"
 	"stp_dao_v2/config"
-	"stp_dao_v2/routers"
+	"stp_dao_v2/handlers/routers"
 	"stp_dao_v2/tasks"
 	"time"
 
