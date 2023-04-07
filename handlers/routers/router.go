@@ -123,6 +123,10 @@ func Router() {
 			r13.GET("/isWhite", handlers.SwapIsWhite)
 			r13.GET("/isCreatorWhite", handlers.SwapIsCreatorWhite)
 		}
+		task := router.Group("/task")
+		{
+			task.POST("/create", handlers.CreateTask)
+		}
 	}
 
 	url := ginSwagger.URL(viper.GetString("app.swagger_url"))

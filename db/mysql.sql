@@ -106,6 +106,7 @@ CREATE TABLE `tb_category`(
     `category_name` VARCHAR(30) NOT NULL UNIQUE,
     PRIMARY KEY (`id`)
 );
+INSERT INTO tb_category (category_name) VALUES ('Social'),('Protocol'),('NFT'),('Metaverse'),('Gaming'),('Other');
 
 CREATE TABLE `tb_dao_category`(
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -141,7 +142,7 @@ CREATE TABLE `tb_admin` (
 `dao_address` VARCHAR(128) NOT NULL,
 `chain_id` INT NOT NULL,
 `account` VARCHAR(128) NOT NULL,
-`account_level` VARCHAR(128),
+`account_level` VARCHAR(128),   #superAdmin;admin
 INDEX `dao_address` (`dao_address` ASC),
 INDEX `account` (`account` ASC),
 INDEX `chain_id` (`chain_id` ASC),
@@ -587,6 +588,34 @@ INSERT INTO sysconfig (cfg_name,cfg_val,cfg_type,cfg_comment,cfg_is_enabled) VAL
 ('cfg_swap_creator_white_list','0x5aEFAA34EaDaC483ea542077D30505eF2472cfe3','','',1);
 
 
+CREATE TABLE `tb_task` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `chain_id` INT NOT NULL,
+    `dao_address` VARCHAR(128) NOT NULL,
+    `task_name` VARCHAR(255) NULL DEFAULT '',
+    `content` TEXT NULL,
+    `deadline` INT NOT NULL DEFAULT 0,
+    `priority` VARCHAR(20) NULL DEFAULT '' COMMENT 'A_low;B_medium;C_high',
+    `assign_account` VARCHAR(128) NULL DEFAULT '',
+    `proposal_id` INT NOT NULL DEFAULT 0,
+    `reward` DECIMAL(65,0) UNSIGNED NOT NULL DEFAULT '0',
+    `status` VARCHAR(50) NULL DEFAULT '' COMMENT 'A_notStarted;B_inProgress;C_undone;D_done',
+    `weight` FLOAT NOT NULL DEFAULT 0,
+    PRIMARY KEY (`id`)
+);
+
+# CREATE TABLE `tb_task_types` (
+#     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+#     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+#     `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+#     `task_id` INT NOT NULL,
+#     `task_name` VARCHAR(255) NULL DEFAULT '',
+#     PRIMARY KEY (`id`),
+#     INDEX `index_task_id` (`task_id` ASC)
+# );
+
 # dev
 # INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
 # ('CreateDao','0x18Be998c31815d1C3d1dde881801112D9ee81532',28315453,'0x',80001),
@@ -631,8 +660,6 @@ INSERT INTO sysconfig (cfg_name,cfg_val,cfg_type,cfg_comment,cfg_is_enabled) VAL
 # ('CreateAirdrop','0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e',15731651,'0x',1),
 # ('SettleAirdrop','0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e',15731651,'0x',1),
 # ('Claimed','0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e',15731651,'0x',1);
-
-INSERT INTO tb_category (category_name) VALUES ('Social'),('Protocol'),('NFT'),('Metaverse'),('Gaming'),('Other');
 
 #klaytn testnet dev
 # INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
@@ -689,46 +716,46 @@ INSERT INTO tb_category (category_name) VALUES ('Social'),('Protocol'),('NFT'),(
 # ('Claimed','0x26E3a7841682D65e7a11e3C82067CeA0BbFC6aB4',23319449,'0x',56);
 
 #Polygon_zkEVM dev
-INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
-('CreateDao','0xD27879D1C09c4ded7d7860f22835De13cAA5885f',140075,'0x',1442),
-('CreateERC20','0xD27879D1C09c4ded7d7860f22835De13cAA5885f',140075,'0x',1442),
-('ClaimReserve','0xD27879D1C09c4ded7d7860f22835De13cAA5885f',140075,'0x',1442),
-('CreateAirdrop','0x6d6aFa2C67BE77d440f5cabce62a9AB093B6085A',140075,'0x',1442),
-('SettleAirdrop','0x6d6aFa2C67BE77d440f5cabce62a9AB093B6085A',140075,'0x',1442),
-('Claimed','0x6d6aFa2C67BE77d440f5cabce62a9AB093B6085A',140075,'0x',1442);
+# INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
+# ('CreateDao','0xD27879D1C09c4ded7d7860f22835De13cAA5885f',140075,'0x',1442),
+# ('CreateERC20','0xD27879D1C09c4ded7d7860f22835De13cAA5885f',140075,'0x',1442),
+# ('ClaimReserve','0xD27879D1C09c4ded7d7860f22835De13cAA5885f',140075,'0x',1442),
+# ('CreateAirdrop','0x6d6aFa2C67BE77d440f5cabce62a9AB093B6085A',140075,'0x',1442),
+# ('SettleAirdrop','0x6d6aFa2C67BE77d440f5cabce62a9AB093B6085A',140075,'0x',1442),
+# ('Claimed','0x6d6aFa2C67BE77d440f5cabce62a9AB093B6085A',140075,'0x',1442);
 
 #Polygon_zkEVM test proxy
-INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
-('CreateDao','0x837614a67877FE0C011d78740febA5b9b3f3B603',140325,'0x',1442),
-('CreateERC20','0x837614a67877FE0C011d78740febA5b9b3f3B603',140325,'0x',1442),
-('ClaimReserve','0x837614a67877FE0C011d78740febA5b9b3f3B603',140325,'0x',1442),
-('CreateAirdrop','0x41526D8dE5ae045aCb88Eb0EedA752874B222ccD',140325,'0x',1442),
-('SettleAirdrop','0x41526D8dE5ae045aCb88Eb0EedA752874B222ccD',140325,'0x',1442),
-('Claimed','0x41526D8dE5ae045aCb88Eb0EedA752874B222ccD',140325,'0x',1442);
+# INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
+# ('CreateDao','0x837614a67877FE0C011d78740febA5b9b3f3B603',140325,'0x',1442),
+# ('CreateERC20','0x837614a67877FE0C011d78740febA5b9b3f3B603',140325,'0x',1442),
+# ('ClaimReserve','0x837614a67877FE0C011d78740febA5b9b3f3B603',140325,'0x',1442),
+# ('CreateAirdrop','0x41526D8dE5ae045aCb88Eb0EedA752874B222ccD',140325,'0x',1442),
+# ('SettleAirdrop','0x41526D8dE5ae045aCb88Eb0EedA752874B222ccD',140325,'0x',1442),
+# ('Claimed','0x41526D8dE5ae045aCb88Eb0EedA752874B222ccD',140325,'0x',1442);
 
 #Base dev
-INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
-('CreateDao','0x25B084FC1de433D2EA72d8F0E7949f4ea040a69f',1500223,'0x',84531),
-('CreateERC20','0x25B084FC1de433D2EA72d8F0E7949f4ea040a69f',1500223,'0x',84531),
-('ClaimReserve','0x25B084FC1de433D2EA72d8F0E7949f4ea040a69f',1500223,'0x',84531),
-('CreateAirdrop','0xE663f23F7326C5fdc884613FC53bC94c65F6C856',1500223,'0x',84531),
-('SettleAirdrop','0xE663f23F7326C5fdc884613FC53bC94c65F6C856',1500223,'0x',84531),
-('Claimed','0xE663f23F7326C5fdc884613FC53bC94c65F6C856',1500223,'0x',84531);
+# INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
+# ('CreateDao','0x25B084FC1de433D2EA72d8F0E7949f4ea040a69f',1500223,'0x',84531),
+# ('CreateERC20','0x25B084FC1de433D2EA72d8F0E7949f4ea040a69f',1500223,'0x',84531),
+# ('ClaimReserve','0x25B084FC1de433D2EA72d8F0E7949f4ea040a69f',1500223,'0x',84531),
+# ('CreateAirdrop','0xE663f23F7326C5fdc884613FC53bC94c65F6C856',1500223,'0x',84531),
+# ('SettleAirdrop','0xE663f23F7326C5fdc884613FC53bC94c65F6C856',1500223,'0x',84531),
+# ('Claimed','0xE663f23F7326C5fdc884613FC53bC94c65F6C856',1500223,'0x',84531);
 
 # goeril dev
-INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
-('CreatedSale','0x626f936D28D758c9566d3EBC3A79491C23EB1015',8669039,'0x',5),
-('Purchased','0x626f936D28D758c9566d3EBC3A79491C23EB1015',8669039,'0x',5),
-('CancelSale','0x626f936D28D758c9566d3EBC3A79491C23EB1015',8669039,'0x',5);
+# INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
+# ('CreatedSale','0x626f936D28D758c9566d3EBC3A79491C23EB1015',8669039,'0x',5),
+# ('Purchased','0x626f936D28D758c9566d3EBC3A79491C23EB1015',8669039,'0x',5),
+# ('CancelSale','0x626f936D28D758c9566d3EBC3A79491C23EB1015',8669039,'0x',5);
 
 # sep dev
-INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
-('CreatedSale','0x8c4591ca2EaeC3698200C76d242782E1aC286c1E',3128425,'0x',11155111),
-('Purchased','0x8c4591ca2EaeC3698200C76d242782E1aC286c1E',3128425,'0x',11155111),
-('CancelSale','0x8c4591ca2EaeC3698200C76d242782E1aC286c1E',3128425,'0x',11155111);
+# INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
+# ('CreatedSale','0x8c4591ca2EaeC3698200C76d242782E1aC286c1E',3128425,'0x',11155111),
+# ('Purchased','0x8c4591ca2EaeC3698200C76d242782E1aC286c1E',3128425,'0x',11155111),
+# ('CancelSale','0x8c4591ca2EaeC3698200C76d242782E1aC286c1E',3128425,'0x',11155111);
 
 # main pre
-INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
-('CreatedSale','0xf161dF89C31c63f3a8DC60cAcceFC78FD53f1AFA',16972769,'0x',1),
-('Purchased','0xf161dF89C31c63f3a8DC60cAcceFC78FD53f1AFA',16972769,'0x',1),
-('CancelSale','0xf161dF89C31c63f3a8DC60cAcceFC78FD53f1AFA',16972769,'0x',1);
+# INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
+# ('CreatedSale','0xf161dF89C31c63f3a8DC60cAcceFC78FD53f1AFA',16972769,'0x',1),
+# ('Purchased','0xf161dF89C31c63f3a8DC60cAcceFC78FD53f1AFA',16972769,'0x',1),
+# ('CancelSale','0xf161dF89C31c63f3a8DC60cAcceFC78FD53f1AFA',16972769,'0x',1);

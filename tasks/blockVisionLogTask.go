@@ -40,9 +40,17 @@ func ScheduledTask() {
 		}
 
 		resBlock, err1 := utils.QueryLatestBlock(url)
-		latestBlockNum, err2 := utils.Hex2Int64(resBlock.Result.(string))
-		if err1 != nil || err2 != nil {
-			oo.LogW("utils.QueryLatestBlock failed. err1: %v, err2: %v, chainId: %d", err1, err2, chainId)
+		if err1 != nil {
+			oo.LogW("utils.QueryLatestBlock failed. err1: %v, chainId: %d", err1, chainId)
+			continue
+		}
+		s, ok := resBlock.Result.(string)
+		if !ok {
+			continue
+		}
+		latestBlockNum, err2 := utils.Hex2Int64(s)
+		if err2 != nil {
+			oo.LogW("utils.QueryLatestBlock failed. err2: %v, chainId: %d", err2, chainId)
 			continue
 		}
 

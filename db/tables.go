@@ -1,6 +1,11 @@
 package db
 
-import "database/sql"
+import (
+	"database/sql"
+	oo "github.com/Anna2024/liboo"
+	"stp_dao_v2/consts"
+	"stp_dao_v2/db/o"
+)
 
 type TbEventHistoricalModel struct {
 	Id               uint64 `db:"id,omitempty" sqler:"skips"`
@@ -172,6 +177,16 @@ type TbAdminModel struct {
 	ChainId      int    `db:"chain_id"`
 	Account      string `db:"account"`
 	AccountLevel string `db:"account_level"`
+}
+
+func SelectTbAdmin(w ...[][]interface{}) (arr []TbAdminModel, err error) {
+	err = oo.SqlSelect(o.DBPre(consts.TbNameAdmin, w).Select(), &arr)
+	return arr, err
+}
+
+func GetTbAdmin(w ...[][]interface{}) (data TbAdminModel, err error) {
+	err = oo.SqlGet(o.DBPre(consts.TbNameAdmin, w).Select(), &data)
+	return data, err
 }
 
 type ErrorInfoModel struct {

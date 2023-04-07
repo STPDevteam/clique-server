@@ -32,6 +32,7 @@ const (
 	TbNameSwap                = "tb_swap"
 	TbNameSwapToken           = "tb_swap_token"
 	TbNameSwapTransaction     = "tb_swap_transaction"
+	TbTask                    = "tb_task"
 
 	EvCreateDao            = "CreateDao"
 	EvCreateProposal       = "CreateProposal"
