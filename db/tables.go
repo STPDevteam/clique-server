@@ -454,4 +454,5 @@ type TbTask struct {
 	Reward        string  `db:"reward"`
 	Status        string  `db:"status"`
 	Weight        float64 `db:"weight"`
+	IsTrash       bool    `db:"is_trash"`
 }

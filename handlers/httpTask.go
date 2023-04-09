@@ -83,7 +83,7 @@ func TaskList(c *gin.Context) {
 		Offset: offsetParam,
 		Limit:  limitParam,
 	}
-	list, total, err := PageTbTask(consts.TbTask, order, page)
+	list, total, err := PageTbTask(consts.TbTask, order, page, o.W("is_trash", 0))
 	if handleErrorIfExists(c, err, errs.ErrServer) {
 		oo.LogW("SQL err:%v", err)
 		return

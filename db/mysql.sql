@@ -603,7 +603,11 @@ CREATE TABLE `tb_task` (
     `reward` DECIMAL(65,0) UNSIGNED NOT NULL DEFAULT '0',
     `status` VARCHAR(50) NULL DEFAULT '' COMMENT 'A_notStarted;B_inProgress;C_undone;D_done',
     `weight` FLOAT NOT NULL DEFAULT 0,
-    PRIMARY KEY (`id`)
+    `is_trash` BOOL NOT NULL DEFAULT false,
+    PRIMARY KEY (`id`),
+    INDEX `index_chain_id` (`chain_id` ASC),
+    INDEX `index_dao_address` (`dao_address` ASC),
+    INDEX `index_is_trash` (`is_trash` ASC)
 );
 
 # CREATE TABLE `tb_task_types` (
