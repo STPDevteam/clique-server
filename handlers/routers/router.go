@@ -126,6 +126,7 @@ func Router() {
 		task := router.Group("/task")
 		{
 			task.POST("/create", handlers.CreateTask)
+			task.GET("/list", handlers.TaskList)
 		}
 	}
 

@@ -92,9 +92,9 @@ func checkAccountJoinOrQuit(data *models.JoinDaoWithSignParam) (ret bool) {
 	return true
 }
 
-func checkAdminForTaskCreate(data models.ReqCreateTask) (ret bool) {
-	message := fmt.Sprintf(`%d,%s,%s,%d`, data.ChainId, data.DaoAddress, data.Sign.Account, data.Sign.Timestamp)
-	ret, err := utils.CheckPersonalSign(message, data.Sign.Account, data.Sign.Signature)
+func checkAdminForTaskCreate(data models.SignDataForTask) (ret bool) {
+	message := fmt.Sprintf(`%d,%s,%s,%d`, data.ChainId, data.DaoAddress, data.Account, data.Timestamp)
+	ret, err := utils.CheckPersonalSign(message, data.Account, data.Signature)
 	if err != nil {
 		oo.LogW("signMessage err:%v", err)
 		return false
@@ -105,7 +105,7 @@ func checkAdminForTaskCreate(data models.ReqCreateTask) (ret bool) {
 		return false
 	}
 
-	if !utils.CheckAdminSignMessageTimestamp(data.Sign.Timestamp) {
+	if !utils.CheckAdminSignMessageTimestamp(data.Timestamp) {
 		oo.LogW("signMessage deadline.")
 		return false
 	}
@@ -113,7 +113,7 @@ func checkAdminForTaskCreate(data models.ReqCreateTask) (ret bool) {
 	arr, err := db.SelectTbAdmin(
 		o.W("chain_id", data.ChainId),
 		o.W("dao_address", data.DaoAddress),
-		o.W("account", data.Sign.Account))
+		o.W("account", data.Account))
 	if err != nil {
 		oo.LogW("SQL err:%v", err)
 		return false

@@ -748,21 +748,35 @@ type UpdateAccountPushSwitchParam struct {
 	AllDaoProposal       bool     `json:"allDaoProposal"`
 }
 
-type SignDataWithTimestamp struct {
-	Account   string `json:"account" validate:"eth_addr"`              // personal_sign address,0x
-	Signature string `json:"signature" validate:"len=130,hexadecimal"` // personal_sign sign result,no 0x
-	Timestamp int64  `json:"timestamp"`
+type SignDataForTask struct {
+	Account    string `json:"account" validate:"eth_addr"`              // personal_sign address,0x
+	Signature  string `json:"signature" validate:"len=130,hexadecimal"` // personal_sign sign result,no 0x
+	Timestamp  int64  `json:"timestamp"`
+	ChainId    int64  `json:"chainId"`
+	DaoAddress string `json:"daoAddress"`
 }
 
 type ReqCreateTask struct {
-	Sign          SignDataWithTimestamp `json:"sign"`
-	ChainId       int64                 `json:"chainId"`
-	DaoAddress    string                `json:"daoAddress"`
-	TaskName      string                `json:"taskName"`
-	Content       string                `json:"content"`
-	Deadline      int64                 `json:"deadline"`
-	Priority      string                `json:"priority"`
-	AssignAccount string                `json:"assignAccount"`
-	ProposalId    int                   `json:"proposalId"`
-	Reward        string                `json:"reward"`
+	Sign          SignDataForTask `json:"sign"`
+	TaskName      string          `json:"taskName"`
+	Content       string          `json:"content"`
+	Deadline      int64           `json:"deadline"`
+	Priority      string          `json:"priority"`
+	AssignAccount string          `json:"assignAccount"`
+	ProposalId    int             `json:"proposalId"`
+	Reward        string          `json:"reward"`
+}
+
+type ResTaskList struct {
+	ChainId       int     `json:"chainId"`
+	DaoAddress    string  `json:"daoAddress"`
+	TaskName      string  `json:"taskName"`
+	Content       string  `json:"content"`
+	Deadline      int64   `json:"deadline"`
+	Priority      string  `json:"priority"`
+	AssignAccount string  `json:"assignAccount"`
+	ProposalId    int     `json:"proposalId"`
+	Reward        string  `json:"reward"`
+	Status        string  `json:"status"`
+	Weight        float64 `json:"weight"`
 }

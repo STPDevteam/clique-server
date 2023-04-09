@@ -438,3 +438,20 @@ type TbSysConfig struct {
 	CfgComment   string `db:"cfg_comment"`
 	CfgIsEnabled bool   `db:"cfg_is_enabled"`
 }
+
+type TbTask struct {
+	Id            int64   `db:"id,omitempty" sqler:"skips"`
+	CreateTime    string  `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime    string  `db:"update_time,omitempty" sqler:"skips"`
+	ChainId       int     `db:"chain_id"`
+	DaoAddress    string  `db:"dao_address"`
+	TaskName      string  `db:"task_name"`
+	Content       string  `db:"content"`
+	Deadline      int64   `db:"deadline"`
+	Priority      string  `db:"priority"`
+	AssignAccount string  `db:"assign_account"`
+	ProposalId    int     `db:"proposal_id"`
+	Reward        string  `db:"reward"`
+	Status        string  `db:"status"`
+	Weight        float64 `db:"weight"`
+}
