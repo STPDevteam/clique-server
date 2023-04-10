@@ -5,6 +5,7 @@ import (
 	oo "github.com/Anna2024/liboo"
 	"github.com/gin-gonic/gin"
 	"stp_dao_v2/consts"
+	"stp_dao_v2/db"
 	"stp_dao_v2/db/o"
 	"stp_dao_v2/errs"
 	"stp_dao_v2/models"
@@ -68,9 +69,9 @@ func CreateTask(c *gin.Context) {
 // @version 0.0.1
 // @description task list
 // @Produce json
-// @Param offset query  int true "offset,page"
-// @Param limit query  int true "limit,page"
-// @Success 200 {object} models.
+// @Param offset query int true "offset,page"
+// @Param limit query int true "limit,page"
+// @Success 200 {object} models.ResTaskList
 // @Router /stpdao/v2/task/list [get]
 func TaskList(c *gin.Context) {
 	limit := c.Query("limit")
@@ -90,4 +91,52 @@ func TaskList(c *gin.Context) {
 	}
 
 	jsonPagination(c, list, total, page)
+}
+
+// @Summary task detail
+// @Tags task
+// @version 0.0.1
+// @description task detail
+// @Produce json
+// @Param taskId query int true "taskId"
+// @Success 200 {object} models.ResTaskDetail
+// @Router /stpdao/v2/task/detail [get]
+func TaskDetail(c *gin.Context) {
+	taskId := c.Query("taskId")
+	taskIdParam, _ := strconv.Atoi(taskId)
+
+	task, err := db.GetTbTask(o.W("id", taskIdParam))
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err:%v", err)
+		return
+	}
+
+	var avatar, nickname string
+	if task.AssignAccount != "" {
+		account, err := db.GetTbAccountModel(o.W("account", task.AssignAccount))
+		if handleErrorIfExists(c, err, errs.ErrServer) {
+			oo.LogW("SQL err:%v", err)
+			return
+		}
+		avatar = account.AccountLogo.String
+		nickname = account.Nickname.String
+	}
+
+	data := models.ResTaskDetail{
+		ChainId:        task.ChainId,
+		DaoAddress:     task.DaoAddress,
+		TaskName:       task.TaskName,
+		Content:        task.Content,
+		Deadline:       task.Deadline,
+		Priority:       task.Priority,
+		AssignAccount:  task.AssignAccount,
+		AssignAvatar:   avatar,
+		AssignNickname: nickname,
+		ProposalId:     task.ProposalId,
+		Reward:         task.Reward,
+		Status:         task.Status,
+		Weight:         task.Weight,
+	}
+
+	jsonData(c, data)
 }

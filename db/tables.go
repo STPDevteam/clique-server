@@ -58,6 +58,11 @@ type TbAccountModel struct {
 	PushSwitch   int            `db:"push_switch"`
 }
 
+func GetTbAccountModel(w ...[][]interface{}) (data TbAccountModel, err error) {
+	err = oo.SqlGet(o.DBPre(consts.TbTask, w).Select(), &data)
+	return data, err
+}
+
 type TbAccountFollowModel struct {
 	Id         uint64 `db:"id,omitempty" sqler:"skips"`
 	CreateTime string `db:"create_time,omitempty" sqler:"skips"`
@@ -455,4 +460,14 @@ type TbTask struct {
 	Status        string  `db:"status"`
 	Weight        float64 `db:"weight"`
 	IsTrash       bool    `db:"is_trash"`
+}
+
+func SelectTbTask(w ...[][]interface{}) (arr []TbTask, err error) {
+	err = oo.SqlSelect(o.DBPre(consts.TbTask, w).Select(), &arr)
+	return arr, err
+}
+
+func GetTbTask(w ...[][]interface{}) (data TbTask, err error) {
+	err = oo.SqlGet(o.DBPre(consts.TbTask, w).Select(), &data)
+	return data, err
 }

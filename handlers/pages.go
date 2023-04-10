@@ -24,18 +24,29 @@ func PageTbTask(table, order string, page ReqPagination, w ...[][]interface{}) (
 	list = make([]models.ResTaskList, 0)
 	for i := range data {
 		ls := data[i]
+
+		var avatar, nickname string
+		if ls.AssignAccount != "" {
+			account, err := db.GetTbAccountModel(o.W("account", ls.AssignAccount))
+			if err != nil {
+				return nil, 0, err
+			}
+			avatar = account.AccountLogo.String
+			nickname = account.Nickname.String
+		}
+
 		list = append(list, models.ResTaskList{
-			ChainId:       ls.ChainId,
-			DaoAddress:    ls.DaoAddress,
-			TaskName:      ls.TaskName,
-			Content:       ls.Content,
-			Deadline:      ls.Deadline,
-			Priority:      ls.Priority,
-			AssignAccount: ls.AssignAccount,
-			ProposalId:    ls.ProposalId,
-			Reward:        ls.Reward,
-			Status:        ls.Status,
-			Weight:        ls.Weight,
+			TaskId:         ls.Id,
+			ChainId:        ls.ChainId,
+			DaoAddress:     ls.DaoAddress,
+			TaskName:       ls.TaskName,
+			Deadline:       ls.Deadline,
+			Priority:       ls.Priority,
+			AssignAccount:  ls.AssignAccount,
+			AssignAvatar:   avatar,
+			AssignNickname: nickname,
+			Status:         ls.Status,
+			Weight:         ls.Weight,
 		})
 	}
 	return list, total, nil

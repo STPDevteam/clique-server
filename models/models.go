@@ -768,15 +768,31 @@ type ReqCreateTask struct {
 }
 
 type ResTaskList struct {
-	ChainId       int     `json:"chainId"`
-	DaoAddress    string  `json:"daoAddress"`
-	TaskName      string  `json:"taskName"`
-	Content       string  `json:"content"`
-	Deadline      int64   `json:"deadline"`
-	Priority      string  `json:"priority"`
-	AssignAccount string  `json:"assignAccount"`
-	ProposalId    int     `json:"proposalId"`
-	Reward        string  `json:"reward"`
-	Status        string  `json:"status"`
-	Weight        float64 `json:"weight"`
+	TaskId         int64   `json:"taskId"`
+	ChainId        int     `json:"chainId"`
+	DaoAddress     string  `json:"daoAddress"`
+	TaskName       string  `json:"taskName"`
+	Deadline       int64   `json:"deadline"`
+	Priority       string  `json:"priority"`
+	AssignAccount  string  `json:"assignAccount"`
+	AssignAvatar   string  `json:"assignAvatar"`
+	AssignNickname string  `json:"assignNickname"`
+	Status         string  `json:"status"`
+	Weight         float64 `json:"weight"`
+}
+
+type ResTaskDetail struct {
+	ChainId        int     `json:"chainId"`
+	DaoAddress     string  `json:"daoAddress"`
+	TaskName       string  `json:"taskName"`
+	Content        string  `json:"content"`
+	Deadline       int64   `json:"deadline"`
+	Priority       string  `json:"priority"`
+	AssignAccount  string  `json:"assignAccount"`
+	AssignAvatar   string  `json:"assignAvatar"`
+	AssignNickname string  `json:"assignNickname"`
+	ProposalId     int     `json:"proposalId"`
+	Reward         string  `json:"reward"`
+	Status         string  `json:"status"`
+	Weight         float64 `json:"weight"`
 }
