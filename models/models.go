@@ -781,6 +781,11 @@ type ReqUpdateTask struct {
 	Weight        float64         `json:"weight"`
 }
 
+type ReqRemoveTask struct {
+	Sign   SignDataForTask `json:"sign"`
+	TaskId []int64         `json:"taskId"`
+}
+
 type ResTaskList struct {
 	TaskId         int64   `json:"taskId"`
 	ChainId        int     `json:"chainId"`

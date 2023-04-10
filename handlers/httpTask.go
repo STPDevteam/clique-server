@@ -103,6 +103,39 @@ func UpdateTask(c *gin.Context) {
 	jsonSuccess(c)
 }
 
+// @Summary remove task to trash
+// @Tags task
+// @version 0.0.1
+// @description remove task to trash
+// @Produce json
+// @Param request body models.ReqRemoveTask true "request"
+// @Success 200 {object} models.Response
+// @Router /stpdao/v2/task/remove [post]
+func TaskRemoveToTrash(c *gin.Context) {
+	var params models.ReqRemoveTask
+	if handleErrorIfExists(c, c.ShouldBindJSON(&params), errs.ErrParam) {
+		return
+	}
+
+	if !checkAdminForTaskCreate(params.Sign) {
+		oo.LogD("SignData err not auth")
+		handleError(c, errs.ErrUnAuthorized)
+		return
+	}
+
+	var v = make(map[string]interface{})
+	v["is_trash"] = 1
+	for _, val := range params.TaskId {
+		err := o.Update(consts.TbTask, v, o.W("id", val))
+		if handleErrorIfExists(c, err, errs.ErrServer) {
+			oo.LogW("SQL err:%v", err)
+			return
+		}
+	}
+
+	jsonSuccess(c)
+}
+
 // @Summary task list
 // @Tags task
 // @version 0.0.1
