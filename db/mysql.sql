@@ -601,12 +601,13 @@ CREATE TABLE `tb_task` (
     `assign_account` VARCHAR(128) NULL DEFAULT '',
     `proposal_id` INT NOT NULL DEFAULT 0,
     `reward` DECIMAL(65,0) UNSIGNED NOT NULL DEFAULT '0',
-    `status` VARCHAR(50) NULL DEFAULT '' COMMENT 'A_notStarted;B_inProgress;C_undone;D_done',
+    `status` VARCHAR(50) NULL DEFAULT '' COMMENT 'A_notStarted;B_inProgress;C_done;D_notStatus',
     `weight` FLOAT NOT NULL DEFAULT 0,
     `is_trash` BOOL NOT NULL DEFAULT false,
     PRIMARY KEY (`id`),
     INDEX `index_chain_id` (`chain_id` ASC),
     INDEX `index_dao_address` (`dao_address` ASC),
+    INDEX `index_status` (`status` ASC),
     INDEX `index_is_trash` (`is_trash` ASC)
 );
 

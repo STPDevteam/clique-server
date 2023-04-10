@@ -69,6 +69,7 @@ func CreateTask(c *gin.Context) {
 // @version 0.0.1
 // @description task list
 // @Produce json
+// @Param status query string false "status:A_notStarted;B_inProgress;C_done;D_notStatus"
 // @Param offset query int true "offset,page"
 // @Param limit query int true "limit,page"
 // @Success 200 {object} models.ResTaskList
@@ -78,13 +79,19 @@ func TaskList(c *gin.Context) {
 	offset := c.Query("offset")
 	limitParam, _ := strconv.Atoi(limit)
 	offsetParam, _ := strconv.Atoi(offset)
+	statusParam := c.Query("status")
+
+	var wStatus [][]interface{}
+	if statusParam != "" {
+		wStatus = o.W("status", statusParam)
+	}
 
 	order := fmt.Sprintf("weight ASC")
 	page := ReqPagination{
 		Offset: offsetParam,
 		Limit:  limitParam,
 	}
-	list, total, err := PageTbTask(consts.TbTask, order, page, o.W("is_trash", 0))
+	list, total, err := PageTbTask(consts.TbTask, order, page, o.W("is_trash", 0), wStatus)
 	if handleErrorIfExists(c, err, errs.ErrServer) {
 		oo.LogW("SQL err:%v", err)
 		return
