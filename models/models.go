@@ -796,6 +796,7 @@ type ResTaskList struct {
 }
 
 type ResTaskDetail struct {
+	TaskId         int64   `json:"taskId"`
 	ChainId        int     `json:"chainId"`
 	DaoAddress     string  `json:"daoAddress"`
 	TaskName       string  `json:"taskName"`

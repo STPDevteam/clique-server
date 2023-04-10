@@ -168,6 +168,7 @@ func TaskDetail(c *gin.Context) {
 	}
 
 	data := models.ResTaskDetail{
+		TaskId:         task.Id,
 		ChainId:        task.ChainId,
 		DaoAddress:     task.DaoAddress,
 		TaskName:       task.TaskName,
