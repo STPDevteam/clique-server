@@ -50,6 +50,15 @@ func handleErrorIfExists(c *gin.Context, err error, cErr *errs.CustomError) bool
 	return false
 }
 
+func handleErrorIfExistsExceptNoRows(c *gin.Context, err error, cErr *errs.CustomError) bool {
+	if err != nil && err != oo.ErrNoRows {
+		oo.LogW("%s: error : %v, custom error: %v", c.FullPath(), err, cErr)
+		handleError(c, cErr)
+		return true
+	}
+	return false
+}
+
 func HandlerPagination(c *gin.Context) {
 	var err error
 	var pagination ReqPagination

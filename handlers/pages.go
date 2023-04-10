@@ -28,7 +28,7 @@ func PageTbTask(table, order string, page ReqPagination, w ...[][]interface{}) (
 		var avatar, nickname string
 		if ls.AssignAccount != "" {
 			account, err := db.GetTbAccountModel(o.W("account", ls.AssignAccount))
-			if err != nil {
+			if err != nil && err != oo.ErrNoRows {
 				return nil, 0, err
 			}
 			avatar = account.AccountLogo.String

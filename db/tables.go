@@ -59,7 +59,7 @@ type TbAccountModel struct {
 }
 
 func GetTbAccountModel(w ...[][]interface{}) (data TbAccountModel, err error) {
-	err = oo.SqlGet(o.DBPre(consts.TbTask, w).Select(), &data)
+	err = oo.SqlGet(o.DBPre(consts.TbNameAccount, w).Select(), &data)
 	return data, err
 }
 

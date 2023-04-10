@@ -105,11 +105,10 @@ func TaskList(c *gin.Context) {
 // @version 0.0.1
 // @description task detail
 // @Produce json
-// @Param taskId query int true "taskId"
 // @Success 200 {object} models.ResTaskDetail
 // @Router /stpdao/v2/task/detail [get]
 func TaskDetail(c *gin.Context) {
-	taskId := c.Query("taskId")
+	taskId := c.Param("taskId")
 	taskIdParam, _ := strconv.Atoi(taskId)
 
 	task, err := db.GetTbTask(o.W("id", taskIdParam))
@@ -121,7 +120,7 @@ func TaskDetail(c *gin.Context) {
 	var avatar, nickname string
 	if task.AssignAccount != "" {
 		account, err := db.GetTbAccountModel(o.W("account", task.AssignAccount))
-		if handleErrorIfExists(c, err, errs.ErrServer) {
+		if handleErrorIfExistsExceptNoRows(c, err, errs.ErrServer) {
 			oo.LogW("SQL err:%v", err)
 			return
 		}
