@@ -767,6 +767,20 @@ type ReqCreateTask struct {
 	Reward        string          `json:"reward"`
 }
 
+type ReqUpdateTask struct {
+	Sign          SignDataForTask `json:"sign"`
+	TaskId        int16           `json:"taskId"`
+	TaskName      string          `json:"taskName"`
+	Content       string          `json:"content"`
+	Deadline      int64           `json:"deadline"`
+	Priority      string          `json:"priority"`
+	AssignAccount string          `json:"assignAccount"`
+	ProposalId    int             `json:"proposalId"`
+	Reward        string          `json:"reward"`
+	Status        string          `json:"status"`
+	Weight        float64         `json:"weight"`
+}
+
 type ResTaskList struct {
 	TaskId         int64   `json:"taskId"`
 	ChainId        int     `json:"chainId"`

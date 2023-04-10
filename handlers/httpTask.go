@@ -18,7 +18,7 @@ import (
 // @description create task
 // @Produce json
 // @Param request body models.ReqCreateTask true "request"
-// @Success 200 {object} models.
+// @Success 200 {object} models.Response
 // @Router /stpdao/v2/task/create [post]
 func CreateTask(c *gin.Context) {
 	var params models.ReqCreateTask
@@ -26,11 +26,11 @@ func CreateTask(c *gin.Context) {
 		return
 	}
 
-	//if !checkAdminForTaskCreate(params.Sign) {
-	//	oo.LogD("SignData err not auth")
-	//	handleError(c, errs.ErrUnAuthorized)
-	//	return
-	//}
+	if !checkAdminForTaskCreate(params.Sign) {
+		oo.LogD("SignData err not auth")
+		handleError(c, errs.ErrUnAuthorized)
+		return
+	}
 
 	var weight float64
 	sqlSel := oo.NewSqler().Table(consts.TbTask).Where("chain_id", params.Sign.ChainId).Where("dao_address", params.Sign.DaoAddress).
@@ -56,6 +56,45 @@ func CreateTask(c *gin.Context) {
 	v["weight"] = weight + 10
 	m = append(m, v)
 	err = o.Insert(consts.TbTask, m)
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err:%v", err)
+		return
+	}
+
+	jsonSuccess(c)
+}
+
+// @Summary update task
+// @Tags task
+// @version 0.0.1
+// @description update task
+// @Produce json
+// @Param request body models.ReqUpdateTask true "request"
+// @Success 200 {object} models.Response
+// @Router /stpdao/v2/task/update [post]
+func UpdateTask(c *gin.Context) {
+	var params models.ReqUpdateTask
+	if handleErrorIfExists(c, c.ShouldBindJSON(&params), errs.ErrParam) {
+		return
+	}
+
+	if !checkAdminForTaskCreate(params.Sign) {
+		oo.LogD("SignData err not auth")
+		handleError(c, errs.ErrUnAuthorized)
+		return
+	}
+
+	var v = make(map[string]interface{})
+	v["task_name"] = params.TaskName
+	v["content"] = params.Content
+	v["deadline"] = params.Deadline
+	v["priority"] = params.Priority
+	v["assign_account"] = params.AssignAccount
+	v["proposal_id"] = params.ProposalId
+	v["reward"] = params.Reward
+	v["status"] = params.Status
+	v["weight"] = params.Weight
+	err := o.Update(consts.TbTask, v, o.W("id", params.TaskId))
 	if handleErrorIfExists(c, err, errs.ErrServer) {
 		oo.LogW("SQL err:%v", err)
 		return
@@ -106,7 +145,7 @@ func TaskList(c *gin.Context) {
 // @description task detail
 // @Produce json
 // @Success 200 {object} models.ResTaskDetail
-// @Router /stpdao/v2/task/detail [get]
+// @Router /stpdao/v2/task/detail/:taskId [get]
 func TaskDetail(c *gin.Context) {
 	taskId := c.Param("taskId")
 	taskIdParam, _ := strconv.Atoi(taskId)
