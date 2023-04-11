@@ -588,6 +588,22 @@ CREATE TABLE `sysconfig` (
 INSERT INTO sysconfig (cfg_name,cfg_val,cfg_type,cfg_comment,cfg_is_enabled) VALUES
 ('cfg_swap_creator_white_list','0x5aEFAA34EaDaC483ea542077D30505eF2472cfe3','','',1);
 
+CREATE TABLE `tb_jobs_apply` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `chain_id` INT NOT NULL,
+    `dao_address` VARCHAR(44) NOT NULL,
+    `account` VARCHAR(44) NOT NULL,
+    `apply_role` VARCHAR(30) NOT NULL DEFAULT 'C_member' COMMENT 'B_admin;C_member',
+    `message` TEXT NOT NULL,
+    `status` VARCHAR(30) NOT NULL DEFAULT 'inApplication' COMMENT 'inApplication;agree;reject',
+    PRIMARY KEY (`id`),
+    INDEX `index_chain_id` (`chain_id` ASC),
+    INDEX `index_dao_address` (`dao_address` ASC),
+    INDEX `index_account` (`account` ASC)
+);
+
 CREATE TABLE `tb_jobs` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -599,7 +615,8 @@ CREATE TABLE `tb_jobs` (
     PRIMARY KEY (`id`),
     INDEX `index_chain_id` (`chain_id` ASC),
     INDEX `index_dao_address` (`dao_address` ASC),
-    INDEX `index_account` (`account` ASC)
+    INDEX `index_account` (`account` ASC),
+    INDEX `index_job` (`job` ASC)
 );
 
 CREATE TABLE `tb_task` (

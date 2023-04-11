@@ -756,6 +756,15 @@ type SignDataForTask struct {
 	DaoAddress string `json:"daoAddress"`
 }
 
+type ReqJobsApply struct {
+	Sign       SignData `json:"sign"`
+	ChainId    int64    `json:"chainId"`
+	DaoAddress string   `json:"daoAddress"`
+	// ApplyRole: C_member/B_admin
+	ApplyRole string `json:"applyRole"`
+	Message   string `json:"message"`
+}
+
 type ReqCreateTask struct {
 	Sign          SignDataForTask `json:"sign"`
 	TaskName      string          `json:"taskName"`

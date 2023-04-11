@@ -33,6 +33,7 @@ const (
 	TbNameSwapToken           = "tb_swap_token"
 	TbNameSwapTransaction     = "tb_swap_transaction"
 	TbJobs                    = "tb_jobs"
+	TbJobsApply               = "tb_jobs_apply"
 	TbTask                    = "tb_task"
 
 	EvCreateDao            = "CreateDao"
@@ -87,4 +88,17 @@ const (
 	StatusNormal  = "normal"
 	StatusEnded   = "ended"
 	StatusCancel  = "cancel"
+
+	Jobs_Status_InApplication = "inApplication"
+	Jobs_Status_Agree         = "agree"
+	Jobs_Status_Reject        = "reject"
+
+	Jobs_A_superAdmin = "A_superAdmin"
+	Jobs_B_admin      = "B_admin"
+	Jobs_C_member     = "C_member"
+
+	Task_status_A_notStarted = "A_notStarted"
+	Task_status_B_inProgress = "B_inProgress"
+	Task_status_C_done       = "C_done"
+	Task_status_D_notStatus  = "D_notStatus"
 )
