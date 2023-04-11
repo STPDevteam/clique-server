@@ -471,3 +471,18 @@ func GetTbTask(w ...[][]interface{}) (data TbTask, err error) {
 	err = oo.SqlGet(o.DBPre(consts.TbTask, w).Select(), &data)
 	return data, err
 }
+
+type TbJobs struct {
+	Id         int64  `db:"id,omitempty" sqler:"skips"`
+	CreateTime string `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime string `db:"update_time,omitempty" sqler:"skips"`
+	ChainId    int    `db:"chain_id"`
+	DaoAddress string `db:"dao_address"`
+	Account    string `db:"account"`
+	Job        string `db:"job"`
+}
+
+func GetTbJobs(w ...[][]interface{}) (data TbJobs, err error) {
+	err = oo.SqlGet(o.DBPre(consts.TbJobs, w).Select(), &data)
+	return data, err
+}

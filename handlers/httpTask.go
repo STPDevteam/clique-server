@@ -141,16 +141,21 @@ func TaskRemoveToTrash(c *gin.Context) {
 // @version 0.0.1
 // @description task list
 // @Produce json
-// @Param status query string false "status:A_notStarted;B_inProgress;C_done;D_notStatus"
 // @Param offset query int true "offset,page"
 // @Param limit query int true "limit,page"
+// @Param chainId query int true "chainId"
+// @Param daoAddress query string true "daoAddress"
+// @Param status query string false "status:A_notStarted;B_inProgress;C_done;D_notStatus"
 // @Success 200 {object} models.ResTaskList
 // @Router /stpdao/v2/task/list [get]
 func TaskList(c *gin.Context) {
 	limit := c.Query("limit")
 	offset := c.Query("offset")
+	chainId := c.Query("chainId")
 	limitParam, _ := strconv.Atoi(limit)
 	offsetParam, _ := strconv.Atoi(offset)
+	chainIdParam, _ := strconv.Atoi(chainId)
+	daoAddressParam := c.Query("daoAddress")
 	statusParam := c.Query("status")
 
 	var wStatus [][]interface{}
@@ -163,7 +168,8 @@ func TaskList(c *gin.Context) {
 		Offset: offsetParam,
 		Limit:  limitParam,
 	}
-	list, total, err := PageTbTask(consts.TbTask, order, page, o.W("is_trash", 0), wStatus)
+	list, total, err := PageTbTask(order, page,
+		o.W("chain_id", chainIdParam), o.W("dao_address", daoAddressParam), o.W("is_trash", 0), wStatus)
 	if handleErrorIfExists(c, err, errs.ErrServer) {
 		oo.LogW("SQL err:%v", err)
 		return

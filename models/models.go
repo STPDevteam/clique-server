@@ -816,3 +816,16 @@ type ResTaskDetail struct {
 	Status         string  `json:"status"`
 	Weight         float64 `json:"weight"`
 }
+
+type ResJobsList struct {
+	ChainId    int    `json:"chainId"`
+	DaoAddress string `json:"daoAddress"`
+	Account    string `json:"account"`
+	Jobs       string `json:"jobs"`
+	Avatar     string `json:"avatar"`
+	Nickname   string `json:"nickname"`
+	Twitter    string `json:"twitter"`
+	Discord    string `json:"discord"`
+	Youtube    string `json:"youtube"`
+	Opensea    string `json:"opensea"`
+}

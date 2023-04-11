@@ -582,11 +582,25 @@ CREATE TABLE `sysconfig` (
     `cfg_comment` VARCHAR(128) NULL DEFAULT '',
     `cfg_is_enabled` BOOL NOT NULL DEFAULT false,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `cfg_name_UNIQUE` (`cfg_name` ASC)
+    UNIQUE INDEX `cfg_name_UNIQUE` (`cfg_name` ASC),
+    INDEX `cfg_is_enabled` (`cfg_is_enabled` ASC)
 );
 INSERT INTO sysconfig (cfg_name,cfg_val,cfg_type,cfg_comment,cfg_is_enabled) VALUES
 ('cfg_swap_creator_white_list','0x5aEFAA34EaDaC483ea542077D30505eF2472cfe3','','',1);
 
+CREATE TABLE `tb_jobs` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `chain_id` INT NOT NULL,
+    `dao_address` VARCHAR(44) NOT NULL,
+    `account` VARCHAR(44) NOT NULL,
+    `job` VARCHAR(30) NOT NULL DEFAULT 'C_member' COMMENT 'A_superAdmin;B_admin;C_member',
+    PRIMARY KEY (`id`),
+    INDEX `index_chain_id` (`chain_id` ASC),
+    INDEX `index_dao_address` (`dao_address` ASC),
+    INDEX `index_account` (`account` ASC)
+);
 
 CREATE TABLE `tb_task` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,

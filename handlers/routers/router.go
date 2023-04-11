@@ -123,6 +123,10 @@ func Router() {
 			r13.GET("/isWhite", handlers.SwapIsWhite)
 			r13.GET("/isCreatorWhite", handlers.SwapIsCreatorWhite)
 		}
+		jobs := router.Group("/jobs")
+		{
+			jobs.GET("/list", handlers.JobsList)
+		}
 		task := router.Group("/task")
 		{
 			task.POST("/create", handlers.CreateTask)
