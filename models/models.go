@@ -757,6 +757,7 @@ type SignDataForTask struct {
 }
 
 type ReqJobsApply struct {
+	// msg(as before): Welcome come Clique
 	Sign       SignData `json:"sign"`
 	ChainId    int64    `json:"chainId"`
 	DaoAddress string   `json:"daoAddress"`
@@ -837,4 +838,15 @@ type ResJobsList struct {
 	Discord    string `json:"discord"`
 	Youtube    string `json:"youtube"`
 	Opensea    string `json:"opensea"`
+}
+
+type ResJobsApplyList struct {
+	ChainId    int    `json:"chainId"`
+	DaoAddress string `json:"daoAddress"`
+	Account    string `json:"account"`
+	Avatar     string `json:"avatar"`
+	Nickname   string `json:"nickname"`
+	ApplyRole  string `json:"applyRole"`
+	ApplyTime  int64  `json:"applyTime"`
+	Message    string `json:"message"`
 }

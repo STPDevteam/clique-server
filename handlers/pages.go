@@ -6,6 +6,7 @@ import (
 	"stp_dao_v2/db"
 	"stp_dao_v2/db/o"
 	"stp_dao_v2/models"
+	"time"
 )
 
 func PageTbTask(order string, page ReqPagination, w ...[][]interface{}) (list []models.ResTaskList, total int64, err error) {
@@ -96,6 +97,49 @@ func PageTbJobs(order string, page ReqPagination, w ...[][]interface{}) (list []
 			Discord:    discord,
 			Youtube:    youtube,
 			Opensea:    opensea,
+		})
+	}
+	return list, total, nil
+}
+
+func PageTbJobsApply(order string, page ReqPagination, w ...[][]interface{}) (list []models.ResJobsApplyList, total int64, err error) {
+	var data []db.TbJobsApply
+	sqler := o.DBPre(consts.TbJobsApply, w)
+	sqlCopy := *sqler
+	err = oo.SqlGet(sqlCopy.Count(), &total)
+	if err == nil {
+		sqlCopy = *sqler
+		err = oo.SqlSelect(sqlCopy.Order(order).Limit(page.Limit).Offset(page.Offset).Select(), &data)
+	}
+	if err != nil {
+		oo.LogW("sqler:%s", sqler)
+		return nil, 0, err
+	}
+
+	list = make([]models.ResJobsApplyList, 0)
+	for i := range data {
+		ls := data[i]
+
+		var avatar, nickname string
+		if ls.Account != "" {
+			account, err := db.GetTbAccountModel(o.W("account", ls.Account))
+			if err != nil && err != oo.ErrNoRows {
+				return nil, 0, err
+			}
+			avatar = account.AccountLogo.String
+			nickname = account.Nickname.String
+		}
+
+		createAt, _ := time.Parse("2006-01-02 15:04:05", ls.CreateTime)
+		list = append(list, models.ResJobsApplyList{
+			ChainId:    ls.ChainId,
+			DaoAddress: ls.DaoAddress,
+			Account:    ls.Account,
+			Avatar:     avatar,
+			Nickname:   nickname,
+			ApplyRole:  ls.ApplyRole,
+			ApplyTime:  createAt.Unix(),
+			Message:    ls.Message,
 		})
 	}
 	return list, total, nil

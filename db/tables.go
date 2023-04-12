@@ -486,3 +486,15 @@ func GetTbJobs(w ...[][]interface{}) (data TbJobs, err error) {
 	err = oo.SqlGet(o.DBPre(consts.TbJobs, w).Select(), &data)
 	return data, err
 }
+
+type TbJobsApply struct {
+	Id         int64  `db:"id,omitempty" sqler:"skips"`
+	CreateTime string `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime string `db:"update_time,omitempty" sqler:"skips"`
+	ChainId    int    `db:"chain_id"`
+	DaoAddress string `db:"dao_address"`
+	Account    string `db:"account"`
+	ApplyRole  string `db:"apply_role"`
+	Message    string `db:"message"`
+	Status     string `db:"status"`
+}

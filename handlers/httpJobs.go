@@ -25,11 +25,11 @@ func JobsApply(c *gin.Context) {
 		return
 	}
 
-	if !checkLogin(&params.Sign) {
-		oo.LogD("SignData err not auth")
-		handleError(c, errs.ErrUnAuthorized)
-		return
-	}
+	//if !checkLogin(&params.Sign) {
+	//	oo.LogD("SignData err not auth")
+	//	handleError(c, errs.ErrUnAuthorized)
+	//	return
+	//}
 
 	countJobs, err := o.Count(consts.TbJobs, o.W("chain_id", params.ChainId), o.W("dao_address", params.DaoAddress),
 		o.W("account", params.Sign.Account), o.W("job", params.ApplyRole))
@@ -68,6 +68,41 @@ func JobsApply(c *gin.Context) {
 	}
 
 	jsonSuccess(c)
+}
+
+// @Summary jobs apply list
+// @Tags jobs
+// @version 0.0.1
+// @description jobs apply list
+// @Produce json
+// @Param offset query int true "offset,page"
+// @Param limit query int true "limit,page"
+// @Param chainId query int true "chainId"
+// @Param daoAddress query string true "daoAddress"
+// @Success 200 {object} models.ResJobsApplyList
+// @Router /stpdao/v2/jobs/list [get]
+func JobsApplyList(c *gin.Context) {
+	limit := c.Query("limit")
+	offset := c.Query("offset")
+	chainId := c.Query("chainId")
+	limitParam, _ := strconv.Atoi(limit)
+	offsetParam, _ := strconv.Atoi(offset)
+	chainIdParam, _ := strconv.Atoi(chainId)
+	daoAddressParam := c.Query("daoAddress")
+
+	order := fmt.Sprintf("create_time DESC")
+	page := ReqPagination{
+		Offset: offsetParam,
+		Limit:  limitParam,
+	}
+	list, total, err := PageTbJobsApply(order, page, o.W("chain_id", chainIdParam), o.W("dao_address", daoAddressParam),
+		o.W("status", consts.Jobs_Status_InApplication))
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err:%v", err)
+		return
+	}
+
+	jsonPagination(c, list, total, page)
 }
 
 // @Summary jobs list
