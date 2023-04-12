@@ -341,6 +341,42 @@ const docTemplate = `{
                 }
             }
         },
+        "/stpdao/v2/account/top/list": {
+            "get": {
+                "description": "account top list",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "account"
+                ],
+                "summary": "account top list",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "offset,page",
+                        "name": "offset",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit,page",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResAccountTopList"
+                        }
+                    }
+                }
+            }
+        },
         "/stpdao/v2/account/update": {
             "post": {
                 "description": "update account info",
@@ -944,6 +980,87 @@ const docTemplate = `{
                 }
             }
         },
+        "/stpdao/v2/jobs/apply": {
+            "post": {
+                "description": "jobs apply",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "jobs"
+                ],
+                "summary": "jobs apply",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ReqJobsApply"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/stpdao/v2/jobs/list": {
+            "get": {
+                "description": "jobs list",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "jobs"
+                ],
+                "summary": "jobs list",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "offset,page",
+                        "name": "offset",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit,page",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "chainId",
+                        "name": "chainId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "daoAddress",
+                        "name": "daoAddress",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResJobsList"
+                        }
+                    }
+                }
+            }
+        },
         "/stpdao/v2/notification/list": {
             "get": {
                 "description": "notification list",
@@ -1399,14 +1516,14 @@ const docTemplate = `{
         },
         "/stpdao/v2/swap/isWhite": {
             "get": {
-                "description": "isWhite",
+                "description": "buy isWhite",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "swap"
                 ],
-                "summary": "isWhite",
+                "summary": "buy isWhite",
                 "parameters": [
                     {
                         "type": "string",
@@ -1585,6 +1702,175 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.ResSwapTransactionListPage"
+                        }
+                    }
+                }
+            }
+        },
+        "/stpdao/v2/task/create": {
+            "post": {
+                "description": "create task",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "task"
+                ],
+                "summary": "create task",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ReqCreateTask"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/stpdao/v2/task/detail/:taskId": {
+            "get": {
+                "description": "task detail",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "task"
+                ],
+                "summary": "task detail",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResTaskDetail"
+                        }
+                    }
+                }
+            }
+        },
+        "/stpdao/v2/task/list": {
+            "get": {
+                "description": "task list",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "task"
+                ],
+                "summary": "task list",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "offset,page",
+                        "name": "offset",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit,page",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "chainId",
+                        "name": "chainId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "daoAddress",
+                        "name": "daoAddress",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "status:A_notStarted;B_inProgress;C_done;D_notStatus",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResTaskList"
+                        }
+                    }
+                }
+            }
+        },
+        "/stpdao/v2/task/remove": {
+            "post": {
+                "description": "remove task to trash",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "task"
+                ],
+                "summary": "remove task to trash",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ReqRemoveTask"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/stpdao/v2/task/update": {
+            "post": {
+                "description": "update task",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "task"
+                ],
+                "summary": "update task",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ReqUpdateTask"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -2094,6 +2380,57 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ReqCreateTask": {
+            "type": "object",
+            "properties": {
+                "assignAccount": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "deadline": {
+                    "type": "integer"
+                },
+                "priority": {
+                    "type": "string"
+                },
+                "proposalId": {
+                    "type": "integer"
+                },
+                "reward": {
+                    "type": "string"
+                },
+                "sign": {
+                    "$ref": "#/definitions/models.SignDataForTask"
+                },
+                "taskName": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ReqJobsApply": {
+            "type": "object",
+            "properties": {
+                "applyRole": {
+                    "description": "ApplyRole: C_member/B_admin",
+                    "type": "string"
+                },
+                "chainId": {
+                    "type": "integer"
+                },
+                "daoAddress": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "sign": {
+                    "description": "msg(as before): Welcome come Clique",
+                    "$ref": "#/definitions/models.SignData"
+                }
+            }
+        },
         "models.ReqPurchased": {
             "type": "object",
             "properties": {
@@ -2105,6 +2442,58 @@ const docTemplate = `{
                 },
                 "saleId": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.ReqRemoveTask": {
+            "type": "object",
+            "properties": {
+                "sign": {
+                    "$ref": "#/definitions/models.SignDataForTask"
+                },
+                "taskId": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "models.ReqUpdateTask": {
+            "type": "object",
+            "properties": {
+                "assignAccount": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "deadline": {
+                    "type": "integer"
+                },
+                "priority": {
+                    "type": "string"
+                },
+                "proposalId": {
+                    "type": "integer"
+                },
+                "reward": {
+                    "type": "string"
+                },
+                "sign": {
+                    "$ref": "#/definitions/models.SignDataForTask"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "taskId": {
+                    "type": "integer"
+                },
+                "taskName": {
+                    "type": "string"
+                },
+                "weight": {
+                    "type": "number"
                 }
             }
         },
@@ -2270,6 +2659,23 @@ const docTemplate = `{
                 },
                 "total": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.ResAccountTopList": {
+            "type": "object",
+            "properties": {
+                "account": {
+                    "type": "string"
+                },
+                "avatar": {
+                    "type": "string"
+                },
+                "fansNum": {
+                    "type": "integer"
+                },
+                "nickname": {
+                    "type": "string"
                 }
             }
         },
@@ -2523,6 +2929,70 @@ const docTemplate = `{
             "properties": {
                 "isWhite": {
                     "type": "boolean"
+                }
+            }
+        },
+        "models.ResJobsApplyList": {
+            "type": "object",
+            "properties": {
+                "account": {
+                    "type": "string"
+                },
+                "applyRole": {
+                    "type": "string"
+                },
+                "applyTime": {
+                    "type": "integer"
+                },
+                "avatar": {
+                    "type": "string"
+                },
+                "chainId": {
+                    "type": "integer"
+                },
+                "daoAddress": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "nickname": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ResJobsList": {
+            "type": "object",
+            "properties": {
+                "account": {
+                    "type": "string"
+                },
+                "avatar": {
+                    "type": "string"
+                },
+                "chainId": {
+                    "type": "integer"
+                },
+                "daoAddress": {
+                    "type": "string"
+                },
+                "discord": {
+                    "type": "string"
+                },
+                "jobs": {
+                    "type": "string"
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "opensea": {
+                    "type": "string"
+                },
+                "twitter": {
+                    "type": "string"
+                },
+                "youtube": {
+                    "type": "string"
                 }
             }
         },
@@ -2964,6 +3434,91 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ResTaskDetail": {
+            "type": "object",
+            "properties": {
+                "assignAccount": {
+                    "type": "string"
+                },
+                "assignAvatar": {
+                    "type": "string"
+                },
+                "assignNickname": {
+                    "type": "string"
+                },
+                "chainId": {
+                    "type": "integer"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "daoAddress": {
+                    "type": "string"
+                },
+                "deadline": {
+                    "type": "integer"
+                },
+                "priority": {
+                    "type": "string"
+                },
+                "proposalId": {
+                    "type": "integer"
+                },
+                "reward": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "taskId": {
+                    "type": "integer"
+                },
+                "taskName": {
+                    "type": "string"
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.ResTaskList": {
+            "type": "object",
+            "properties": {
+                "assignAccount": {
+                    "type": "string"
+                },
+                "assignAvatar": {
+                    "type": "string"
+                },
+                "assignNickname": {
+                    "type": "string"
+                },
+                "chainId": {
+                    "type": "integer"
+                },
+                "daoAddress": {
+                    "type": "string"
+                },
+                "deadline": {
+                    "type": "integer"
+                },
+                "priority": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "taskId": {
+                    "type": "integer"
+                },
+                "taskName": {
+                    "type": "string"
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
         "models.ResTokenImg": {
             "type": "object",
             "properties": {
@@ -3132,6 +3687,28 @@ const docTemplate = `{
                 "signature": {
                     "description": "personal_sign sign result,no 0x",
                     "type": "string"
+                }
+            }
+        },
+        "models.SignDataForTask": {
+            "type": "object",
+            "properties": {
+                "account": {
+                    "description": "personal_sign address,0x",
+                    "type": "string"
+                },
+                "chainId": {
+                    "type": "integer"
+                },
+                "daoAddress": {
+                    "type": "string"
+                },
+                "signature": {
+                    "description": "personal_sign sign result,no 0x",
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "integer"
                 }
             }
         },

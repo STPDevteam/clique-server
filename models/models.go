@@ -848,6 +848,7 @@ type ResJobsList struct {
 }
 
 type ResJobsApplyList struct {
+	Id         int64  `json:"id"`
 	ChainId    int    `json:"chainId"`
 	DaoAddress string `json:"daoAddress"`
 	Account    string `json:"account"`
@@ -856,4 +857,10 @@ type ResJobsApplyList struct {
 	ApplyRole  string `json:"applyRole"`
 	ApplyTime  int64  `json:"applyTime"`
 	Message    string `json:"message"`
+}
+
+type ReqJobsApplyReview struct {
+	Sign        SignDataForTask `json:"sign"`
+	JobsApplyId int64           `json:"jobsApplyId"`
+	Pass        bool            `json:"pass"`
 }

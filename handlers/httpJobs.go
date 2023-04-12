@@ -25,11 +25,11 @@ func JobsApply(c *gin.Context) {
 		return
 	}
 
-	//if !checkLogin(&params.Sign) {
-	//	oo.LogD("SignData err not auth")
-	//	handleError(c, errs.ErrUnAuthorized)
-	//	return
-	//}
+	if !checkLogin(&params.Sign) {
+		oo.LogD("SignData err not auth")
+		handleError(c, errs.ErrUnAuthorized)
+		return
+	}
 
 	countJobs, err := o.Count(consts.TbJobs, o.W("chain_id", params.ChainId), o.W("dao_address", params.DaoAddress),
 		o.W("account", params.Sign.Account), o.W("job", params.ApplyRole))
@@ -105,6 +105,21 @@ func JobsApplyList(c *gin.Context) {
 	jsonPagination(c, list, total, page)
 }
 
+// @Summary jobs apply review
+// @Tags jobs
+// @version 0.0.1
+// @description jobs apply review
+// @Produce json
+// @Param request body models.ReqJobsApplyReview true "request"
+// @Success 200 {object} models.Response
+// @Router /stpdao/v2/jobs/apply/review [post]
+func JobsApplyReview(c *gin.Context) {
+	var params models.ReqJobsApplyReview
+	if handleErrorIfExists(c, c.ShouldBindJSON(&params), errs.ErrParam) {
+		return
+	}
+}
+
 // @Summary jobs list
 // @Tags jobs
 // @version 0.0.1
@@ -114,7 +129,7 @@ func JobsApplyList(c *gin.Context) {
 // @Param limit query int true "limit,page"
 // @Param chainId query int true "chainId"
 // @Param daoAddress query string true "daoAddress"
-// @Success 200 {object} models.
+// @Success 200 {object} models.ResJobsList
 // @Router /stpdao/v2/jobs/list [get]
 func JobsList(c *gin.Context) {
 	limit := c.Query("limit")

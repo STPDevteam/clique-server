@@ -240,6 +240,40 @@ definitions:
           type: string
         type: array
     type: object
+  models.ReqCreateTask:
+    properties:
+      assignAccount:
+        type: string
+      content:
+        type: string
+      deadline:
+        type: integer
+      priority:
+        type: string
+      proposalId:
+        type: integer
+      reward:
+        type: string
+      sign:
+        $ref: '#/definitions/models.SignDataForTask'
+      taskName:
+        type: string
+    type: object
+  models.ReqJobsApply:
+    properties:
+      applyRole:
+        description: 'ApplyRole: C_member/B_admin'
+        type: string
+      chainId:
+        type: integer
+      daoAddress:
+        type: string
+      message:
+        type: string
+      sign:
+        $ref: '#/definitions/models.SignData'
+        description: 'msg(as before): Welcome come Clique'
+    type: object
   models.ReqPurchased:
     properties:
       account:
@@ -248,6 +282,40 @@ definitions:
         type: string
       saleId:
         type: integer
+    type: object
+  models.ReqRemoveTask:
+    properties:
+      sign:
+        $ref: '#/definitions/models.SignDataForTask'
+      taskId:
+        items:
+          type: integer
+        type: array
+    type: object
+  models.ReqUpdateTask:
+    properties:
+      assignAccount:
+        type: string
+      content:
+        type: string
+      deadline:
+        type: integer
+      priority:
+        type: string
+      proposalId:
+        type: integer
+      reward:
+        type: string
+      sign:
+        $ref: '#/definitions/models.SignDataForTask'
+      status:
+        type: string
+      taskId:
+        type: integer
+      taskName:
+        type: string
+      weight:
+        type: number
     type: object
   models.ResAccountFollow:
     properties:
@@ -356,6 +424,17 @@ definitions:
         type: array
       total:
         type: integer
+    type: object
+  models.ResAccountTopList:
+    properties:
+      account:
+        type: string
+      avatar:
+        type: string
+      fansNum:
+        type: integer
+      nickname:
+        type: string
     type: object
   models.ResActivityList:
     properties:
@@ -524,6 +603,48 @@ definitions:
     properties:
       isWhite:
         type: boolean
+    type: object
+  models.ResJobsApplyList:
+    properties:
+      account:
+        type: string
+      applyRole:
+        type: string
+      applyTime:
+        type: integer
+      avatar:
+        type: string
+      chainId:
+        type: integer
+      daoAddress:
+        type: string
+      message:
+        type: string
+      nickname:
+        type: string
+    type: object
+  models.ResJobsList:
+    properties:
+      account:
+        type: string
+      avatar:
+        type: string
+      chainId:
+        type: integer
+      daoAddress:
+        type: string
+      discord:
+        type: string
+      jobs:
+        type: string
+      nickname:
+        type: string
+      opensea:
+        type: string
+      twitter:
+        type: string
+      youtube:
+        type: string
     type: object
   models.ResLeftDaoCreator:
     properties:
@@ -812,6 +933,62 @@ definitions:
       total:
         type: integer
     type: object
+  models.ResTaskDetail:
+    properties:
+      assignAccount:
+        type: string
+      assignAvatar:
+        type: string
+      assignNickname:
+        type: string
+      chainId:
+        type: integer
+      content:
+        type: string
+      daoAddress:
+        type: string
+      deadline:
+        type: integer
+      priority:
+        type: string
+      proposalId:
+        type: integer
+      reward:
+        type: string
+      status:
+        type: string
+      taskId:
+        type: integer
+      taskName:
+        type: string
+      weight:
+        type: number
+    type: object
+  models.ResTaskList:
+    properties:
+      assignAccount:
+        type: string
+      assignAvatar:
+        type: string
+      assignNickname:
+        type: string
+      chainId:
+        type: integer
+      daoAddress:
+        type: string
+      deadline:
+        type: integer
+      priority:
+        type: string
+      status:
+        type: string
+      taskId:
+        type: integer
+      taskName:
+        type: string
+      weight:
+        type: number
+    type: object
   models.ResTokenImg:
     properties:
       large:
@@ -923,6 +1100,21 @@ definitions:
       signature:
         description: personal_sign sign result,no 0x
         type: string
+    type: object
+  models.SignDataForTask:
+    properties:
+      account:
+        description: personal_sign address,0x
+        type: string
+      chainId:
+        type: integer
+      daoAddress:
+        type: string
+      signature:
+        description: personal_sign sign result,no 0x
+        type: string
+      timestamp:
+        type: integer
     type: object
   models.UpdateAccountParam:
     properties:
@@ -1194,6 +1386,30 @@ paths:
           schema:
             $ref: '#/definitions/models.ResAccountSignPage'
       summary: account sign record list
+      tags:
+      - account
+  /stpdao/v2/account/top/list:
+    get:
+      description: account top list
+      parameters:
+      - description: offset,page
+        in: query
+        name: offset
+        required: true
+        type: integer
+      - description: limit,page
+        in: query
+        name: limit
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResAccountTopList'
+      summary: account top list
       tags:
       - account
   /stpdao/v2/account/update:
@@ -1592,6 +1808,60 @@ paths:
       summary: update img
       tags:
       - img
+  /stpdao/v2/jobs/apply:
+    post:
+      description: jobs apply
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ReqJobsApply'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: jobs apply
+      tags:
+      - jobs
+  /stpdao/v2/jobs/list:
+    get:
+      description: jobs list
+      parameters:
+      - description: offset,page
+        in: query
+        name: offset
+        required: true
+        type: integer
+      - description: limit,page
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: chainId
+        in: query
+        name: chainId
+        required: true
+        type: integer
+      - description: daoAddress
+        in: query
+        name: daoAddress
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResJobsList'
+      summary: jobs list
+      tags:
+      - jobs
   /stpdao/v2/notification/list:
     get:
       description: notification list
@@ -1893,7 +2163,7 @@ paths:
       - swap
   /stpdao/v2/swap/isWhite:
     get:
-      description: isWhite
+      description: buy isWhite
       parameters:
       - description: account
         in: query
@@ -1912,7 +2182,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.ResIsWhite'
-      summary: isWhite
+      summary: buy isWhite
       tags:
       - swap
   /stpdao/v2/swap/list:
@@ -2019,6 +2289,117 @@ paths:
       summary: transactions list
       tags:
       - swap
+  /stpdao/v2/task/create:
+    post:
+      description: create task
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ReqCreateTask'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: create task
+      tags:
+      - task
+  /stpdao/v2/task/detail/:taskId:
+    get:
+      description: task detail
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResTaskDetail'
+      summary: task detail
+      tags:
+      - task
+  /stpdao/v2/task/list:
+    get:
+      description: task list
+      parameters:
+      - description: offset,page
+        in: query
+        name: offset
+        required: true
+        type: integer
+      - description: limit,page
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: chainId
+        in: query
+        name: chainId
+        required: true
+        type: integer
+      - description: daoAddress
+        in: query
+        name: daoAddress
+        required: true
+        type: string
+      - description: status:A_notStarted;B_inProgress;C_done;D_notStatus
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResTaskList'
+      summary: task list
+      tags:
+      - task
+  /stpdao/v2/task/remove:
+    post:
+      description: remove task to trash
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ReqRemoveTask'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: remove task to trash
+      tags:
+      - task
+  /stpdao/v2/task/update:
+    post:
+      description: update task
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ReqUpdateTask'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: update task
+      tags:
+      - task
   /stpdao/v2/token/img:
     get:
       description: query Token img

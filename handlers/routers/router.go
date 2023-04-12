@@ -128,6 +128,7 @@ func Router() {
 		{
 			jobs.POST("/apply", handlers.JobsApply)
 			jobs.GET("/apply/list", handlers.JobsApplyList)
+			jobs.POST("/apply/review", handlers.JobsApplyReview)
 			jobs.GET("/list", handlers.JobsList)
 		}
 		task := router.Group("/task")
