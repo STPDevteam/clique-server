@@ -10,6 +10,8 @@ import (
 	"stp_dao_v2/config"
 	"stp_dao_v2/consts"
 	"stp_dao_v2/db"
+	"stp_dao_v2/db/o"
+	"stp_dao_v2/errs"
 	"stp_dao_v2/models"
 	"stp_dao_v2/utils"
 	"strconv"
@@ -608,6 +610,20 @@ func HttpUpdateAccountFollow(c *gin.Context) {
 				return
 			}
 		}
+	}
+
+	fansNum, err := o.Count(consts.TbNameAccountFollow, o.W("followed", params.Params.FollowAccount), o.W("status", 1))
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err: %v", err)
+		return
+	}
+
+	var v = make(map[string]interface{})
+	v["fans_num"] = fansNum
+	err = o.Update(consts.TbNameAccount, v, o.W("account", params.Params.FollowAccount))
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err: %v", err)
+		return
 	}
 
 	c.JSON(http.StatusOK, models.Response{

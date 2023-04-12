@@ -56,6 +56,7 @@ type TbAccountModel struct {
 	Youtube      sql.NullString `db:"youtube"`
 	Opensea      sql.NullString `db:"opensea"`
 	PushSwitch   int            `db:"push_switch"`
+	FansNum      int64          `db:"fans_num"`
 }
 
 func GetTbAccountModel(w ...[][]interface{}) (data TbAccountModel, err error) {

@@ -193,6 +193,7 @@ CREATE TABLE `tb_account` (
     `youtube` VARCHAR(128),
     `opensea` VARCHAR(128),
     `push_switch` INT NOT NULL DEFAULT 0,
+    `fans_num` INT NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
     INDEX `index_account` (`account` ASC)
 );
