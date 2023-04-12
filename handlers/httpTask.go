@@ -26,7 +26,8 @@ func CreateTask(c *gin.Context) {
 		return
 	}
 
-	if !checkAdminForTaskCreate(params.Sign) {
+	_, ok := checkAdminOrMember(params.Sign)
+	if !ok {
 		oo.LogD("SignData err not auth")
 		handleError(c, errs.ErrUnAuthorized)
 		return
@@ -78,7 +79,8 @@ func UpdateTask(c *gin.Context) {
 		return
 	}
 
-	if !checkAdminForTaskCreate(params.Sign) {
+	_, ok := checkAdminOrMember(params.Sign)
+	if !ok {
 		oo.LogD("SignData err not auth")
 		handleError(c, errs.ErrUnAuthorized)
 		return
@@ -117,7 +119,8 @@ func TaskRemoveToTrash(c *gin.Context) {
 		return
 	}
 
-	if !checkAdminForTaskCreate(params.Sign) {
+	_, ok := checkAdminOrMember(params.Sign)
+	if !ok {
 		oo.LogD("SignData err not auth")
 		handleError(c, errs.ErrUnAuthorized)
 		return

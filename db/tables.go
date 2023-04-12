@@ -499,3 +499,8 @@ type TbJobsApply struct {
 	Message    string `db:"message"`
 	Status     string `db:"status"`
 }
+
+func GetTbJobsApply(w ...[][]interface{}) (data TbJobsApply, err error) {
+	err = oo.SqlGet(o.DBPre(consts.TbJobsApply, w).Select(), &data)
+	return data, err
+}

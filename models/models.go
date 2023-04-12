@@ -862,5 +862,5 @@ type ResJobsApplyList struct {
 type ReqJobsApplyReview struct {
 	Sign        SignDataForTask `json:"sign"`
 	JobsApplyId int64           `json:"jobsApplyId"`
-	Pass        bool            `json:"pass"`
+	IsPass      bool            `json:"isPass"`
 }

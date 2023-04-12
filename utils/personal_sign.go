@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
-	"math/big"
 	"strconv"
 	"strings"
 	"time"
@@ -33,7 +32,7 @@ func CheckSignMessageTimestamp(message string) bool {
 
 func CheckAdminSignMessageTimestamp(timestamp int64) bool {
 	now := time.Now().Unix()
-	if timestamp < now {
+	if timestamp < now || timestamp > now+86400 {
 		return false
 	}
 
@@ -117,11 +116,11 @@ func SignMessage(message, secret string) (string, error) {
 		err = fmt.Errorf("crypto.Sign err:%v", err)
 		return "", err
 	}
-	sig1 := big.NewInt(0)
-	sig1.Add(big.NewInt(0).SetBytes(sig), big.NewInt(27))
-	sig = sig1.Bytes()
+	if sig[64] < 27 {
+		sig[64] += 27
+	}
 
 	signature := common.Bytes2Hex(sig)
 
-	return fmt.Sprintf("%0130s", signature), nil
+	return signature, nil
 }

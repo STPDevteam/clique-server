@@ -5,6 +5,7 @@ import (
 	oo "github.com/Anna2024/liboo"
 	"github.com/gin-gonic/gin"
 	"stp_dao_v2/consts"
+	"stp_dao_v2/db"
 	"stp_dao_v2/db/o"
 	"stp_dao_v2/errs"
 	"stp_dao_v2/models"
@@ -118,6 +119,78 @@ func JobsApplyReview(c *gin.Context) {
 	if handleErrorIfExists(c, c.ShouldBindJSON(&params), errs.ErrParam) {
 		return
 	}
+
+	role, ok := checkAdminOrMember(params.Sign)
+	if !ok {
+		oo.LogD("SignData err not auth")
+		handleError(c, errs.ErrUnAuthorized)
+		return
+	}
+
+	jobsApplyData, err := db.GetTbJobsApply(o.W("id", params.JobsApplyId))
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err:%v", err)
+		return
+	}
+
+	if jobsApplyData.ApplyRole == consts.Jobs_B_admin {
+		if role != consts.Jobs_A_superAdmin {
+			handleError(c, errs.ErrUnAuthorized)
+			return
+		}
+	} else if jobsApplyData.ApplyRole == consts.Jobs_C_member {
+		if role != consts.Jobs_A_superAdmin && role != consts.Jobs_B_admin {
+			handleError(c, errs.ErrUnAuthorized)
+			return
+		}
+	}
+
+	var status string
+	if params.IsPass {
+		status = consts.Jobs_Status_Agree
+	} else {
+		status = consts.Jobs_Status_Reject
+	}
+	var val = make(map[string]interface{})
+	val["status"] = status
+	err = o.Update(consts.TbJobsApply, val, o.W("id", params.JobsApplyId))
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err:%v", err)
+		return
+	}
+
+	if params.IsPass {
+		jobData, err := db.GetTbJobs(
+			o.W("chain_id", jobsApplyData.ChainId),
+			o.W("dao_address", jobsApplyData.DaoAddress),
+			o.W("account", jobsApplyData.Account))
+		if handleErrorIfExistsExceptNoRows(c, err, errs.ErrServer) {
+			oo.LogW("SQL err:%v", err)
+			return
+		}
+
+		var v = make(map[string]interface{})
+		v["job"] = jobsApplyData.ApplyRole
+		var e error
+		if jobData.Job != "" {
+			e = o.Update(consts.TbJobs, v, o.W("chain_id", jobsApplyData.ChainId),
+				o.W("dao_address", jobsApplyData.DaoAddress),
+				o.W("account", jobsApplyData.Account))
+		} else {
+			var m = make([]map[string]interface{}, 0)
+			v["chain_id"] = jobsApplyData.ChainId
+			v["dao_address"] = jobsApplyData.DaoAddress
+			v["account"] = jobsApplyData.Account
+			m = append(m, v)
+			e = o.Insert(consts.TbJobs, m)
+		}
+		if handleErrorIfExists(c, e, errs.ErrServer) {
+			oo.LogW("SQL err:%v", e)
+			return
+		}
+	}
+
+	jsonSuccess(c)
 }
 
 // @Summary jobs list

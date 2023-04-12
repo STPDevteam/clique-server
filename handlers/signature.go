@@ -92,34 +92,32 @@ func checkAccountJoinOrQuit(data *models.JoinDaoWithSignParam) (ret bool) {
 	return true
 }
 
-func checkAdminForTaskCreate(data models.SignDataForTask) (ret bool) {
+func checkAdminOrMember(data models.SignDataForTask) (role string, ret bool) {
 	message := fmt.Sprintf(`%d,%s,%s,%d`, data.ChainId, data.DaoAddress, data.Account, data.Timestamp)
 	ret, err := utils.CheckPersonalSign(message, data.Account, data.Signature)
 	if err != nil {
 		oo.LogW("signMessage err:%v", err)
-		return false
+		return "", false
 	}
 
 	if !ret {
 		oo.LogW("check Sign failed.")
-		return false
+		return "", false
 	}
 
 	if !utils.CheckAdminSignMessageTimestamp(data.Timestamp) {
 		oo.LogW("signMessage deadline.")
-		return false
+		return "", false
 	}
 
-	arr, err := db.SelectTbAdmin(
+	jobs, err := db.GetTbJobs(
 		o.W("chain_id", data.ChainId),
 		o.W("dao_address", data.DaoAddress),
 		o.W("account", data.Account))
 	if err != nil {
 		oo.LogW("SQL err:%v", err)
-		return false
+		return "", false
 	}
-	if len(arr) == 0 {
-		return false
-	}
-	return true
+
+	return jobs.Job, true
 }
