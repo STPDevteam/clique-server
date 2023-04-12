@@ -79,6 +79,7 @@ func Router() {
 			r6.GET("/followers/list", handlers.HttpAccountFollowersList)
 			r6.GET("/relation", handlers.HttpAccountRelation)
 			r6.GET("/push/setting", handlers.HttpPushSetting)
+			r6.GET("/top/list", handlers.HttpAccountTopList)
 		}
 		r7 := router.Group("/token")
 		{

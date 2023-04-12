@@ -918,3 +918,32 @@ func HttpPushSetting(c *gin.Context) {
 		Message: "ok",
 	})
 }
+
+// @Summary account top list
+// @Tags account
+// @version 0.0.1
+// @description account top list
+// @Produce json
+// @Param offset query int true "offset,page"
+// @Param limit query int true "limit,page"
+// @Success 200 {object} models.ResAccountTopList
+// @Router /stpdao/v2/account/top/list [get]
+func HttpAccountTopList(c *gin.Context) {
+	limit := c.Query("limit")
+	offset := c.Query("offset")
+	limitParam, _ := strconv.Atoi(limit)
+	offsetParam, _ := strconv.Atoi(offset)
+
+	order := fmt.Sprintf("fans_num DESC")
+	page := ReqPagination{
+		Offset: offsetParam,
+		Limit:  limitParam,
+	}
+	list, total, err := PageTbAccountTopList(order, page)
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err:%v", err)
+		return
+	}
+
+	jsonPagination(c, list, total, page)
+}

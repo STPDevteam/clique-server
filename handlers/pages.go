@@ -144,3 +144,31 @@ func PageTbJobsApply(order string, page ReqPagination, w ...[][]interface{}) (li
 	}
 	return list, total, nil
 }
+
+func PageTbAccountTopList(order string, page ReqPagination, w ...[][]interface{}) (list []models.ResAccountTopList, total int64, err error) {
+	var data []db.TbAccountModel
+	sqler := o.DBPre(consts.TbNameAccount, w)
+	sqlCopy := *sqler
+	err = oo.SqlGet(sqlCopy.Count(), &total)
+	if err == nil {
+		sqlCopy = *sqler
+		err = oo.SqlSelect(sqlCopy.Order(order).Limit(page.Limit).Offset(page.Offset).Select(), &data)
+	}
+	if err != nil {
+		oo.LogW("sqler:%s", sqler)
+		return nil, 0, err
+	}
+
+	list = make([]models.ResAccountTopList, 0)
+	for i := range data {
+		ls := data[i]
+
+		list = append(list, models.ResAccountTopList{
+			Account:  ls.Account,
+			Avatar:   ls.AccountLogo.String,
+			Nickname: ls.Nickname.String,
+			FansNum:  ls.FansNum,
+		})
+	}
+	return list, total, nil
+}

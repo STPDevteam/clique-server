@@ -647,6 +647,13 @@ type ResAccountFollowers struct {
 	Relation string `json:"relation"`
 }
 
+type ResAccountTopList struct {
+	Account  string `json:"account"`
+	Avatar   string `json:"avatar"`
+	Nickname string `json:"nickname"`
+	FansNum  int64  `json:"fansNum"`
+}
+
 type ReqCreateSale struct {
 	ChainId int    `json:"chainId"`
 	Title   string `json:"title"`
