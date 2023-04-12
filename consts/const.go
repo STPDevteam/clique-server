@@ -96,6 +96,7 @@ const (
 	Jobs_A_superAdmin = "A_superAdmin"
 	Jobs_B_admin      = "B_admin"
 	Jobs_C_member     = "C_member"
+	Jobs_noRole       = "noRole"
 
 	Task_status_A_notStarted = "A_notStarted"
 	Task_status_B_inProgress = "B_inProgress"

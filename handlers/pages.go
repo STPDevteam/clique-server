@@ -87,6 +87,7 @@ func PageTbJobs(order string, page ReqPagination, w ...[][]interface{}) (list []
 		}
 
 		list = append(list, models.ResJobsList{
+			JobId:      ls.Id,
 			ChainId:    ls.ChainId,
 			DaoAddress: ls.DaoAddress,
 			Account:    ls.Account,
@@ -132,7 +133,7 @@ func PageTbJobsApply(order string, page ReqPagination, w ...[][]interface{}) (li
 
 		createAt, _ := time.Parse("2006-01-02 15:04:05", ls.CreateTime)
 		list = append(list, models.ResJobsApplyList{
-			Id:         ls.Id,
+			ApplyId:    ls.Id,
 			ChainId:    ls.ChainId,
 			DaoAddress: ls.DaoAddress,
 			Account:    ls.Account,

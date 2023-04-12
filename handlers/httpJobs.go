@@ -226,3 +226,61 @@ func JobsList(c *gin.Context) {
 
 	jsonPagination(c, list, total, page)
 }
+
+// @Summary jobs alter
+// @Tags jobs
+// @version 0.0.1
+// @description jobs alter, only superAdmin or admin, change admin/member to member/noRole
+// @Produce json
+// @Param request body models.ReqJobsAlter true "request"
+// @Success 200 {object} models.Response
+// @Router /stpdao/v2/jobs/alter [post]
+func JobsAlter(c *gin.Context) {
+	var params models.ReqJobsAlter
+	if handleErrorIfExists(c, c.ShouldBindJSON(&params), errs.ErrParam) {
+		return
+	}
+
+	role, ok := checkAdminOrMember(params.Sign)
+	if !ok {
+		oo.LogD("SignData err not auth")
+		handleError(c, errs.ErrUnAuthorized)
+		return
+	}
+
+	jobData, err := db.GetTbJobs(o.W("id", params.JobId))
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err:%v", err)
+		return
+	}
+
+	if jobData.Job == consts.Jobs_B_admin {
+		if role != consts.Jobs_A_superAdmin {
+			handleError(c, errs.ErrUnAuthorized)
+			return
+		}
+	} else if jobData.Job == consts.Jobs_C_member {
+		if role != consts.Jobs_A_superAdmin && role != consts.Jobs_B_admin {
+			handleError(c, errs.ErrUnAuthorized)
+			return
+		}
+	}
+
+	if params.ChangeTo == consts.Jobs_C_member {
+		var val = make(map[string]interface{})
+		val["job"] = consts.Jobs_C_member
+		err = o.Update(consts.TbJobs, val, o.W("id", params.JobId))
+		if handleErrorIfExists(c, err, errs.ErrServer) {
+			oo.LogW("SQL err:%v", err)
+			return
+		}
+	} else if params.ChangeTo == consts.Jobs_noRole {
+		err = o.Delete(consts.TbJobs, o.W("id", params.JobId))
+		if handleErrorIfExists(c, err, errs.ErrServer) {
+			oo.LogW("SQL err:%v", err)
+			return
+		}
+	}
+
+	jsonSuccess(c)
+}

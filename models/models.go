@@ -835,6 +835,7 @@ type ResTaskDetail struct {
 }
 
 type ResJobsList struct {
+	JobId      int64  `json:"jobId"`
 	ChainId    int    `json:"chainId"`
 	DaoAddress string `json:"daoAddress"`
 	Account    string `json:"account"`
@@ -848,7 +849,7 @@ type ResJobsList struct {
 }
 
 type ResJobsApplyList struct {
-	Id         int64  `json:"id"`
+	ApplyId    int64  `json:"applyId"`
 	ChainId    int    `json:"chainId"`
 	DaoAddress string `json:"daoAddress"`
 	Account    string `json:"account"`
@@ -863,4 +864,11 @@ type ReqJobsApplyReview struct {
 	Sign        SignDataForTask `json:"sign"`
 	JobsApplyId int64           `json:"jobsApplyId"`
 	IsPass      bool            `json:"isPass"`
+}
+
+type ReqJobsAlter struct {
+	Sign  SignDataForTask `json:"sign"`
+	JobId int64           `json:"jobId"`
+	// ChangeTo: C_member/noRole
+	ChangeTo string `json:"changeTo"`
 }
