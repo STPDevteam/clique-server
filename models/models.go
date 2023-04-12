@@ -869,6 +869,6 @@ type ReqJobsApplyReview struct {
 type ReqJobsAlter struct {
 	Sign  SignDataForTask `json:"sign"`
 	JobId int64           `json:"jobId"`
-	// ChangeTo: C_member/noRole
+	// ChangeTo: B_admin/C_member/noRole
 	ChangeTo string `json:"changeTo"`
 }

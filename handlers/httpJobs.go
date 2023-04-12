@@ -259,6 +259,16 @@ func JobsAlter(c *gin.Context) {
 			handleError(c, errs.ErrUnAuthorized)
 			return
 		}
+
+		if params.ChangeTo == consts.Jobs_B_admin {
+			var val = make(map[string]interface{})
+			val["job"] = consts.Jobs_B_admin
+			err = o.Update(consts.TbJobs, val, o.W("id", params.JobId))
+			if handleErrorIfExists(c, err, errs.ErrServer) {
+				oo.LogW("SQL err:%v", err)
+				return
+			}
+		}
 	} else if jobData.Job == consts.Jobs_C_member {
 		if role != consts.Jobs_A_superAdmin && role != consts.Jobs_B_admin {
 			handleError(c, errs.ErrUnAuthorized)
