@@ -25,6 +25,10 @@ func JobsApply(c *gin.Context) {
 	if handleErrorIfExists(c, c.ShouldBindJSON(&params), errs.ErrParam) {
 		return
 	}
+	if params.ApplyRole != consts.Jobs_B_admin && params.ApplyRole != consts.Jobs_C_member {
+		handleError(c, errs.ErrParam)
+		return
+	}
 
 	if !checkLogin(&params.Sign) {
 		oo.LogD("SignData err not auth")
@@ -230,7 +234,7 @@ func JobsList(c *gin.Context) {
 // @Summary jobs alter
 // @Tags jobs
 // @version 0.0.1
-// @description jobs alter, only superAdmin or admin, change admin/member to member/noRole
+// @description jobs alter, only superAdmin or admin, change admin/member to admin/member/noRole
 // @Produce json
 // @Param request body models.ReqJobsAlter true "request"
 // @Success 200 {object} models.Response

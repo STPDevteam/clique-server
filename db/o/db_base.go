@@ -86,6 +86,10 @@ func W(w ...interface{}) [][]interface{} {
 	return [][]interface{}{w}
 }
 
+func Sqler(table string, w ...[][]interface{}) *oo.Sqler {
+	return DBPre(table, w)
+}
+
 func DBPre(table string, args [][][]interface{}) *oo.Sqler {
 	sqler := oo.NewSqler().Table(table)
 	for x := range args {

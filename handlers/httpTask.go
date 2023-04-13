@@ -26,16 +26,16 @@ func CreateTask(c *gin.Context) {
 		return
 	}
 
-	_, ok := checkAdminOrMember(params.Sign)
-	if !ok {
+	role, ok := checkAdminOrMember(params.Sign)
+	if !ok || (role != consts.Jobs_A_superAdmin && role != consts.Jobs_B_admin) {
 		oo.LogD("SignData err not auth")
 		handleError(c, errs.ErrUnAuthorized)
 		return
 	}
 
 	var weight float64
-	sqlSel := oo.NewSqler().Table(consts.TbTask).Where("chain_id", params.Sign.ChainId).Where("dao_address", params.Sign.DaoAddress).
-		Where("status", "A_notStarted").Max("weight")
+	sqlSel := o.Sqler(consts.TbTask, o.W("chain_id", params.Sign.ChainId), o.W("dao_address", params.Sign.DaoAddress),
+		o.W("status", consts.Task_status_A_notStarted)).Max("weight")
 	err := oo.SqlGet(sqlSel, &weight)
 	if handleErrorIfExists(c, err, errs.ErrServer) {
 		oo.LogW("SQL err:%v", err)
@@ -53,7 +53,7 @@ func CreateTask(c *gin.Context) {
 	v["assign_account"] = params.AssignAccount
 	v["proposal_id"] = params.ProposalId
 	v["reward"] = params.Reward
-	v["status"] = "A_notStarted"
+	v["status"] = consts.Task_status_A_notStarted
 	v["weight"] = weight + 10
 	m = append(m, v)
 	err = o.Insert(consts.TbTask, m)
@@ -79,8 +79,8 @@ func UpdateTask(c *gin.Context) {
 		return
 	}
 
-	_, ok := checkAdminOrMember(params.Sign)
-	if !ok {
+	role, ok := checkAdminOrMember(params.Sign)
+	if !ok || (role != consts.Jobs_A_superAdmin && role != consts.Jobs_B_admin) {
 		oo.LogD("SignData err not auth")
 		handleError(c, errs.ErrUnAuthorized)
 		return
@@ -119,8 +119,8 @@ func TaskRemoveToTrash(c *gin.Context) {
 		return
 	}
 
-	_, ok := checkAdminOrMember(params.Sign)
-	if !ok {
+	role, ok := checkAdminOrMember(params.Sign)
+	if !ok || (role != consts.Jobs_A_superAdmin && role != consts.Jobs_B_admin) {
 		oo.LogD("SignData err not auth")
 		handleError(c, errs.ErrUnAuthorized)
 		return
