@@ -125,7 +125,7 @@ func Router() {
 			r13.GET("/isWhite", handlers.SwapIsWhite)
 			r13.GET("/isCreatorWhite", handlers.SwapIsCreatorWhite)
 		}
-		jobs := router.Group("/jobs")
+		jobs := router.Group("/jobs", middlewares.JWTAuthForce())
 		{
 			jobs.POST("/apply", handlers.JobsApply)
 			jobs.GET("/apply/list", handlers.JobsApplyList)
@@ -134,7 +134,7 @@ func Router() {
 			jobs.POST("/alter", handlers.JobsAlter)
 
 		}
-		task := router.Group("/task")
+		task := router.Group("/task", middlewares.JWTAuthForce())
 		{
 			task.POST("/create", handlers.CreateTask)
 			task.POST("/update", handlers.UpdateTask)

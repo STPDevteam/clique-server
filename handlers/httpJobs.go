@@ -21,6 +21,13 @@ import (
 // @Success 200 {object} models.Response
 // @Router /stpdao/v2/jobs/apply [post]
 func JobsApply(c *gin.Context) {
+	var ok bool
+	var user *db.TbAccountModel
+	user, ok = parseJWTCache(c)
+	if !ok {
+		return
+	}
+
 	var params models.ReqJobsApply
 	if handleErrorIfExists(c, c.ShouldBindJSON(&params), errs.ErrParam) {
 		return
@@ -30,14 +37,8 @@ func JobsApply(c *gin.Context) {
 		return
 	}
 
-	if !checkLogin(&params.Sign) {
-		oo.LogD("SignData err not auth")
-		handleError(c, errs.ErrUnAuthorized)
-		return
-	}
-
 	countJobs, err := o.Count(consts.TbJobs, o.W("chain_id", params.ChainId), o.W("dao_address", params.DaoAddress),
-		o.W("account", params.Sign.Account), o.W("job", params.ApplyRole))
+		o.W("account", user.Account), o.W("job", params.ApplyRole))
 	if handleErrorIfExists(c, err, errs.ErrServer) {
 		oo.LogW("SQL err:%v", err)
 		return
@@ -48,7 +49,7 @@ func JobsApply(c *gin.Context) {
 	}
 
 	countJobsApply, err := o.Count(consts.TbJobsApply, o.W("chain_id", params.ChainId), o.W("dao_address", params.DaoAddress),
-		o.W("account", params.Sign.Account), o.W("status", consts.Jobs_Status_InApplication))
+		o.W("account", user.Account), o.W("status", consts.Jobs_Status_InApplication))
 	if handleErrorIfExists(c, err, errs.ErrServer) {
 		oo.LogW("SQL err:%v", err)
 		return
@@ -62,7 +63,7 @@ func JobsApply(c *gin.Context) {
 	var v = make(map[string]interface{})
 	v["chain_id"] = params.ChainId
 	v["dao_address"] = params.DaoAddress
-	v["account"] = params.Sign.Account
+	v["account"] = user.Account
 	v["apply_role"] = params.ApplyRole
 	v["message"] = params.Message
 	m = append(m, v)
@@ -119,14 +120,19 @@ func JobsApplyList(c *gin.Context) {
 // @Success 200 {object} models.Response
 // @Router /stpdao/v2/jobs/apply/review [post]
 func JobsApplyReview(c *gin.Context) {
+	var ok bool
+	var user *db.TbAccountModel
+	user, ok = parseJWTCache(c)
+	if !ok {
+		return
+	}
+
 	var params models.ReqJobsApplyReview
 	if handleErrorIfExists(c, c.ShouldBindJSON(&params), errs.ErrParam) {
 		return
 	}
 
-	role, ok := checkAdminOrMember(params.Sign)
-	if !ok {
-		oo.LogD("SignData err not auth")
+	if !IsSuperAdmin(params.ChainId, params.DaoAddress, user.Account) {
 		handleError(c, errs.ErrUnAuthorized)
 		return
 	}
@@ -135,18 +141,6 @@ func JobsApplyReview(c *gin.Context) {
 	if handleErrorIfExists(c, err, errs.ErrServer) {
 		oo.LogW("SQL err:%v", err)
 		return
-	}
-
-	if jobsApplyData.ApplyRole == consts.Jobs_B_admin {
-		if role != consts.Jobs_A_superAdmin {
-			handleError(c, errs.ErrUnAuthorized)
-			return
-		}
-	} else if jobsApplyData.ApplyRole == consts.Jobs_C_member {
-		if role != consts.Jobs_A_superAdmin && role != consts.Jobs_B_admin {
-			handleError(c, errs.ErrUnAuthorized)
-			return
-		}
 	}
 
 	var status string
@@ -240,14 +234,20 @@ func JobsList(c *gin.Context) {
 // @Success 200 {object} models.Response
 // @Router /stpdao/v2/jobs/alter [post]
 func JobsAlter(c *gin.Context) {
+	var ok bool
+	var user *db.TbAccountModel
+	user, ok = parseJWTCache(c)
+	if !ok {
+		return
+	}
+
 	var params models.ReqJobsAlter
 	if handleErrorIfExists(c, c.ShouldBindJSON(&params), errs.ErrParam) {
 		return
 	}
 
-	role, ok := checkAdminOrMember(params.Sign)
+	role, ok := IsAboveAdmin(params.ChainId, params.DaoAddress, user.Account)
 	if !ok {
-		oo.LogD("SignData err not auth")
 		handleError(c, errs.ErrUnAuthorized)
 		return
 	}

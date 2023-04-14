@@ -21,20 +21,25 @@ import (
 // @Success 200 {object} models.Response
 // @Router /stpdao/v2/task/create [post]
 func CreateTask(c *gin.Context) {
+	var ok bool
+	var user *db.TbAccountModel
+	user, ok = parseJWTCache(c)
+	if !ok {
+		return
+	}
+
 	var params models.ReqCreateTask
 	if handleErrorIfExists(c, c.ShouldBindJSON(&params), errs.ErrParam) {
 		return
 	}
 
-	role, ok := checkAdminOrMember(params.Sign)
-	if !ok || (role != consts.Jobs_A_superAdmin && role != consts.Jobs_B_admin) {
-		oo.LogD("SignData err not auth")
+	if !IsSuperAdmin(params.ChainId, params.DaoAddress, user.Account) {
 		handleError(c, errs.ErrUnAuthorized)
 		return
 	}
 
 	var weight float64
-	sqlSel := o.Sqler(consts.TbTask, o.W("chain_id", params.Sign.ChainId), o.W("dao_address", params.Sign.DaoAddress),
+	sqlSel := o.Sqler(consts.TbTask, o.W("chain_id", params.ChainId), o.W("dao_address", params.DaoAddress),
 		o.W("status", consts.Task_status_A_notStarted)).Max("weight")
 	err := oo.SqlGet(sqlSel, &weight)
 	if handleErrorIfExists(c, err, errs.ErrServer) {
@@ -44,8 +49,8 @@ func CreateTask(c *gin.Context) {
 
 	var m = make([]map[string]interface{}, 0)
 	var v = make(map[string]interface{})
-	v["chain_id"] = params.Sign.ChainId
-	v["dao_address"] = params.Sign.DaoAddress
+	v["chain_id"] = params.ChainId
+	v["dao_address"] = params.DaoAddress
 	v["task_name"] = params.TaskName
 	v["content"] = params.Content
 	v["deadline"] = params.Deadline
@@ -74,14 +79,20 @@ func CreateTask(c *gin.Context) {
 // @Success 200 {object} models.Response
 // @Router /stpdao/v2/task/update [post]
 func UpdateTask(c *gin.Context) {
+	var ok bool
+	var user *db.TbAccountModel
+	user, ok = parseJWTCache(c)
+	if !ok {
+		return
+	}
+
 	var params models.ReqUpdateTask
 	if handleErrorIfExists(c, c.ShouldBindJSON(&params), errs.ErrParam) {
 		return
 	}
 
-	role, ok := checkAdminOrMember(params.Sign)
-	if !ok || (role != consts.Jobs_A_superAdmin && role != consts.Jobs_B_admin) {
-		oo.LogD("SignData err not auth")
+	_, ok = IsAboveAdmin(params.ChainId, params.DaoAddress, user.Account)
+	if !ok {
 		handleError(c, errs.ErrUnAuthorized)
 		return
 	}
@@ -114,14 +125,20 @@ func UpdateTask(c *gin.Context) {
 // @Success 200 {object} models.Response
 // @Router /stpdao/v2/task/remove [post]
 func TaskRemoveToTrash(c *gin.Context) {
+	var ok bool
+	var user *db.TbAccountModel
+	user, ok = parseJWTCache(c)
+	if !ok {
+		return
+	}
+
 	var params models.ReqRemoveTask
 	if handleErrorIfExists(c, c.ShouldBindJSON(&params), errs.ErrParam) {
 		return
 	}
 
-	role, ok := checkAdminOrMember(params.Sign)
-	if !ok || (role != consts.Jobs_A_superAdmin && role != consts.Jobs_B_admin) {
-		oo.LogD("SignData err not auth")
+	_, ok = IsAboveAdmin(params.ChainId, params.DaoAddress, user.Account)
+	if !ok {
 		handleError(c, errs.ErrUnAuthorized)
 		return
 	}

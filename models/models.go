@@ -765,43 +765,44 @@ type SignDataForTask struct {
 }
 
 type ReqJobsApply struct {
-	// msg(as before): Welcome come Clique
-	Sign       SignData `json:"sign"`
-	ChainId    int64    `json:"chainId"`
-	DaoAddress string   `json:"daoAddress"`
+	ChainId    int64  `json:"chainId"`
+	DaoAddress string `json:"daoAddress"`
 	// ApplyRole: C_member/B_admin
 	ApplyRole string `json:"applyRole"`
 	Message   string `json:"message"`
 }
 
 type ReqCreateTask struct {
-	Sign          SignDataForTask `json:"sign"`
-	TaskName      string          `json:"taskName"`
-	Content       string          `json:"content"`
-	Deadline      int64           `json:"deadline"`
-	Priority      string          `json:"priority"`
-	AssignAccount string          `json:"assignAccount"`
-	ProposalId    int             `json:"proposalId"`
-	Reward        string          `json:"reward"`
+	ChainId       int64  `json:"chainId"`
+	DaoAddress    string `json:"daoAddress"`
+	TaskName      string `json:"taskName"`
+	Content       string `json:"content"`
+	Deadline      int64  `json:"deadline"`
+	Priority      string `json:"priority"`
+	AssignAccount string `json:"assignAccount"`
+	ProposalId    int    `json:"proposalId"`
+	Reward        string `json:"reward"`
 }
 
 type ReqUpdateTask struct {
-	Sign          SignDataForTask `json:"sign"`
-	TaskId        int16           `json:"taskId"`
-	TaskName      string          `json:"taskName"`
-	Content       string          `json:"content"`
-	Deadline      int64           `json:"deadline"`
-	Priority      string          `json:"priority"`
-	AssignAccount string          `json:"assignAccount"`
-	ProposalId    int             `json:"proposalId"`
-	Reward        string          `json:"reward"`
-	Status        string          `json:"status"`
-	Weight        float64         `json:"weight"`
+	ChainId       int64   `json:"chainId"`
+	DaoAddress    string  `json:"daoAddress"`
+	TaskId        int16   `json:"taskId"`
+	TaskName      string  `json:"taskName"`
+	Content       string  `json:"content"`
+	Deadline      int64   `json:"deadline"`
+	Priority      string  `json:"priority"`
+	AssignAccount string  `json:"assignAccount"`
+	ProposalId    int     `json:"proposalId"`
+	Reward        string  `json:"reward"`
+	Status        string  `json:"status"`
+	Weight        float64 `json:"weight"`
 }
 
 type ReqRemoveTask struct {
-	Sign   SignDataForTask `json:"sign"`
-	TaskId []int64         `json:"taskId"`
+	ChainId    int64   `json:"chainId"`
+	DaoAddress string  `json:"daoAddress"`
+	TaskId     []int64 `json:"taskId"`
 }
 
 type ResTaskList struct {
@@ -862,14 +863,16 @@ type ResJobsApplyList struct {
 }
 
 type ReqJobsApplyReview struct {
-	Sign        SignDataForTask `json:"sign"`
-	JobsApplyId int64           `json:"jobsApplyId"`
-	IsPass      bool            `json:"isPass"`
+	ChainId     int64  `json:"chainId"`
+	DaoAddress  string `json:"daoAddress"`
+	JobsApplyId int64  `json:"jobsApplyId"`
+	IsPass      bool   `json:"isPass"`
 }
 
 type ReqJobsAlter struct {
-	Sign  SignDataForTask `json:"sign"`
-	JobId int64           `json:"jobId"`
+	ChainId    int64  `json:"chainId"`
+	DaoAddress string `json:"daoAddress"`
+	JobId      int64  `json:"jobId"`
 	// ChangeTo: B_admin/C_member/noRole
 	ChangeTo string `json:"changeTo"`
 }

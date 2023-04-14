@@ -121,3 +121,35 @@ func checkAdminOrMember(data models.SignDataForTask) (role string, ret bool) {
 
 	return jobs.Job, true
 }
+
+func IsSuperAdmin(chainId int64, daoAddress, account string) (b bool) {
+	jobData, err := db.GetTbJobs(
+		o.W("chain_id", chainId),
+		o.W("dao_address", daoAddress),
+		o.W("account", account))
+	if err != nil {
+		oo.LogW("SQL err:%v", err)
+		return false
+	}
+	if jobData.Job != consts.Jobs_A_superAdmin {
+		return false
+	}
+
+	return true
+}
+
+func IsAboveAdmin(chainId int64, daoAddress, account string) (role string, b bool) {
+	jobData, err := db.GetTbJobs(
+		o.W("chain_id", chainId),
+		o.W("dao_address", daoAddress),
+		o.W("account", account))
+	if err != nil {
+		oo.LogW("SQL err:%v", err)
+		return "", false
+	}
+	if jobData.Job != consts.Jobs_A_superAdmin && jobData.Job != consts.Jobs_B_admin {
+		return "", false
+	}
+
+	return jobData.Job, true
+}

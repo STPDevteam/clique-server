@@ -4,6 +4,8 @@ import (
 	oo "github.com/Anna2024/liboo"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"stp_dao_v2/consts"
+	"stp_dao_v2/db"
 	"stp_dao_v2/errs"
 )
 
@@ -74,4 +76,18 @@ func HandlerPagination(c *gin.Context) {
 		handleError(c, errs.ErrParam)
 		return
 	}
+}
+
+func parseJWTCache(c *gin.Context) (*db.TbAccountModel, bool) {
+	if login := c.GetBool(consts.KEY_LOGIN); login {
+		if val, ok := c.Get(consts.KEY_CURRENT_USER); ok && val != nil {
+			user, ok := val.(db.TbAccountModel)
+			if ok {
+				return &user, true
+			}
+		}
+	}
+
+	handleError(c, errs.ErrUnAuthorized)
+	return nil, false
 }
