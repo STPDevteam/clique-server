@@ -1253,6 +1253,26 @@ paths:
       summary: account following list
       tags:
       - account
+  /stpdao/v2/account/jwt/signIn:
+    post:
+      description: account sign in
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.SignData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: account sign in
+      tags:
+      - account
   /stpdao/v2/account/nfts:
     get:
       description: account NFTs

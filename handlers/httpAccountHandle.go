@@ -12,11 +12,60 @@ import (
 	"stp_dao_v2/db"
 	"stp_dao_v2/db/o"
 	"stp_dao_v2/errs"
+	"stp_dao_v2/middlewares"
 	"stp_dao_v2/models"
 	"stp_dao_v2/utils"
 	"strconv"
 	"time"
 )
+
+// @Summary account sign in
+// @Tags account
+// @version 0.0.1
+// @description account sign in
+// @Produce json
+// @Param request body models.SignData true "request"
+// @Success 200 {object} models.Response
+// @Router /stpdao/v2/account/jwt/signIn [post]
+func HttpAccountSignIn(c *gin.Context) {
+	var params models.SignData
+	if handleErrorIfExists(c, c.ShouldBindJSON(&params), errs.ErrParam) {
+		return
+	}
+
+	if !checkLogin(&params) {
+		handleError(c, errs.ErrUnAuthorized)
+		return
+	}
+
+getAccount:
+	user, err := db.GetTbAccountModel(o.W("account", params.Account))
+	if err == oo.ErrNoRows {
+		var m = make([]map[string]interface{}, 0)
+		var v = make(map[string]interface{})
+		v["account"] = params.Account
+		m = append(m, v)
+		err = o.Insert(consts.TbNameAccount, m)
+		if handleErrorIfExists(c, err, errs.ErrServer) {
+			oo.LogW("SQL err: %v", err)
+			return
+		}
+		goto getAccount
+	}
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err: %v", err)
+		return
+	}
+
+	var jwtToken string
+	jwtToken, err = middlewares.CreateToken(user.Account, user.Id)
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("CreateToken err: %v", err)
+		return
+	}
+
+	jsonData(c, jwtToken)
+}
 
 // @Summary account info
 // @Tags account

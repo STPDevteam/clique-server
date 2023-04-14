@@ -102,6 +102,37 @@ const docTemplate = `{
                 }
             }
         },
+        "/stpdao/v2/account/jwt/signIn": {
+            "post": {
+                "description": "account sign in",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "account"
+                ],
+                "summary": "account sign in",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SignData"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/stpdao/v2/account/nfts": {
             "get": {
                 "description": "account NFTs",

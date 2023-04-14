@@ -102,4 +102,7 @@ const (
 	Task_status_B_inProgress = "B_inProgress"
 	Task_status_C_done       = "C_done"
 	Task_status_D_notStatus  = "D_notStatus"
+
+	KEY_LOGIN        = "login"
+	KEY_CURRENT_USER = "current_user"
 )

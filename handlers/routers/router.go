@@ -70,6 +70,7 @@ func Router() {
 		r6 := router.Group("/account")
 		{
 			r6.POST("/query", handlers.HttpQueryAccount)
+			r6.POST("/jwt/signIn", handlers.HttpAccountSignIn)
 			r6.POST("/update", handlers.HttpUpdateAccount)
 			r6.GET("/record", handlers.HttpQueryRecordList)
 			r6.GET("/sign/list", handlers.HttpQueryAccountSignList)
