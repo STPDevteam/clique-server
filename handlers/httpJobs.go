@@ -85,7 +85,7 @@ func JobsApply(c *gin.Context) {
 // @Param chainId query int true "chainId"
 // @Param daoAddress query string true "daoAddress"
 // @Success 200 {object} models.ResJobsApplyList
-// @Router /stpdao/v2/jobs/list [get]
+// @Router /stpdao/v2/jobs/apply/list [get]
 func JobsApplyList(c *gin.Context) {
 	limit := c.Query("limit")
 	offset := c.Query("offset")

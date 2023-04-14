@@ -259,6 +259,16 @@ definitions:
       taskName:
         type: string
     type: object
+  models.ReqJobsAlter:
+    properties:
+      changeTo:
+        description: 'ChangeTo: B_admin/C_member/noRole'
+        type: string
+      jobId:
+        type: integer
+      sign:
+        $ref: '#/definitions/models.SignDataForTask'
+    type: object
   models.ReqJobsApply:
     properties:
       applyRole:
@@ -273,6 +283,15 @@ definitions:
       sign:
         $ref: '#/definitions/models.SignData'
         description: 'msg(as before): Welcome come Clique'
+    type: object
+  models.ReqJobsApplyReview:
+    properties:
+      isPass:
+        type: boolean
+      jobsApplyId:
+        type: integer
+      sign:
+        $ref: '#/definitions/models.SignDataForTask'
     type: object
   models.ReqPurchased:
     properties:
@@ -608,6 +627,8 @@ definitions:
     properties:
       account:
         type: string
+      applyId:
+        type: integer
       applyRole:
         type: string
       applyTime:
@@ -635,6 +656,8 @@ definitions:
         type: string
       discord:
         type: string
+      jobId:
+        type: integer
       jobs:
         type: string
       nickname:
@@ -1114,6 +1137,7 @@ definitions:
         description: personal_sign sign result,no 0x
         type: string
       timestamp:
+        description: 'Timestamp: expired timestamp, cannot exceed one day(86400)'
         type: integer
     type: object
   models.UpdateAccountParam:
@@ -1808,6 +1832,26 @@ paths:
       summary: update img
       tags:
       - img
+  /stpdao/v2/jobs/alter:
+    post:
+      description: jobs alter, only superAdmin or admin, change admin/member to admin/member/noRole
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ReqJobsAlter'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: jobs alter
+      tags:
+      - jobs
   /stpdao/v2/jobs/apply:
     post:
       description: jobs apply
@@ -1826,6 +1870,60 @@ paths:
           schema:
             $ref: '#/definitions/models.Response'
       summary: jobs apply
+      tags:
+      - jobs
+  /stpdao/v2/jobs/apply/list:
+    get:
+      description: jobs apply list
+      parameters:
+      - description: offset,page
+        in: query
+        name: offset
+        required: true
+        type: integer
+      - description: limit,page
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: chainId
+        in: query
+        name: chainId
+        required: true
+        type: integer
+      - description: daoAddress
+        in: query
+        name: daoAddress
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResJobsApplyList'
+      summary: jobs apply list
+      tags:
+      - jobs
+  /stpdao/v2/jobs/apply/review:
+    post:
+      description: jobs apply review
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ReqJobsApplyReview'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: jobs apply review
       tags:
       - jobs
   /stpdao/v2/jobs/list:

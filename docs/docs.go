@@ -980,6 +980,37 @@ const docTemplate = `{
                 }
             }
         },
+        "/stpdao/v2/jobs/alter": {
+            "post": {
+                "description": "jobs alter, only superAdmin or admin, change admin/member to admin/member/noRole",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "jobs"
+                ],
+                "summary": "jobs alter",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ReqJobsAlter"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/stpdao/v2/jobs/apply": {
             "post": {
                 "description": "jobs apply",
@@ -998,6 +1029,87 @@ const docTemplate = `{
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/models.ReqJobsApply"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/stpdao/v2/jobs/apply/list": {
+            "get": {
+                "description": "jobs apply list",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "jobs"
+                ],
+                "summary": "jobs apply list",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "offset,page",
+                        "name": "offset",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit,page",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "chainId",
+                        "name": "chainId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "daoAddress",
+                        "name": "daoAddress",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResJobsApplyList"
+                        }
+                    }
+                }
+            }
+        },
+        "/stpdao/v2/jobs/apply/review": {
+            "post": {
+                "description": "jobs apply review",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "jobs"
+                ],
+                "summary": "jobs apply review",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ReqJobsApplyReview"
                         }
                     }
                 ],
@@ -2409,6 +2521,21 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ReqJobsAlter": {
+            "type": "object",
+            "properties": {
+                "changeTo": {
+                    "description": "ChangeTo: B_admin/C_member/noRole",
+                    "type": "string"
+                },
+                "jobId": {
+                    "type": "integer"
+                },
+                "sign": {
+                    "$ref": "#/definitions/models.SignDataForTask"
+                }
+            }
+        },
         "models.ReqJobsApply": {
             "type": "object",
             "properties": {
@@ -2428,6 +2555,20 @@ const docTemplate = `{
                 "sign": {
                     "description": "msg(as before): Welcome come Clique",
                     "$ref": "#/definitions/models.SignData"
+                }
+            }
+        },
+        "models.ReqJobsApplyReview": {
+            "type": "object",
+            "properties": {
+                "isPass": {
+                    "type": "boolean"
+                },
+                "jobsApplyId": {
+                    "type": "integer"
+                },
+                "sign": {
+                    "$ref": "#/definitions/models.SignDataForTask"
                 }
             }
         },
@@ -2938,6 +3079,9 @@ const docTemplate = `{
                 "account": {
                     "type": "string"
                 },
+                "applyId": {
+                    "type": "integer"
+                },
                 "applyRole": {
                     "type": "string"
                 },
@@ -2978,6 +3122,9 @@ const docTemplate = `{
                 },
                 "discord": {
                     "type": "string"
+                },
+                "jobId": {
+                    "type": "integer"
                 },
                 "jobs": {
                     "type": "string"
@@ -3708,6 +3855,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "timestamp": {
+                    "description": "Timestamp: expired timestamp, cannot exceed one day(86400)",
                     "type": "integer"
                 }
             }
