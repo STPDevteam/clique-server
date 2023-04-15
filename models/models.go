@@ -805,6 +805,44 @@ type ReqRemoveTask struct {
 	TaskId     []int64 `json:"taskId"`
 }
 
+type ReqCreateTeamSpaces struct {
+	ChainId    int64  `json:"chainId"`
+	DaoAddress string `json:"daoAddress"`
+	Title      string `json:"title"`
+	Access     string `json:"access"`
+}
+
+type ReqUpdateTeamSpaces struct {
+	TeamSpacesId int64  `json:"teamSpacesId"`
+	ChainId      int64  `json:"chainId"`
+	DaoAddress   string `json:"daoAddress"`
+	Title        string `json:"title"`
+	Access       string `json:"access"`
+	Url          string `json:"url"`
+}
+
+type ResTeamSpacesList struct {
+	TeamSpacesId       int64  `json:"teamSpacesId"`
+	ChainId            int    `json:"chainId"`
+	DaoAddress         string `json:"daoAddress"`
+	Creator            string `json:"creator"`
+	AvatarCreator      string `json:"avatarCreator"`
+	NicknameCreator    string `json:"nicknameCreator"`
+	Title              string `json:"title"`
+	Url                string `json:"url"`
+	LastEditTime       int64  `json:"lastEditTime"`
+	LastEditBy         string `json:"lastEditBy"`
+	AvatarLastEditBy   string `json:"avatarLastEditBy"`
+	NicknameLastEditBy string `json:"nicknameLastEditBy"`
+	Access             string `json:"access"`
+}
+
+type ReqRemoveTeamSpaces struct {
+	ChainId      int64  `json:"chainId"`
+	DaoAddress   string `json:"daoAddress"`
+	TeamSpacesId int64  `json:"teamSpacesId"`
+}
+
 type ResTaskList struct {
 	TaskId         int64   `json:"taskId"`
 	ChainId        int     `json:"chainId"`

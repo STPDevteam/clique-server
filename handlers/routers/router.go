@@ -134,6 +134,13 @@ func Router() {
 			jobs.POST("/alter", handlers.JobsAlter)
 
 		}
+		teamSpaces := router.Group("/spaces", middlewares.JWTAuthForce())
+		{
+			teamSpaces.POST("/create", handlers.CreateTeamSpaces)
+			teamSpaces.POST("/update", handlers.UpdateTeamSpaces)
+			teamSpaces.POST("/remove", handlers.TeamSpacesRemoveToTrash)
+			teamSpaces.GET("/list", handlers.TeamSpacesList)
+		}
 		task := router.Group("/task", middlewares.JWTAuthForce())
 		{
 			task.POST("/create", handlers.CreateTask)

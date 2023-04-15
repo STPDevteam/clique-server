@@ -33,7 +33,8 @@ func CreateTask(c *gin.Context) {
 		return
 	}
 
-	if !IsSuperAdmin(params.ChainId, params.DaoAddress, user.Account) {
+	_, ok = IsAboveAdmin(params.ChainId, params.DaoAddress, user.Account)
+	if !ok {
 		handleError(c, errs.ErrUnAuthorized)
 		return
 	}

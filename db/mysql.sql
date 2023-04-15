@@ -620,6 +620,26 @@ CREATE TABLE `tb_jobs` (
     INDEX `index_job` (`job` ASC)
 );
 
+CREATE TABLE `tb_team_spaces` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `chain_id` INT NOT NULL,
+    `dao_address` VARCHAR(44) NOT NULL,
+    `creator` VARCHAR(44) NOT NULL,
+    `title` VARCHAR(20) NOT NULL,
+    `url` VARCHAR(255) NOT NULL DEFAULT '',
+    `last_edit_time` INT NOT NULL DEFAULT 0,
+    `last_edit_by` VARCHAR(44) NOT NULL DEFAULT '',
+    `access` VARCHAR(20) NOT NULL DEFAULT 'public' COMMENT 'public;private',
+    `is_trash` BOOL NOT NULL DEFAULT false,
+    PRIMARY KEY (`id`),
+    INDEX `index_chain_id` (`chain_id` ASC),
+    INDEX `index_dao_address` (`dao_address` ASC),
+    INDEX `index_access` (`access` ASC),
+    INDEX `index_is_trash` (`is_trash` ASC)
+);
+
 CREATE TABLE `tb_task` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

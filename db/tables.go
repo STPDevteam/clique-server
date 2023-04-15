@@ -504,3 +504,23 @@ func GetTbJobsApply(w ...[][]interface{}) (data TbJobsApply, err error) {
 	err = oo.SqlGet(o.DBPre(consts.TbJobsApply, w).Select(), &data)
 	return data, err
 }
+
+type TbTeamSpaces struct {
+	Id           int64  `db:"id,omitempty" sqler:"skips"`
+	CreateTime   string `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime   string `db:"update_time,omitempty" sqler:"skips"`
+	ChainId      int    `db:"chain_id"`
+	DaoAddress   string `db:"dao_address"`
+	Creator      string `db:"creator"`
+	Title        string `db:"title"`
+	Url          string `db:"url"`
+	LastEditTime int64  `db:"last_edit_time"`
+	LastEditBy   string `db:"last_edit_by"`
+	Access       string `db:"access"`
+	IsTrash      bool   `db:"is_trash"`
+}
+
+func SelectTbTeamSpaces(w ...[][]interface{}) (arr []TbTeamSpaces, err error) {
+	err = oo.SqlSelect(o.DBPre(consts.TbTask, w).Select(), &arr)
+	return arr, err
+}

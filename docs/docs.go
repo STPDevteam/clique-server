@@ -1597,6 +1597,135 @@ const docTemplate = `{
                 }
             }
         },
+        "/stpdao/v2/spaces/create": {
+            "post": {
+                "description": "create team spaces",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "spaces"
+                ],
+                "summary": "create team spaces",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ReqCreateTeamSpaces"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/stpdao/v2/spaces/list": {
+            "get": {
+                "description": "team spaces list",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "spaces"
+                ],
+                "summary": "team spaces list",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "chainId",
+                        "name": "chainId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "daoAddress",
+                        "name": "daoAddress",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResTeamSpacesList"
+                        }
+                    }
+                }
+            }
+        },
+        "/stpdao/v2/spaces/remove": {
+            "post": {
+                "description": "remove team spaces",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "spaces"
+                ],
+                "summary": "remove team spaces",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ReqRemoveTeamSpaces"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/stpdao/v2/spaces/update": {
+            "post": {
+                "description": "update team spaces",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "spaces"
+                ],
+                "summary": "update team spaces",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ReqUpdateTeamSpaces"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/stpdao/v2/swap/create": {
             "post": {
                 "description": "create sale",
@@ -2529,7 +2658,13 @@ const docTemplate = `{
                 "assignAccount": {
                     "type": "string"
                 },
+                "chainId": {
+                    "type": "integer"
+                },
                 "content": {
+                    "type": "string"
+                },
+                "daoAddress": {
                     "type": "string"
                 },
                 "deadline": {
@@ -2544,10 +2679,24 @@ const docTemplate = `{
                 "reward": {
                     "type": "string"
                 },
-                "sign": {
-                    "$ref": "#/definitions/models.SignDataForTask"
-                },
                 "taskName": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ReqCreateTeamSpaces": {
+            "type": "object",
+            "properties": {
+                "access": {
+                    "type": "string"
+                },
+                "chainId": {
+                    "type": "integer"
+                },
+                "daoAddress": {
+                    "type": "string"
+                },
+                "title": {
                     "type": "string"
                 }
             }
@@ -2555,15 +2704,18 @@ const docTemplate = `{
         "models.ReqJobsAlter": {
             "type": "object",
             "properties": {
+                "chainId": {
+                    "type": "integer"
+                },
                 "changeTo": {
                     "description": "ChangeTo: B_admin/C_member/noRole",
                     "type": "string"
                 },
+                "daoAddress": {
+                    "type": "string"
+                },
                 "jobId": {
                     "type": "integer"
-                },
-                "sign": {
-                    "$ref": "#/definitions/models.SignDataForTask"
                 }
             }
         },
@@ -2582,24 +2734,23 @@ const docTemplate = `{
                 },
                 "message": {
                     "type": "string"
-                },
-                "sign": {
-                    "description": "msg(as before): Welcome come Clique",
-                    "$ref": "#/definitions/models.SignData"
                 }
             }
         },
         "models.ReqJobsApplyReview": {
             "type": "object",
             "properties": {
+                "chainId": {
+                    "type": "integer"
+                },
+                "daoAddress": {
+                    "type": "string"
+                },
                 "isPass": {
                     "type": "boolean"
                 },
                 "jobsApplyId": {
                     "type": "integer"
-                },
-                "sign": {
-                    "$ref": "#/definitions/models.SignDataForTask"
                 }
             }
         },
@@ -2620,8 +2771,11 @@ const docTemplate = `{
         "models.ReqRemoveTask": {
             "type": "object",
             "properties": {
-                "sign": {
-                    "$ref": "#/definitions/models.SignDataForTask"
+                "chainId": {
+                    "type": "integer"
+                },
+                "daoAddress": {
+                    "type": "string"
                 },
                 "taskId": {
                     "type": "array",
@@ -2631,13 +2785,33 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ReqRemoveTeamSpaces": {
+            "type": "object",
+            "properties": {
+                "chainId": {
+                    "type": "integer"
+                },
+                "daoAddress": {
+                    "type": "string"
+                },
+                "teamSpacesId": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.ReqUpdateTask": {
             "type": "object",
             "properties": {
                 "assignAccount": {
                     "type": "string"
                 },
+                "chainId": {
+                    "type": "integer"
+                },
                 "content": {
+                    "type": "string"
+                },
+                "daoAddress": {
                     "type": "string"
                 },
                 "deadline": {
@@ -2652,9 +2826,6 @@ const docTemplate = `{
                 "reward": {
                     "type": "string"
                 },
-                "sign": {
-                    "$ref": "#/definitions/models.SignDataForTask"
-                },
                 "status": {
                     "type": "string"
                 },
@@ -2666,6 +2837,29 @@ const docTemplate = `{
                 },
                 "weight": {
                     "type": "number"
+                }
+            }
+        },
+        "models.ReqUpdateTeamSpaces": {
+            "type": "object",
+            "properties": {
+                "access": {
+                    "type": "string"
+                },
+                "chainId": {
+                    "type": "integer"
+                },
+                "daoAddress": {
+                    "type": "string"
+                },
+                "teamSpacesId": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
                 }
             }
         },
@@ -3697,6 +3891,50 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ResTeamSpacesList": {
+            "type": "object",
+            "properties": {
+                "access": {
+                    "type": "string"
+                },
+                "avatarCreator": {
+                    "type": "string"
+                },
+                "avatarLastEditBy": {
+                    "type": "string"
+                },
+                "chainId": {
+                    "type": "integer"
+                },
+                "creator": {
+                    "type": "string"
+                },
+                "daoAddress": {
+                    "type": "string"
+                },
+                "lastEditBy": {
+                    "type": "string"
+                },
+                "lastEditTime": {
+                    "type": "integer"
+                },
+                "nicknameCreator": {
+                    "type": "string"
+                },
+                "nicknameLastEditBy": {
+                    "type": "string"
+                },
+                "teamSpacesId": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
         "models.ResTokenImg": {
             "type": "object",
             "properties": {
@@ -3865,29 +4103,6 @@ const docTemplate = `{
                 "signature": {
                     "description": "personal_sign sign result,no 0x",
                     "type": "string"
-                }
-            }
-        },
-        "models.SignDataForTask": {
-            "type": "object",
-            "properties": {
-                "account": {
-                    "description": "personal_sign address,0x",
-                    "type": "string"
-                },
-                "chainId": {
-                    "type": "integer"
-                },
-                "daoAddress": {
-                    "type": "string"
-                },
-                "signature": {
-                    "description": "personal_sign sign result,no 0x",
-                    "type": "string"
-                },
-                "timestamp": {
-                    "description": "Timestamp: expired timestamp, cannot exceed one day(86400)",
-                    "type": "integer"
                 }
             }
         },

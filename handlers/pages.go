@@ -9,6 +9,62 @@ import (
 	"time"
 )
 
+func PageTbTeamSpaces(order string, page ReqPagination, w ...[][]interface{}) (list []models.ResTeamSpacesList, total int64, err error) {
+	var data []db.TbTeamSpaces
+	sqler := o.DBPre(consts.TbTeamSpaces, w)
+	sqlCopy := *sqler
+	err = oo.SqlGet(sqlCopy.Count(), &total)
+	if err == nil {
+		sqlCopy = *sqler
+		err = oo.SqlSelect(sqlCopy.Order(order).Limit(page.Limit).Offset(page.Offset).Select(), &data)
+	}
+	if err != nil {
+		oo.LogW("sqler:%s", sqler)
+		return nil, 0, err
+	}
+
+	list = make([]models.ResTeamSpacesList, 0)
+	for i := range data {
+		ls := data[i]
+
+		var avatarCreator, nicknameCreator string
+		if ls.Creator != "" {
+			account, err := db.GetTbAccountModel(o.W("account", ls.Creator))
+			if err != nil && err != oo.ErrNoRows {
+				return nil, 0, err
+			}
+			avatarCreator = account.AccountLogo.String
+			nicknameCreator = account.Nickname.String
+		}
+		var avatarLastEditBy, nicknameLastEditBy string
+		if ls.LastEditBy != "" {
+			account, err := db.GetTbAccountModel(o.W("account", ls.LastEditBy))
+			if err != nil && err != oo.ErrNoRows {
+				return nil, 0, err
+			}
+			avatarLastEditBy = account.AccountLogo.String
+			nicknameLastEditBy = account.Nickname.String
+		}
+
+		list = append(list, models.ResTeamSpacesList{
+			TeamSpacesId:       ls.Id,
+			ChainId:            ls.ChainId,
+			DaoAddress:         ls.DaoAddress,
+			Creator:            ls.Creator,
+			AvatarCreator:      avatarCreator,
+			NicknameCreator:    nicknameCreator,
+			Title:              ls.Title,
+			Url:                ls.Url,
+			LastEditTime:       ls.LastEditTime,
+			LastEditBy:         ls.LastEditBy,
+			AvatarLastEditBy:   avatarLastEditBy,
+			NicknameLastEditBy: nicknameLastEditBy,
+			Access:             ls.Access,
+		})
+	}
+	return list, total, nil
+}
+
 func PageTbTask(order string, page ReqPagination, w ...[][]interface{}) (list []models.ResTaskList, total int64, err error) {
 	var data []db.TbTask
 	sqler := o.DBPre(consts.TbTask, w)

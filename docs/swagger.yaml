@@ -244,7 +244,11 @@ definitions:
     properties:
       assignAccount:
         type: string
+      chainId:
+        type: integer
       content:
+        type: string
+      daoAddress:
         type: string
       deadline:
         type: integer
@@ -254,20 +258,31 @@ definitions:
         type: integer
       reward:
         type: string
-      sign:
-        $ref: '#/definitions/models.SignDataForTask'
       taskName:
+        type: string
+    type: object
+  models.ReqCreateTeamSpaces:
+    properties:
+      access:
+        type: string
+      chainId:
+        type: integer
+      daoAddress:
+        type: string
+      title:
         type: string
     type: object
   models.ReqJobsAlter:
     properties:
+      chainId:
+        type: integer
       changeTo:
         description: 'ChangeTo: B_admin/C_member/noRole'
         type: string
+      daoAddress:
+        type: string
       jobId:
         type: integer
-      sign:
-        $ref: '#/definitions/models.SignDataForTask'
     type: object
   models.ReqJobsApply:
     properties:
@@ -280,18 +295,17 @@ definitions:
         type: string
       message:
         type: string
-      sign:
-        $ref: '#/definitions/models.SignData'
-        description: 'msg(as before): Welcome come Clique'
     type: object
   models.ReqJobsApplyReview:
     properties:
+      chainId:
+        type: integer
+      daoAddress:
+        type: string
       isPass:
         type: boolean
       jobsApplyId:
         type: integer
-      sign:
-        $ref: '#/definitions/models.SignDataForTask'
     type: object
   models.ReqPurchased:
     properties:
@@ -304,18 +318,33 @@ definitions:
     type: object
   models.ReqRemoveTask:
     properties:
-      sign:
-        $ref: '#/definitions/models.SignDataForTask'
+      chainId:
+        type: integer
+      daoAddress:
+        type: string
       taskId:
         items:
           type: integer
         type: array
     type: object
+  models.ReqRemoveTeamSpaces:
+    properties:
+      chainId:
+        type: integer
+      daoAddress:
+        type: string
+      teamSpacesId:
+        type: integer
+    type: object
   models.ReqUpdateTask:
     properties:
       assignAccount:
         type: string
+      chainId:
+        type: integer
       content:
+        type: string
+      daoAddress:
         type: string
       deadline:
         type: integer
@@ -325,8 +354,6 @@ definitions:
         type: integer
       reward:
         type: string
-      sign:
-        $ref: '#/definitions/models.SignDataForTask'
       status:
         type: string
       taskId:
@@ -335,6 +362,21 @@ definitions:
         type: string
       weight:
         type: number
+    type: object
+  models.ReqUpdateTeamSpaces:
+    properties:
+      access:
+        type: string
+      chainId:
+        type: integer
+      daoAddress:
+        type: string
+      teamSpacesId:
+        type: integer
+      title:
+        type: string
+      url:
+        type: string
     type: object
   models.ResAccountFollow:
     properties:
@@ -1012,6 +1054,35 @@ definitions:
       weight:
         type: number
     type: object
+  models.ResTeamSpacesList:
+    properties:
+      access:
+        type: string
+      avatarCreator:
+        type: string
+      avatarLastEditBy:
+        type: string
+      chainId:
+        type: integer
+      creator:
+        type: string
+      daoAddress:
+        type: string
+      lastEditBy:
+        type: string
+      lastEditTime:
+        type: integer
+      nicknameCreator:
+        type: string
+      nicknameLastEditBy:
+        type: string
+      teamSpacesId:
+        type: integer
+      title:
+        type: string
+      url:
+        type: string
+    type: object
   models.ResTokenImg:
     properties:
       large:
@@ -1123,22 +1194,6 @@ definitions:
       signature:
         description: personal_sign sign result,no 0x
         type: string
-    type: object
-  models.SignDataForTask:
-    properties:
-      account:
-        description: personal_sign address,0x
-        type: string
-      chainId:
-        type: integer
-      daoAddress:
-        type: string
-      signature:
-        description: personal_sign sign result,no 0x
-        type: string
-      timestamp:
-        description: 'Timestamp: expired timestamp, cannot exceed one day(86400)'
-        type: integer
     type: object
   models.UpdateAccountParam:
     properties:
@@ -2240,6 +2295,90 @@ paths:
       summary: sign query dao handle
       tags:
       - sign
+  /stpdao/v2/spaces/create:
+    post:
+      description: create team spaces
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ReqCreateTeamSpaces'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: create team spaces
+      tags:
+      - spaces
+  /stpdao/v2/spaces/list:
+    get:
+      description: team spaces list
+      parameters:
+      - description: chainId
+        in: query
+        name: chainId
+        required: true
+        type: integer
+      - description: daoAddress
+        in: query
+        name: daoAddress
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResTeamSpacesList'
+      summary: team spaces list
+      tags:
+      - spaces
+  /stpdao/v2/spaces/remove:
+    post:
+      description: remove team spaces
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ReqRemoveTeamSpaces'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: remove team spaces
+      tags:
+      - spaces
+  /stpdao/v2/spaces/update:
+    post:
+      description: update team spaces
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ReqUpdateTeamSpaces'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: update team spaces
+      tags:
+      - spaces
   /stpdao/v2/swap/create:
     post:
       description: create sale
