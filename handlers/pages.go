@@ -94,9 +94,8 @@ func PageTbTask(order string, page ReqPagination, w ...[][]interface{}) (list []
 		}
 
 		list = append(list, models.ResTaskList{
+			SpacesId:       ls.SpacesId,
 			TaskId:         ls.Id,
-			ChainId:        ls.ChainId,
-			DaoAddress:     ls.DaoAddress,
 			TaskName:       ls.TaskName,
 			Deadline:       ls.Deadline,
 			Priority:       ls.Priority,

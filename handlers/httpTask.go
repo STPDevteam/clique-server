@@ -33,16 +33,22 @@ func CreateTask(c *gin.Context) {
 		return
 	}
 
-	_, ok = IsAboveAdmin(params.ChainId, params.DaoAddress, user.Account)
+	spacesData, err := db.GetTbTeamSpaces(o.W("id", params.SpacesId))
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err:%v", err)
+		return
+	}
+
+	_, ok = IsAboveAdmin(spacesData.ChainId, spacesData.DaoAddress, user.Account)
 	if !ok {
 		handleError(c, errs.ErrUnAuthorized)
 		return
 	}
 
 	var weight float64
-	sqlSel := o.Sqler(consts.TbTask, o.W("chain_id", params.ChainId), o.W("dao_address", params.DaoAddress),
+	sqlSel := o.Sqler(consts.TbTask, o.W("spaces_id", params.SpacesId),
 		o.W("status", consts.Task_status_A_notStarted)).Max("weight")
-	err := oo.SqlGet(sqlSel, &weight)
+	err = oo.SqlGet(sqlSel, &weight)
 	if handleErrorIfExists(c, err, errs.ErrServer) {
 		oo.LogW("SQL err:%v", err)
 		return
@@ -50,8 +56,7 @@ func CreateTask(c *gin.Context) {
 
 	var m = make([]map[string]interface{}, 0)
 	var v = make(map[string]interface{})
-	v["chain_id"] = params.ChainId
-	v["dao_address"] = params.DaoAddress
+	v["spaces_id"] = params.SpacesId
 	v["task_name"] = params.TaskName
 	v["content"] = params.Content
 	v["deadline"] = params.Deadline
@@ -92,7 +97,13 @@ func UpdateTask(c *gin.Context) {
 		return
 	}
 
-	_, ok = IsAboveAdmin(params.ChainId, params.DaoAddress, user.Account)
+	spacesData, err := db.GetTbTeamSpaces(o.W("id", params.SpacesId))
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err:%v", err)
+		return
+	}
+
+	_, ok = IsAboveAdmin(spacesData.ChainId, spacesData.DaoAddress, user.Account)
 	if !ok {
 		handleError(c, errs.ErrUnAuthorized)
 		return
@@ -108,7 +119,7 @@ func UpdateTask(c *gin.Context) {
 	v["reward"] = params.Reward
 	v["status"] = params.Status
 	v["weight"] = params.Weight
-	err := o.Update(consts.TbTask, v, o.W("id", params.TaskId))
+	err = o.Update(consts.TbTask, v, o.W("id", params.TaskId))
 	if handleErrorIfExists(c, err, errs.ErrServer) {
 		oo.LogW("SQL err:%v", err)
 		return
@@ -138,7 +149,13 @@ func TaskRemoveToTrash(c *gin.Context) {
 		return
 	}
 
-	_, ok = IsAboveAdmin(params.ChainId, params.DaoAddress, user.Account)
+	spacesData, err := db.GetTbTeamSpaces(o.W("id", params.SpacesId))
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err:%v", err)
+		return
+	}
+
+	_, ok = IsAboveAdmin(spacesData.ChainId, spacesData.DaoAddress, user.Account)
 	if !ok {
 		handleError(c, errs.ErrUnAuthorized)
 		return
@@ -147,7 +164,7 @@ func TaskRemoveToTrash(c *gin.Context) {
 	var v = make(map[string]interface{})
 	v["is_trash"] = 1
 	for _, val := range params.TaskId {
-		err := o.Update(consts.TbTask, v, o.W("id", val))
+		err = o.Update(consts.TbTask, v, o.W("id", val))
 		if handleErrorIfExists(c, err, errs.ErrServer) {
 			oo.LogW("SQL err:%v", err)
 			return
@@ -164,19 +181,17 @@ func TaskRemoveToTrash(c *gin.Context) {
 // @Produce json
 // @Param offset query int true "offset,page"
 // @Param limit query int true "limit,page"
-// @Param chainId query int true "chainId"
-// @Param daoAddress query string true "daoAddress"
+// @Param spacesId query int true "spacesId"
 // @Param status query string false "status:A_notStarted;B_inProgress;C_done;D_notStatus"
 // @Success 200 {object} models.ResTaskList
 // @Router /stpdao/v2/task/list [get]
 func TaskList(c *gin.Context) {
 	limit := c.Query("limit")
 	offset := c.Query("offset")
-	chainId := c.Query("chainId")
+	spacesId := c.Query("spacesId")
 	limitParam, _ := strconv.Atoi(limit)
 	offsetParam, _ := strconv.Atoi(offset)
-	chainIdParam, _ := strconv.Atoi(chainId)
-	daoAddressParam := c.Query("daoAddress")
+	spacesIdParam, _ := strconv.Atoi(spacesId)
 	statusParam := c.Query("status")
 
 	var wStatus [][]interface{}
@@ -189,8 +204,7 @@ func TaskList(c *gin.Context) {
 		Offset: offsetParam,
 		Limit:  limitParam,
 	}
-	list, total, err := PageTbTask(order, page,
-		o.W("chain_id", chainIdParam), o.W("dao_address", daoAddressParam), o.W("is_trash", 0), wStatus)
+	list, total, err := PageTbTask(order, page, o.W("spaces_id", spacesIdParam), o.W("is_trash", 0), wStatus)
 	if handleErrorIfExists(c, err, errs.ErrServer) {
 		oo.LogW("SQL err:%v", err)
 		return
@@ -229,8 +243,7 @@ func TaskDetail(c *gin.Context) {
 
 	data := models.ResTaskDetail{
 		TaskId:         task.Id,
-		ChainId:        task.ChainId,
-		DaoAddress:     task.DaoAddress,
+		SpacesId:       task.SpacesId,
 		TaskName:       task.TaskName,
 		Content:        task.Content,
 		Deadline:       task.Deadline,

@@ -644,8 +644,7 @@ CREATE TABLE `tb_task` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    `chain_id` INT NOT NULL,
-    `dao_address` VARCHAR(128) NOT NULL,
+    `spaces_id` INT NOT NULL,
     `task_name` VARCHAR(255) NULL DEFAULT '',
     `content` TEXT NULL,
     `deadline` INT NOT NULL DEFAULT 0,
@@ -657,8 +656,7 @@ CREATE TABLE `tb_task` (
     `weight` FLOAT NOT NULL DEFAULT 0,
     `is_trash` BOOL NOT NULL DEFAULT false,
     PRIMARY KEY (`id`),
-    INDEX `index_chain_id` (`chain_id` ASC),
-    INDEX `index_dao_address` (`dao_address` ASC),
+    INDEX `index_spaces_id` (`spaces_id` ASC),
     INDEX `index_status` (`status` ASC),
     INDEX `index_is_trash` (`is_trash` ASC)
 );

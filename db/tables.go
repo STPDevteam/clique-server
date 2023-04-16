@@ -449,8 +449,7 @@ type TbTask struct {
 	Id            int64   `db:"id,omitempty" sqler:"skips"`
 	CreateTime    string  `db:"create_time,omitempty" sqler:"skips"`
 	UpdateTime    string  `db:"update_time,omitempty" sqler:"skips"`
-	ChainId       int     `db:"chain_id"`
-	DaoAddress    string  `db:"dao_address"`
+	SpacesId      int64   `db:"spaces_id"`
 	TaskName      string  `db:"task_name"`
 	Content       string  `db:"content"`
 	Deadline      int64   `db:"deadline"`
@@ -509,7 +508,7 @@ type TbTeamSpaces struct {
 	Id           int64  `db:"id,omitempty" sqler:"skips"`
 	CreateTime   string `db:"create_time,omitempty" sqler:"skips"`
 	UpdateTime   string `db:"update_time,omitempty" sqler:"skips"`
-	ChainId      int    `db:"chain_id"`
+	ChainId      int64  `db:"chain_id"`
 	DaoAddress   string `db:"dao_address"`
 	Creator      string `db:"creator"`
 	Title        string `db:"title"`
@@ -521,6 +520,11 @@ type TbTeamSpaces struct {
 }
 
 func SelectTbTeamSpaces(w ...[][]interface{}) (arr []TbTeamSpaces, err error) {
-	err = oo.SqlSelect(o.DBPre(consts.TbTask, w).Select(), &arr)
+	err = oo.SqlSelect(o.DBPre(consts.TbTeamSpaces, w).Select(), &arr)
 	return arr, err
+}
+
+func GetTbTeamSpaces(w ...[][]interface{}) (data TbTeamSpaces, err error) {
+	err = oo.SqlGet(o.DBPre(consts.TbTeamSpaces, w).Select(), &data)
+	return data, err
 }

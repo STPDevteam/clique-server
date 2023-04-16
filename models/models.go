@@ -773,8 +773,7 @@ type ReqJobsApply struct {
 }
 
 type ReqCreateTask struct {
-	ChainId       int64  `json:"chainId"`
-	DaoAddress    string `json:"daoAddress"`
+	SpacesId      int64  `json:"spacesId"`
 	TaskName      string `json:"taskName"`
 	Content       string `json:"content"`
 	Deadline      int64  `json:"deadline"`
@@ -785,8 +784,7 @@ type ReqCreateTask struct {
 }
 
 type ReqUpdateTask struct {
-	ChainId       int64   `json:"chainId"`
-	DaoAddress    string  `json:"daoAddress"`
+	SpacesId      int64   `json:"spacesId"`
 	TaskId        int16   `json:"taskId"`
 	TaskName      string  `json:"taskName"`
 	Content       string  `json:"content"`
@@ -800,9 +798,8 @@ type ReqUpdateTask struct {
 }
 
 type ReqRemoveTask struct {
-	ChainId    int64   `json:"chainId"`
-	DaoAddress string  `json:"daoAddress"`
-	TaskId     []int64 `json:"taskId"`
+	SpacesId int64   `json:"spacesId"`
+	TaskId   []int64 `json:"taskId"`
 }
 
 type ReqCreateTeamSpaces struct {
@@ -823,7 +820,7 @@ type ReqUpdateTeamSpaces struct {
 
 type ResTeamSpacesList struct {
 	TeamSpacesId       int64  `json:"teamSpacesId"`
-	ChainId            int    `json:"chainId"`
+	ChainId            int64  `json:"chainId"`
 	DaoAddress         string `json:"daoAddress"`
 	Creator            string `json:"creator"`
 	AvatarCreator      string `json:"avatarCreator"`
@@ -844,9 +841,8 @@ type ReqRemoveTeamSpaces struct {
 }
 
 type ResTaskList struct {
+	SpacesId       int64   `json:"spacesId"`
 	TaskId         int64   `json:"taskId"`
-	ChainId        int     `json:"chainId"`
-	DaoAddress     string  `json:"daoAddress"`
 	TaskName       string  `json:"taskName"`
 	Deadline       int64   `json:"deadline"`
 	Priority       string  `json:"priority"`
@@ -859,8 +855,7 @@ type ResTaskList struct {
 
 type ResTaskDetail struct {
 	TaskId         int64   `json:"taskId"`
-	ChainId        int     `json:"chainId"`
-	DaoAddress     string  `json:"daoAddress"`
+	SpacesId       int64   `json:"spacesId"`
 	TaskName       string  `json:"taskName"`
 	Content        string  `json:"content"`
 	Deadline       int64   `json:"deadline"`
