@@ -2057,15 +2057,8 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "chainId",
-                        "name": "chainId",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "daoAddress",
-                        "name": "daoAddress",
+                        "description": "spacesId",
+                        "name": "spacesId",
                         "in": "query",
                         "required": true
                     },
@@ -2658,13 +2651,7 @@ const docTemplate = `{
                 "assignAccount": {
                     "type": "string"
                 },
-                "chainId": {
-                    "type": "integer"
-                },
                 "content": {
-                    "type": "string"
-                },
-                "daoAddress": {
                     "type": "string"
                 },
                 "deadline": {
@@ -2678,6 +2665,9 @@ const docTemplate = `{
                 },
                 "reward": {
                     "type": "string"
+                },
+                "spacesId": {
+                    "type": "integer"
                 },
                 "taskName": {
                     "type": "string"
@@ -2771,11 +2761,8 @@ const docTemplate = `{
         "models.ReqRemoveTask": {
             "type": "object",
             "properties": {
-                "chainId": {
+                "spacesId": {
                     "type": "integer"
-                },
-                "daoAddress": {
-                    "type": "string"
                 },
                 "taskId": {
                     "type": "array",
@@ -2805,13 +2792,7 @@ const docTemplate = `{
                 "assignAccount": {
                     "type": "string"
                 },
-                "chainId": {
-                    "type": "integer"
-                },
                 "content": {
-                    "type": "string"
-                },
-                "daoAddress": {
                     "type": "string"
                 },
                 "deadline": {
@@ -2825,6 +2806,9 @@ const docTemplate = `{
                 },
                 "reward": {
                     "type": "string"
+                },
+                "spacesId": {
+                    "type": "integer"
                 },
                 "status": {
                     "type": "string"
@@ -3818,13 +3802,7 @@ const docTemplate = `{
                 "assignNickname": {
                     "type": "string"
                 },
-                "chainId": {
-                    "type": "integer"
-                },
                 "content": {
-                    "type": "string"
-                },
-                "daoAddress": {
                     "type": "string"
                 },
                 "deadline": {
@@ -3838,6 +3816,9 @@ const docTemplate = `{
                 },
                 "reward": {
                     "type": "string"
+                },
+                "spacesId": {
+                    "type": "integer"
                 },
                 "status": {
                     "type": "string"
@@ -3865,17 +3846,14 @@ const docTemplate = `{
                 "assignNickname": {
                     "type": "string"
                 },
-                "chainId": {
-                    "type": "integer"
-                },
-                "daoAddress": {
-                    "type": "string"
-                },
                 "deadline": {
                     "type": "integer"
                 },
                 "priority": {
                     "type": "string"
+                },
+                "spacesId": {
+                    "type": "integer"
                 },
                 "status": {
                     "type": "string"

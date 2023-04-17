@@ -150,6 +150,11 @@ type TbDaoModel struct {
 	TotalProposals    int64         `db:"total_proposals"`
 }
 
+func SelectTbDaoModel(w ...[][]interface{}) (arr []TbDaoModel, err error) {
+	err = oo.SqlSelect(o.DBPre(consts.TbNameDao, w).Select(), &arr)
+	return arr, err
+}
+
 type CategoryModel struct {
 	Id           uint64 `db:"id,omitempty" sqler:"skips"`
 	CreateTime   string `db:"create_time,omitempty" sqler:"skips"`

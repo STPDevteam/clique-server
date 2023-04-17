@@ -2045,15 +2045,8 @@
                     },
                     {
                         "type": "integer",
-                        "description": "chainId",
-                        "name": "chainId",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "daoAddress",
-                        "name": "daoAddress",
+                        "description": "spacesId",
+                        "name": "spacesId",
                         "in": "query",
                         "required": true
                     },
@@ -2646,13 +2639,7 @@
                 "assignAccount": {
                     "type": "string"
                 },
-                "chainId": {
-                    "type": "integer"
-                },
                 "content": {
-                    "type": "string"
-                },
-                "daoAddress": {
                     "type": "string"
                 },
                 "deadline": {
@@ -2666,6 +2653,9 @@
                 },
                 "reward": {
                     "type": "string"
+                },
+                "spacesId": {
+                    "type": "integer"
                 },
                 "taskName": {
                     "type": "string"
@@ -2759,11 +2749,8 @@
         "models.ReqRemoveTask": {
             "type": "object",
             "properties": {
-                "chainId": {
+                "spacesId": {
                     "type": "integer"
-                },
-                "daoAddress": {
-                    "type": "string"
                 },
                 "taskId": {
                     "type": "array",
@@ -2793,13 +2780,7 @@
                 "assignAccount": {
                     "type": "string"
                 },
-                "chainId": {
-                    "type": "integer"
-                },
                 "content": {
-                    "type": "string"
-                },
-                "daoAddress": {
                     "type": "string"
                 },
                 "deadline": {
@@ -2813,6 +2794,9 @@
                 },
                 "reward": {
                     "type": "string"
+                },
+                "spacesId": {
+                    "type": "integer"
                 },
                 "status": {
                     "type": "string"
@@ -3806,13 +3790,7 @@
                 "assignNickname": {
                     "type": "string"
                 },
-                "chainId": {
-                    "type": "integer"
-                },
                 "content": {
-                    "type": "string"
-                },
-                "daoAddress": {
                     "type": "string"
                 },
                 "deadline": {
@@ -3826,6 +3804,9 @@
                 },
                 "reward": {
                     "type": "string"
+                },
+                "spacesId": {
+                    "type": "integer"
                 },
                 "status": {
                     "type": "string"
@@ -3853,17 +3834,14 @@
                 "assignNickname": {
                     "type": "string"
                 },
-                "chainId": {
-                    "type": "integer"
-                },
-                "daoAddress": {
-                    "type": "string"
-                },
                 "deadline": {
                     "type": "integer"
                 },
                 "priority": {
                     "type": "string"
+                },
+                "spacesId": {
+                    "type": "integer"
                 },
                 "status": {
                     "type": "string"

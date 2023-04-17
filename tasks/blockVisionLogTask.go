@@ -12,6 +12,7 @@ import (
 	"stp_dao_v2/consts"
 	_ "stp_dao_v2/consts"
 	"stp_dao_v2/db"
+	"stp_dao_v2/db/o"
 	"stp_dao_v2/utils"
 	"strconv"
 	"strings"
@@ -405,6 +406,36 @@ func save(blockData []map[string]interface{}, currentBlockNum int64, chainId int
 				return
 			}
 
+			// team space
+			var mJob = make([]map[string]interface{}, 0)
+			var vJob = make(map[string]interface{})
+			vJob["chain_id"] = chainId
+			vJob["dao_address"] = daoAddress
+			vJob["account"] = creatorAddress
+			vJob["job"] = consts.Jobs_A_superAdmin
+			mJob = append(mJob, vJob)
+			_, errTx = o.InsertTx(tx, consts.TbJobs, mJob)
+			if errTx != nil {
+				oo.LogW("SQL err:%v", errTx)
+				return
+			}
+
+			var mGeneral = make([]map[string]interface{}, 0)
+			var vGeneral = make(map[string]interface{})
+			vGeneral["chain_id"] = chainId
+			vGeneral["dao_address"] = daoAddress
+			vGeneral["creator"] = creatorAddress
+			vGeneral["title"] = "General"
+			vGeneral["last_edit_time"] = time.Now().Unix()
+			vGeneral["last_edit_by"] = creatorAddress
+			vGeneral["access"] = "public"
+			mGeneral = append(mGeneral, vGeneral)
+			_, errTx = o.InsertTx(tx, consts.TbTeamSpaces, mGeneral)
+			if errTx != nil {
+				oo.LogW("SQL err:%v", errTx)
+				return
+			}
+
 			// save member
 			sqlInsMember := fmt.Sprintf(`INSERT INTO %s (dao_address,chain_id,account,join_switch) VALUES ('%s',%d,'%s',%d)`,
 				consts.TbNameMember,
@@ -522,13 +553,13 @@ func save(blockData []map[string]interface{}, currentBlockNum int64, chainId int
 								errTx = errK
 								return
 							}
-							if duration > 40 {
-								oo.LogW("query block number failed,duration > 10. timestamp: %v", timestamp)
-								errTx = errors.New("query block number failed,duration > 10")
+							if duration > 1000 {
+								oo.LogW("query block number failed,duration > 1000. timestamp: %v, chainId:%d", timestamp, daoEntity.TokenChainId)
+								errTx = errors.New("query block number failed,duration > 1000")
 								return
 							}
 							if len(resKB.Data) == 0 {
-								duration += 1
+								duration += 100
 								goto Loop
 							}
 							blockNumber = resKB.Data[0]

@@ -244,11 +244,7 @@ definitions:
     properties:
       assignAccount:
         type: string
-      chainId:
-        type: integer
       content:
-        type: string
-      daoAddress:
         type: string
       deadline:
         type: integer
@@ -258,6 +254,8 @@ definitions:
         type: integer
       reward:
         type: string
+      spacesId:
+        type: integer
       taskName:
         type: string
     type: object
@@ -318,10 +316,8 @@ definitions:
     type: object
   models.ReqRemoveTask:
     properties:
-      chainId:
+      spacesId:
         type: integer
-      daoAddress:
-        type: string
       taskId:
         items:
           type: integer
@@ -340,11 +336,7 @@ definitions:
     properties:
       assignAccount:
         type: string
-      chainId:
-        type: integer
       content:
-        type: string
-      daoAddress:
         type: string
       deadline:
         type: integer
@@ -354,6 +346,8 @@ definitions:
         type: integer
       reward:
         type: string
+      spacesId:
+        type: integer
       status:
         type: string
       taskId:
@@ -1006,11 +1000,7 @@ definitions:
         type: string
       assignNickname:
         type: string
-      chainId:
-        type: integer
       content:
-        type: string
-      daoAddress:
         type: string
       deadline:
         type: integer
@@ -1020,6 +1010,8 @@ definitions:
         type: integer
       reward:
         type: string
+      spacesId:
+        type: integer
       status:
         type: string
       taskId:
@@ -1037,14 +1029,12 @@ definitions:
         type: string
       assignNickname:
         type: string
-      chainId:
-        type: integer
-      daoAddress:
-        type: string
       deadline:
         type: integer
       priority:
         type: string
+      spacesId:
+        type: integer
       status:
         type: string
       taskId:
@@ -2593,16 +2583,11 @@ paths:
         name: limit
         required: true
         type: integer
-      - description: chainId
+      - description: spacesId
         in: query
-        name: chainId
+        name: spacesId
         required: true
         type: integer
-      - description: daoAddress
-        in: query
-        name: daoAddress
-        required: true
-        type: string
       - description: status:A_notStarted;B_inProgress;C_done;D_notStatus
         in: query
         name: status
