@@ -785,7 +785,7 @@ type ReqCreateTask struct {
 
 type ReqUpdateTask struct {
 	SpacesId      int64   `json:"spacesId"`
-	TaskId        int16   `json:"taskId"`
+	TaskId        int64   `json:"taskId"`
 	TaskName      string  `json:"taskName"`
 	Content       string  `json:"content"`
 	Deadline      int64   `json:"deadline"`

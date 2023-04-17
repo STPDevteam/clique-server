@@ -9,6 +9,7 @@ import (
 	"stp_dao_v2/db/o"
 	"stp_dao_v2/models"
 	"stp_dao_v2/utils"
+	"strings"
 )
 
 func checkLogin(sign *models.SignData) (ret bool) {
@@ -152,4 +153,13 @@ func IsAboveAdmin(chainId int64, daoAddress, account string) (role string, b boo
 	}
 
 	return jobData.Job, true
+}
+
+func IsTaskAssign(taskId int64, account string) (b bool) {
+	task, err := db.GetTbTask(o.W("id", taskId))
+	if err != nil || task.AssignAccount == "" || strings.ToLower(task.AssignAccount) != strings.ToLower(account) {
+		return false
+	}
+
+	return true
 }

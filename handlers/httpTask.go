@@ -103,8 +103,9 @@ func UpdateTask(c *gin.Context) {
 		return
 	}
 
-	_, ok = IsAboveAdmin(spacesData.ChainId, spacesData.DaoAddress, user.Account)
-	if !ok {
+	_, ok1 := IsAboveAdmin(spacesData.ChainId, spacesData.DaoAddress, user.Account)
+	ok2 := IsTaskAssign(params.TaskId, user.Account)
+	if !ok1 && !ok2 {
 		handleError(c, errs.ErrUnAuthorized)
 		return
 	}
