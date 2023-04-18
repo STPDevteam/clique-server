@@ -249,6 +249,7 @@ definitions:
       deadline:
         type: integer
       priority:
+        description: A_low;B_medium;C_high
         type: string
       proposalId:
         type: integer
@@ -262,6 +263,7 @@ definitions:
   models.ReqCreateTeamSpaces:
     properties:
       access:
+        description: public;private
         type: string
       chainId:
         type: integer
@@ -341,6 +343,7 @@ definitions:
       deadline:
         type: integer
       priority:
+        description: A_low;B_medium;C_high
         type: string
       proposalId:
         type: integer
@@ -349,6 +352,7 @@ definitions:
       spacesId:
         type: integer
       status:
+        description: A_notStarted;B_inProgress;C_done;D_notStatus
         type: string
       taskId:
         type: integer
@@ -1899,7 +1903,8 @@ paths:
       - img
   /stpdao/v2/jobs/alter:
     post:
-      description: jobs alter, only superAdmin or admin, change admin/member to admin/member/noRole
+      description: 'jobs alter, only superAdmin or admin, change admin/member to admin/member/noRole,
+        request header: Authorization=Bearer ${JWT Token}'
       parameters:
       - description: request
         in: body
@@ -1919,7 +1924,7 @@ paths:
       - jobs
   /stpdao/v2/jobs/apply:
     post:
-      description: jobs apply
+      description: 'jobs apply, request header: Authorization=Bearer ${JWT Token}'
       parameters:
       - description: request
         in: body
@@ -1973,7 +1978,8 @@ paths:
       - jobs
   /stpdao/v2/jobs/apply/review:
     post:
-      description: jobs apply review
+      description: 'jobs apply review, request header: Authorization=Bearer ${JWT
+        Token}'
       parameters:
       - description: request
         in: body
@@ -2287,7 +2293,8 @@ paths:
       - sign
   /stpdao/v2/spaces/create:
     post:
-      description: create team spaces
+      description: 'create team spaces, request header: Authorization=Bearer ${JWT
+        Token}'
       parameters:
       - description: request
         in: body
@@ -2331,7 +2338,8 @@ paths:
       - spaces
   /stpdao/v2/spaces/remove:
     post:
-      description: remove team spaces
+      description: 'remove team spaces, request header: Authorization=Bearer ${JWT
+        Token}'
       parameters:
       - description: request
         in: body
@@ -2351,7 +2359,8 @@ paths:
       - spaces
   /stpdao/v2/spaces/update:
     post:
-      description: update team spaces
+      description: 'update team spaces, request header: Authorization=Bearer ${JWT
+        Token}'
       parameters:
       - description: request
         in: body
@@ -2538,7 +2547,7 @@ paths:
       - swap
   /stpdao/v2/task/create:
     post:
-      description: create task
+      description: 'create task, request header: Authorization=Bearer ${JWT Token}'
       parameters:
       - description: request
         in: body
@@ -2592,6 +2601,10 @@ paths:
         in: query
         name: status
         type: string
+      - description: priority:A_low;B_medium;C_high
+        in: query
+        name: priority
+        type: string
       produces:
       - application/json
       responses:
@@ -2604,7 +2617,8 @@ paths:
       - task
   /stpdao/v2/task/remove:
     post:
-      description: remove task to trash
+      description: 'remove task to trash, request header: Authorization=Bearer ${JWT
+        Token}'
       parameters:
       - description: request
         in: body
@@ -2624,7 +2638,7 @@ paths:
       - task
   /stpdao/v2/task/update:
     post:
-      description: update task
+      description: 'update task, request header: Authorization=Bearer ${JWT Token}'
       parameters:
       - description: request
         in: body

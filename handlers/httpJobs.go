@@ -15,7 +15,7 @@ import (
 // @Summary jobs apply
 // @Tags jobs
 // @version 0.0.1
-// @description jobs apply
+// @description jobs apply, request header: Authorization=Bearer ${JWT Token}
 // @Produce json
 // @Param request body models.ReqJobsApply true "request"
 // @Success 200 {object} models.Response
@@ -45,6 +45,24 @@ func JobsApply(c *gin.Context) {
 	}
 	if countJobs > 0 {
 		handleError(c, errs.NewError(400, "You have successfully applied."))
+		return
+	}
+
+	if params.ApplyRole == consts.Jobs_C_member {
+		var m = make([]map[string]interface{}, 0)
+		var v = make(map[string]interface{})
+		v["chain_id"] = params.ChainId
+		v["dao_address"] = params.DaoAddress
+		v["account"] = user.Account
+		v["job"] = consts.Jobs_C_member
+		m = append(m, v)
+		err := o.Insert(consts.TbJobs, m)
+		if handleErrorIfExists(c, err, errs.ErrServer) {
+			oo.LogW("SQL err:%v", err)
+			return
+		}
+
+		jsonSuccess(c)
 		return
 	}
 
@@ -114,7 +132,7 @@ func JobsApplyList(c *gin.Context) {
 // @Summary jobs apply review
 // @Tags jobs
 // @version 0.0.1
-// @description jobs apply review
+// @description jobs apply review, request header: Authorization=Bearer ${JWT Token}
 // @Produce json
 // @Param request body models.ReqJobsApplyReview true "request"
 // @Success 200 {object} models.Response
@@ -228,7 +246,7 @@ func JobsList(c *gin.Context) {
 // @Summary jobs alter
 // @Tags jobs
 // @version 0.0.1
-// @description jobs alter, only superAdmin or admin, change admin/member to admin/member/noRole
+// @description jobs alter, only superAdmin or admin, change admin/member to admin/member/noRole, request header: Authorization=Bearer ${JWT Token}
 // @Produce json
 // @Param request body models.ReqJobsAlter true "request"
 // @Success 200 {object} models.Response

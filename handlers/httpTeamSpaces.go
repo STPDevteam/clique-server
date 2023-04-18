@@ -45,7 +45,7 @@ func TeamSpacesList(c *gin.Context) {
 // @Summary create team spaces
 // @Tags spaces
 // @version 0.0.1
-// @description create team spaces
+// @description create team spaces, request header: Authorization=Bearer ${JWT Token}
 // @Produce json
 // @Param request body models.ReqCreateTeamSpaces true "request"
 // @Success 200 {object} models.Response
@@ -94,7 +94,7 @@ func CreateTeamSpaces(c *gin.Context) {
 // @Summary update team spaces
 // @Tags spaces
 // @version 0.0.1
-// @description update team spaces
+// @description update team spaces, request header: Authorization=Bearer ${JWT Token}
 // @Produce json
 // @Param request body models.ReqUpdateTeamSpaces true "request"
 // @Success 200 {object} models.Response
@@ -139,7 +139,7 @@ func UpdateTeamSpaces(c *gin.Context) {
 // @Summary remove team spaces
 // @Tags spaces
 // @version 0.0.1
-// @description remove team spaces
+// @description remove team spaces, request header: Authorization=Bearer ${JWT Token}
 // @Produce json
 // @Param request body models.ReqRemoveTeamSpaces true "request"
 // @Success 200 {object} models.Response

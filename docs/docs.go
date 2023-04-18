@@ -1013,7 +1013,7 @@ const docTemplate = `{
         },
         "/stpdao/v2/jobs/alter": {
             "post": {
-                "description": "jobs alter, only superAdmin or admin, change admin/member to admin/member/noRole",
+                "description": "jobs alter, only superAdmin or admin, change admin/member to admin/member/noRole, request header: Authorization=Bearer ${JWT Token}",
                 "produces": [
                     "application/json"
                 ],
@@ -1044,7 +1044,7 @@ const docTemplate = `{
         },
         "/stpdao/v2/jobs/apply": {
             "post": {
-                "description": "jobs apply",
+                "description": "jobs apply, request header: Authorization=Bearer ${JWT Token}",
                 "produces": [
                     "application/json"
                 ],
@@ -1125,7 +1125,7 @@ const docTemplate = `{
         },
         "/stpdao/v2/jobs/apply/review": {
             "post": {
-                "description": "jobs apply review",
+                "description": "jobs apply review, request header: Authorization=Bearer ${JWT Token}",
                 "produces": [
                     "application/json"
                 ],
@@ -1599,7 +1599,7 @@ const docTemplate = `{
         },
         "/stpdao/v2/spaces/create": {
             "post": {
-                "description": "create team spaces",
+                "description": "create team spaces, request header: Authorization=Bearer ${JWT Token}",
                 "produces": [
                     "application/json"
                 ],
@@ -1666,7 +1666,7 @@ const docTemplate = `{
         },
         "/stpdao/v2/spaces/remove": {
             "post": {
-                "description": "remove team spaces",
+                "description": "remove team spaces, request header: Authorization=Bearer ${JWT Token}",
                 "produces": [
                     "application/json"
                 ],
@@ -1697,7 +1697,7 @@ const docTemplate = `{
         },
         "/stpdao/v2/spaces/update": {
             "post": {
-                "description": "update team spaces",
+                "description": "update team spaces, request header: Authorization=Bearer ${JWT Token}",
                 "produces": [
                     "application/json"
                 ],
@@ -1981,7 +1981,7 @@ const docTemplate = `{
         },
         "/stpdao/v2/task/create": {
             "post": {
-                "description": "create task",
+                "description": "create task, request header: Authorization=Bearer ${JWT Token}",
                 "produces": [
                     "application/json"
                 ],
@@ -2067,6 +2067,12 @@ const docTemplate = `{
                         "description": "status:A_notStarted;B_inProgress;C_done;D_notStatus",
                         "name": "status",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "priority:A_low;B_medium;C_high",
+                        "name": "priority",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -2081,7 +2087,7 @@ const docTemplate = `{
         },
         "/stpdao/v2/task/remove": {
             "post": {
-                "description": "remove task to trash",
+                "description": "remove task to trash, request header: Authorization=Bearer ${JWT Token}",
                 "produces": [
                     "application/json"
                 ],
@@ -2112,7 +2118,7 @@ const docTemplate = `{
         },
         "/stpdao/v2/task/update": {
             "post": {
-                "description": "update task",
+                "description": "update task, request header: Authorization=Bearer ${JWT Token}",
                 "produces": [
                     "application/json"
                 ],
@@ -2658,6 +2664,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "priority": {
+                    "description": "A_low;B_medium;C_high",
                     "type": "string"
                 },
                 "proposalId": {
@@ -2678,6 +2685,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "access": {
+                    "description": "public;private",
                     "type": "string"
                 },
                 "chainId": {
@@ -2799,6 +2807,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "priority": {
+                    "description": "A_low;B_medium;C_high",
                     "type": "string"
                 },
                 "proposalId": {
@@ -2811,6 +2820,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "status": {
+                    "description": "A_notStarted;B_inProgress;C_done;D_notStatus",
                     "type": "string"
                 },
                 "taskId": {

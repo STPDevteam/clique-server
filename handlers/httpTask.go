@@ -15,7 +15,7 @@ import (
 // @Summary create task
 // @Tags task
 // @version 0.0.1
-// @description create task
+// @description create task, request header: Authorization=Bearer ${JWT Token}
 // @Produce json
 // @Param request body models.ReqCreateTask true "request"
 // @Success 200 {object} models.Response
@@ -79,7 +79,7 @@ func CreateTask(c *gin.Context) {
 // @Summary update task
 // @Tags task
 // @version 0.0.1
-// @description update task
+// @description update task, request header: Authorization=Bearer ${JWT Token}
 // @Produce json
 // @Param request body models.ReqUpdateTask true "request"
 // @Success 200 {object} models.Response
@@ -132,7 +132,7 @@ func UpdateTask(c *gin.Context) {
 // @Summary remove task to trash
 // @Tags task
 // @version 0.0.1
-// @description remove task to trash
+// @description remove task to trash, request header: Authorization=Bearer ${JWT Token}
 // @Produce json
 // @Param request body models.ReqRemoveTask true "request"
 // @Success 200 {object} models.Response
