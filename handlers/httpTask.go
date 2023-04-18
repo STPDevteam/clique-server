@@ -184,6 +184,7 @@ func TaskRemoveToTrash(c *gin.Context) {
 // @Param limit query int true "limit,page"
 // @Param spacesId query int true "spacesId"
 // @Param status query string false "status:A_notStarted;B_inProgress;C_done;D_notStatus"
+// @Param priority query string false "priority:A_low;B_medium;C_high"
 // @Success 200 {object} models.ResTaskList
 // @Router /stpdao/v2/task/list [get]
 func TaskList(c *gin.Context) {
@@ -194,10 +195,14 @@ func TaskList(c *gin.Context) {
 	offsetParam, _ := strconv.Atoi(offset)
 	spacesIdParam, _ := strconv.Atoi(spacesId)
 	statusParam := c.Query("status")
+	priorityParam := c.Query("priority")
 
-	var wStatus [][]interface{}
+	var wStatus, wPriority [][]interface{}
 	if statusParam != "" {
 		wStatus = o.W("status", statusParam)
+	}
+	if priorityParam != "" {
+		wPriority = o.W("priority", priorityParam)
 	}
 
 	order := fmt.Sprintf("weight ASC")
@@ -205,7 +210,7 @@ func TaskList(c *gin.Context) {
 		Offset: offsetParam,
 		Limit:  limitParam,
 	}
-	list, total, err := PageTbTask(order, page, o.W("spaces_id", spacesIdParam), o.W("is_trash", 0), wStatus)
+	list, total, err := PageTbTask(order, page, o.W("spaces_id", spacesIdParam), o.W("is_trash", 0), wStatus, wPriority)
 	if handleErrorIfExists(c, err, errs.ErrServer) {
 		oo.LogW("SQL err:%v", err)
 		return

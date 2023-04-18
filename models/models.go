@@ -773,10 +773,11 @@ type ReqJobsApply struct {
 }
 
 type ReqCreateTask struct {
-	SpacesId      int64  `json:"spacesId"`
-	TaskName      string `json:"taskName"`
-	Content       string `json:"content"`
-	Deadline      int64  `json:"deadline"`
+	SpacesId int64  `json:"spacesId"`
+	TaskName string `json:"taskName"`
+	Content  string `json:"content"`
+	Deadline int64  `json:"deadline"`
+	// A_low;B_medium;C_high
 	Priority      string `json:"priority"`
 	AssignAccount string `json:"assignAccount"`
 	ProposalId    int    `json:"proposalId"`
@@ -784,17 +785,19 @@ type ReqCreateTask struct {
 }
 
 type ReqUpdateTask struct {
-	SpacesId      int64   `json:"spacesId"`
-	TaskId        int64   `json:"taskId"`
-	TaskName      string  `json:"taskName"`
-	Content       string  `json:"content"`
-	Deadline      int64   `json:"deadline"`
-	Priority      string  `json:"priority"`
-	AssignAccount string  `json:"assignAccount"`
-	ProposalId    int     `json:"proposalId"`
-	Reward        string  `json:"reward"`
-	Status        string  `json:"status"`
-	Weight        float64 `json:"weight"`
+	SpacesId int64  `json:"spacesId"`
+	TaskId   int64  `json:"taskId"`
+	TaskName string `json:"taskName"`
+	Content  string `json:"content"`
+	Deadline int64  `json:"deadline"`
+	// A_low;B_medium;C_high
+	Priority      string `json:"priority"`
+	AssignAccount string `json:"assignAccount"`
+	ProposalId    int    `json:"proposalId"`
+	Reward        string `json:"reward"`
+	// A_notStarted;B_inProgress;C_done;D_notStatus
+	Status string  `json:"status"`
+	Weight float64 `json:"weight"`
 }
 
 type ReqRemoveTask struct {
@@ -806,7 +809,8 @@ type ReqCreateTeamSpaces struct {
 	ChainId    int64  `json:"chainId"`
 	DaoAddress string `json:"daoAddress"`
 	Title      string `json:"title"`
-	Access     string `json:"access"`
+	// public;private
+	Access string `json:"access"`
 }
 
 type ReqUpdateTeamSpaces struct {
