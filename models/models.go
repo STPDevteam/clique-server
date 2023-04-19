@@ -171,7 +171,6 @@ type ResActivity struct {
 }
 
 type UpdateAccountWithSignParam struct {
-	Sign  SignData           `json:"sign"`
 	Param UpdateAccountParam `json:"param"`
 }
 
@@ -299,6 +298,10 @@ type ResTokenList struct {
 type SignData struct {
 	Account   string `json:"account" validate:"eth_addr"`              // personal_sign address,0x
 	Signature string `json:"signature" validate:"len=130,hexadecimal"` // personal_sign sign result,no 0x
+}
+
+type ReqAccountQuery struct {
+	Account string `json:"account"`
 }
 
 type AirdropAdminSignData struct {
@@ -607,7 +610,6 @@ type ResAccountSign struct {
 }
 
 type FollowWithSignParam struct {
-	Sign   SignData    `json:"sign"`
 	Params FollowParam `json:"params"`
 }
 
@@ -748,21 +750,20 @@ type ResIsWhite struct {
 }
 
 type UpdateAccountPushSwitchParam struct {
-	Sign                 SignData `json:"sign"`
-	AllDaosICreateOrJoin bool     `json:"allDaosICreateOrJoin"`
-	NewDao               bool     `json:"newDao"`
-	AllDaoAirdrop        bool     `json:"allDaoAirdrop"`
-	AllDaoProposal       bool     `json:"allDaoProposal"`
+	AllDaosICreateOrJoin bool `json:"allDaosICreateOrJoin"`
+	NewDao               bool `json:"newDao"`
+	AllDaoAirdrop        bool `json:"allDaoAirdrop"`
+	AllDaoProposal       bool `json:"allDaoProposal"`
 }
 
-type SignDataForTask struct {
-	Account   string `json:"account" validate:"eth_addr"`              // personal_sign address,0x
-	Signature string `json:"signature" validate:"len=130,hexadecimal"` // personal_sign sign result,no 0x
-	// Timestamp: expired timestamp, cannot exceed one day(86400)
-	Timestamp  int64  `json:"timestamp"`
-	ChainId    int64  `json:"chainId"`
-	DaoAddress string `json:"daoAddress"`
-}
+//type SignDataForTask struct {
+//	Account   string `json:"account" validate:"eth_addr"`              // personal_sign address,0x
+//	Signature string `json:"signature" validate:"len=130,hexadecimal"` // personal_sign sign result,no 0x
+//	// Timestamp: expired timestamp, cannot exceed one day(86400)
+//	Timestamp  int64  `json:"timestamp"`
+//	ChainId    int64  `json:"chainId"`
+//	DaoAddress string `json:"daoAddress"`
+//}
 
 type ReqJobsApply struct {
 	ChainId    int64  `json:"chainId"`

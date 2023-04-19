@@ -67,20 +67,27 @@ func Router() {
 			r5.POST("/lock/handle", handlers.HttpLockDaoHandleSign)
 			r5.GET("/query/handle", handlers.HttpQueryDaoHandle)
 		}
-		r6 := router.Group("/account")
+		account := router.Group("/account")
 		{
-			r6.POST("/query", handlers.HttpQueryAccount)
-			r6.POST("/jwt/signIn", handlers.HttpAccountSignIn)
-			r6.POST("/update", handlers.HttpUpdateAccount)
-			r6.GET("/record", handlers.HttpQueryRecordList)
-			r6.GET("/sign/list", handlers.HttpQueryAccountSignList)
-			r6.GET("/nfts", handlers.HttpQueryAccountNFTsList)
-			r6.POST("/update/follow", handlers.HttpUpdateAccountFollow)
-			r6.GET("/following/list", handlers.HttpAccountFollowingList)
-			r6.GET("/followers/list", handlers.HttpAccountFollowersList)
-			r6.GET("/relation", handlers.HttpAccountRelation)
-			r6.GET("/push/setting", handlers.HttpPushSetting)
-			r6.GET("/top/list", handlers.HttpAccountTopList)
+			account.POST("/jwt/signIn", handlers.HttpAccountSignIn)
+			account.GET("/record", handlers.HttpQueryRecordList)
+			account.GET("/sign/list", handlers.HttpQueryAccountSignList)
+			account.GET("/nfts", handlers.HttpQueryAccountNFTsList)
+			account.GET("/following/list", handlers.HttpAccountFollowingList)
+			account.GET("/followers/list", handlers.HttpAccountFollowersList)
+			account.GET("/relation", handlers.HttpAccountRelation)
+			account.GET("/top/list", handlers.HttpAccountTopList)
+		}
+		accountAuthForce := router.Group("/account", middlewares.JWTAuthForce())
+		{
+			accountAuthForce.POST("/update", handlers.HttpUpdateAccount)
+			accountAuthForce.POST("/update/follow", handlers.HttpUpdateAccountFollow)
+			account.POST("/push/setting", handlers.HttpPushSetting)
+
+		}
+		accountAuth := router.Group("/account", middlewares.JWTAuth())
+		{
+			accountAuth.POST("/query", handlers.HttpQueryAccount)
 		}
 		r7 := router.Group("/token")
 		{
@@ -130,6 +137,7 @@ func Router() {
 			jobsAuth.POST("/apply", handlers.JobsApply)
 			jobsAuth.POST("/apply/review", handlers.JobsApplyReview)
 			jobsAuth.POST("/alter", handlers.JobsAlter)
+			jobsAuth.GET("/isJoin", handlers.JobsIsJoin)
 
 		}
 		jobs := router.Group("/jobs")

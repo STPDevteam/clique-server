@@ -1154,6 +1154,42 @@ const docTemplate = `{
                 }
             }
         },
+        "/stpdao/v2/jobs/isJoin": {
+            "get": {
+                "description": "jobs isJoin, request header: Authorization=Bearer ${JWT Token}",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "jobs"
+                ],
+                "summary": "jobs isJoin",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "chainId",
+                        "name": "chainId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "daoAddress",
+                        "name": "daoAddress",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/stpdao/v2/jobs/list": {
             "get": {
                 "description": "jobs list",
@@ -2426,9 +2462,6 @@ const docTemplate = `{
             "properties": {
                 "params": {
                     "$ref": "#/definitions/models.FollowParam"
-                },
-                "sign": {
-                    "$ref": "#/definitions/models.SignData"
                 }
             }
         },
@@ -4143,9 +4176,6 @@ const docTemplate = `{
                 },
                 "newDao": {
                     "type": "boolean"
-                },
-                "sign": {
-                    "$ref": "#/definitions/models.SignData"
                 }
             }
         },
@@ -4154,9 +4184,6 @@ const docTemplate = `{
             "properties": {
                 "param": {
                     "$ref": "#/definitions/models.UpdateAccountParam"
-                },
-                "sign": {
-                    "$ref": "#/definitions/models.SignData"
                 }
             }
         },

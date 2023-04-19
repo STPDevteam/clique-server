@@ -93,35 +93,35 @@ func checkAccountJoinOrQuit(data *models.JoinDaoWithSignParam) (ret bool) {
 	return true
 }
 
-func checkAdminOrMember(data models.SignDataForTask) (role string, ret bool) {
-	message := fmt.Sprintf(`%d,%s,%s,%d`, data.ChainId, data.DaoAddress, data.Account, data.Timestamp)
-	ret, err := utils.CheckPersonalSign(message, data.Account, data.Signature)
-	if err != nil {
-		oo.LogW("signMessage err:%v", err)
-		return "", false
-	}
-
-	if !ret {
-		oo.LogW("check Sign failed.")
-		return "", false
-	}
-
-	if !utils.CheckAdminSignMessageTimestamp(data.Timestamp) {
-		oo.LogW("signMessage deadline.")
-		return "", false
-	}
-
-	jobs, err := db.GetTbJobs(
-		o.W("chain_id", data.ChainId),
-		o.W("dao_address", data.DaoAddress),
-		o.W("account", data.Account))
-	if err != nil {
-		oo.LogW("SQL err:%v", err)
-		return "", false
-	}
-
-	return jobs.Job, true
-}
+//func checkAdminOrMember(data models.SignDataForTask) (role string, ret bool) {
+//	message := fmt.Sprintf(`%d,%s,%s,%d`, data.ChainId, data.DaoAddress, data.Account, data.Timestamp)
+//	ret, err := utils.CheckPersonalSign(message, data.Account, data.Signature)
+//	if err != nil {
+//		oo.LogW("signMessage err:%v", err)
+//		return "", false
+//	}
+//
+//	if !ret {
+//		oo.LogW("check Sign failed.")
+//		return "", false
+//	}
+//
+//	if !utils.CheckAdminSignMessageTimestamp(data.Timestamp) {
+//		oo.LogW("signMessage deadline.")
+//		return "", false
+//	}
+//
+//	jobs, err := db.GetTbJobs(
+//		o.W("chain_id", data.ChainId),
+//		o.W("dao_address", data.DaoAddress),
+//		o.W("account", data.Account))
+//	if err != nil {
+//		oo.LogW("SQL err:%v", err)
+//		return "", false
+//	}
+//
+//	return jobs.Job, true
+//}
 
 func IsSuperAdmin(chainId int64, daoAddress, account string) (b bool) {
 	jobData, err := db.GetTbJobs(

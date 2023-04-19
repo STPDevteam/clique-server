@@ -91,8 +91,6 @@ definitions:
     properties:
       params:
         $ref: '#/definitions/models.FollowParam'
-      sign:
-        $ref: '#/definitions/models.SignData'
     type: object
   models.JoinDaoParam:
     properties:
@@ -1222,15 +1220,11 @@ definitions:
         type: boolean
       newDao:
         type: boolean
-      sign:
-        $ref: '#/definitions/models.SignData'
     type: object
   models.UpdateAccountWithSignParam:
     properties:
       param:
         $ref: '#/definitions/models.UpdateAccountParam'
-      sign:
-        $ref: '#/definitions/models.SignData'
     type: object
   models.UserInformationParam:
     properties:
@@ -1995,6 +1989,30 @@ paths:
           schema:
             $ref: '#/definitions/models.Response'
       summary: jobs apply review
+      tags:
+      - jobs
+  /stpdao/v2/jobs/isJoin:
+    get:
+      description: 'jobs isJoin, request header: Authorization=Bearer ${JWT Token}'
+      parameters:
+      - description: chainId
+        in: query
+        name: chainId
+        required: true
+        type: integer
+      - description: daoAddress
+        in: query
+        name: daoAddress
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: jobs isJoin
       tags:
       - jobs
   /stpdao/v2/jobs/list:

@@ -56,7 +56,7 @@ func JobsApply(c *gin.Context) {
 		v["account"] = user.Account
 		v["job"] = consts.Jobs_C_member
 		m = append(m, v)
-		err := o.Insert(consts.TbJobs, m)
+		err = o.Insert(consts.TbJobs, m)
 		if handleErrorIfExists(c, err, errs.ErrServer) {
 			oo.LogW("SQL err:%v", err)
 			return
@@ -315,4 +315,40 @@ func JobsAlter(c *gin.Context) {
 	}
 
 	jsonSuccess(c)
+}
+
+// @Summary jobs isJoin
+// @Tags jobs
+// @version 0.0.1
+// @description jobs isJoin, request header: Authorization=Bearer ${JWT Token}
+// @Produce json
+// @Param chainId query int true "chainId"
+// @Param daoAddress query string true "daoAddress"
+// @Success 200 {object} models.Response
+// @Router /stpdao/v2/jobs/isJoin [get]
+func JobsIsJoin(c *gin.Context) {
+	var ok bool
+	var user *db.TbAccountModel
+	user, ok = parseJWTCache(c)
+	if !ok {
+		return
+	}
+
+	chainId := c.Query("chainId")
+	chainIdParam, _ := strconv.Atoi(chainId)
+	daoAddressParam := c.Query("daoAddress")
+
+	count, err := o.Count(consts.TbJobs, o.W("chain_id", chainIdParam),
+		o.W("dao_address", daoAddressParam), o.W("account", user.Account))
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err:%v", err)
+		return
+	}
+
+	var isJoin bool
+	if count > 0 {
+		isJoin = true
+	}
+
+	jsonData(c, isJoin)
 }

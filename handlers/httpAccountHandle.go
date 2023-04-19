@@ -16,6 +16,7 @@ import (
 	"stp_dao_v2/models"
 	"stp_dao_v2/utils"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -76,7 +77,17 @@ getAccount:
 // @Success 200 {object} models.ResQueryAccount
 // @Router /stpdao/v2/account/query [post]
 func HttpQueryAccount(c *gin.Context) {
-	var params models.SignData
+	var user *db.TbAccountModel
+	login := c.GetBool(consts.KEY_LOGIN)
+	if login {
+		var ok bool
+		user, ok = parseJWTCache(c)
+		if !ok {
+			return
+		}
+	}
+
+	var params models.ReqAccountQuery
 	err := c.ShouldBindJSON(&params)
 	if err != nil {
 		oo.LogW("%v", err)
@@ -258,7 +269,7 @@ func HttpQueryAccount(c *gin.Context) {
 	}
 
 	var email string
-	if checkLogin(&params) {
+	if login && strings.ToLower(user.Account) == strings.ToLower(params.Account) {
 		email = entity.Email.String
 	}
 
@@ -299,6 +310,13 @@ func HttpQueryAccount(c *gin.Context) {
 // @Success 200 {object} models.Response
 // @Router /stpdao/v2/account/update [post]
 func HttpUpdateAccount(c *gin.Context) {
+	var ok bool
+	var user *db.TbAccountModel
+	user, ok = parseJWTCache(c)
+	if !ok {
+		return
+	}
+
 	var params models.UpdateAccountWithSignParam
 	err := c.ShouldBindJSON(&params)
 	if err != nil {
@@ -306,16 +324,6 @@ func HttpUpdateAccount(c *gin.Context) {
 		c.JSON(http.StatusOK, models.Response{
 			Code:    http.StatusBadRequest,
 			Message: "Invalid parameters.",
-		})
-		return
-	}
-
-	if !checkLogin(&params.Sign) {
-		oo.LogD("SignData err not auth")
-		c.JSON(http.StatusUnauthorized, models.Response{
-			Code:    http.StatusUnauthorized,
-			Data:    models.ResResult{Success: false},
-			Message: "SignData err not auth",
 		})
 		return
 	}
@@ -331,7 +339,7 @@ func HttpUpdateAccount(c *gin.Context) {
 	v["country"] = params.Param.Country[:int(math.Min(float64(len(params.Param.Country)), 128))]
 	v["youtube"] = params.Param.Youtube[:int(math.Min(float64(len(params.Param.Youtube)), 128))]
 	v["opensea"] = params.Param.Opensea[:int(math.Min(float64(len(params.Param.Opensea)), 128))]
-	sqler := oo.NewSqler().Table(consts.TbNameAccount).Where("account", params.Sign.Account).Update(v)
+	sqler := oo.NewSqler().Table(consts.TbNameAccount).Where("account", user.Account).Update(v)
 	err = oo.SqlExec(sqler)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)
@@ -566,6 +574,13 @@ func HttpQueryAccountNFTsList(c *gin.Context) {
 // @Success 200 {object} models.Response
 // @Router /stpdao/v2/account/update/follow [post]
 func HttpUpdateAccountFollow(c *gin.Context) {
+	var ok bool
+	var user *db.TbAccountModel
+	user, ok = parseJWTCache(c)
+	if !ok {
+		return
+	}
+
 	var params models.FollowWithSignParam
 	err := c.ShouldBindJSON(&params)
 	if err != nil {
@@ -577,18 +592,8 @@ func HttpUpdateAccountFollow(c *gin.Context) {
 		return
 	}
 
-	if !checkLogin(&params.Sign) {
-		oo.LogD("SignData err not auth")
-		c.JSON(http.StatusUnauthorized, models.Response{
-			Code:    http.StatusUnauthorized,
-			Data:    models.ResResult{Success: false},
-			Message: "SignData err not auth",
-		})
-		return
-	}
-
 	var count int
-	sqlSel := oo.NewSqler().Table(consts.TbNameAccountFollow).Where("account", params.Sign.Account).
+	sqlSel := oo.NewSqler().Table(consts.TbNameAccountFollow).Where("account", user.Account).
 		Where("followed", params.Params.FollowAccount).Count()
 	err = oo.SqlGet(sqlSel, &count)
 	if err != nil && err != oo.ErrNoRows {
@@ -604,7 +609,7 @@ func HttpUpdateAccountFollow(c *gin.Context) {
 		if count == 0 {
 			var m = make([]map[string]interface{}, 0)
 			var v = make(map[string]interface{})
-			v["account"] = params.Sign.Account
+			v["account"] = user.Account
 			v["followed"] = params.Params.FollowAccount
 			v["status"] = 1
 			m = append(m, v)
@@ -622,7 +627,7 @@ func HttpUpdateAccountFollow(c *gin.Context) {
 		if count == 1 {
 			var v = make(map[string]interface{})
 			v["status"] = 1
-			sqlUp := oo.NewSqler().Table(consts.TbNameAccountFollow).Where("account", params.Sign.Account).
+			sqlUp := oo.NewSqler().Table(consts.TbNameAccountFollow).Where("account", user.Account).
 				Where("followed", params.Params.FollowAccount).Update(v)
 			err = oo.SqlExec(sqlUp)
 			if err != nil {
@@ -647,7 +652,7 @@ func HttpUpdateAccountFollow(c *gin.Context) {
 		if count == 1 {
 			var v = make(map[string]interface{})
 			v["status"] = 0
-			sqlUp := oo.NewSqler().Table(consts.TbNameAccountFollow).Where("account", params.Sign.Account).
+			sqlUp := oo.NewSqler().Table(consts.TbNameAccountFollow).Where("account", user.Account).
 				Where("followed", params.Params.FollowAccount).Update(v)
 			err = oo.SqlExec(sqlUp)
 			if err != nil {
@@ -906,6 +911,13 @@ func HttpAccountRelation(c *gin.Context) {
 // @Success 200 {object} models.Response
 // @Router /stpdao/v2/account/push/setting [post]
 func HttpPushSetting(c *gin.Context) {
+	var ok bool
+	var user *db.TbAccountModel
+	user, ok = parseJWTCache(c)
+	if !ok {
+		return
+	}
+
 	var params models.UpdateAccountPushSwitchParam
 	err := c.ShouldBindJSON(&params)
 	if err != nil {
@@ -913,16 +925,6 @@ func HttpPushSetting(c *gin.Context) {
 		c.JSON(http.StatusOK, models.Response{
 			Code:    http.StatusBadRequest,
 			Message: "Invalid parameters.",
-		})
-		return
-	}
-
-	if !checkLogin(&params.Sign) {
-		oo.LogD("SignData err not auth")
-		c.JSON(http.StatusUnauthorized, models.Response{
-			Code:    http.StatusUnauthorized,
-			Data:    models.ResResult{Success: false},
-			Message: "SignData err not auth",
 		})
 		return
 	}
@@ -951,7 +953,7 @@ func HttpPushSetting(c *gin.Context) {
 
 	var v = make(map[string]interface{})
 	v["push_switch"] = pushSwitch
-	sqler := oo.NewSqler().Table(consts.TbNameAccount).Where("account", params.Sign.Account).Update(v)
+	sqler := oo.NewSqler().Table(consts.TbNameAccount).Where("account", user.Account).Update(v)
 	err = oo.SqlExec(sqler)
 	if err != nil {
 		oo.LogW("SQL err: %v", err)
