@@ -75,13 +75,13 @@ func JWTAuthForce() gin.HandlerFunc {
 		authorization := c.Request.Header.Get("Authorization")
 		if authorization == "" {
 			c.Abort()
-			c.Error(errs.ErrUnAuthorized)
+			c.Error(errs.NewError(401, "Authorization is nil"))
 			return
 		}
 		authorizations := strings.Split(authorization, " ")
 		if len(authorizations) != 2 || authorizations[0] != "Bearer" {
 			c.Abort()
-			c.Error(errs.ErrUnAuthorized)
+			c.Error(errs.NewError(401, "get Authorization error"))
 			return
 		}
 		token := authorizations[1]
@@ -98,7 +98,7 @@ func JWTAuthForce() gin.HandlerFunc {
 		if claims.Subject != claims.Account {
 			oo.LogW("%s: ParseToken: token:%s, error : not consistent", c.FullPath(), token)
 			c.Abort()
-			c.Error(errs.ErrUnAuthorized)
+			c.Error(errs.NewError(401, "subject != account"))
 			return
 		}
 

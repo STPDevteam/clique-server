@@ -73,7 +73,7 @@ getAccount:
 // @version 0.0.1
 // @description account info
 // @Produce json
-// @Param request body models.SignData true "request"
+// @Param request body models.ReqAccountQuery true "request"
 // @Success 200 {object} models.ResQueryAccount
 // @Router /stpdao/v2/account/query [post]
 func HttpQueryAccount(c *gin.Context) {
