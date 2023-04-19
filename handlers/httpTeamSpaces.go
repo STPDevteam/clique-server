@@ -64,7 +64,7 @@ func CreateTeamSpaces(c *gin.Context) {
 	}
 
 	if !IsSuperAdmin(params.ChainId, params.DaoAddress, user.Account) {
-		handleError(c, errs.ErrUnAuthorized)
+		handleError(c, errs.NewError(401, "You are not super admin."))
 		return
 	}
 	if len(params.Title) > 20 {
@@ -113,7 +113,7 @@ func UpdateTeamSpaces(c *gin.Context) {
 	}
 
 	if !IsSuperAdmin(params.ChainId, params.DaoAddress, user.Account) {
-		handleError(c, errs.ErrUnAuthorized)
+		handleError(c, errs.NewError(401, "You are not super admin."))
 		return
 	}
 	if len(params.Title) > 20 {
@@ -158,7 +158,7 @@ func TeamSpacesRemoveToTrash(c *gin.Context) {
 	}
 
 	if !IsSuperAdmin(params.ChainId, params.DaoAddress, user.Account) {
-		handleError(c, errs.ErrUnAuthorized)
+		handleError(c, errs.NewError(401, "You are not super admin."))
 		return
 	}
 

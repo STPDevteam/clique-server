@@ -41,7 +41,7 @@ func CreateTask(c *gin.Context) {
 
 	_, ok = IsAboveAdmin(spacesData.ChainId, spacesData.DaoAddress, user.Account)
 	if !ok {
-		handleError(c, errs.ErrUnAuthorized)
+		handleError(c, errs.NewError(401, "You are not admin."))
 		return
 	}
 
@@ -106,7 +106,7 @@ func UpdateTask(c *gin.Context) {
 	_, ok1 := IsAboveAdmin(spacesData.ChainId, spacesData.DaoAddress, user.Account)
 	ok2 := IsTaskAssign(params.TaskId, user.Account)
 	if !ok1 && !ok2 {
-		handleError(c, errs.ErrUnAuthorized)
+		handleError(c, errs.NewError(401, "You are not admin."))
 		return
 	}
 
@@ -158,7 +158,7 @@ func TaskRemoveToTrash(c *gin.Context) {
 
 	_, ok = IsAboveAdmin(spacesData.ChainId, spacesData.DaoAddress, user.Account)
 	if !ok {
-		handleError(c, errs.ErrUnAuthorized)
+		handleError(c, errs.NewError(401, "You are not admin."))
 		return
 	}
 

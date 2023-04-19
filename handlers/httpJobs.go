@@ -151,7 +151,7 @@ func JobsApplyReview(c *gin.Context) {
 	}
 
 	if !IsSuperAdmin(params.ChainId, params.DaoAddress, user.Account) {
-		handleError(c, errs.ErrUnAuthorized)
+		handleError(c, errs.NewError(401, "You are not super admin."))
 		return
 	}
 
@@ -266,7 +266,7 @@ func JobsAlter(c *gin.Context) {
 
 	role, ok := IsAboveAdmin(params.ChainId, params.DaoAddress, user.Account)
 	if !ok {
-		handleError(c, errs.ErrUnAuthorized)
+		handleError(c, errs.NewError(401, "You are not admin."))
 		return
 	}
 
