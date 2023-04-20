@@ -783,6 +783,8 @@ type ReqCreateTask struct {
 	AssignAccount string `json:"assignAccount"`
 	ProposalId    int    `json:"proposalId"`
 	Reward        string `json:"reward"`
+	// A_notStarted;B_inProgress;C_done;D_notStatus
+	Status string `json:"status"`
 }
 
 type ReqUpdateTask struct {

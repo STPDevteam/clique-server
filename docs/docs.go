@@ -2717,6 +2717,10 @@ const docTemplate = `{
                 "spacesId": {
                     "type": "integer"
                 },
+                "status": {
+                    "description": "A_notStarted;B_inProgress;C_done;D_notStatus",
+                    "type": "string"
+                },
                 "taskName": {
                     "type": "string"
                 }

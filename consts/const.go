@@ -107,3 +107,5 @@ const (
 	KEY_LOGIN        = "login"
 	KEY_CURRENT_USER = "current_user"
 )
+
+var Task_Status_Arr = []string{Task_status_A_notStarted, Task_status_B_inProgress, Task_status_C_done, Task_status_D_notStatus}

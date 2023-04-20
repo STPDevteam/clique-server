@@ -32,6 +32,11 @@ func CreateTask(c *gin.Context) {
 	if handleErrorIfExists(c, c.ShouldBindJSON(&params), errs.ErrParam) {
 		return
 	}
+	if !oo.InArray(params.Status, consts.Task_Status_Arr) {
+		oo.LogW("%#v", params)
+		handleError(c, errs.ErrParam)
+		return
+	}
 
 	spacesData, err := db.GetTbTeamSpaces(o.W("id", params.SpacesId))
 	if handleErrorIfExists(c, err, errs.ErrServer) {
@@ -46,8 +51,7 @@ func CreateTask(c *gin.Context) {
 	}
 
 	var weight float64
-	sqlSel := o.Sqler(consts.TbTask, o.W("spaces_id", params.SpacesId),
-		o.W("status", consts.Task_status_A_notStarted)).Max("weight")
+	sqlSel := o.Sqler(consts.TbTask, o.W("spaces_id", params.SpacesId)).Max("weight")
 	err = oo.SqlGet(sqlSel, &weight)
 	if handleErrorIfExists(c, err, errs.ErrServer) {
 		oo.LogW("SQL err:%v", err)
@@ -64,7 +68,7 @@ func CreateTask(c *gin.Context) {
 	v["assign_account"] = params.AssignAccount
 	v["proposal_id"] = params.ProposalId
 	v["reward"] = params.Reward
-	v["status"] = consts.Task_status_A_notStarted
+	v["status"] = params.Status
 	v["weight"] = weight + 10
 	m = append(m, v)
 	err = o.Insert(consts.TbTask, m)
