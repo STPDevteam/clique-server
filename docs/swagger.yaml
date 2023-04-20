@@ -204,6 +204,11 @@ definitions:
       content:
         type: string
     type: object
+  models.ReqAccountQuery:
+    properties:
+      account:
+        type: string
+    type: object
   models.ReqCreateSale:
     properties:
       about:
@@ -1379,7 +1384,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/models.SignData'
+          $ref: '#/definitions/models.ReqAccountQuery'
       produces:
       - application/json
       responses:
@@ -1991,9 +1996,9 @@ paths:
       summary: jobs apply review
       tags:
       - jobs
-  /stpdao/v2/jobs/isJoin:
+  /stpdao/v2/jobs/identity:
     get:
-      description: 'jobs isJoin, request header: Authorization=Bearer ${JWT Token}'
+      description: 'jobs identity, request header: Authorization=Bearer ${JWT Token}'
       parameters:
       - description: chainId
         in: query
@@ -2012,7 +2017,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.Response'
-      summary: jobs isJoin
+      summary: jobs identity
       tags:
       - jobs
   /stpdao/v2/jobs/list:

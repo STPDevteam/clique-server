@@ -231,7 +231,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.SignData"
+                            "$ref": "#/definitions/models.ReqAccountQuery"
                         }
                     }
                 ],
@@ -1154,16 +1154,16 @@ const docTemplate = `{
                 }
             }
         },
-        "/stpdao/v2/jobs/isJoin": {
+        "/stpdao/v2/jobs/identity": {
             "get": {
-                "description": "jobs isJoin, request header: Authorization=Bearer ${JWT Token}",
+                "description": "jobs identity, request header: Authorization=Bearer ${JWT Token}",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "jobs"
                 ],
-                "summary": "jobs isJoin",
+                "summary": "jobs identity",
                 "parameters": [
                     {
                         "type": "integer",
@@ -2629,6 +2629,14 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "content": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ReqAccountQuery": {
+            "type": "object",
+            "properties": {
+                "account": {
                     "type": "string"
                 }
             }
