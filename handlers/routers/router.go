@@ -150,6 +150,7 @@ func Router() {
 			teamSpacesAuth.POST("/create", handlers.CreateTeamSpaces)
 			teamSpacesAuth.POST("/update", handlers.UpdateTeamSpaces)
 			teamSpacesAuth.POST("/remove", handlers.TeamSpacesRemoveToTrash)
+			teamSpacesAuth.POST("/delete", handlers.DeleteTeamSpaces)
 		}
 		teamSpaces := router.Group("/spaces")
 		{

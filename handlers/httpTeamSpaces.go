@@ -172,3 +172,38 @@ func TeamSpacesRemoveToTrash(c *gin.Context) {
 
 	jsonSuccess(c)
 }
+
+// @Summary delete completely team spaces
+// @Tags spaces
+// @version 0.0.1
+// @description delete completely team spaces, request header: Authorization=Bearer ${JWT Token}
+// @Produce json
+// @Param request body models.ReqDeleteTeamSpaces true "request"
+// @Success 200 {object} models.Response
+// @Router /stpdao/v2/spaces/delete [post]
+func DeleteTeamSpaces(c *gin.Context) {
+	var ok bool
+	var user *db.TbAccountModel
+	user, ok = parseJWTCache(c)
+	if !ok {
+		return
+	}
+
+	var params models.ReqDeleteTeamSpaces
+	if handleErrorIfExists(c, c.ShouldBindJSON(&params), errs.ErrParam) {
+		return
+	}
+
+	if !IsSuperAdmin(params.ChainId, params.DaoAddress, user.Account) {
+		handleError(c, errs.NewError(401, "You are not super admin."))
+		return
+	}
+
+	err := o.Delete(consts.TbTeamSpaces, o.W("id", params.TeamSpacesId))
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err:%v", err)
+		return
+	}
+
+	jsonSuccess(c)
+}

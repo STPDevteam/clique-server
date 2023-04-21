@@ -852,6 +852,12 @@ type ReqRemoveTeamSpaces struct {
 	TeamSpacesId int64  `json:"teamSpacesId"`
 }
 
+type ReqDeleteTeamSpaces struct {
+	ChainId      int64  `json:"chainId"`
+	DaoAddress   string `json:"daoAddress"`
+	TeamSpacesId int64  `json:"teamSpacesId"`
+}
+
 type ResTaskList struct {
 	SpacesId       int64   `json:"spacesId"`
 	TaskId         int64   `json:"taskId"`
