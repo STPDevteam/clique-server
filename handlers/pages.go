@@ -102,6 +102,8 @@ func PageTbTask(order string, page ReqPagination, w ...[][]interface{}) (list []
 			AssignAccount:  ls.AssignAccount,
 			AssignAvatar:   avatar,
 			AssignNickname: nickname,
+			ProposalId:     ls.ProposalId,
+			Reward:         ls.Reward,
 			Status:         ls.Status,
 			Weight:         ls.Weight,
 		})

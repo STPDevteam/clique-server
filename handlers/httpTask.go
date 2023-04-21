@@ -133,6 +133,50 @@ func UpdateTask(c *gin.Context) {
 	jsonSuccess(c)
 }
 
+// @Summary delete completely task
+// @Tags task
+// @version 0.0.1
+// @description delete completely task, request header: Authorization=Bearer ${JWT Token}
+// @Produce json
+// @Param request body models.ReqDeleteTask true "request"
+// @Success 200 {object} models.Response
+// @Router /stpdao/v2/task/delete [post]
+func DeleteTask(c *gin.Context) {
+	var ok bool
+	var user *db.TbAccountModel
+	user, ok = parseJWTCache(c)
+	if !ok {
+		return
+	}
+
+	var params models.ReqDeleteTask
+	if handleErrorIfExists(c, c.ShouldBindJSON(&params), errs.ErrParam) {
+		return
+	}
+
+	spacesData, err := db.GetTbTeamSpaces(o.W("id", params.SpacesId))
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err:%v", err)
+		return
+	}
+
+	_, ok = IsAboveAdmin(spacesData.ChainId, spacesData.DaoAddress, user.Account)
+	if !ok {
+		handleError(c, errs.NewError(401, "You are not admin."))
+		return
+	}
+
+	for _, val := range params.TaskId {
+		err = o.Delete(consts.TbTask, o.W("id", val))
+		if handleErrorIfExists(c, err, errs.ErrServer) {
+			oo.LogW("SQL err:%v", err)
+			return
+		}
+	}
+
+	jsonSuccess(c)
+}
+
 // @Summary remove task to trash
 // @Tags task
 // @version 0.0.1

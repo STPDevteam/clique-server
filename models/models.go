@@ -808,6 +808,11 @@ type ReqRemoveTask struct {
 	TaskId   []int64 `json:"taskId"`
 }
 
+type ReqDeleteTask struct {
+	SpacesId int64   `json:"spacesId"`
+	TaskId   []int64 `json:"taskId"`
+}
+
 type ReqCreateTeamSpaces struct {
 	ChainId    int64  `json:"chainId"`
 	DaoAddress string `json:"daoAddress"`
@@ -856,6 +861,8 @@ type ResTaskList struct {
 	AssignAccount  string  `json:"assignAccount"`
 	AssignAvatar   string  `json:"assignAvatar"`
 	AssignNickname string  `json:"assignNickname"`
+	ProposalId     int     `json:"proposalId"`
+	Reward         string  `json:"reward"`
 	Status         string  `json:"status"`
 	Weight         float64 `json:"weight"`
 }

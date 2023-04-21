@@ -3907,6 +3907,12 @@ const docTemplate = `{
                 "priority": {
                     "type": "string"
                 },
+                "proposalId": {
+                    "type": "integer"
+                },
+                "reward": {
+                    "type": "string"
+                },
                 "spacesId": {
                     "type": "integer"
                 },

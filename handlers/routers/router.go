@@ -160,6 +160,7 @@ func Router() {
 			taskAuth.POST("/create", handlers.CreateTask)
 			taskAuth.POST("/update", handlers.UpdateTask)
 			taskAuth.POST("/remove", handlers.TaskRemoveToTrash)
+			taskAuth.POST("/delete", handlers.DeleteTask)
 		}
 		task := router.Group("/task")
 		{
