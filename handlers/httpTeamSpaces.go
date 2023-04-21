@@ -23,9 +23,24 @@ import (
 // @Success 200 {object} models.ResTeamSpacesList
 // @Router /stpdao/v2/spaces/list [get]
 func TeamSpacesList(c *gin.Context) {
+	var user *db.TbAccountModel
+	login := c.GetBool(consts.KEY_LOGIN)
+	if login {
+		var ok bool
+		user, ok = parseJWTCache(c)
+		if !ok {
+			return
+		}
+	}
+
 	chainId := c.Query("chainId")
 	chainIdParam, _ := strconv.Atoi(chainId)
 	daoAddressParam := c.Query("daoAddress")
+
+	var wAccess [][]interface{}
+	if !login || !IsSuperAdmin(int64(chainIdParam), daoAddressParam, user.Account) {
+		wAccess = o.W("access", "public")
+	}
 
 	order := fmt.Sprintf("create_time ASC")
 	page := ReqPagination{
@@ -33,7 +48,7 @@ func TeamSpacesList(c *gin.Context) {
 		Limit:  10,
 	}
 	list, total, err := PageTbTeamSpaces(order, page,
-		o.W("chain_id", chainIdParam), o.W("dao_address", daoAddressParam), o.W("is_trash", 0))
+		o.W("chain_id", chainIdParam), o.W("dao_address", daoAddressParam), o.W("is_trash", 0), wAccess)
 	if handleErrorIfExists(c, err, errs.ErrServer) {
 		oo.LogW("SQL err:%v", err)
 		return

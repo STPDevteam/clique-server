@@ -826,8 +826,9 @@ type ReqUpdateTeamSpaces struct {
 	ChainId      int64  `json:"chainId"`
 	DaoAddress   string `json:"daoAddress"`
 	Title        string `json:"title"`
-	Access       string `json:"access"`
-	Url          string `json:"url"`
+	// public;private
+	Access string `json:"access"`
+	Url    string `json:"url"`
 }
 
 type ResTeamSpacesList struct {

@@ -152,7 +152,7 @@ func Router() {
 			teamSpacesAuth.POST("/remove", handlers.TeamSpacesRemoveToTrash)
 			teamSpacesAuth.POST("/delete", handlers.DeleteTeamSpaces)
 		}
-		teamSpaces := router.Group("/spaces")
+		teamSpaces := router.Group("/spaces", middlewares.JWTAuth())
 		{
 			teamSpaces.GET("/list", handlers.TeamSpacesList)
 		}
