@@ -278,6 +278,24 @@ definitions:
       title:
         type: string
     type: object
+  models.ReqDeleteTask:
+    properties:
+      spacesId:
+        type: integer
+      taskId:
+        items:
+          type: integer
+        type: array
+    type: object
+  models.ReqDeleteTeamSpaces:
+    properties:
+      chainId:
+        type: integer
+      daoAddress:
+        type: string
+      teamSpacesId:
+        type: integer
+    type: object
   models.ReqJobsAlter:
     properties:
       chainId:
@@ -370,6 +388,7 @@ definitions:
   models.ReqUpdateTeamSpaces:
     properties:
       access:
+        description: public;private
         type: string
       chainId:
         type: integer
@@ -663,6 +682,49 @@ definitions:
         type: array
       total:
         type: integer
+    type: object
+  models.ResDaoOne:
+    properties:
+      chainId:
+        type: integer
+      creator:
+        type: string
+      daoAddress:
+        type: string
+      daoLogo:
+        type: string
+      daoName:
+        type: string
+      description:
+        type: string
+      discord:
+        type: string
+      github:
+        type: string
+      handle:
+        type: string
+      id:
+        type: integer
+      members:
+        type: integer
+      proposalThreshold:
+        type: string
+      tokenAddress:
+        type: string
+      tokenChainId:
+        type: integer
+      totalProposals:
+        type: integer
+      twitter:
+        type: string
+      votingPeriod:
+        type: integer
+      votingQuorum:
+        type: string
+      votingType:
+        type: string
+      website:
+        type: string
     type: object
   models.ResIsWhite:
     properties:
@@ -1868,6 +1930,30 @@ paths:
       summary: join or quit Dao
       tags:
       - Dao
+  /stpdao/v2/dao/one:
+    get:
+      description: Dao one
+      parameters:
+      - description: dao Address
+        in: query
+        name: daoAddress
+        required: true
+        type: string
+      - description: chainId
+        in: query
+        name: chainId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResDaoOne'
+      summary: Dao one
+      tags:
+      - Dao
   /stpdao/v2/error/info:
     post:
       description: error info
@@ -2342,6 +2428,27 @@ paths:
       summary: create team spaces
       tags:
       - spaces
+  /stpdao/v2/spaces/delete:
+    post:
+      description: 'delete completely team spaces, request header: Authorization=Bearer
+        ${JWT Token}'
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ReqDeleteTeamSpaces'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: delete completely team spaces
+      tags:
+      - spaces
   /stpdao/v2/spaces/list:
     get:
       description: team spaces list
@@ -2593,6 +2700,27 @@ paths:
           schema:
             $ref: '#/definitions/models.Response'
       summary: create task
+      tags:
+      - task
+  /stpdao/v2/task/delete:
+    post:
+      description: 'delete completely task, request header: Authorization=Bearer ${JWT
+        Token}'
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ReqDeleteTask'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: delete completely task
       tags:
       - task
   /stpdao/v2/task/detail/:taskId:

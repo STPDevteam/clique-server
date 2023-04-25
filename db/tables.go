@@ -150,6 +150,11 @@ type TbDaoModel struct {
 	TotalProposals    int64         `db:"total_proposals"`
 }
 
+func GetTbDao(w ...[][]interface{}) (data TbDaoModel, err error) {
+	err = oo.SqlGet(o.DBPre(consts.TbNameDao, w).Select(), &data)
+	return data, err
+}
+
 func SelectTbDaoModel(w ...[][]interface{}) (arr []TbDaoModel, err error) {
 	err = oo.SqlSelect(o.DBPre(consts.TbNameDao, w).Select(), &arr)
 	return arr, err

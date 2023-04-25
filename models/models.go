@@ -342,6 +342,29 @@ type ResAdminsList struct {
 	//AccountLevel string `json:"accountLevel"`
 }
 
+type ResDaoOne struct {
+	Id                uint64 `json:"id"`
+	DaoLogo           string `json:"daoLogo"`
+	DaoName           string `json:"daoName"`
+	DaoAddress        string `json:"daoAddress"`
+	Creator           string `json:"creator"`
+	Handle            string `json:"handle"`
+	Description       string `json:"description"`
+	ChainId           int    `json:"chainId"`
+	TokenChainId      int    `json:"tokenChainId"`
+	TokenAddress      string `json:"tokenAddress"`
+	ProposalThreshold string `json:"proposalThreshold"`
+	VotingQuorum      string `json:"votingQuorum"`
+	VotingPeriod      int    `json:"votingPeriod"`
+	VotingType        string `json:"votingType"`
+	Twitter           string `json:"twitter"`
+	Github            string `json:"github"`
+	Discord           string `json:"discord"`
+	Website           string `json:"website"`
+	Members           int64  `json:"members"`
+	TotalProposals    int64  `json:"totalProposals"`
+}
+
 type ErrorInfoParam struct {
 	Title   string `json:"title"`
 	Content string `json:"content"`

@@ -951,6 +951,42 @@ const docTemplate = `{
                 }
             }
         },
+        "/stpdao/v2/dao/one": {
+            "get": {
+                "description": "Dao one",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dao"
+                ],
+                "summary": "Dao one",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "dao Address",
+                        "name": "daoAddress",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "chainId",
+                        "name": "chainId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResDaoOne"
+                        }
+                    }
+                }
+            }
+        },
         "/stpdao/v2/error/info": {
             "post": {
                 "description": "error info",
@@ -1664,6 +1700,37 @@ const docTemplate = `{
                 }
             }
         },
+        "/stpdao/v2/spaces/delete": {
+            "post": {
+                "description": "delete completely team spaces, request header: Authorization=Bearer ${JWT Token}",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "spaces"
+                ],
+                "summary": "delete completely team spaces",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ReqDeleteTeamSpaces"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/stpdao/v2/spaces/list": {
             "get": {
                 "description": "team spaces list",
@@ -2033,6 +2100,37 @@ const docTemplate = `{
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/models.ReqCreateTask"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/stpdao/v2/task/delete": {
+            "post": {
+                "description": "delete completely task, request header: Authorization=Bearer ${JWT Token}",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "task"
+                ],
+                "summary": "delete completely task",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ReqDeleteTask"
                         }
                     }
                 ],
@@ -2744,6 +2842,34 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ReqDeleteTask": {
+            "type": "object",
+            "properties": {
+                "spacesId": {
+                    "type": "integer"
+                },
+                "taskId": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "models.ReqDeleteTeamSpaces": {
+            "type": "object",
+            "properties": {
+                "chainId": {
+                    "type": "integer"
+                },
+                "daoAddress": {
+                    "type": "string"
+                },
+                "teamSpacesId": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.ReqJobsAlter": {
             "type": "object",
             "properties": {
@@ -2883,6 +3009,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "access": {
+                    "description": "public;private",
                     "type": "string"
                 },
                 "chainId": {
@@ -3326,6 +3453,71 @@ const docTemplate = `{
                 },
                 "total": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.ResDaoOne": {
+            "type": "object",
+            "properties": {
+                "chainId": {
+                    "type": "integer"
+                },
+                "creator": {
+                    "type": "string"
+                },
+                "daoAddress": {
+                    "type": "string"
+                },
+                "daoLogo": {
+                    "type": "string"
+                },
+                "daoName": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "discord": {
+                    "type": "string"
+                },
+                "github": {
+                    "type": "string"
+                },
+                "handle": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "members": {
+                    "type": "integer"
+                },
+                "proposalThreshold": {
+                    "type": "string"
+                },
+                "tokenAddress": {
+                    "type": "string"
+                },
+                "tokenChainId": {
+                    "type": "integer"
+                },
+                "totalProposals": {
+                    "type": "integer"
+                },
+                "twitter": {
+                    "type": "string"
+                },
+                "votingPeriod": {
+                    "type": "integer"
+                },
+                "votingQuorum": {
+                    "type": "string"
+                },
+                "votingType": {
+                    "type": "string"
+                },
+                "website": {
+                    "type": "string"
                 }
             }
         },

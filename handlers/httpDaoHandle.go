@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"stp_dao_v2/consts"
 	"stp_dao_v2/db"
+	"stp_dao_v2/db/o"
+	"stp_dao_v2/errs"
 	"stp_dao_v2/models"
 	"stp_dao_v2/utils"
 	"strconv"
@@ -577,4 +579,50 @@ func HttpDaoAdmins(c *gin.Context) {
 		Data:    data,
 	})
 
+}
+
+// @Summary Dao one
+// @Tags Dao
+// @version 0.0.1
+// @description Dao one
+// @Produce json
+// @Param daoAddress query string true "dao Address"
+// @Param chainId query string true "chainId"
+// @Success 200 {object} models.ResDaoOne
+// @Router /stpdao/v2/dao/one [get]
+func HttpDaoOne(c *gin.Context) {
+	daoAddressParam := c.Query("daoAddress")
+	chainId := c.Query("chainId")
+	chainIdParam, _ := strconv.Atoi(chainId)
+
+	dao, err := db.GetTbDao(o.W("chain_id", chainIdParam), o.W("dao_address", daoAddressParam))
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err:%v", err)
+		return
+	}
+
+	data := models.ResDaoOne{
+		Id:                dao.Id,
+		DaoLogo:           dao.DaoLogo,
+		DaoName:           dao.DaoName,
+		DaoAddress:        dao.DaoAddress,
+		Creator:           dao.Creator,
+		Handle:            dao.Handle,
+		Description:       dao.Description,
+		ChainId:           dao.ChainId,
+		TokenChainId:      dao.TokenChainId,
+		TokenAddress:      dao.TokenAddress,
+		ProposalThreshold: dao.ProposalThreshold,
+		VotingQuorum:      dao.VotingQuorum,
+		VotingPeriod:      dao.VotingPeriod,
+		VotingType:        dao.VotingType,
+		Twitter:           dao.Twitter,
+		Github:            dao.Github,
+		Discord:           dao.Discord,
+		Website:           dao.Website,
+		Members:           dao.Members,
+		TotalProposals:    dao.TotalProposals,
+	}
+
+	jsonData(c, data)
 }

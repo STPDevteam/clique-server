@@ -49,6 +49,7 @@ func Router() {
 			r2.GET("/left", handlers.HttpLeftDaoJoin)
 			r2.GET("/info", handlers.HttpDaoInfo)
 			r2.GET("/admins", handlers.HttpDaoAdmins)
+			r2.GET("/one", handlers.HttpDaoOne)
 		}
 		r3 := router.Group("/proposal")
 		{
@@ -82,8 +83,7 @@ func Router() {
 		{
 			accountAuthForce.POST("/update", handlers.HttpUpdateAccount)
 			accountAuthForce.POST("/update/follow", handlers.HttpUpdateAccountFollow)
-			account.POST("/push/setting", handlers.HttpPushSetting)
-
+			accountAuthForce.POST("/push/setting", handlers.HttpPushSetting)
 		}
 		accountAuth := router.Group("/account", middlewares.JWTAuth())
 		{
