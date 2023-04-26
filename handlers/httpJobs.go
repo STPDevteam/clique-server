@@ -49,6 +49,11 @@ func JobsApply(c *gin.Context) {
 	}
 
 	if params.ApplyRole == consts.Jobs_C_member {
+		_, okAdmin := IsAboveAdmin(params.ChainId, params.DaoAddress, user.Account)
+		if okAdmin {
+			handleError(c, errs.NewError(400, "You are already an administrator."))
+			return
+		}
 		var m = make([]map[string]interface{}, 0)
 		var v = make(map[string]interface{})
 		v["chain_id"] = params.ChainId
