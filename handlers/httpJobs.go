@@ -219,6 +219,7 @@ func JobsApplyReview(c *gin.Context) {
 // @version 0.0.1
 // @description jobs list
 // @Produce json
+// @Param exceptLevel query string false "exceptLevel: A_superAdmin;B_admin;C_member"
 // @Param offset query int true "offset,page"
 // @Param limit query int true "limit,page"
 // @Param chainId query int true "chainId"
@@ -233,13 +234,19 @@ func JobsList(c *gin.Context) {
 	offsetParam, _ := strconv.Atoi(offset)
 	chainIdParam, _ := strconv.Atoi(chainId)
 	daoAddressParam := c.Query("daoAddress")
+	exceptLevelParam := c.Query("exceptLevel")
+
+	var wExceptLevel [][]interface{}
+	if exceptLevelParam != "" {
+		wExceptLevel = o.W("job", "!=", exceptLevelParam)
+	}
 
 	order := fmt.Sprintf("job ASC")
 	page := ReqPagination{
 		Offset: offsetParam,
 		Limit:  limitParam,
 	}
-	list, total, err := PageTbJobs(order, page, o.W("chain_id", chainIdParam), o.W("dao_address", daoAddressParam))
+	list, total, err := PageTbJobs(order, page, o.W("chain_id", chainIdParam), o.W("dao_address", daoAddressParam), wExceptLevel)
 	if handleErrorIfExists(c, err, errs.ErrServer) {
 		oo.LogW("SQL err:%v", err)
 		return
