@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -402,6 +403,48 @@ func jsonRPCAccountNFTPortfolio(body, url string) (data *models.JsonRPCAccountNF
 		"application/json",
 		body,
 	)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(res, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+func sendPostWithBearerHeader(url, bearerToken string, body []byte) (resp *http.Response, err error) {
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(body))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Authorization", bearerToken)
+	req.Header.Set("Content-Type", "application/json")
+
+	return http.DefaultClient.Do(req)
+}
+
+func AiChat(account, content, url, accessToken string) (*models.ResAiChat, error) {
+	body := fmt.Sprintf(`{
+	  "model": "gpt-3.5-turbo",
+	  "messages": [{"role": "user", "content": "%s"}],
+	  "max_tokens": 100,
+	  "user": "%s"
+	}`, content, account)
+
+	return jsonAiChat(body, url, accessToken)
+}
+
+func jsonAiChat(body, url, accessToken string) (data *models.ResAiChat, err error) {
+	resp, err := sendPostWithBearerHeader(url, accessToken, []byte(body))
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+	res, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}

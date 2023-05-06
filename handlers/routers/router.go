@@ -168,6 +168,11 @@ func Router() {
 			task.GET("/list", handlers.TaskList)
 			task.GET("/detail/:taskId", handlers.TaskDetail)
 		}
+
+		ai := router.Group("/ai")
+		{
+			ai.POST("", middlewares.JWTAuthForce(), handlers.Ai)
+		}
 	}
 
 	url := ginSwagger.URL(viper.GetString("app.swagger_url"))
