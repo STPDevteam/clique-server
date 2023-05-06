@@ -791,7 +791,7 @@ type UpdateAccountPushSwitchParam struct {
 type ReqJobsApply struct {
 	ChainId    int64  `json:"chainId"`
 	DaoAddress string `json:"daoAddress"`
-	// ApplyRole: C_member/B_admin
+	// ApplyRole: C_member/B_admin/noRole
 	ApplyRole string `json:"applyRole"`
 	Message   string `json:"message"`
 }

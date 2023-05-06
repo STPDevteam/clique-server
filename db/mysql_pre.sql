@@ -1,5 +1,5 @@
-CREATE SCHEMA IF NOT EXISTS `stp_dao_v2` DEFAULT CHARACTER SET utf8mb4 ;
-USE `stp_dao_v2`;
+CREATE SCHEMA IF NOT EXISTS `stp_dao_v2_pre` DEFAULT CHARACTER SET utf8mb4 ;
+USE `stp_dao_v2_pre`;
 
 SET GLOBAL TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
 SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
@@ -702,19 +702,19 @@ CREATE TABLE `tb_task` (
 # ('Claimed','0x8FC198E84e43474F95468300593539B8cb3bEe8f',7750200,'0x',5);
 
 # pre
-# INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
+INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
 # ('CreateDao','0xa2d34aA709De897Ef62ee08274EC6e2c451a1CdC',42297775,'0x',137),
 # ('CreateERC20','0xa2d34aA709De897Ef62ee08274EC6e2c451a1CdC',42297775,'0x',137),
 # ('ClaimReserve','0xa2d34aA709De897Ef62ee08274EC6e2c451a1CdC',42297775,'0x',137),
 # ('CreateAirdrop','0x9fBa77AA2957b2C47c0B80e14fdf7e7d28eDd127',42297775,'0x',137),
 # ('SettleAirdrop','0x9fBa77AA2957b2C47c0B80e14fdf7e7d28eDd127',42297775,'0x',137),
 # ('Claimed','0x9fBa77AA2957b2C47c0B80e14fdf7e7d28eDd127',42297775,'0x',137),
-# ('CreateDao','0xD7a52a2Fe72A588351600Fa2feDD6132381f065d',17187744,'0x',1),
-# ('CreateERC20','0xD7a52a2Fe72A588351600Fa2feDD6132381f065d',17187744,'0x',1),
-# ('ClaimReserve','0xD7a52a2Fe72A588351600Fa2feDD6132381f065d',17187744,'0x',1),
-# ('CreateAirdrop','0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e',17187744,'0x',1),
-# ('SettleAirdrop','0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e',17187744,'0x',1),
-# ('Claimed','0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e',17187744,'0x',1);
+('CreateDao','0xD7a52a2Fe72A588351600Fa2feDD6132381f065d',17187744,'0x',1),
+('CreateERC20','0xD7a52a2Fe72A588351600Fa2feDD6132381f065d',17187744,'0x',1),
+('ClaimReserve','0xD7a52a2Fe72A588351600Fa2feDD6132381f065d',17187744,'0x',1),
+('CreateAirdrop','0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e',17187744,'0x',1),
+('SettleAirdrop','0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e',17187744,'0x',1),
+('Claimed','0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e',17187744,'0x',1);
 
 #klaytn testnet dev
 # INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
@@ -753,13 +753,13 @@ CREATE TABLE `tb_task` (
 # ('Claimed','0xae96637920430e4D05cCf11Db47cfa5cfC3224B7',24603072,'0x',97);
 
 #BSC mainnet pre
-# INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
-# ('CreateDao','0x5bf53eAFd960AE3Cced46D2B7B1b8555334dBeF0',27917263,'0x',56),
-# ('CreateERC20','0x5bf53eAFd960AE3Cced46D2B7B1b8555334dBeF0',27917263,'0x',56),
-# ('ClaimReserve','0x5bf53eAFd960AE3Cced46D2B7B1b8555334dBeF0',27917263,'0x',56),
-# ('CreateAirdrop','0x2AC73343B61ec8C0301aebB39514d1cD12f9013A',27917263,'0x',56),
-# ('SettleAirdrop','0x2AC73343B61ec8C0301aebB39514d1cD12f9013A',27917263,'0x',56),
-# ('Claimed','0x2AC73343B61ec8C0301aebB39514d1cD12f9013A',27917263,'0x',56);
+INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
+('CreateDao','0x5bf53eAFd960AE3Cced46D2B7B1b8555334dBeF0',27917263,'0x',56),
+('CreateERC20','0x5bf53eAFd960AE3Cced46D2B7B1b8555334dBeF0',27917263,'0x',56),
+('ClaimReserve','0x5bf53eAFd960AE3Cced46D2B7B1b8555334dBeF0',27917263,'0x',56),
+('CreateAirdrop','0x2AC73343B61ec8C0301aebB39514d1cD12f9013A',27917263,'0x',56),
+('SettleAirdrop','0x2AC73343B61ec8C0301aebB39514d1cD12f9013A',27917263,'0x',56),
+('Claimed','0x2AC73343B61ec8C0301aebB39514d1cD12f9013A',27917263,'0x',56);
 
 #BSC mainnet main
 # INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES

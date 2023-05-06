@@ -1238,6 +1238,12 @@ const docTemplate = `{
                 "summary": "jobs list",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "exceptLevel: A_superAdmin;B_admin;C_member",
+                        "name": "exceptLevel",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "offset,page",
                         "name": "offset",
@@ -2892,7 +2898,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "applyRole": {
-                    "description": "ApplyRole: C_member/B_admin",
+                    "description": "ApplyRole: C_member/B_admin/noRole",
                     "type": "string"
                 },
                 "chainId": {

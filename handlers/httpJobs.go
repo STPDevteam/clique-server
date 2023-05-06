@@ -32,7 +32,7 @@ func JobsApply(c *gin.Context) {
 	if handleErrorIfExists(c, c.ShouldBindJSON(&params), errs.ErrParam) {
 		return
 	}
-	if params.ApplyRole != consts.Jobs_B_admin && params.ApplyRole != consts.Jobs_C_member {
+	if params.ApplyRole != consts.Jobs_B_admin && params.ApplyRole != consts.Jobs_C_member && params.ApplyRole != consts.Jobs_noRole {
 		handleError(c, errs.ErrParam)
 		return
 	}
@@ -48,7 +48,7 @@ func JobsApply(c *gin.Context) {
 		return
 	}
 
-	if params.ApplyRole == consts.Jobs_C_member {
+	if params.ApplyRole == consts.Jobs_C_member || params.ApplyRole == consts.Jobs_noRole {
 		_, okAdmin := IsAboveAdmin(params.ChainId, params.DaoAddress, user.Account)
 		if okAdmin {
 			handleError(c, errs.NewError(400, "You are already an administrator."))
@@ -59,7 +59,7 @@ func JobsApply(c *gin.Context) {
 		v["chain_id"] = params.ChainId
 		v["dao_address"] = params.DaoAddress
 		v["account"] = user.Account
-		v["job"] = consts.Jobs_C_member
+		v["job"] = params.ApplyRole
 		m = append(m, v)
 		err = o.Insert(consts.TbJobs, m)
 		if handleErrorIfExists(c, err, errs.ErrServer) {

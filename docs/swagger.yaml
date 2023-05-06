@@ -311,7 +311,7 @@ definitions:
   models.ReqJobsApply:
     properties:
       applyRole:
-        description: 'ApplyRole: C_member/B_admin'
+        description: 'ApplyRole: C_member/B_admin/noRole'
         type: string
       chainId:
         type: integer
@@ -2117,6 +2117,10 @@ paths:
     get:
       description: jobs list
       parameters:
+      - description: 'exceptLevel: A_superAdmin;B_admin;C_member'
+        in: query
+        name: exceptLevel
+        type: string
       - description: offset,page
         in: query
         name: offset
