@@ -426,13 +426,12 @@ func sendPostWithBearerHeader(url, bearerToken string, body []byte) (resp *http.
 	return http.DefaultClient.Do(req)
 }
 
-func AiChat(account, content, url, accessToken string) (*models.ResAiChat, error) {
+func AiChat(account, message, url, accessToken string) (*models.ResAiChat, error) {
 	body := fmt.Sprintf(`{
 	  "model": "gpt-3.5-turbo",
-	  "messages": [{"role": "user", "content": "%s"}],
-	  "max_tokens": 100,
+	  "messages": [%s],
 	  "user": "%s"
-	}`, content, account)
+	}`, message, account)
 
 	return jsonAiChat(body, url, accessToken)
 }

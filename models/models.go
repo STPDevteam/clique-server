@@ -955,7 +955,7 @@ type ReqJobsAlter struct {
 }
 
 type ReqAiChai struct {
-	Content string `json:"content"`
+	Content []string `json:"content"`
 }
 
 type ResAiChat struct {

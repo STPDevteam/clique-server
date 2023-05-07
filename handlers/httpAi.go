@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	oo "github.com/Anna2024/liboo"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
@@ -31,9 +32,18 @@ func Ai(c *gin.Context) {
 		return
 	}
 
+	var message string
+	for _, v := range params.Content {
+		if message == "" {
+			message = fmt.Sprintf(`{"role": "user", "content": "%s"}`, v)
+		} else {
+			message = fmt.Sprintf(`%s,{"role": "user", "content": "%s"}`, message, v)
+		}
+	}
+
 	url := "https://api.openai.com/v1/chat/completions"
-	chat, err := utils.AiChat(user.Account, params.Content, url, viper.GetString("app.openai_bearer_key"))
-	if handleErrorIfExists(c, err, errs.NewError(500, err.Error())) {
+	chat, err := utils.AiChat(user.Account, message, url, viper.GetString("app.openai_bearer_key"))
+	if handleErrorIfExists(c, err, errs.ErrServer) {
 		oo.LogW("AiChat err:%v", err)
 		return
 	}

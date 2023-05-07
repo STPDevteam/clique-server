@@ -209,6 +209,13 @@ definitions:
       account:
         type: string
     type: object
+  models.ReqAiChai:
+    properties:
+      content:
+        items:
+          type: string
+        type: array
+    type: object
   models.ReqCreateSale:
     properties:
       about:
@@ -570,6 +577,40 @@ definitions:
     properties:
       account:
         type: string
+    type: object
+  models.ResAiChat:
+    properties:
+      choices:
+        items:
+          properties:
+            finish_reason:
+              type: string
+            index:
+              type: integer
+            message:
+              properties:
+                content:
+                  type: string
+                role:
+                  type: string
+              type: object
+          type: object
+        type: array
+      created:
+        type: integer
+      id:
+        type: string
+      object:
+        type: string
+      usage:
+        properties:
+          completion_tokens:
+            type: integer
+          prompt_tokens:
+            type: integer
+          total_tokens:
+            type: integer
+        type: object
     type: object
   models.ResAirdropId:
     properties:
@@ -1653,6 +1694,26 @@ paths:
       summary: query activity list
       tags:
       - activity
+  /stpdao/v2/ai:
+    post:
+      description: 'request header: Authorization=Bearer ${JWT Token}'
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ReqAiChai'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResAiChat'
+      summary: ai chat
+      tags:
+      - ai
   /stpdao/v2/airdrop/address:
     post:
       description: save airdrop address

@@ -518,6 +518,37 @@
                 }
             }
         },
+        "/stpdao/v2/ai": {
+            "post": {
+                "description": "request header: Authorization=Bearer ${JWT Token}",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ai"
+                ],
+                "summary": "ai chat",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ReqAiChai"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResAiChat"
+                        }
+                    }
+                }
+            }
+        },
         "/stpdao/v2/airdrop/address": {
             "post": {
                 "description": "save airdrop address",
@@ -2733,6 +2764,17 @@
                 }
             }
         },
+        "models.ReqAiChai": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "models.ReqCreateSale": {
             "type": "object",
             "properties": {
@@ -3280,6 +3322,59 @@
             "properties": {
                 "account": {
                     "type": "string"
+                }
+            }
+        },
+        "models.ResAiChat": {
+            "type": "object",
+            "properties": {
+                "choices": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "finish_reason": {
+                                "type": "string"
+                            },
+                            "index": {
+                                "type": "integer"
+                            },
+                            "message": {
+                                "type": "object",
+                                "properties": {
+                                    "content": {
+                                        "type": "string"
+                                    },
+                                    "role": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "usage": {
+                    "type": "object",
+                    "properties": {
+                        "completion_tokens": {
+                            "type": "integer"
+                        },
+                        "prompt_tokens": {
+                            "type": "integer"
+                        },
+                        "total_tokens": {
+                            "type": "integer"
+                        }
+                    }
                 }
             }
         },
