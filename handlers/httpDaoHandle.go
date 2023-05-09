@@ -601,6 +601,16 @@ func HttpDaoOne(c *gin.Context) {
 		return
 	}
 
+	var now = time.Now().Unix()
+	activityProposalCount, err := o.Count(consts.TbNameProposal,
+		o.W("chain_id", chainIdParam), o.W("dao_address", daoAddressParam),
+		o.W("end_time", ">=", now), o.W("start_time", "<=", now),
+	)
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err:%v", err)
+		return
+	}
+
 	data := models.ResDaoOne{
 		Id:                dao.Id,
 		DaoLogo:           dao.DaoLogo,
@@ -622,6 +632,7 @@ func HttpDaoOne(c *gin.Context) {
 		Website:           dao.Website,
 		Members:           dao.Members,
 		TotalProposals:    dao.TotalProposals,
+		ActivityProposals: activityProposalCount,
 	}
 
 	jsonData(c, data)

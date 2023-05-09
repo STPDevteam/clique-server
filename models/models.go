@@ -363,6 +363,7 @@ type ResDaoOne struct {
 	Website           string `json:"website"`
 	Members           int64  `json:"members"`
 	TotalProposals    int64  `json:"totalProposals"`
+	ActivityProposals int64  `json:"activityProposals"`
 }
 
 type ErrorInfoParam struct {
