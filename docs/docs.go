@@ -3560,6 +3560,9 @@ const docTemplate = `{
         "models.ResDaoOne": {
             "type": "object",
             "properties": {
+                "activityProposals": {
+                    "type": "integer"
+                },
                 "chainId": {
                     "type": "integer"
                 },

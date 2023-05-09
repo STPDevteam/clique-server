@@ -406,7 +406,7 @@ func save(blockData []map[string]interface{}, currentBlockNum int64, chainId int
 				return
 			}
 
-			// team space
+			// team space jobs
 			var mJob = make([]map[string]interface{}, 0)
 			var vJob = make(map[string]interface{})
 			vJob["chain_id"] = chainId
@@ -756,11 +756,34 @@ func save(blockData []map[string]interface{}, currentBlockNum int64, chainId int
 			daoAddress := blockData[i]["address"].(string)
 			account := utils.FixTo0x40String(blockData[i]["topic1"].(string))
 			enable, _ := utils.Hex2Dec(blockData[i]["data"].(string))
+
+			// jobs admin, first delete, if add, insert
+			errTx = o.Delete(consts.TbJobs, o.W("chain_id", chainId), o.W("dao_address", daoAddress),
+				o.W("account", account))
+			if errTx != nil {
+				oo.LogW("SQL err:%v", errTx)
+				return
+			}
+
 			var accountLevel string
 			if enable == 0 {
 				accountLevel = consts.LevelNoRole
 			} else if enable == 1 {
 				accountLevel = consts.LevelAdmin
+
+				// jobs admin, first delete, if add, insert
+				var mJobAdmin = make([]map[string]interface{}, 0)
+				var vJobAdmin = make(map[string]interface{})
+				vJobAdmin["chain_id"] = chainId
+				vJobAdmin["dao_address"] = daoAddress
+				vJobAdmin["account"] = account
+				vJobAdmin["job"] = consts.Jobs_B_admin
+				mJobAdmin = append(mJobAdmin, vJobAdmin)
+				_, errTx = o.InsertTx(tx, consts.TbJobs, mJobAdmin)
+				if errTx != nil {
+					oo.LogW("SQL err:%v", errTx)
+					return
+				}
 			}
 			sqlIns := fmt.Sprintf(`REPLACE INTO %s (dao_address,chain_id,account,account_level) VALUES ('%s',%d,'%s','%s')`,
 				consts.TbNameAdmin,
@@ -810,6 +833,17 @@ func save(blockData []map[string]interface{}, currentBlockNum int64, chainId int
 				consts.LevelSuperAdmin,
 			)
 			_, errTx = oo.SqlxTxExec(tx, sqlUpSuperAdmin)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+
+			// jobs superAdmin
+			var vJobsSuperAdmin = make(map[string]interface{})
+			vJobsSuperAdmin["account"] = newOwner
+			errTx = o.Update(consts.TbJobs, vJobsSuperAdmin, o.W("chain_id", chainId),
+				o.W("dao_address", daoAddress),
+				o.W("account", previousOwner))
 			if errTx != nil {
 				oo.LogW("SQL err: %v", errTx)
 				return

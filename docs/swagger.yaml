@@ -726,6 +726,8 @@ definitions:
     type: object
   models.ResDaoOne:
     properties:
+      activityProposals:
+        type: integer
       chainId:
         type: integer
       creator:
