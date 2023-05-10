@@ -772,17 +772,26 @@ func save(blockData []map[string]interface{}, currentBlockNum int64, chainId int
 				accountLevel = consts.LevelAdmin
 
 				// jobs admin, first delete, if add, insert
-				var mJobAdmin = make([]map[string]interface{}, 0)
-				var vJobAdmin = make(map[string]interface{})
-				vJobAdmin["chain_id"] = chainId
-				vJobAdmin["dao_address"] = daoAddress
-				vJobAdmin["account"] = account
-				vJobAdmin["job"] = consts.Jobs_B_admin
-				mJobAdmin = append(mJobAdmin, vJobAdmin)
-				_, errTx = o.InsertTx(tx, consts.TbJobs, mJobAdmin)
-				if errTx != nil {
+				count, err := o.Count(consts.TbJobs, o.W("chain_id", chainId), o.W("dao_address", daoAddress),
+					o.W("account", account), o.W("job", consts.Jobs_A_superAdmin))
+				if err != nil {
 					oo.LogW("SQL err:%v", errTx)
+					errTx = err
 					return
+				}
+				if count == 0 {
+					var mJobAdmin = make([]map[string]interface{}, 0)
+					var vJobAdmin = make(map[string]interface{})
+					vJobAdmin["chain_id"] = chainId
+					vJobAdmin["dao_address"] = daoAddress
+					vJobAdmin["account"] = account
+					vJobAdmin["job"] = consts.Jobs_B_admin
+					mJobAdmin = append(mJobAdmin, vJobAdmin)
+					_, errTx = o.InsertTx(tx, consts.TbJobs, mJobAdmin)
+					if errTx != nil {
+						oo.LogW("SQL err:%v", errTx)
+						return
+					}
 				}
 			}
 			sqlIns := fmt.Sprintf(`REPLACE INTO %s (dao_address,chain_id,account,account_level) VALUES ('%s',%d,'%s','%s')`,
