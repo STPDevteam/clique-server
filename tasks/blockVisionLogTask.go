@@ -759,7 +759,7 @@ func save(blockData []map[string]interface{}, currentBlockNum int64, chainId int
 
 			// jobs admin, first delete, if add, insert
 			errTx = o.Delete(consts.TbJobs, o.W("chain_id", chainId), o.W("dao_address", daoAddress),
-				o.W("account", account))
+				o.W("account", account), o.W("job", "!=", consts.Jobs_A_superAdmin))
 			if errTx != nil {
 				oo.LogW("SQL err:%v", errTx)
 				return
