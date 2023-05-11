@@ -115,15 +115,16 @@ func UpdateTask(c *gin.Context) {
 	}
 
 	var v = make(map[string]interface{})
-	v["task_name"] = params.TaskName
+
 	if !params.IsDrag {
+		v["task_name"] = params.TaskName
 		v["content"] = params.Content
+		v["deadline"] = params.Deadline
+		v["priority"] = params.Priority
+		v["assign_account"] = params.AssignAccount
+		v["proposal_id"] = params.ProposalId
+		v["reward"] = params.Reward
 	}
-	v["deadline"] = params.Deadline
-	v["priority"] = params.Priority
-	v["assign_account"] = params.AssignAccount
-	v["proposal_id"] = params.ProposalId
-	v["reward"] = params.Reward
 	v["status"] = params.Status
 	v["weight"] = params.Weight
 	err = o.Update(consts.TbTask, v, o.W("id", params.TaskId))
