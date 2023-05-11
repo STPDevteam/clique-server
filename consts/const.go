@@ -57,7 +57,6 @@ const (
 	LevelSuperAdmin = "superAdmin"
 	LevelAdmin      = "admin"
 	LevelMember     = "member"
-	LevelNoRole     = "noRole"
 
 	TypesNameAirdrop             = "Airdrop"
 	TypesNamePublicSaleCreated   = "PublicSaleCreated"   // notification

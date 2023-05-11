@@ -765,12 +765,14 @@ func save(blockData []map[string]interface{}, currentBlockNum int64, chainId int
 				return
 			}
 
-			var accountLevel string
 			if enable == 0 {
-				accountLevel = consts.LevelNoRole
+				errTx = o.Delete(consts.TbNameAdmin, o.W("chain_id", chainId), o.W("dao_address", daoAddress),
+					o.W("account", account), o.W("account_level", consts.LevelAdmin))
+				if errTx != nil {
+					oo.LogW("SQL err:%v", errTx)
+					return
+				}
 			} else if enable == 1 {
-				accountLevel = consts.LevelAdmin
-
 				// jobs admin, first delete, if add, insert
 				count, err := o.Count(consts.TbJobs, o.W("chain_id", chainId), o.W("dao_address", daoAddress),
 					o.W("account", account), o.W("job", consts.Jobs_A_superAdmin))
@@ -780,6 +782,7 @@ func save(blockData []map[string]interface{}, currentBlockNum int64, chainId int
 					return
 				}
 				if count == 0 {
+					// jobs admin
 					var mJobAdmin = make([]map[string]interface{}, 0)
 					var vJobAdmin = make(map[string]interface{})
 					vJobAdmin["chain_id"] = chainId
@@ -792,19 +795,20 @@ func save(blockData []map[string]interface{}, currentBlockNum int64, chainId int
 						oo.LogW("SQL err:%v", errTx)
 						return
 					}
+
+					var mAdmin = make([]map[string]interface{}, 0)
+					var vAdmin = make(map[string]interface{})
+					vAdmin["chain_id"] = chainId
+					vAdmin["dao_address"] = daoAddress
+					vAdmin["account"] = account
+					vAdmin["account_level"] = consts.LevelAdmin
+					mAdmin = append(mAdmin, vAdmin)
+					errTx = o.Insert(consts.TbNameAdmin, mAdmin)
+					if errTx != nil {
+						oo.LogW("SQL err:%v", errTx)
+						return
+					}
 				}
-			}
-			sqlIns := fmt.Sprintf(`REPLACE INTO %s (dao_address,chain_id,account,account_level) VALUES ('%s',%d,'%s','%s')`,
-				consts.TbNameAdmin,
-				daoAddress,
-				chainId,
-				account,
-				accountLevel,
-			)
-			_, errTx = oo.SqlxTxExec(tx, sqlIns)
-			if errTx != nil {
-				oo.LogW("SQL err: %v", errTx)
-				return
 			}
 
 			// save account record
