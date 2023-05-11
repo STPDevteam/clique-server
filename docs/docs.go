@@ -1257,6 +1257,26 @@ const docTemplate = `{
                 }
             }
         },
+        "/stpdao/v2/jobs/left": {
+            "get": {
+                "description": "jobs left, request header: Authorization=Bearer ${JWT Token}",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "jobs"
+                ],
+                "summary": "jobs left",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResJobsLeft"
+                        }
+                    }
+                }
+            }
+        },
         "/stpdao/v2/jobs/list": {
             "get": {
                 "description": "jobs list",
@@ -3661,6 +3681,26 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "nickname": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ResJobsLeft": {
+            "type": "object",
+            "properties": {
+                "chainId": {
+                    "type": "integer"
+                },
+                "daoAddress": {
+                    "type": "string"
+                },
+                "daoLogo": {
+                    "type": "string"
+                },
+                "daoName": {
+                    "type": "string"
+                },
+                "role": {
                     "type": "string"
                 }
             }

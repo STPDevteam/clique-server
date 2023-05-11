@@ -709,12 +709,12 @@ INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain
 # ('CreateAirdrop','0x9fBa77AA2957b2C47c0B80e14fdf7e7d28eDd127',42297775,'0x',137),
 # ('SettleAirdrop','0x9fBa77AA2957b2C47c0B80e14fdf7e7d28eDd127',42297775,'0x',137),
 # ('Claimed','0x9fBa77AA2957b2C47c0B80e14fdf7e7d28eDd127',42297775,'0x',137),
-('CreateDao','0xD7a52a2Fe72A588351600Fa2feDD6132381f065d',17187744,'0x',1),
-('CreateERC20','0xD7a52a2Fe72A588351600Fa2feDD6132381f065d',17187744,'0x',1),
-('ClaimReserve','0xD7a52a2Fe72A588351600Fa2feDD6132381f065d',17187744,'0x',1),
-('CreateAirdrop','0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e',17187744,'0x',1),
-('SettleAirdrop','0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e',17187744,'0x',1),
-('Claimed','0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e',17187744,'0x',1);
+# ('CreateDao','0xD7a52a2Fe72A588351600Fa2feDD6132381f065d',17187744,'0x',1),
+# ('CreateERC20','0xD7a52a2Fe72A588351600Fa2feDD6132381f065d',17187744,'0x',1),
+# ('ClaimReserve','0xD7a52a2Fe72A588351600Fa2feDD6132381f065d',17187744,'0x',1),
+# ('CreateAirdrop','0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e',17187744,'0x',1),
+# ('SettleAirdrop','0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e',17187744,'0x',1),
+# ('Claimed','0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e',17187744,'0x',1);
 
 #klaytn testnet dev
 # INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
@@ -754,12 +754,12 @@ INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain
 
 #BSC mainnet pre
 INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
-('CreateDao','0x5bf53eAFd960AE3Cced46D2B7B1b8555334dBeF0',27917263,'0x',56),
-('CreateERC20','0x5bf53eAFd960AE3Cced46D2B7B1b8555334dBeF0',27917263,'0x',56),
-('ClaimReserve','0x5bf53eAFd960AE3Cced46D2B7B1b8555334dBeF0',27917263,'0x',56),
-('CreateAirdrop','0x2AC73343B61ec8C0301aebB39514d1cD12f9013A',27917263,'0x',56),
-('SettleAirdrop','0x2AC73343B61ec8C0301aebB39514d1cD12f9013A',27917263,'0x',56),
-('Claimed','0x2AC73343B61ec8C0301aebB39514d1cD12f9013A',27917263,'0x',56);
+('CreateDao','0x5bf53eAFd960AE3Cced46D2B7B1b8555334dBeF0',28110754,'0x',56),
+('CreateERC20','0x5bf53eAFd960AE3Cced46D2B7B1b8555334dBeF0',28110754,'0x',56),
+('ClaimReserve','0x5bf53eAFd960AE3Cced46D2B7B1b8555334dBeF0',28110754,'0x',56),
+('CreateAirdrop','0x2AC73343B61ec8C0301aebB39514d1cD12f9013A',28110754,'0x',56),
+('SettleAirdrop','0x2AC73343B61ec8C0301aebB39514d1cD12f9013A',28110754,'0x',56),
+('Claimed','0x2AC73343B61ec8C0301aebB39514d1cD12f9013A',28110754,'0x',56);
 
 #BSC mainnet main
 # INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES

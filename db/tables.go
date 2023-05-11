@@ -497,6 +497,11 @@ func GetTbJobs(w ...[][]interface{}) (data TbJobs, err error) {
 	return data, err
 }
 
+func SelectTbJobs(w ...[][]interface{}) (arr []TbJobs, err error) {
+	err = oo.SqlSelect(o.DBPre(consts.TbJobs, w).Select(), &arr)
+	return arr, err
+}
+
 type TbJobsApply struct {
 	Id         int64  `db:"id,omitempty" sqler:"skips"`
 	CreateTime string `db:"create_time,omitempty" sqler:"skips"`

@@ -362,3 +362,46 @@ func JobsIdentity(c *gin.Context) {
 
 	jsonData(c, jobs.Job)
 }
+
+// @Summary jobs left
+// @Tags jobs
+// @version 0.0.1
+// @description jobs left, request header: Authorization=Bearer ${JWT Token}
+// @Produce json
+// @Success 200 {object} models.ResJobsLeft
+// @Router /stpdao/v2/jobs/left [get]
+func JobsLeft(c *gin.Context) {
+	var ok bool
+	var user *db.TbAccountModel
+	user, ok = parseJWTCache(c)
+	if !ok {
+		return
+	}
+
+	jobsArr, err := db.SelectTbJobs(o.W("account", user.Account), o.W("job", "!=", consts.Jobs_noRole))
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQl err:%v", err)
+		return
+	}
+
+	var data = make([]models.ResJobsLeft, 0)
+	for index := range jobsArr {
+		ls := jobsArr[index]
+
+		dao, err := db.GetTbDao(o.W("chain_id", ls.ChainId), o.W("dao_address", ls.DaoAddress))
+		if handleErrorIfExists(c, err, errs.ErrServer) {
+			oo.LogW("SQl err:%v", err)
+			return
+		}
+
+		data = append(data, models.ResJobsLeft{
+			ChainId:    ls.ChainId,
+			DaoAddress: ls.DaoAddress,
+			DaoLogo:    dao.DaoLogo,
+			DaoName:    dao.DaoName,
+			Role:       ls.Job,
+		})
+	}
+
+	jsonData(c, data)
+}

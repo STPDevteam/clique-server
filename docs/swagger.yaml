@@ -795,6 +795,19 @@ definitions:
       nickname:
         type: string
     type: object
+  models.ResJobsLeft:
+    properties:
+      chainId:
+        type: integer
+      daoAddress:
+        type: string
+      daoLogo:
+        type: string
+      daoName:
+        type: string
+      role:
+        type: string
+    type: object
   models.ResJobsList:
     properties:
       account:
@@ -2174,6 +2187,19 @@ paths:
           schema:
             $ref: '#/definitions/models.Response'
       summary: jobs identity
+      tags:
+      - jobs
+  /stpdao/v2/jobs/left:
+    get:
+      description: 'jobs left, request header: Authorization=Bearer ${JWT Token}'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResJobsLeft'
+      summary: jobs left
       tags:
       - jobs
   /stpdao/v2/jobs/list:

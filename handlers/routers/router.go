@@ -138,6 +138,7 @@ func Router() {
 			jobsAuth.POST("/apply/review", handlers.JobsApplyReview)
 			jobsAuth.POST("/alter", handlers.JobsAlter)
 			jobsAuth.GET("/identity", handlers.JobsIdentity)
+			jobsAuth.GET("/left", handlers.JobsLeft)
 
 		}
 		jobs := router.Group("/jobs")

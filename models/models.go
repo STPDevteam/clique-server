@@ -977,3 +977,11 @@ type ResAiChat struct {
 		TotalTokens      int `json:"total_tokens"`
 	} `json:"usage"`
 }
+
+type ResJobsLeft struct {
+	ChainId    int    `json:"chainId"`
+	DaoAddress string `json:"daoAddress"`
+	DaoLogo    string `json:"daoLogo"`
+	DaoName    string `json:"daoName"`
+	Role       string `json:"role"`
+}
