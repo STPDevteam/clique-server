@@ -825,6 +825,7 @@ type ReqUpdateTask struct {
 	// A_notStarted;B_inProgress;C_done;D_notStatus
 	Status string  `json:"status"`
 	Weight float64 `json:"weight"`
+	IsDrag bool    `json:"isDrag"`
 }
 
 type ReqRemoveTask struct {

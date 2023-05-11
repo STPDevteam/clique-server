@@ -116,7 +116,9 @@ func UpdateTask(c *gin.Context) {
 
 	var v = make(map[string]interface{})
 	v["task_name"] = params.TaskName
-	v["content"] = params.Content
+	if !params.IsDrag {
+		v["content"] = params.Content
+	}
 	v["deadline"] = params.Deadline
 	v["priority"] = params.Priority
 	v["assign_account"] = params.AssignAccount

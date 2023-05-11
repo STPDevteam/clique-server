@@ -3045,6 +3045,9 @@ const docTemplate = `{
                 "deadline": {
                     "type": "integer"
                 },
+                "isDrag": {
+                    "type": "boolean"
+                },
                 "priority": {
                     "description": "A_low;B_medium;C_high",
                     "type": "string"
