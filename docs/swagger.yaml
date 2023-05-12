@@ -1132,6 +1132,8 @@ definitions:
         type: string
       content:
         type: string
+      createTime:
+        type: integer
       deadline:
         type: integer
       priority:

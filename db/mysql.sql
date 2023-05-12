@@ -815,6 +815,15 @@ CREATE TABLE `tb_task` (
 # ('SettleAirdrop','0xFB00facc857A05BdC216B791404d47432C612374',2393909,'0x',7001),
 # ('Claimed','0xFB00facc857A05BdC216B791404d47432C612374',2393909,'0x',7001);
 
+#zkSync Era Testnet to dev
+# INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
+# ('CreateDao','0x59db4F4e81E7cE00eB26B4638c2234d959dd05e0',5423856,'0x',280),
+# ('CreateERC20','0x59db4F4e81E7cE00eB26B4638c2234d959dd05e0',5423856,'0x',280),
+# ('ClaimReserve','0x59db4F4e81E7cE00eB26B4638c2234d959dd05e0',5423856,'0x',280),
+# ('CreateAirdrop','0x8a636039F6981ED727Ff049e259A01E6E97be04E',5423856,'0x',280),
+# ('SettleAirdrop','0x8a636039F6981ED727Ff049e259A01E6E97be04E',5423856,'0x',280),
+# ('Claimed','0x8a636039F6981ED727Ff049e259A01E6E97be04E',5423856,'0x',280);
+
 # goeril dev
 # INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
 # ('CreatedSale','0x626f936D28D758c9566d3EBC3A79491C23EB1015',8669039,'0x',5),

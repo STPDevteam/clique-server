@@ -4199,6 +4199,9 @@ const docTemplate = `{
                 "content": {
                     "type": "string"
                 },
+                "createTime": {
+                    "type": "integer"
+                },
                 "deadline": {
                     "type": "integer"
                 },
