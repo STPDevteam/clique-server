@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func Keccak256(str string) string {
@@ -110,4 +111,9 @@ func ReplaceEmailStar(email string) string {
 		return email
 	}
 	return email[:index/2] + "****" + email[index:]
+}
+
+func TimeParse(timeStr string) int64 {
+	t, _ := time.Parse("2006-01-02 15:04:05", timeStr)
+	return t.Unix()
 }

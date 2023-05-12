@@ -9,6 +9,7 @@ import (
 	"stp_dao_v2/db/o"
 	"stp_dao_v2/errs"
 	"stp_dao_v2/models"
+	"stp_dao_v2/utils"
 	"strconv"
 )
 
@@ -301,6 +302,7 @@ func TaskDetail(c *gin.Context) {
 	data := models.ResTaskDetail{
 		TaskId:         task.Id,
 		SpacesId:       task.SpacesId,
+		CreateTime:     utils.TimeParse(task.CreateTime),
 		TaskName:       task.TaskName,
 		Content:        task.Content,
 		Deadline:       task.Deadline,

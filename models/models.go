@@ -902,6 +902,7 @@ type ResTaskList struct {
 type ResTaskDetail struct {
 	TaskId         int64   `json:"taskId"`
 	SpacesId       int64   `json:"spacesId"`
+	CreateTime     int64   `json:"createTime"`
 	TaskName       string  `json:"taskName"`
 	Content        string  `json:"content"`
 	Deadline       int64   `json:"deadline"`
