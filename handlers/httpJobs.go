@@ -249,7 +249,8 @@ func JobsList(c *gin.Context) {
 	list, total, err := PageTbJobs(order, page,
 		o.W("chain_id", chainIdParam),
 		o.W("dao_address", daoAddressParam),
-		o.W("job", "!=", consts.Jobs_noRole), wExceptLevel)
+		o.W("job", "!=", consts.Jobs_noRole),
+		o.W("job", "!=", consts.Jobs_C_member), wExceptLevel)
 	if handleErrorIfExists(c, err, errs.ErrServer) {
 		oo.LogW("SQL err:%v", err)
 		return

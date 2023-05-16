@@ -15,7 +15,7 @@ func OnceTaskForTeamSpaces() {
 		return
 	}
 
-	oo.LogD("start init team spaces...")
+	oo.LogD("start init team spaces super admin...")
 
 	tx, errTx := oo.NewSqlxTx()
 	if errTx != nil {
@@ -72,5 +72,5 @@ func OnceTaskForTeamSpaces() {
 		}
 	}
 
-	oo.LogD("team spaces ended...")
+	oo.LogD("team spaces super admin ended...")
 }

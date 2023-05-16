@@ -538,11 +538,11 @@ CREATE TABLE `tb_swap_token` (
 );
 
 # token list main
-INSERT INTO tb_swap_token (chain_id,token_address,token_name,symbol,decimals,coin_ids,price,img,url_coingecko,url_coinmarketcap,isSync) VALUES
-(1,'0xde7d85157d9714eadf595045cc12ca4a5f3e2adb','STP','STPT',18,'stp-network',0,'https://s2.coinmarketcap.com/static/img/coins/128x128/4006.png','https://www.coingecko.com/en/coins/stp-network','https://coinmarketcap.com/currencies/standard-tokenization-protocol',1),
-(1,'0xb49fa25978abf9a248b8212ab4b87277682301c0','RAI Finance','SOFI',18,'rai-finance',0,'https://s2.coinmarketcap.com/static/img/coins/128x128/16552.png','https://www.coingecko.com/en/coins/rai-finance','https://coinmarketcap.com/currencies/rai-finance-sofi',1),
-(1,'0x62959c699a52ec647622c91e79ce73344e4099f5','DeFine','DFA',18,'define',0,'https://s2.coinmarketcap.com/static/img/coins/128x128/11150.png','https://www.coingecko.com/en/coins/define','https://coinmarketcap.com/currencies/define',1),
-(1,'0x0000000000000000000000000000000000000000','ETH','ETH',18,'ethereum',0,'https://etherscan.io/images/svg/brands/ethereum-original.svg','https://www.coingecko.com/en/coins/ethereum','https://coinmarketcap.com/currencies/ethereum',1);
+# INSERT INTO tb_swap_token (chain_id,token_address,token_name,symbol,decimals,coin_ids,price,img,url_coingecko,url_coinmarketcap,isSync) VALUES
+# (1,'0xde7d85157d9714eadf595045cc12ca4a5f3e2adb','STP','STPT',18,'stp-network',0,'https://s2.coinmarketcap.com/static/img/coins/128x128/4006.png','https://www.coingecko.com/en/coins/stp-network','https://coinmarketcap.com/currencies/standard-tokenization-protocol',1),
+# (1,'0xb49fa25978abf9a248b8212ab4b87277682301c0','RAI Finance','SOFI',18,'rai-finance',0,'https://s2.coinmarketcap.com/static/img/coins/128x128/16552.png','https://www.coingecko.com/en/coins/rai-finance','https://coinmarketcap.com/currencies/rai-finance-sofi',1),
+# (1,'0x62959c699a52ec647622c91e79ce73344e4099f5','DeFine','DFA',18,'define',0,'https://s2.coinmarketcap.com/static/img/coins/128x128/11150.png','https://www.coingecko.com/en/coins/define','https://coinmarketcap.com/currencies/define',1),
+# (1,'0x0000000000000000000000000000000000000000','ETH','ETH',18,'ethereum',0,'https://etherscan.io/images/svg/brands/ethereum-original.svg','https://www.coingecko.com/en/coins/ethereum','https://coinmarketcap.com/currencies/ethereum',1);
 
 # token list test
 # INSERT INTO tb_swap_token (chain_id,token_address,token_name,symbol,decimals,coin_ids,price,img) VALUES
