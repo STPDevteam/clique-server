@@ -61,7 +61,7 @@ func main() {
 	//go tasks.UpdateSwapStatus()
 	//go tasks.DoPush()
 
-	go tasks.OnceTaskForTeamSpaces()
+	//go tasks.OnceTaskForTeamSpaces()
 	//go tasks.GetV1Proposal()
 
 	go oo.SafeGuardTask(func() { routers.Router() }, time.Second*10)

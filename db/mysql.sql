@@ -824,14 +824,14 @@ CREATE TABLE `tb_task` (
 # ('SettleAirdrop','0x8a636039F6981ED727Ff049e259A01E6E97be04E',5423856,'0x',280),
 # ('Claimed','0x8a636039F6981ED727Ff049e259A01E6E97be04E',5423856,'0x',280);
 
-#zkSync Era mainnet to pre
-INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
-('CreateDao','0xeb0C7B105998c88678f8A86Efc0bbD0Aa807A891',3605241,'0x',324),
-('CreateERC20','0xeb0C7B105998c88678f8A86Efc0bbD0Aa807A891',3605241,'0x',324),
-('ClaimReserve','0xeb0C7B105998c88678f8A86Efc0bbD0Aa807A891',3605241,'0x',324),
-('CreateAirdrop','0x4Ee940aBA04AA89D98adA57311d60519fc3154C0',3605241,'0x',324),
-('SettleAirdrop','0x4Ee940aBA04AA89D98adA57311d60519fc3154C0',3605241,'0x',324),
-('Claimed','0x4Ee940aBA04AA89D98adA57311d60519fc3154C0',3605241,'0x',324);
+#zkSync Era mainnet to pre/main
+# INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
+# ('CreateDao','0xeb0C7B105998c88678f8A86Efc0bbD0Aa807A891',3678801,'0x',324),
+# ('CreateERC20','0xeb0C7B105998c88678f8A86Efc0bbD0Aa807A891',3678801,'0x',324),
+# ('ClaimReserve','0xeb0C7B105998c88678f8A86Efc0bbD0Aa807A891',3678801,'0x',324),
+# ('CreateAirdrop','0x4Ee940aBA04AA89D98adA57311d60519fc3154C0',3678801,'0x',324),
+# ('SettleAirdrop','0x4Ee940aBA04AA89D98adA57311d60519fc3154C0',3678801,'0x',324),
+# ('Claimed','0x4Ee940aBA04AA89D98adA57311d60519fc3154C0',3678801,'0x',324);
 
 # goeril dev
 # INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES

@@ -129,7 +129,6 @@ func IsSuperAdmin(chainId int64, daoAddress, account string) (b bool) {
 		o.W("dao_address", daoAddress),
 		o.W("account", account))
 	if err != nil {
-		oo.LogW("SQL err:%v", err)
 		return false
 	}
 	if jobData.Job != consts.Jobs_A_superAdmin {
@@ -145,7 +144,6 @@ func IsAboveAdmin(chainId int64, daoAddress, account string) (role string, b boo
 		o.W("dao_address", daoAddress),
 		o.W("account", account))
 	if err != nil {
-		oo.LogW("SQL err:%v", err)
 		return "", false
 	}
 	if jobData.Job != consts.Jobs_A_superAdmin && jobData.Job != consts.Jobs_B_admin {
