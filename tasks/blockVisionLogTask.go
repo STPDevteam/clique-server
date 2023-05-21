@@ -705,6 +705,22 @@ func save(blockData []map[string]interface{}, currentBlockNum int64, chainId int
 				oo.LogW("SQL err: %v", errTx)
 				return
 			}
+
+			// total proposals
+			dao, err := db.GetTbDao(o.W("chain_id", chainId), o.W("dao_address", daoAddress))
+			if err != nil {
+				oo.LogW("SQL err: %v", err)
+				errTx = err
+				return
+			}
+
+			var vDao = make(map[string]interface{})
+			vDao["total_proposals"] = dao.TotalProposals + 1
+			_, errTx = o.UpdateTx(tx, consts.TbNameDao, vDao, o.W("id", dao.Id))
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
 		}
 
 		if blockData[i]["event_type"] == consts.EvVote {

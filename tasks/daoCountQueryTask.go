@@ -30,19 +30,7 @@ func DaoCountTask() {
 			return
 		}
 
-		var members int64
-		sqlMembers := oo.NewSqler().Table(consts.TbNameMember).
-			Where("dao_address", ls.DaoAddress).
-			Where("chain_id", ls.ChainId).
-			Where("join_switch", 1).Count()
-		err = oo.SqlGet(sqlMembers, &members)
-		if err != nil {
-			oo.LogW("SQL err: %v", err)
-			return
-		}
-
 		var v = make(map[string]interface{})
-		v["members"] = members
 		v["total_proposals"] = totalProposals
 		sqlUp := oo.NewSqler().Table(consts.TbNameDao).Where("id", ls.Id).Update(v)
 		err = oo.SqlExec(sqlUp)

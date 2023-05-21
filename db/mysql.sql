@@ -184,7 +184,7 @@ CREATE TABLE `tb_account` (
     `account` VARCHAR(128) NOT NULL UNIQUE,
     `account_logo` VARCHAR(128),
     `nickname` VARCHAR(128),
-    `introduction` VARCHAR(200),
+    `introduction` VARCHAR(1000),
     `twitter` VARCHAR(128),
     `github` VARCHAR(128),
     `discord` VARCHAR(128),

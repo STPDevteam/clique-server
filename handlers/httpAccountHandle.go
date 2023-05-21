@@ -331,7 +331,7 @@ func HttpUpdateAccount(c *gin.Context) {
 	var v = make(map[string]interface{})
 	v["account_logo"] = params.Param.AccountLogo[:int(math.Min(float64(len(params.Param.AccountLogo)), 128))]
 	v["nickname"] = params.Param.Nickname[:int(math.Min(float64(len(params.Param.Nickname)), 128))]
-	v["introduction"] = params.Param.Introduction[:int(math.Min(float64(len(params.Param.Introduction)), 200))]
+	v["introduction"] = params.Param.Introduction[:int(math.Min(float64(len(params.Param.Introduction)), 1000))]
 	v["twitter"] = params.Param.Twitter[:int(math.Min(float64(len(params.Param.Twitter)), 128))]
 	v["github"] = params.Param.Github[:int(math.Min(float64(len(params.Param.Github)), 128))]
 	v["discord"] = params.Param.Discord[:int(math.Min(float64(len(params.Param.Discord)), 128))]
