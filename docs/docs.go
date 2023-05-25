@@ -3357,6 +3357,12 @@ const docTemplate = `{
             "properties": {
                 "account": {
                     "type": "string"
+                },
+                "accountLogo": {
+                    "type": "string"
+                },
+                "nickname": {
+                    "type": "string"
                 }
             }
         },

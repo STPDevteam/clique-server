@@ -338,7 +338,9 @@ type ResDaoInfo struct {
 }
 
 type ResAdminsList struct {
-	Account string `json:"account"`
+	Account     string `json:"account"`
+	AccountLogo string `json:"accountLogo"`
+	Nickname    string `json:"nickname"`
 	//AccountLevel string `json:"accountLevel"`
 }
 

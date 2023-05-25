@@ -567,8 +567,18 @@ func HttpDaoAdmins(c *gin.Context) {
 
 	var data = make([]models.ResAdminsList, 0)
 	for index := range adminEntities {
+		ls := adminEntities[index]
+
+		var user db.TbAccountModel
+		user, err = db.GetTbAccountModel(o.W("account", ls.Account))
+		if handleErrorIfExistsExceptNoRows(c, err, errs.ErrServer) {
+			oo.LogW("SQL err: %v", err)
+			return
+		}
 		data = append(data, models.ResAdminsList{
-			Account: adminEntities[index].Account,
+			Account:     ls.Account,
+			AccountLogo: user.AccountLogo.String,
+			Nickname:    user.Nickname.String,
 			//AccountLevel: adminEntities[index].AccountLevel,
 		})
 	}

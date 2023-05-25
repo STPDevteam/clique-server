@@ -579,6 +579,10 @@ definitions:
     properties:
       account:
         type: string
+      accountLogo:
+        type: string
+      nickname:
+        type: string
     type: object
   models.ResAiChat:
     properties:
