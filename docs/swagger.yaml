@@ -317,13 +317,9 @@ definitions:
     type: object
   models.ReqJobsApply:
     properties:
-      applyRole:
-        description: 'ApplyRole: C_member/B_admin/noRole'
-        type: string
-      chainId:
+      jobPublishId:
+        description: from job publish list
         type: integer
-      daoAddress:
-        type: string
       message:
         type: string
     type: object
@@ -337,6 +333,29 @@ definitions:
         type: boolean
       jobsApplyId:
         type: integer
+    type: object
+  models.ReqJobsPublish:
+    properties:
+      access:
+        description: 'Access: B_admin'
+        type: string
+      chainId:
+        type: integer
+      daoAddress:
+        type: string
+      jobBio:
+        type: string
+      title:
+        type: string
+    type: object
+  models.ReqJobsPublishEdit:
+    properties:
+      jobBio:
+        type: string
+      jobPublishId:
+        type: integer
+      title:
+        type: string
     type: object
   models.ReqPurchased:
     properties:
@@ -669,6 +688,8 @@ definitions:
     properties:
       accountLevel:
         type: string
+      activeProposals:
+        type: integer
       chainId:
         type: integer
       daoAddress:
@@ -677,6 +698,16 @@ definitions:
         type: string
       daoName:
         type: string
+      description:
+        type: string
+      handle:
+        type: string
+      isApprove:
+        type: boolean
+      members:
+        type: integer
+      totalProposals:
+        type: integer
     type: object
   models.ResDaoInfo:
     properties:
@@ -839,6 +870,22 @@ definitions:
       youtube:
         type: string
     type: object
+  models.ResJobsPublishList:
+    properties:
+      access:
+        description: 'Access: B_admin'
+        type: string
+      chainId:
+        type: integer
+      daoAddress:
+        type: string
+      jobBio:
+        type: string
+      jobPublishId:
+        type: integer
+      title:
+        type: string
+    type: object
   models.ResLeftDaoCreator:
     properties:
       account:
@@ -955,7 +1002,6 @@ definitions:
       accountLogo:
         type: string
       adminDao:
-        description: MyTokens     []ResMyTokens `json:"myTokens"`
         items:
           $ref: '#/definitions/models.ResDao'
         type: array
@@ -979,10 +1025,6 @@ definitions:
         type: string
       introduction:
         type: string
-      memberDao:
-        items:
-          $ref: '#/definitions/models.ResDao'
-        type: array
       newDao:
         type: boolean
       nickname:
@@ -1320,6 +1362,8 @@ definitions:
     properties:
       account:
         description: personal_sign address,0x
+        type: string
+      message:
         type: string
       signature:
         description: personal_sign sign result,no 0x
@@ -2246,6 +2290,84 @@ paths:
           schema:
             $ref: '#/definitions/models.ResJobsList'
       summary: jobs list
+      tags:
+      - jobs
+  /stpdao/v2/jobs/publish:
+    post:
+      description: 'jobs publish, request header: Authorization=Bearer ${JWT Token}'
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ReqJobsPublish'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: jobs publish
+      tags:
+      - jobs
+  /stpdao/v2/jobs/publish/:jobPublishId:
+    delete:
+      description: jobs publish delete
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: jobs publish delete
+      tags:
+      - jobs
+  /stpdao/v2/jobs/publish/edit:
+    post:
+      description: 'jobs publish edit, request header: Authorization=Bearer ${JWT
+        Token}'
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ReqJobsPublishEdit'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: jobs publish edit
+      tags:
+      - jobs
+  /stpdao/v2/jobs/publish/list:
+    get:
+      description: jobs publish list
+      parameters:
+      - description: chainId
+        in: query
+        name: chainId
+        required: true
+        type: integer
+      - description: daoAddress
+        in: query
+        name: daoAddress
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResJobsPublishList'
+      summary: jobs publish list
       tags:
       - jobs
   /stpdao/v2/notification/list:

@@ -132,40 +132,41 @@ func Router() {
 			r13.GET("/isWhite", handlers.SwapIsWhite)
 			r13.GET("/isCreatorWhite", handlers.SwapIsCreatorWhite)
 		}
-		jobsAuth := router.Group("/jobs", middlewares.JWTAuthForce())
-		{
-			jobsAuth.POST("/apply", handlers.JobsApply)
-			jobsAuth.POST("/apply/review", handlers.JobsApplyReview)
-			jobsAuth.POST("/alter", handlers.JobsAlter)
-			jobsAuth.GET("/identity", handlers.JobsIdentity)
-			jobsAuth.GET("/left", handlers.JobsLeft)
 
-		}
 		jobs := router.Group("/jobs")
 		{
+			jobs.POST("/publish", middlewares.JWTAuthForce(), handlers.JobsPublish)
+			jobs.POST("/publish/edit", middlewares.JWTAuthForce(), handlers.JobsPublishEdit)
+			jobs.GET("/publish/list", handlers.JobsPublishList)
+			jobs.DELETE("/publish/:jobPublishId", middlewares.JWTAuthForce(), handlers.JobsPublishDelete)
+
+			jobs.POST("/apply", middlewares.JWTAuthForce(), handlers.JobsApply)
+			jobs.POST("/apply/review", middlewares.JWTAuthForce(), handlers.JobsApplyReview)
+			jobs.POST("/alter", middlewares.JWTAuthForce(), handlers.JobsAlter)
+			jobs.GET("/identity", middlewares.JWTAuthForce(), handlers.JobsIdentity)
+			jobs.GET("/left", middlewares.JWTAuthForce(), handlers.JobsLeft)
+
 			jobs.GET("/apply/list", handlers.JobsApplyList)
 			jobs.GET("/list", handlers.JobsList)
 		}
-		teamSpacesAuth := router.Group("/spaces", middlewares.JWTAuthForce())
+
+		teamSpaces := router.Group("/spaces")
 		{
-			teamSpacesAuth.POST("/create", handlers.CreateTeamSpaces)
-			teamSpacesAuth.POST("/update", handlers.UpdateTeamSpaces)
-			teamSpacesAuth.POST("/remove", handlers.TeamSpacesRemoveToTrash)
-			teamSpacesAuth.POST("/delete", handlers.DeleteTeamSpaces)
+			teamSpaces.POST("/create", middlewares.JWTAuthForce(), handlers.CreateTeamSpaces)
+			teamSpaces.POST("/update", middlewares.JWTAuthForce(), handlers.UpdateTeamSpaces)
+			teamSpaces.POST("/remove", middlewares.JWTAuthForce(), handlers.TeamSpacesRemoveToTrash)
+			teamSpaces.POST("/delete", middlewares.JWTAuthForce(), handlers.DeleteTeamSpaces)
+
+			teamSpaces.GET("/list", middlewares.JWTAuth(), handlers.TeamSpacesList)
 		}
-		teamSpaces := router.Group("/spaces", middlewares.JWTAuth())
-		{
-			teamSpaces.GET("/list", handlers.TeamSpacesList)
-		}
-		taskAuth := router.Group("/task", middlewares.JWTAuthForce())
-		{
-			taskAuth.POST("/create", handlers.CreateTask)
-			taskAuth.POST("/update", handlers.UpdateTask)
-			taskAuth.POST("/remove", handlers.TaskRemoveToTrash)
-			taskAuth.POST("/delete", handlers.DeleteTask)
-		}
+
 		task := router.Group("/task")
 		{
+			task.POST("/create", middlewares.JWTAuthForce(), handlers.CreateTask)
+			task.POST("/update", middlewares.JWTAuthForce(), handlers.UpdateTask)
+			task.POST("/remove", middlewares.JWTAuthForce(), handlers.TaskRemoveToTrash)
+			task.POST("/delete", middlewares.JWTAuthForce(), handlers.DeleteTask)
+
 			task.GET("/list", handlers.TaskList)
 			task.GET("/detail/:taskId", handlers.TaskDetail)
 		}

@@ -88,25 +88,15 @@ func HttpQueryAccount(c *gin.Context) {
 	}
 
 	var params models.ReqAccountQuery
-	err := c.ShouldBindJSON(&params)
-	if err != nil {
-		oo.LogW("%v", err)
-		c.JSON(http.StatusOK, models.Response{
-			Code:    http.StatusBadRequest,
-			Message: "Invalid parameters.",
-		})
+	if handleErrorIfExists(c, c.ShouldBindJSON(&params), errs.ErrParam) {
 		return
 	}
 
 	var counts int
 	sqlCount := oo.NewSqler().Table(consts.TbNameAccount).Where("account", params.Account).Count()
-	err = oo.SqlGet(sqlCount, &counts)
-	if err != nil {
+	err := oo.SqlGet(sqlCount, &counts)
+	if handleErrorIfExists(c, err, errs.ErrServer) {
 		oo.LogW("SQL err: %v", err)
-		c.JSON(http.StatusOK, models.Response{
-			Code:    500,
-			Message: "Something went wrong, Please try again later.",
-		})
 		return
 	}
 
@@ -117,12 +107,8 @@ func HttpQueryAccount(c *gin.Context) {
 		m = append(m, v)
 		sqlIns := oo.NewSqler().Table(consts.TbNameAccount).Insert(m)
 		err = oo.SqlExec(sqlIns)
-		if err != nil {
+		if handleErrorIfExists(c, err, errs.ErrServer) {
 			oo.LogW("SQL err: %v", err)
-			c.JSON(http.StatusOK, models.Response{
-				Code:    500,
-				Message: "Something went wrong, Please try again later.",
-			})
 			return
 		}
 	}
@@ -130,116 +116,138 @@ func HttpQueryAccount(c *gin.Context) {
 	var entity db.TbAccountModel
 	sqlSel := oo.NewSqler().Table(consts.TbNameAccount).Where("account", params.Account).Select()
 	err = oo.SqlGet(sqlSel, &entity)
-	if err != nil {
+	if handleErrorIfExists(c, err, errs.ErrServer) {
 		oo.LogW("SQL err: %v", err)
-		c.JSON(http.StatusOK, models.Response{
-			Code:    500,
-			Message: "Something went wrong, Please try again later.",
-		})
 		return
 	}
 
-	//var myTokenEntities []models.HolderDataModel
-	//sqlSel = oo.NewSqler().Table(consts.TbNameHolderData).Where("holder_address", params.Account).Select()
-	//err = oo.SqlSelect(sqlSel, &myTokenEntities)
+	//var adminDaoEntities []db.TbAdminModel
+	//sqlSel = oo.NewSqler().Table(consts.TbNameAdmin).
+	//	Where("account", params.Account).
+	//	Where("account_level='superAdmin' OR account_level='admin'").Select()
+	//err = oo.SqlSelect(sqlSel, &adminDaoEntities)
 	//if err != nil {
 	//	oo.LogW("SQL err: %v", err)
-	//	c.JSON(http.StatusInternalServerError, models.Response{
+	//	c.JSON(http.StatusOK, models.Response{
 	//		Code:    500,
 	//		Message: "Something went wrong, Please try again later.",
 	//	})
 	//	return
 	//}
-	//var dataMyTokens = make([]models.ResMyTokens, 0)
-	//for index := range myTokenEntities {
-	//	dataMyTokens = append(dataMyTokens, models.ResMyTokens{
-	//		TokenAddress: myTokenEntities[index].TokenAddress,
-	//		ChainId:      myTokenEntities[index].ChainId,
-	//		Balance:      myTokenEntities[index].Balance,
-	//	})
+	//var dataAdmin = make([]models.ResDao, 0)
+	//for index := range adminDaoEntities {
+	//	var daoEntity []db.TbDaoModel
+	//	sqlSel = oo.NewSqler().Table(consts.TbNameDao).Where("chain_id", adminDaoEntities[index].ChainId).Where("dao_address", adminDaoEntities[index].DaoAddress).Select()
+	//	err = oo.SqlSelect(sqlSel, &daoEntity)
+	//	if err != nil {
+	//		oo.LogW("SQL err: %v", err)
+	//		c.JSON(http.StatusOK, models.Response{
+	//			Code:    500,
+	//			Message: "Something went wrong, Please try again later.",
+	//		})
+	//		return
+	//	}
+	//	if len(daoEntity) > 0 {
+	//		if !daoEntity[0].Deprecated {
+	//			dataAdmin = append(dataAdmin, models.ResDao{
+	//				DaoAddress:   adminDaoEntities[index].DaoAddress,
+	//				ChainId:      adminDaoEntities[index].ChainId,
+	//				AccountLevel: adminDaoEntities[index].AccountLevel,
+	//				DaoName:      daoEntity[0].DaoName,
+	//				DaoLogo:      daoEntity[0].DaoLogo,
+	//			})
+	//		}
+	//	}
 	//}
-
-	var adminDaoEntities []db.TbAdminModel
-	sqlSel = oo.NewSqler().Table(consts.TbNameAdmin).
-		Where("account", params.Account).
-		Where("account_level='superAdmin' OR account_level='admin'").Select()
-	err = oo.SqlSelect(sqlSel, &adminDaoEntities)
-	if err != nil {
-		oo.LogW("SQL err: %v", err)
-		c.JSON(http.StatusOK, models.Response{
-			Code:    500,
-			Message: "Something went wrong, Please try again later.",
-		})
-		return
-	}
+	//
+	//var memberEntities []db.TbMemberModel
+	//sqlSel = oo.NewSqler().Table(consts.TbNameMember).Where("account", params.Account).Where("join_switch", 1).Select()
+	//err = oo.SqlSelect(sqlSel, &memberEntities)
+	//if err != nil {
+	//	oo.LogW("SQL err: %v", err)
+	//	c.JSON(http.StatusOK, models.Response{
+	//		Code:    500,
+	//		Message: "Something went wrong, Please try again later.",
+	//	})
+	//	return
+	//}
+	//var dataMember = make([]models.ResDao, 0)
+	//for index := range memberEntities {
+	//	var success = false
+	//	for indexAdmin := range adminDaoEntities {
+	//		if adminDaoEntities[indexAdmin].ChainId == memberEntities[index].ChainId && adminDaoEntities[indexAdmin].DaoAddress == memberEntities[index].DaoAddress {
+	//			success = true
+	//			break
+	//		}
+	//	}
+	//	if !success {
+	//		var daoEntity []db.TbDaoModel
+	//		sqlSel = oo.NewSqler().Table(consts.TbNameDao).Where("chain_id", memberEntities[index].ChainId).Where("dao_address", memberEntities[index].DaoAddress).Select()
+	//		err = oo.SqlSelect(sqlSel, &daoEntity)
+	//		if err != nil {
+	//			oo.LogW("SQL err: %v", err)
+	//			c.JSON(http.StatusOK, models.Response{
+	//				Code:    500,
+	//				Message: "Something went wrong, Please try again later.",
+	//			})
+	//			return
+	//		}
+	//		if len(daoEntity) > 0 {
+	//			if !daoEntity[0].Deprecated {
+	//				dataMember = append(dataMember, models.ResDao{
+	//					DaoAddress:   memberEntities[index].DaoAddress,
+	//					ChainId:      memberEntities[index].ChainId,
+	//					AccountLevel: consts.LevelMember,
+	//					DaoName:      daoEntity[0].DaoName,
+	//					DaoLogo:      daoEntity[0].DaoLogo,
+	//				})
+	//			}
+	//		}
+	//	}
+	//}
 	var dataAdmin = make([]models.ResDao, 0)
-	for index := range adminDaoEntities {
-		var daoEntity []db.TbDaoModel
-		sqlSel = oo.NewSqler().Table(consts.TbNameDao).Where("chain_id", adminDaoEntities[index].ChainId).Where("dao_address", adminDaoEntities[index].DaoAddress).Select()
-		err = oo.SqlSelect(sqlSel, &daoEntity)
-		if err != nil {
+	if login {
+		jobs, err := db.SelectTbJobs(o.W("account", user.Account), o.W(fmt.Sprintf("job IN ('%s','%s')", consts.Jobs_A_superAdmin, consts.Jobs_B_admin)))
+		if handleErrorIfExists(c, err, errs.ErrServer) {
 			oo.LogW("SQL err: %v", err)
-			c.JSON(http.StatusOK, models.Response{
-				Code:    500,
-				Message: "Something went wrong, Please try again later.",
-			})
 			return
 		}
-		if len(daoEntity) > 0 {
-			if !daoEntity[0].Deprecated {
-				dataAdmin = append(dataAdmin, models.ResDao{
-					DaoAddress:   adminDaoEntities[index].DaoAddress,
-					ChainId:      adminDaoEntities[index].ChainId,
-					AccountLevel: adminDaoEntities[index].AccountLevel,
-					DaoName:      daoEntity[0].DaoName,
-					DaoLogo:      daoEntity[0].DaoLogo,
-				})
-			}
-		}
-	}
+		for index := range jobs {
+			ls := jobs[index]
 
-	var memberEntities []db.TbMemberModel
-	sqlSel = oo.NewSqler().Table(consts.TbNameMember).Where("account", params.Account).Where("join_switch", 1).Select()
-	err = oo.SqlSelect(sqlSel, &memberEntities)
-	if err != nil {
-		oo.LogW("SQL err: %v", err)
-		c.JSON(http.StatusOK, models.Response{
-			Code:    500,
-			Message: "Something went wrong, Please try again later.",
-		})
-		return
-	}
-	var dataMember = make([]models.ResDao, 0)
-	for index := range memberEntities {
-		var success = false
-		for indexAdmin := range adminDaoEntities {
-			if adminDaoEntities[indexAdmin].ChainId == memberEntities[index].ChainId && adminDaoEntities[indexAdmin].DaoAddress == memberEntities[index].DaoAddress {
-				success = true
-				break
-			}
-		}
-		if !success {
-			var daoEntity []db.TbDaoModel
-			sqlSel = oo.NewSqler().Table(consts.TbNameDao).Where("chain_id", memberEntities[index].ChainId).Where("dao_address", memberEntities[index].DaoAddress).Select()
-			err = oo.SqlSelect(sqlSel, &daoEntity)
-			if err != nil {
+			dao, err := db.GetTbDao(o.W("chain_id", ls.ChainId), o.W("dao_address", ls.DaoAddress))
+			if handleErrorIfExists(c, err, errs.ErrServer) {
 				oo.LogW("SQL err: %v", err)
-				c.JSON(http.StatusOK, models.Response{
-					Code:    500,
-					Message: "Something went wrong, Please try again later.",
-				})
 				return
 			}
-			if len(daoEntity) > 0 {
-				if !daoEntity[0].Deprecated {
-					dataMember = append(dataMember, models.ResDao{
-						DaoAddress:   memberEntities[index].DaoAddress,
-						ChainId:      memberEntities[index].ChainId,
-						AccountLevel: consts.LevelMember,
-						DaoName:      daoEntity[0].DaoName,
-						DaoLogo:      daoEntity[0].DaoLogo,
-					})
-				}
+
+			var activeProposals int64
+			var now = time.Now().Unix()
+			sqlActive := oo.NewSqler().Table(consts.TbNameProposal).Where("deprecated", 0).
+				Where("chain_id", ls.ChainId).
+				Where("dao_address", ls.DaoAddress).
+				Where("start_time", "<=", now).
+				Where("end_time", ">=", now).Count()
+			err = oo.SqlGet(sqlActive, &activeProposals)
+			if handleErrorIfExists(c, err, errs.ErrServer) {
+				oo.LogW("SQL err: %v", err)
+				return
+			}
+
+			if !dao.Deprecated {
+				dataAdmin = append(dataAdmin, models.ResDao{
+					DaoAddress:      dao.DaoAddress,
+					ChainId:         dao.ChainId,
+					AccountLevel:    ls.Job,
+					DaoName:         dao.DaoName,
+					DaoLogo:         dao.DaoLogo,
+					Handle:          dao.Handle,
+					Description:     dao.Description,
+					IsApprove:       dao.Approve,
+					Members:         dao.Members,
+					TotalProposals:  dao.TotalProposals,
+					ActiveProposals: activeProposals,
+				})
 			}
 		}
 	}
@@ -277,22 +285,20 @@ func HttpQueryAccount(c *gin.Context) {
 		Code:    http.StatusOK,
 		Message: "ok",
 		Data: models.ResQueryAccount{
-			Account:      entity.Account,
-			AccountLogo:  entity.AccountLogo.String,
-			Followers:    followersCount,
-			Following:    followingCount,
-			Nickname:     entity.Nickname.String,
-			Introduction: entity.Introduction.String,
-			Twitter:      entity.Twitter.String,
-			Github:       entity.Github.String,
-			Discord:      entity.Discord.String,
-			Email:        email,
-			Country:      entity.Country.String,
-			Youtube:      entity.Youtube.String,
-			Opensea:      entity.Opensea.String,
-			//MyTokens:     dataMyTokens,
+			Account:              entity.Account,
+			AccountLogo:          entity.AccountLogo.String,
+			Followers:            followersCount,
+			Following:            followingCount,
+			Nickname:             entity.Nickname.String,
+			Introduction:         entity.Introduction.String,
+			Twitter:              entity.Twitter.String,
+			Github:               entity.Github.String,
+			Discord:              entity.Discord.String,
+			Email:                email,
+			Country:              entity.Country.String,
+			Youtube:              entity.Youtube.String,
+			Opensea:              entity.Opensea.String,
 			AdminDao:             dataAdmin,
-			MemberDao:            dataMember,
 			AllDaosICreateOrJoin: entity.PushSwitch&(1<<0) > 0,
 			NewDao:               entity.PushSwitch&(1<<1) > 0,
 			AllDaoAirdrop:        entity.PushSwitch&(1<<2) > 0,

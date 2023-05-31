@@ -1333,6 +1333,124 @@ const docTemplate = `{
                 }
             }
         },
+        "/stpdao/v2/jobs/publish": {
+            "post": {
+                "description": "jobs publish, request header: Authorization=Bearer ${JWT Token}",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "jobs"
+                ],
+                "summary": "jobs publish",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ReqJobsPublish"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/stpdao/v2/jobs/publish/:jobPublishId": {
+            "delete": {
+                "description": "jobs publish delete",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "jobs"
+                ],
+                "summary": "jobs publish delete",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/stpdao/v2/jobs/publish/edit": {
+            "post": {
+                "description": "jobs publish edit, request header: Authorization=Bearer ${JWT Token}",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "jobs"
+                ],
+                "summary": "jobs publish edit",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ReqJobsPublishEdit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/stpdao/v2/jobs/publish/list": {
+            "get": {
+                "description": "jobs publish list",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "jobs"
+                ],
+                "summary": "jobs publish list",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "chainId",
+                        "name": "chainId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "daoAddress",
+                        "name": "daoAddress",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResJobsPublishList"
+                        }
+                    }
+                }
+            }
+        },
         "/stpdao/v2/notification/list": {
             "get": {
                 "description": "notification list",
@@ -2959,15 +3077,9 @@ const docTemplate = `{
         "models.ReqJobsApply": {
             "type": "object",
             "properties": {
-                "applyRole": {
-                    "description": "ApplyRole: C_member/B_admin/noRole",
-                    "type": "string"
-                },
-                "chainId": {
+                "jobPublishId": {
+                    "description": "from job publish list",
                     "type": "integer"
-                },
-                "daoAddress": {
-                    "type": "string"
                 },
                 "message": {
                     "type": "string"
@@ -2988,6 +3100,41 @@ const docTemplate = `{
                 },
                 "jobsApplyId": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.ReqJobsPublish": {
+            "type": "object",
+            "properties": {
+                "access": {
+                    "description": "Access: B_admin",
+                    "type": "string"
+                },
+                "chainId": {
+                    "type": "integer"
+                },
+                "daoAddress": {
+                    "type": "string"
+                },
+                "jobBio": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ReqJobsPublishEdit": {
+            "type": "object",
+            "properties": {
+                "jobBio": {
+                    "type": "string"
+                },
+                "jobPublishId": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
                 }
             }
         },
@@ -3497,6 +3644,9 @@ const docTemplate = `{
                 "accountLevel": {
                     "type": "string"
                 },
+                "activeProposals": {
+                    "type": "integer"
+                },
                 "chainId": {
                     "type": "integer"
                 },
@@ -3508,6 +3658,21 @@ const docTemplate = `{
                 },
                 "daoName": {
                     "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "handle": {
+                    "type": "string"
+                },
+                "isApprove": {
+                    "type": "boolean"
+                },
+                "members": {
+                    "type": "integer"
+                },
+                "totalProposals": {
+                    "type": "integer"
                 }
             }
         },
@@ -3752,6 +3917,30 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ResJobsPublishList": {
+            "type": "object",
+            "properties": {
+                "access": {
+                    "description": "Access: B_admin",
+                    "type": "string"
+                },
+                "chainId": {
+                    "type": "integer"
+                },
+                "daoAddress": {
+                    "type": "string"
+                },
+                "jobBio": {
+                    "type": "string"
+                },
+                "jobPublishId": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "models.ResLeftDaoCreator": {
             "type": "object",
             "properties": {
@@ -3929,7 +4118,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "adminDao": {
-                    "description": "MyTokens     []ResMyTokens ` + "`" + `json:\"myTokens\"` + "`" + `",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.ResDao"
@@ -3964,12 +4152,6 @@ const docTemplate = `{
                 },
                 "introduction": {
                     "type": "string"
-                },
-                "memberDao": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.ResDao"
-                    }
                 },
                 "newDao": {
                     "type": "boolean"
@@ -4485,6 +4667,9 @@ const docTemplate = `{
             "properties": {
                 "account": {
                     "description": "personal_sign address,0x",
+                    "type": "string"
+                },
+                "message": {
                     "type": "string"
                 },
                 "signature": {

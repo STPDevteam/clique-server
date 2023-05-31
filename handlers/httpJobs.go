@@ -12,6 +12,171 @@ import (
 	"strconv"
 )
 
+// @Summary jobs publish
+// @Tags jobs
+// @version 0.0.1
+// @description jobs publish, request header: Authorization=Bearer ${JWT Token}
+// @Produce json
+// @Param request body models.ReqJobsPublish true "request"
+// @Success 200 {object} models.Response
+// @Router /stpdao/v2/jobs/publish [post]
+func JobsPublish(c *gin.Context) {
+	var ok bool
+	var user *db.TbAccountModel
+	user, ok = parseJWTCache(c)
+	if !ok {
+		return
+	}
+
+	var params models.ReqJobsPublish
+	if handleErrorIfExists(c, c.ShouldBindJSON(&params), errs.ErrParam) {
+		return
+	}
+	if params.Access != "B_admin" {
+		handleError(c, errs.ErrParam)
+		return
+	}
+
+	if !IsSuperAdmin(params.ChainId, params.DaoAddress, user.Account) {
+		handleError(c, errs.ErrNoPermission)
+		return
+	}
+
+	var m = make([]map[string]interface{}, 0)
+	var v = make(map[string]interface{})
+	v["chain_id"] = params.ChainId
+	v["dao_address"] = params.DaoAddress
+	v["title"] = params.Title
+	v["job_bio"] = params.JobBio
+	v["access"] = params.Access
+	m = append(m, v)
+	err := o.Insert(consts.TbJobsPublish, m)
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err:%v", err)
+		return
+	}
+
+	jsonSuccess(c)
+}
+
+// @Summary jobs publish edit
+// @Tags jobs
+// @version 0.0.1
+// @description jobs publish edit, request header: Authorization=Bearer ${JWT Token}
+// @Produce json
+// @Param request body models.ReqJobsPublishEdit true "request"
+// @Success 200 {object} models.Response
+// @Router /stpdao/v2/jobs/publish/edit [post]
+func JobsPublishEdit(c *gin.Context) {
+	var ok bool
+	var user *db.TbAccountModel
+	user, ok = parseJWTCache(c)
+	if !ok {
+		return
+	}
+
+	var params models.ReqJobsPublishEdit
+	if handleErrorIfExists(c, c.ShouldBindJSON(&params), errs.ErrParam) {
+		return
+	}
+
+	publishData, err := db.GetTbJobsPublish(o.W("id", params.JobPublishId))
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err:%v", err)
+		return
+	}
+
+	if !IsSuperAdmin(publishData.ChainId, publishData.DaoAddress, user.Account) {
+		handleError(c, errs.ErrNoPermission)
+		return
+	}
+
+	var v = make(map[string]interface{})
+	v["title"] = params.Title
+	v["job_bio"] = params.JobBio
+	err = o.Update(consts.TbJobsPublish, v, o.W("id", params.JobPublishId))
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err:%v", err)
+		return
+	}
+
+	jsonSuccess(c)
+}
+
+// @Summary jobs publish list
+// @Tags jobs
+// @version 0.0.1
+// @description jobs publish list
+// @Produce json
+// @Param chainId query int true "chainId"
+// @Param daoAddress query string true "daoAddress"
+// @Success 200 {object} models.ResJobsPublishList
+// @Router /stpdao/v2/jobs/publish/list [get]
+func JobsPublishList(c *gin.Context) {
+	chainId := c.Query("chainId")
+	chainIdParam, _ := strconv.Atoi(chainId)
+	daoAddressParam := c.Query("daoAddress")
+
+	publishArr, err := db.SelectTbJobsPublish(o.W("chain_id", chainIdParam), o.W("dao_address", daoAddressParam))
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err:%v", err)
+		return
+	}
+
+	var resp = make([]models.ResJobsPublishList, 0)
+	for index := range publishArr {
+		ls := publishArr[index]
+
+		resp = append(resp, models.ResJobsPublishList{
+			JobPublishId: ls.Id,
+			ChainId:      ls.ChainId,
+			DaoAddress:   ls.DaoAddress,
+			Title:        ls.Title,
+			JobBio:       ls.JobBio,
+			Access:       ls.Access,
+		})
+	}
+
+	jsonData(c, resp)
+}
+
+// @Summary jobs publish delete
+// @Tags jobs
+// @version 0.0.1
+// @description jobs publish delete
+// @Produce json
+// @Success 200 {object} models.Response
+// @Router /stpdao/v2/jobs/publish/:jobPublishId [delete]
+func JobsPublishDelete(c *gin.Context) {
+	var ok bool
+	var user *db.TbAccountModel
+	user, ok = parseJWTCache(c)
+	if !ok {
+		return
+	}
+
+	jobPublishIdParam := c.Param("jobPublishId")
+
+	publishData, err := db.GetTbJobsPublish(o.W("id", jobPublishIdParam))
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err:%v", err)
+		return
+	}
+
+	if !IsSuperAdmin(publishData.ChainId, publishData.DaoAddress, user.Account) {
+		handleError(c, errs.ErrNoPermission)
+		return
+	}
+
+	err = o.Delete(consts.TbJobsPublish, o.W("id", jobPublishIdParam))
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err:%v", err)
+		return
+	}
+
+	jsonSuccess(c)
+}
+
 // @Summary jobs apply
 // @Tags jobs
 // @version 0.0.1
@@ -32,62 +197,69 @@ func JobsApply(c *gin.Context) {
 	if handleErrorIfExists(c, c.ShouldBindJSON(&params), errs.ErrParam) {
 		return
 	}
-	if params.ApplyRole != consts.Jobs_B_admin && params.ApplyRole != consts.Jobs_C_member && params.ApplyRole != consts.Jobs_noRole {
-		handleError(c, errs.ErrParam)
-		return
-	}
 
-	countJobs, err := o.Count(consts.TbJobs, o.W("chain_id", params.ChainId), o.W("dao_address", params.DaoAddress),
-		o.W("account", user.Account), o.W("job", params.ApplyRole))
+	publishData, err := db.GetTbJobsPublish(o.W("id", params.JobPublishId))
 	if handleErrorIfExists(c, err, errs.ErrServer) {
 		oo.LogW("SQL err:%v", err)
 		return
 	}
-	if countJobs > 0 {
-		handleError(c, errs.NewError(400, "You have successfully applied."))
-		return
-	}
 
-	if params.ApplyRole == consts.Jobs_C_member || params.ApplyRole == consts.Jobs_noRole {
-		_, okAdmin := IsAboveAdmin(params.ChainId, params.DaoAddress, user.Account)
-		if okAdmin {
-			handleError(c, errs.NewError(400, "You are already an administrator."))
-			return
-		}
-		var m = make([]map[string]interface{}, 0)
-		var v = make(map[string]interface{})
-		v["chain_id"] = params.ChainId
-		v["dao_address"] = params.DaoAddress
-		v["account"] = user.Account
-		v["job"] = params.ApplyRole
-		m = append(m, v)
-		err = o.Insert(consts.TbJobs, m)
-		if handleErrorIfExists(c, err, errs.ErrServer) {
-			oo.LogW("SQL err:%v", err)
-			return
-		}
-
-		jsonSuccess(c)
-		return
-	}
-
-	countJobsApply, err := o.Count(consts.TbJobsApply, o.W("chain_id", params.ChainId), o.W("dao_address", params.DaoAddress),
-		o.W("account", user.Account), o.W("status", consts.Jobs_Status_InApplication))
-	if handleErrorIfExists(c, err, errs.ErrServer) {
-		oo.LogW("SQL err:%v", err)
-		return
-	}
-	if countJobsApply > 0 {
-		handleError(c, errs.NewError(400, "Application submitted."))
-		return
-	}
+	//if params.ApplyRole != consts.Jobs_B_admin && params.ApplyRole != consts.Jobs_C_member && params.ApplyRole != consts.Jobs_noRole {
+	//	handleError(c, errs.ErrParam)
+	//	return
+	//}
+	//
+	//countJobs, err := o.Count(consts.TbJobs, o.W("chain_id", params.ChainId), o.W("dao_address", params.DaoAddress),
+	//	o.W("account", user.Account), o.W("job", params.ApplyRole))
+	//if handleErrorIfExists(c, err, errs.ErrServer) {
+	//	oo.LogW("SQL err:%v", err)
+	//	return
+	//}
+	//if countJobs > 0 {
+	//	handleError(c, errs.NewError(400, "You have successfully applied."))
+	//	return
+	//}
+	//
+	//if params.ApplyRole == consts.Jobs_C_member || params.ApplyRole == consts.Jobs_noRole {
+	//	_, okAdmin := IsAboveAdmin(params.ChainId, params.DaoAddress, user.Account)
+	//	if okAdmin {
+	//		handleError(c, errs.NewError(400, "You are already an administrator."))
+	//		return
+	//	}
+	//	var m = make([]map[string]interface{}, 0)
+	//	var v = make(map[string]interface{})
+	//	v["chain_id"] = params.ChainId
+	//	v["dao_address"] = params.DaoAddress
+	//	v["account"] = user.Account
+	//	v["job"] = params.ApplyRole
+	//	m = append(m, v)
+	//	err = o.Insert(consts.TbJobs, m)
+	//	if handleErrorIfExists(c, err, errs.ErrServer) {
+	//		oo.LogW("SQL err:%v", err)
+	//		return
+	//	}
+	//
+	//	jsonSuccess(c)
+	//	return
+	//}
+	//
+	//countJobsApply, err := o.Count(consts.TbJobsApply, o.W("chain_id", params.ChainId), o.W("dao_address", params.DaoAddress),
+	//	o.W("account", user.Account), o.W("status", consts.Jobs_Status_InApplication))
+	//if handleErrorIfExists(c, err, errs.ErrServer) {
+	//	oo.LogW("SQL err:%v", err)
+	//	return
+	//}
+	//if countJobsApply > 0 {
+	//	handleError(c, errs.NewError(400, "Application submitted."))
+	//	return
+	//}
 
 	var m = make([]map[string]interface{}, 0)
 	var v = make(map[string]interface{})
-	v["chain_id"] = params.ChainId
-	v["dao_address"] = params.DaoAddress
+	v["chain_id"] = publishData.ChainId
+	v["dao_address"] = publishData.DaoAddress
 	v["account"] = user.Account
-	v["apply_role"] = params.ApplyRole
+	v["apply_role"] = publishData.Access
 	v["message"] = params.Message
 	m = append(m, v)
 	err = o.Insert(consts.TbJobsApply, m)
@@ -156,7 +328,7 @@ func JobsApplyReview(c *gin.Context) {
 	}
 
 	if !IsSuperAdmin(params.ChainId, params.DaoAddress, user.Account) {
-		handleError(c, errs.NewError(401, "You are not super admin."))
+		handleError(c, errs.ErrNoPermission)
 		return
 	}
 
@@ -282,7 +454,7 @@ func JobsAlter(c *gin.Context) {
 
 	role, ok := IsAboveAdmin(params.ChainId, params.DaoAddress, user.Account)
 	if !ok {
-		handleError(c, errs.NewError(401, "You are not admin."))
+		handleError(c, errs.ErrNoPermission)
 		return
 	}
 

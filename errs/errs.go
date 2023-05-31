@@ -11,6 +11,7 @@ var (
 
 	ErrParam        = NewError(400, "Invalid parameters.")
 	ErrUnAuthorized = NewError(401, "UnAuthorized.")
+	ErrNoPermission = NewError(403, "No permission.")
 )
 
 func (e *CustomError) Error() string {

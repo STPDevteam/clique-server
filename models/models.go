@@ -125,40 +125,38 @@ type ResUploadImgPath struct {
 }
 
 type ResQueryAccount struct {
-	Account      string `json:"account"`
-	AccountLogo  string `json:"accountLogo"`
-	Followers    int    `json:"followers"`
-	Following    int    `json:"following"`
-	Nickname     string `json:"nickname"`
-	Introduction string `json:"introduction"`
-	Twitter      string `json:"twitter"`
-	Github       string `json:"github"`
-	Discord      string `json:"discord"`
-	Email        string `json:"email"`
-	Country      string `json:"country"`
-	Youtube      string `json:"youtube"`
-	Opensea      string `json:"opensea"`
-	//MyTokens     []ResMyTokens `json:"myTokens"`
+	Account              string   `json:"account"`
+	AccountLogo          string   `json:"accountLogo"`
+	Followers            int      `json:"followers"`
+	Following            int      `json:"following"`
+	Nickname             string   `json:"nickname"`
+	Introduction         string   `json:"introduction"`
+	Twitter              string   `json:"twitter"`
+	Github               string   `json:"github"`
+	Discord              string   `json:"discord"`
+	Email                string   `json:"email"`
+	Country              string   `json:"country"`
+	Youtube              string   `json:"youtube"`
+	Opensea              string   `json:"opensea"`
 	AdminDao             []ResDao `json:"adminDao"`
-	MemberDao            []ResDao `json:"memberDao"`
 	AllDaosICreateOrJoin bool     `json:"allDaosICreateOrJoin"`
 	NewDao               bool     `json:"newDao"`
 	AllDaoAirdrop        bool     `json:"allDaoAirdrop"`
 	AllDaoProposal       bool     `json:"allDaoProposal"`
 }
 
-//type ResMyTokens struct {
-//	TokenAddress string `json:"tokenAddress"`
-//	ChainId      int    `json:"chainId"`
-//	Balance      string `json:"balance"`
-//}
-
 type ResDao struct {
-	DaoAddress   string `json:"daoAddress"`
-	ChainId      int    `json:"chainId"`
-	AccountLevel string `json:"accountLevel"`
-	DaoName      string `json:"daoName"`
-	DaoLogo      string `json:"daoLogo"`
+	DaoAddress      string `json:"daoAddress"`
+	ChainId         int    `json:"chainId"`
+	AccountLevel    string `json:"accountLevel"`
+	DaoName         string `json:"daoName"`
+	DaoLogo         string `json:"daoLogo"`
+	Handle          string `json:"handle"`
+	Description     string `json:"description"`
+	IsApprove       bool   `json:"isApprove"`
+	Members         int64  `json:"members"`
+	TotalProposals  int64  `json:"totalProposals"`
+	ActiveProposals int64  `json:"activeProposals"`
 }
 
 type ResActivity struct {
@@ -296,7 +294,8 @@ type ResTokenList struct {
 }
 
 type SignData struct {
-	Account   string `json:"account" validate:"eth_addr"`              // personal_sign address,0x
+	Account   string `json:"account" validate:"eth_addr"` // personal_sign address,0x
+	Message   string `json:"message"`
 	Signature string `json:"signature" validate:"len=130,hexadecimal"` // personal_sign sign result,no 0x
 }
 
@@ -792,11 +791,9 @@ type UpdateAccountPushSwitchParam struct {
 //}
 
 type ReqJobsApply struct {
-	ChainId    int64  `json:"chainId"`
-	DaoAddress string `json:"daoAddress"`
-	// ApplyRole: C_member/B_admin/noRole
-	ApplyRole string `json:"applyRole"`
-	Message   string `json:"message"`
+	// from job publish list
+	JobPublishId int64  `json:"jobPublishId"`
+	Message      string `json:"message"`
 }
 
 type ReqCreateTask struct {
@@ -988,4 +985,29 @@ type ResJobsLeft struct {
 	DaoLogo    string `json:"daoLogo"`
 	DaoName    string `json:"daoName"`
 	Role       string `json:"role"`
+}
+
+type ReqJobsPublish struct {
+	ChainId    int64  `json:"chainId"`
+	DaoAddress string `json:"daoAddress"`
+	Title      string `json:"title"`
+	JobBio     string `json:"jobBio"`
+	// Access: B_admin
+	Access string `json:"access"`
+}
+
+type ReqJobsPublishEdit struct {
+	JobPublishId int64  `json:"jobPublishId"`
+	Title        string `json:"title"`
+	JobBio       string `json:"jobBio"`
+}
+
+type ResJobsPublishList struct {
+	JobPublishId int64  `json:"jobPublishId"`
+	ChainId      int64  `json:"chainId"`
+	DaoAddress   string `json:"daoAddress"`
+	Title        string `json:"title"`
+	JobBio       string `json:"jobBio"`
+	// Access: B_admin
+	Access string `json:"access"`
 }

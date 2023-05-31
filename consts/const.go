@@ -34,6 +34,7 @@ const (
 	TbNameSwapTransaction     = "tb_swap_transaction"
 	TbJobs                    = "tb_jobs"
 	TbJobsApply               = "tb_jobs_apply"
+	TbJobsPublish             = "tb_jobs_publish"
 	TbTask                    = "tb_task"
 	TbTeamSpaces              = "tb_team_spaces"
 

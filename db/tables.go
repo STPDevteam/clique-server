@@ -502,6 +502,27 @@ func SelectTbJobs(w ...[][]interface{}) (arr []TbJobs, err error) {
 	return arr, err
 }
 
+type TbJobsPublish struct {
+	Id         int64  `db:"id,omitempty" sqler:"skips"`
+	CreateTime string `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime string `db:"update_time,omitempty" sqler:"skips"`
+	ChainId    int64  `db:"chain_id"`
+	DaoAddress string `db:"dao_address"`
+	Title      string `db:"title"`
+	JobBio     string `db:"job_bio"`
+	Access     string `db:"access"`
+}
+
+func GetTbJobsPublish(w ...[][]interface{}) (data TbJobsPublish, err error) {
+	err = oo.SqlGet(o.DBPre(consts.TbJobsPublish, w).Select(), &data)
+	return data, err
+}
+
+func SelectTbJobsPublish(w ...[][]interface{}) (arr []TbJobsPublish, err error) {
+	err = oo.SqlSelect(o.DBPre(consts.TbJobsPublish, w).Select(), &arr)
+	return arr, err
+}
+
 type TbJobsApply struct {
 	Id         int64  `db:"id,omitempty" sqler:"skips"`
 	CreateTime string `db:"create_time,omitempty" sqler:"skips"`

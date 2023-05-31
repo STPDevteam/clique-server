@@ -589,6 +589,20 @@ CREATE TABLE `sysconfig` (
 INSERT INTO sysconfig (cfg_name,cfg_val,cfg_type,cfg_comment,cfg_is_enabled) VALUES
 ('cfg_swap_creator_white_list','0x5aEFAA34EaDaC483ea542077D30505eF2472cfe3','','',1);
 
+CREATE TABLE `tb_jobs_publish` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `chain_id` INT NOT NULL,
+    `dao_address` VARCHAR(44) NOT NULL,
+    `title` VARCHAR(255) NOT NULL DEFAULT '',
+    `job_bio` TEXT NOT NULL,
+    `access` VARCHAR(30) NOT NULL DEFAULT 'B_admin' COMMENT 'B_admin',
+    PRIMARY KEY (`id`),
+    INDEX `index_chain_id` (`chain_id` ASC),
+    INDEX `index_dao_address` (`dao_address` ASC)
+);
+
 CREATE TABLE `tb_jobs_apply` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
