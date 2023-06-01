@@ -32,7 +32,7 @@ func JobsPublish(c *gin.Context) {
 	if handleErrorIfExists(c, c.ShouldBindJSON(&params), errs.ErrParam) {
 		return
 	}
-	if params.Access != "B_admin" {
+	if params.Access != "B_admin" || params.Title == "" || params.JobBio == "" {
 		handleError(c, errs.ErrParam)
 		return
 	}
@@ -209,16 +209,16 @@ func JobsApply(c *gin.Context) {
 	//	return
 	//}
 	//
-	//countJobs, err := o.Count(consts.TbJobs, o.W("chain_id", params.ChainId), o.W("dao_address", params.DaoAddress),
-	//	o.W("account", user.Account), o.W("job", params.ApplyRole))
-	//if handleErrorIfExists(c, err, errs.ErrServer) {
-	//	oo.LogW("SQL err:%v", err)
-	//	return
-	//}
-	//if countJobs > 0 {
-	//	handleError(c, errs.NewError(400, "You have successfully applied."))
-	//	return
-	//}
+	countJobs, err := o.Count(consts.TbJobs, o.W("chain_id", publishData.ChainId), o.W("dao_address", publishData.DaoAddress),
+		o.W("account", user.Account), o.W("job", publishData.Access))
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err:%v", err)
+		return
+	}
+	if countJobs > 0 {
+		handleError(c, errs.NewError(400, "You have successfully applied."))
+		return
+	}
 	//
 	//if params.ApplyRole == consts.Jobs_C_member || params.ApplyRole == consts.Jobs_noRole {
 	//	_, okAdmin := IsAboveAdmin(params.ChainId, params.DaoAddress, user.Account)
@@ -243,16 +243,16 @@ func JobsApply(c *gin.Context) {
 	//	return
 	//}
 	//
-	//countJobsApply, err := o.Count(consts.TbJobsApply, o.W("chain_id", params.ChainId), o.W("dao_address", params.DaoAddress),
-	//	o.W("account", user.Account), o.W("status", consts.Jobs_Status_InApplication))
-	//if handleErrorIfExists(c, err, errs.ErrServer) {
-	//	oo.LogW("SQL err:%v", err)
-	//	return
-	//}
-	//if countJobsApply > 0 {
-	//	handleError(c, errs.NewError(400, "Application submitted."))
-	//	return
-	//}
+	countJobsApply, err := o.Count(consts.TbJobsApply, o.W("chain_id", publishData.ChainId), o.W("dao_address", publishData.DaoAddress),
+		o.W("account", user.Account), o.W("status", consts.Jobs_Status_InApplication))
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err:%v", err)
+		return
+	}
+	if countJobsApply > 0 {
+		handleError(c, errs.NewError(400, "Application submitted."))
+		return
+	}
 
 	var m = make([]map[string]interface{}, 0)
 	var v = make(map[string]interface{})
@@ -266,6 +266,52 @@ func JobsApply(c *gin.Context) {
 	if handleErrorIfExists(c, err, errs.ErrServer) {
 		oo.LogW("SQL err:%v", err)
 		return
+	}
+
+	jsonSuccess(c)
+}
+
+// @Summary jobs join to member
+// @Tags jobs
+// @version 0.0.1
+// @description jobs join to member, request header: Authorization=Bearer ${JWT Token}
+// @Produce json
+// @Param request body models.ReqJobsJoinToMember true "request"
+// @Success 200 {object} models.Response
+// @Router /stpdao/v2/jobs/join/member [post]
+func JobsJoinToMember(c *gin.Context) {
+	var ok bool
+	var user *db.TbAccountModel
+	user, ok = parseJWTCache(c)
+	if !ok {
+		return
+	}
+
+	var params models.ReqJobsJoinToMember
+	if handleErrorIfExists(c, c.ShouldBindJSON(&params), errs.ErrParam) {
+		return
+	}
+
+	count, err := o.Count(consts.TbJobs, o.W("chain_id", params.ChainId), o.W("dao_address", params.DaoAddress),
+		o.W("account", user.Account))
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err:%v", err)
+		return
+	}
+
+	if count == 0 {
+		var m = make([]map[string]interface{}, 0)
+		var v = make(map[string]interface{})
+		v["chain_id"] = params.ChainId
+		v["dao_address"] = params.DaoAddress
+		v["account"] = user.Account
+		v["job"] = consts.Jobs_C_member
+		m = append(m, v)
+		err = o.Insert(consts.TbJobs, m)
+		if handleErrorIfExists(c, err, errs.ErrServer) {
+			oo.LogW("SQL err:%v", err)
+			return
+		}
 	}
 
 	jsonSuccess(c)

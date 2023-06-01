@@ -141,6 +141,7 @@ func Router() {
 			jobs.DELETE("/publish/:jobPublishId", middlewares.JWTAuthForce(), handlers.JobsPublishDelete)
 
 			jobs.POST("/apply", middlewares.JWTAuthForce(), handlers.JobsApply)
+			jobs.POST("/join/member", middlewares.JWTAuthForce(), handlers.JobsJoinToMember)
 			jobs.POST("/apply/review", middlewares.JWTAuthForce(), handlers.JobsApplyReview)
 			jobs.POST("/alter", middlewares.JWTAuthForce(), handlers.JobsAlter)
 			jobs.GET("/identity", middlewares.JWTAuthForce(), handlers.JobsIdentity)

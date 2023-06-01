@@ -22,7 +22,6 @@ import (
 // @Produce json
 // @Param customizeOrderProposal query string false "customizeOrderProposal: ASC"
 // @Param customizeOrderCreateTime query string false "customizeOrderCreateTime: ASC"
-// @Param order query string false "account address"
 // @Param account query string false "account address"
 // @Param keyword query  string false "query keyword:Dao name,Dao address,Token address"
 // @Param category query string false "category"

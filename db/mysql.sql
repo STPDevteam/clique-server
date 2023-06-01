@@ -601,7 +601,8 @@ CREATE TABLE `tb_jobs_publish` (
     PRIMARY KEY (`id`),
     INDEX `index_chain_id` (`chain_id` ASC),
     INDEX `index_dao_address` (`dao_address` ASC)
-);
+) CHARACTER SET = utf8mb4
+  COLLATE = utf8mb4_general_ci;
 
 CREATE TABLE `tb_jobs_apply` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,

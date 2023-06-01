@@ -334,6 +334,13 @@ definitions:
       jobsApplyId:
         type: integer
     type: object
+  models.ReqJobsJoinToMember:
+    properties:
+      chainId:
+        type: integer
+      daoAddress:
+        type: string
+    type: object
   models.ReqJobsPublish:
     properties:
       access:
@@ -2239,6 +2246,27 @@ paths:
           schema:
             $ref: '#/definitions/models.Response'
       summary: jobs identity
+      tags:
+      - jobs
+  /stpdao/v2/jobs/join/member:
+    post:
+      description: 'jobs join to member, request header: Authorization=Bearer ${JWT
+        Token}'
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ReqJobsJoinToMember'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: jobs join to member
       tags:
       - jobs
   /stpdao/v2/jobs/left:

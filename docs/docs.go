@@ -1257,6 +1257,37 @@ const docTemplate = `{
                 }
             }
         },
+        "/stpdao/v2/jobs/join/member": {
+            "post": {
+                "description": "jobs join to member, request header: Authorization=Bearer ${JWT Token}",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "jobs"
+                ],
+                "summary": "jobs join to member",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ReqJobsJoinToMember"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/stpdao/v2/jobs/left": {
             "get": {
                 "description": "jobs left, request header: Authorization=Bearer ${JWT Token}",
@@ -3100,6 +3131,17 @@ const docTemplate = `{
                 },
                 "jobsApplyId": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.ReqJobsJoinToMember": {
+            "type": "object",
+            "properties": {
+                "chainId": {
+                    "type": "integer"
+                },
+                "daoAddress": {
+                    "type": "string"
                 }
             }
         },

@@ -796,6 +796,11 @@ type ReqJobsApply struct {
 	Message      string `json:"message"`
 }
 
+type ReqJobsJoinToMember struct {
+	ChainId    int64  `json:"chainId"`
+	DaoAddress string `json:"daoAddress"`
+}
+
 type ReqCreateTask struct {
 	SpacesId int64  `json:"spacesId"`
 	TaskName string `json:"taskName"`

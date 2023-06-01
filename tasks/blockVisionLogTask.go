@@ -608,6 +608,22 @@ func save(blockData []map[string]interface{}, currentBlockNum int64, chainId int
 				return
 			}
 
+			// total proposals
+			dao, err := db.GetTbDao(o.W("chain_id", chainId), o.W("dao_address", daoAddress))
+			if err != nil {
+				oo.LogW("SQL err: %v", err)
+				errTx = err
+				return
+			}
+
+			var vDao = make(map[string]interface{})
+			vDao["total_proposals"] = dao.TotalProposals + 1
+			_, errTx = o.UpdateTx(tx, consts.TbNameDao, vDao, o.W("id", dao.Id))
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+
 			//for notification
 			var notificationData = make([]map[string]interface{}, 0)
 			var values = make(map[string]interface{})
@@ -705,22 +721,6 @@ func save(blockData []map[string]interface{}, currentBlockNum int64, chainId int
 				oo.LogW("SQL err: %v", errTx)
 				return
 			}
-
-			// total proposals
-			dao, err := db.GetTbDao(o.W("chain_id", chainId), o.W("dao_address", daoAddress))
-			if err != nil {
-				oo.LogW("SQL err: %v", err)
-				errTx = err
-				return
-			}
-
-			var vDao = make(map[string]interface{})
-			vDao["total_proposals"] = dao.TotalProposals + 1
-			_, errTx = o.UpdateTx(tx, consts.TbNameDao, vDao, o.W("id", dao.Id))
-			if errTx != nil {
-				oo.LogW("SQL err: %v", errTx)
-				return
-			}
 		}
 
 		if blockData[i]["event_type"] == consts.EvVote {
@@ -812,17 +812,26 @@ func save(blockData []map[string]interface{}, currentBlockNum int64, chainId int
 						return
 					}
 
-					var mAdmin = make([]map[string]interface{}, 0)
-					var vAdmin = make(map[string]interface{})
-					vAdmin["chain_id"] = chainId
-					vAdmin["dao_address"] = daoAddress
-					vAdmin["account"] = account
-					vAdmin["account_level"] = consts.LevelAdmin
-					mAdmin = append(mAdmin, vAdmin)
-					errTx = o.Insert(consts.TbNameAdmin, mAdmin)
-					if errTx != nil {
+					countAdmin, err := o.Count(consts.TbNameAdmin, o.W("chain_id", chainId), o.W("dao_address", daoAddress),
+						o.W("account", account), o.W("account_level", consts.LevelAdmin))
+					if err != nil {
 						oo.LogW("SQL err:%v", errTx)
+						errTx = err
 						return
+					}
+					if countAdmin == 0 {
+						var mAdmin = make([]map[string]interface{}, 0)
+						var vAdmin = make(map[string]interface{})
+						vAdmin["chain_id"] = chainId
+						vAdmin["dao_address"] = daoAddress
+						vAdmin["account"] = account
+						vAdmin["account_level"] = consts.LevelAdmin
+						mAdmin = append(mAdmin, vAdmin)
+						_, errTx = o.InsertTx(tx, consts.TbNameAdmin, mAdmin)
+						if errTx != nil {
+							oo.LogW("SQL err:%v", errTx)
+							return
+						}
 					}
 				}
 			}
