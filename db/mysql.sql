@@ -73,7 +73,7 @@ CREATE TABLE `tb_dao` (
     `dao_address`  VARCHAR(128) NOT NULL,
     `creator` VARCHAR(128) NOT NULL,
     `handle` VARCHAR(30) NOT NULL,
-    `description` VARCHAR(500) NOT NULL,
+    `description` VARCHAR(1000) NOT NULL,
     `chain_id` INT NOT NULL,
     `token_chain_id` INT NOT NULL,
     `token_address` VARCHAR(128) NOT NULL,
@@ -618,7 +618,8 @@ CREATE TABLE `tb_jobs_apply` (
     INDEX `index_chain_id` (`chain_id` ASC),
     INDEX `index_dao_address` (`dao_address` ASC),
     INDEX `index_account` (`account` ASC)
-);
+) CHARACTER SET = utf8mb4
+  COLLATE = utf8mb4_general_ci;
 
 CREATE TABLE `tb_jobs` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -633,7 +634,8 @@ CREATE TABLE `tb_jobs` (
     INDEX `index_dao_address` (`dao_address` ASC),
     INDEX `index_account` (`account` ASC),
     INDEX `index_job` (`job` ASC)
-);
+) CHARACTER SET = utf8mb4
+  COLLATE = utf8mb4_general_ci;
 
 CREATE TABLE `tb_team_spaces` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -653,7 +655,8 @@ CREATE TABLE `tb_team_spaces` (
     INDEX `index_dao_address` (`dao_address` ASC),
     INDEX `index_access` (`access` ASC),
     INDEX `index_is_trash` (`is_trash` ASC)
-);
+) CHARACTER SET = utf8mb4
+  COLLATE = utf8mb4_general_ci;
 
 CREATE TABLE `tb_task` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -674,7 +677,8 @@ CREATE TABLE `tb_task` (
     INDEX `index_spaces_id` (`spaces_id` ASC),
     INDEX `index_status` (`status` ASC),
     INDEX `index_is_trash` (`is_trash` ASC)
-);
+) CHARACTER SET = utf8mb4
+  COLLATE = utf8mb4_general_ci;
 
 # CREATE TABLE `tb_task_types` (
 #     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
