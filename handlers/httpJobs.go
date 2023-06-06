@@ -314,6 +314,20 @@ func JobsJoinToMember(c *gin.Context) {
 		}
 	}
 
+	daoData, err := db.GetTbDao(o.W("chain_id", params.ChainId), o.W("dao_address", params.DaoAddress))
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err:%v", err)
+		return
+	}
+	vDao := map[string]any{
+		"members": daoData.Members + 1,
+	}
+	err = o.Update(consts.TbNameDao, vDao, o.W("chain_id", params.ChainId), o.W("dao_address", params.DaoAddress))
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err:%v", err)
+		return
+	}
+
 	jsonSuccess(c)
 }
 
