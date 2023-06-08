@@ -558,11 +558,11 @@ func save(blockData []map[string]interface{}, currentBlockNum int64, chainId int
 								errTx = errors.New("query block number failed,duration > 1000")
 								return
 							}
-							if len(resKB.Data) == 0 {
+							if resKB.Data == "" {
 								duration += 100
 								goto Loop
 							}
-							blockNumber = resKB.Data[0]
+							blockNumber = resKB.Data
 						} else {
 							urlGetBlock := fmt.Sprintf(viper.GetStringSlice("scan.query_block_number_url")[indexUrl], timestamp)
 							res, errG := utils.GetBlockNumberFromTimestamp(urlGetBlock)

@@ -172,6 +172,13 @@ func Router() {
 			task.GET("/detail/:taskId", handlers.TaskDetail)
 		}
 
+		sbt := router.Group("/sbt")
+		{
+			sbt.POST("/create", middlewares.JWTAuthForce(), handlers.CreateSBT)
+
+			sbt.GET("/list", handlers.SBTList)
+		}
+
 		ai := router.Group("/ai")
 		{
 			ai.POST("", middlewares.JWTAuthForce(), handlers.Ai)

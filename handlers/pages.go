@@ -231,3 +231,42 @@ func PageTbAccountTopList(order string, page ReqPagination, w ...[][]interface{}
 	}
 	return list, total, nil
 }
+
+func PageTbSBT(order string, page ReqPagination, w ...[][]interface{}) (list []models.ResSBTList, total int64, err error) {
+	var data []db.TbSBT
+	sqler := o.DBPre(consts.TbSBT, w)
+	sqlCopy := *sqler
+	err = oo.SqlGet(sqlCopy.Count(), &total)
+	if err == nil {
+		sqlCopy = *sqler
+		err = oo.SqlSelect(sqlCopy.Order(order).Limit(page.Limit).Offset(page.Offset).Select(), &data)
+	}
+	if err != nil {
+		oo.LogW("sqler:%s", sqler)
+		return nil, 0, err
+	}
+
+	list = make([]models.ResSBTList, 0)
+	for i := range data {
+		ls := data[i]
+
+		dao, err := db.GetTbDao(o.W("chain_id", ls.ChainId), o.W("dao_address", ls.DaoAddress))
+		if err != nil {
+			return nil, 0, err
+		}
+
+		list = append(list, models.ResSBTList{
+			ChainId:      ls.ChainId,
+			DaoAddress:   ls.DaoAddress,
+			DaoName:      dao.DaoName,
+			DaoLogo:      dao.DaoLogo,
+			TokenChainId: ls.TokenChainId,
+			FileUrl:      ls.FileUrl,
+			ItemName:     ls.ItemName,
+			StartTime:    ls.StartTime,
+			EndTime:      ls.EndTime,
+			Status:       ls.Status,
+		})
+	}
+	return list, total, nil
+}

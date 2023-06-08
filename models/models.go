@@ -416,9 +416,9 @@ type V1ProposalData struct {
 }
 
 type KlaytnBlock struct {
-	Code    int      `json:"code"`
-	Data    []string `json:"data"`
-	Message string   `json:"msg"`
+	Code    int    `json:"code"`
+	Data    string `json:"data"`
+	Message string `json:"msg"`
 }
 
 type ResTokenImg struct {
@@ -1015,4 +1015,36 @@ type ResJobsPublishList struct {
 	JobBio       string `json:"jobBio"`
 	// Access: B_admin
 	Access string `json:"access"`
+}
+
+type ReqSBTCreate struct {
+	ChainId      int64  `json:"chainId"`
+	DaoAddress   string `json:"daoAddress"`
+	TokenChainId int64  `json:"tokenChainId"`
+	FileUrl      string `json:"fileUrl"`
+	ItemName     string `json:"itemName"`
+	Introduction string `json:"introduction"`
+	TotalSupply  uint64 `json:"totalSupply"`
+	StartTime    int64  `json:"startTime"`
+	EndTime      int64  `json:"endTime"`
+	// anyone;joined;whitelist
+	Way       string        `json:"way"`
+	Whitelist JsonWhitelist `json:"whitelist"`
+}
+
+type JsonWhitelist struct {
+	Account []string `json:"account"`
+}
+
+type ResSBTList struct {
+	ChainId      int64  `json:"chainId"`
+	DaoAddress   string `json:"daoAddress"`
+	DaoName      string `json:"daoName"`
+	DaoLogo      string `json:"daoLogo"`
+	TokenChainId int64  `json:"tokenChainId"`
+	FileUrl      string `json:"fileUrl"`
+	ItemName     string `json:"itemName"`
+	StartTime    int64  `json:"startTime"`
+	EndTime      int64  `json:"endTime"`
+	Status       string `json:"status"`
 }

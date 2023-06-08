@@ -564,3 +564,22 @@ func GetTbTeamSpaces(w ...[][]interface{}) (data TbTeamSpaces, err error) {
 	err = oo.SqlGet(o.DBPre(consts.TbTeamSpaces, w).Select(), &data)
 	return data, err
 }
+
+type TbSBT struct {
+	Id           int64  `db:"id,omitempty" sqler:"skips"`
+	CreateTime   string `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime   string `db:"update_time,omitempty" sqler:"skips"`
+	ChainId      int64  `db:"chain_id"`
+	DaoAddress   string `db:"dao_address"`
+	TokenChainId int64  `db:"token_chain_id"`
+	TokenAddress string `db:"token_address"`
+	FileUrl      string `db:"file_url"`
+	ItemName     string `db:"item_name"`
+	Introduction string `db:"introduction"`
+	TotalSupply  uint64 `db:"total_supply"`
+	StartTime    int64  `db:"start_time"`
+	EndTime      int64  `db:"end_time"`
+	Way          string `db:"way"`
+	WhiteList    string `db:"whitelist"`
+	Status       string `db:"status"`
+}

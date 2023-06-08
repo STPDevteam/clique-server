@@ -680,6 +680,30 @@ CREATE TABLE `tb_task` (
 ) CHARACTER SET = utf8mb4
   COLLATE = utf8mb4_general_ci;
 
+CREATE TABLE `tb_sbt` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `chain_id` INT NOT NULL,
+    `dao_address` VARCHAR(44) NOT NULL,
+    `token_chain_id` INT NOT NULL,
+    `token_address` VARCHAR(44) NOT NULL DEFAULT '',
+    `file_url` VARCHAR(255) NOT NULL DEFAULT '',
+    `item_name` VARCHAR(50) NOT NULL DEFAULT '',
+    `introduction` VARCHAR(2000) NOT NULL DEFAULT '',
+    `total_supply` INT UNSIGNED NOT NULL DEFAULT 0,
+    `start_time` INT NOT NULL DEFAULT 0,
+    `end_time` INT NOT NULL DEFAULT 0,
+    `way` VARCHAR(20) NOT NULL DEFAULT '' COMMENT 'anyone;joined;whitelist',
+    `whitelist` TEXT NOT NULL,
+    `status` VARCHAR(20) NOT NULL DEFAULT 'pending' COMMENT 'pending;scanned',
+    PRIMARY KEY (`id`),
+    INDEX `index_chain_id` (`chain_id` ASC),
+    INDEX `index_dao_address` (`dao_address` ASC),
+    INDEX `index_status` (`status` ASC)
+) CHARACTER SET = utf8mb4
+  COLLATE = utf8mb4_general_ci;
+
 # CREATE TABLE `tb_task_types` (
 #     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 #     `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

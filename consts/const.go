@@ -37,6 +37,7 @@ const (
 	TbJobsPublish             = "tb_jobs_publish"
 	TbTask                    = "tb_task"
 	TbTeamSpaces              = "tb_team_spaces"
+	TbSBT                     = "tb_sbt"
 
 	EvCreateDao            = "CreateDao"
 	EvCreateProposal       = "CreateProposal"
