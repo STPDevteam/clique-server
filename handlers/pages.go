@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	oo "github.com/Anna2024/liboo"
 	"stp_dao_v2/consts"
 	"stp_dao_v2/db"
@@ -11,7 +12,7 @@ import (
 
 func PageTbTeamSpaces(order string, page ReqPagination, w ...[][]interface{}) (list []models.ResTeamSpacesList, total int64, err error) {
 	var data []db.TbTeamSpaces
-	sqler := o.DBPre(consts.TbTeamSpaces, w)
+	sqler := o.Pre(consts.TbTeamSpaces, w)
 	sqlCopy := *sqler
 	err = oo.SqlGet(sqlCopy.Count(), &total)
 	if err == nil {
@@ -67,7 +68,7 @@ func PageTbTeamSpaces(order string, page ReqPagination, w ...[][]interface{}) (l
 
 func PageTbTask(order string, page ReqPagination, w ...[][]interface{}) (list []models.ResTaskList, total int64, err error) {
 	var data []db.TbTask
-	sqler := o.DBPre(consts.TbTask, w)
+	sqler := o.Pre(consts.TbTask, w)
 	sqlCopy := *sqler
 	err = oo.SqlGet(sqlCopy.Count(), &total)
 	if err == nil {
@@ -113,7 +114,7 @@ func PageTbTask(order string, page ReqPagination, w ...[][]interface{}) (list []
 
 func PageTbJobs(order string, page ReqPagination, w ...[][]interface{}) (list []models.ResJobsList, total int64, err error) {
 	var data []db.TbJobs
-	sqler := o.DBPre(consts.TbJobs, w)
+	sqler := o.Pre(consts.TbJobs, w)
 	sqlCopy := *sqler
 	err = oo.SqlGet(sqlCopy.Count(), &total)
 	if err == nil {
@@ -162,7 +163,7 @@ func PageTbJobs(order string, page ReqPagination, w ...[][]interface{}) (list []
 
 func PageTbJobsApply(order string, page ReqPagination, w ...[][]interface{}) (list []models.ResJobsApplyList, total int64, err error) {
 	var data []db.TbJobsApply
-	sqler := o.DBPre(consts.TbJobsApply, w)
+	sqler := o.Pre(consts.TbJobsApply, w)
 	sqlCopy := *sqler
 	err = oo.SqlGet(sqlCopy.Count(), &total)
 	if err == nil {
@@ -206,7 +207,7 @@ func PageTbJobsApply(order string, page ReqPagination, w ...[][]interface{}) (li
 
 func PageTbAccountTopList(order string, page ReqPagination, w ...[][]interface{}) (list []models.ResAccountTopList, total int64, err error) {
 	var data []db.TbAccountModel
-	sqler := o.DBPre(consts.TbNameAccount, w)
+	sqler := o.Pre(consts.TbNameAccount, w)
 	sqlCopy := *sqler
 	err = oo.SqlGet(sqlCopy.Count(), &total)
 	if err == nil {
@@ -234,7 +235,7 @@ func PageTbAccountTopList(order string, page ReqPagination, w ...[][]interface{}
 
 func PageTbSBT(order string, page ReqPagination, w ...[][]interface{}) (list []models.ResSBTList, total int64, err error) {
 	var data []db.TbSBT
-	sqler := o.DBPre(consts.TbSBT, w)
+	sqler := o.Pre(consts.TbSBT, w)
 	sqlCopy := *sqler
 	err = oo.SqlGet(sqlCopy.Count(), &total)
 	if err == nil {
@@ -256,6 +257,7 @@ func PageTbSBT(order string, page ReqPagination, w ...[][]interface{}) (list []m
 		}
 
 		list = append(list, models.ResSBTList{
+			SBTId:        ls.Id,
 			ChainId:      ls.ChainId,
 			DaoAddress:   ls.DaoAddress,
 			DaoName:      dao.DaoName,
@@ -268,5 +270,23 @@ func PageTbSBT(order string, page ReqPagination, w ...[][]interface{}) (list []m
 			Status:       ls.Status,
 		})
 	}
+	return list, total, nil
+}
+
+func PageTbSBTClaim(order string, page ReqPagination, w ...[][]interface{}) (list []models.ResSBTClaimList, total int64, err error) {
+	sqler := o.Pre(fmt.Sprintf(`%s AS a`, consts.TbSBTClaim), w)
+	sqlCopy := *sqler
+	err = oo.SqlGet(sqlCopy.Count(), &total)
+	if err == nil {
+		sqlCopy = *sqler
+		err = oo.SqlSelect(sqlCopy.Join(fmt.Sprintf(`%s AS b on a.account = b.account`, consts.TbNameAccount)).
+			Order(order).Limit(page.Limit).Offset(page.Offset).
+			Select("a.account, IFNULL(b.account_logo,'') AS account_logo"), &list)
+	}
+	if err != nil {
+		oo.LogW("sqler:%s", sqler)
+		return nil, 0, err
+	}
+
 	return list, total, nil
 }

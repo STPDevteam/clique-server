@@ -7,11 +7,11 @@ import (
 )
 
 func SelectSqler(table string, w ...[][]interface{}) string {
-	return DBPre(table, w).Select()
+	return Pre(table, w).Select()
 }
 
 func Count(table string, w ...[][]interface{}) (data int64, err error) {
-	sqler := DBPre(table, w).Count()
+	sqler := Pre(table, w).Count()
 	err = oo.SqlGet(sqler, &data)
 	if err != nil {
 		oo.LogW("sqler:%s", sqler)
@@ -38,7 +38,7 @@ func InsertBatch(table string, m []map[string]interface{}) error {
 }
 
 func Update(table string, v map[string]interface{}, w ...[][]interface{}) error {
-	sqler := DBPre(table, w).Update(v)
+	sqler := Pre(table, w).Update(v)
 	err := oo.SqlExec(sqler)
 	if err != nil {
 		oo.LogW("sqler:%s", sqler)
@@ -65,7 +65,7 @@ func InsertBatchTx(tx *sqlx.Tx, table string, m []map[string]interface{}) (sql.R
 }
 
 func UpdateTx(tx *sqlx.Tx, table string, v map[string]interface{}, w ...[][]interface{}) (sql.Result, error) {
-	sqler := DBPre(table, w).Update(v)
+	sqler := Pre(table, w).Update(v)
 	res, err := oo.SqlxTxExec(tx, sqler)
 	if err != nil {
 		oo.LogW("sqler:%s", sqler)
@@ -74,7 +74,7 @@ func UpdateTx(tx *sqlx.Tx, table string, v map[string]interface{}, w ...[][]inte
 }
 
 func Delete(table string, w ...[][]interface{}) error {
-	sqler := DBPre(table, w).Delete()
+	sqler := Pre(table, w).Delete()
 	err := oo.SqlExec(sqler)
 	if err != nil {
 		oo.LogW("sqler:%s", sqler)
@@ -87,10 +87,10 @@ func W(w ...interface{}) [][]interface{} {
 }
 
 func Sqler(table string, w ...[][]interface{}) *oo.Sqler {
-	return DBPre(table, w)
+	return Pre(table, w)
 }
 
-func DBPre(table string, args [][][]interface{}) *oo.Sqler {
+func Pre(table string, args [][][]interface{}) *oo.Sqler {
 	sqler := oo.NewSqler().Table(table)
 	for x := range args {
 		for y := range args[x] {

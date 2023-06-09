@@ -38,6 +38,7 @@ const (
 	TbTask                    = "tb_task"
 	TbTeamSpaces              = "tb_team_spaces"
 	TbSBT                     = "tb_sbt"
+	TbSBTClaim                = "tb_sbt_claim"
 
 	EvCreateDao            = "CreateDao"
 	EvCreateProposal       = "CreateProposal"
@@ -87,6 +88,7 @@ const (
 
 	StatusPending = "pending"
 	StatusSoon    = "soon"
+	StatusActive  = "active"
 	StatusNormal  = "normal"
 	StatusEnded   = "ended"
 	StatusCancel  = "cancel"
@@ -107,6 +109,10 @@ const (
 
 	KEY_LOGIN        = "login"
 	KEY_CURRENT_USER = "current_user"
+
+	SBT_WAY_anyone    = "anyone"
+	SBT_WAY_joined    = "joined"
+	SBT_WAY_whitelist = "whitelist"
 )
 
 var Task_Status_Arr = []string{Task_status_A_notStarted, Task_status_B_inProgress, Task_status_C_done, Task_status_D_notStatus}

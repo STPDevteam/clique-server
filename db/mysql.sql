@@ -696,13 +696,24 @@ CREATE TABLE `tb_sbt` (
     `end_time` INT NOT NULL DEFAULT 0,
     `way` VARCHAR(20) NOT NULL DEFAULT '' COMMENT 'anyone;joined;whitelist',
     `whitelist` TEXT NOT NULL,
-    `status` VARCHAR(20) NOT NULL DEFAULT 'pending' COMMENT 'pending;scanned',
+    `status` VARCHAR(20) NOT NULL DEFAULT 'pending' COMMENT 'pending;soon;active;ended',
     PRIMARY KEY (`id`),
     INDEX `index_chain_id` (`chain_id` ASC),
     INDEX `index_dao_address` (`dao_address` ASC),
     INDEX `index_status` (`status` ASC)
 ) CHARACTER SET = utf8mb4
   COLLATE = utf8mb4_general_ci;
+
+CREATE TABLE `tb_sbt_claim` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `sbt_id` INT UNSIGNED NOT NULL,
+    `account` VARCHAR(44) NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `index_sbt_id` (`sbt_id` ASC),
+    INDEX `index_account` (`account` ASC)
+);
 
 # CREATE TABLE `tb_task_types` (
 #     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,

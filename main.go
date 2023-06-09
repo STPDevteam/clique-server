@@ -55,6 +55,7 @@ func main() {
 	go tasks.UpdateDaoInfoTask()
 	go tasks.TokensImgTask()
 	go tasks.UpdateNotification()
+	go tasks.UpdateSBTStatus()
 	//go tasks.UpdateAccountRecord()
 	//go tasks.DaoCountTask()
 	//go tasks.SwapTokenPrice()

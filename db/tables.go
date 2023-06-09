@@ -60,7 +60,7 @@ type TbAccountModel struct {
 }
 
 func GetTbAccountModel(w ...[][]interface{}) (data TbAccountModel, err error) {
-	err = oo.SqlGet(o.DBPre(consts.TbNameAccount, w).Select(), &data)
+	err = oo.SqlGet(o.Pre(consts.TbNameAccount, w).Select(), &data)
 	return data, err
 }
 
@@ -151,12 +151,12 @@ type TbDaoModel struct {
 }
 
 func GetTbDao(w ...[][]interface{}) (data TbDaoModel, err error) {
-	err = oo.SqlGet(o.DBPre(consts.TbNameDao, w).Select(), &data)
+	err = oo.SqlGet(o.Pre(consts.TbNameDao, w).Select(), &data)
 	return data, err
 }
 
 func SelectTbDaoModel(w ...[][]interface{}) (arr []TbDaoModel, err error) {
-	err = oo.SqlSelect(o.DBPre(consts.TbNameDao, w).Select(), &arr)
+	err = oo.SqlSelect(o.Pre(consts.TbNameDao, w).Select(), &arr)
 	return arr, err
 }
 
@@ -196,12 +196,12 @@ type TbAdminModel struct {
 }
 
 func SelectTbAdmin(w ...[][]interface{}) (arr []TbAdminModel, err error) {
-	err = oo.SqlSelect(o.DBPre(consts.TbNameAdmin, w).Select(), &arr)
+	err = oo.SqlSelect(o.Pre(consts.TbNameAdmin, w).Select(), &arr)
 	return arr, err
 }
 
 func GetTbAdmin(w ...[][]interface{}) (data TbAdminModel, err error) {
-	err = oo.SqlGet(o.DBPre(consts.TbNameAdmin, w).Select(), &data)
+	err = oo.SqlGet(o.Pre(consts.TbNameAdmin, w).Select(), &data)
 	return data, err
 }
 
@@ -473,12 +473,12 @@ type TbTask struct {
 }
 
 func SelectTbTask(w ...[][]interface{}) (arr []TbTask, err error) {
-	err = oo.SqlSelect(o.DBPre(consts.TbTask, w).Select(), &arr)
+	err = oo.SqlSelect(o.Pre(consts.TbTask, w).Select(), &arr)
 	return arr, err
 }
 
 func GetTbTask(w ...[][]interface{}) (data TbTask, err error) {
-	err = oo.SqlGet(o.DBPre(consts.TbTask, w).Select(), &data)
+	err = oo.SqlGet(o.Pre(consts.TbTask, w).Select(), &data)
 	return data, err
 }
 
@@ -493,12 +493,12 @@ type TbJobs struct {
 }
 
 func GetTbJobs(w ...[][]interface{}) (data TbJobs, err error) {
-	err = oo.SqlGet(o.DBPre(consts.TbJobs, w).Select(), &data)
+	err = oo.SqlGet(o.Pre(consts.TbJobs, w).Select(), &data)
 	return data, err
 }
 
 func SelectTbJobs(w ...[][]interface{}) (arr []TbJobs, err error) {
-	err = oo.SqlSelect(o.DBPre(consts.TbJobs, w).Select(), &arr)
+	err = oo.SqlSelect(o.Pre(consts.TbJobs, w).Select(), &arr)
 	return arr, err
 }
 
@@ -514,12 +514,12 @@ type TbJobsPublish struct {
 }
 
 func GetTbJobsPublish(w ...[][]interface{}) (data TbJobsPublish, err error) {
-	err = oo.SqlGet(o.DBPre(consts.TbJobsPublish, w).Select(), &data)
+	err = oo.SqlGet(o.Pre(consts.TbJobsPublish, w).Select(), &data)
 	return data, err
 }
 
 func SelectTbJobsPublish(w ...[][]interface{}) (arr []TbJobsPublish, err error) {
-	err = oo.SqlSelect(o.DBPre(consts.TbJobsPublish, w).Select(), &arr)
+	err = oo.SqlSelect(o.Pre(consts.TbJobsPublish, w).Select(), &arr)
 	return arr, err
 }
 
@@ -536,7 +536,7 @@ type TbJobsApply struct {
 }
 
 func GetTbJobsApply(w ...[][]interface{}) (data TbJobsApply, err error) {
-	err = oo.SqlGet(o.DBPre(consts.TbJobsApply, w).Select(), &data)
+	err = oo.SqlGet(o.Pre(consts.TbJobsApply, w).Select(), &data)
 	return data, err
 }
 
@@ -556,17 +556,17 @@ type TbTeamSpaces struct {
 }
 
 func SelectTbTeamSpaces(w ...[][]interface{}) (arr []TbTeamSpaces, err error) {
-	err = oo.SqlSelect(o.DBPre(consts.TbTeamSpaces, w).Select(), &arr)
+	err = oo.SqlSelect(o.Pre(consts.TbTeamSpaces, w).Select(), &arr)
 	return arr, err
 }
 
 func GetTbTeamSpaces(w ...[][]interface{}) (data TbTeamSpaces, err error) {
-	err = oo.SqlGet(o.DBPre(consts.TbTeamSpaces, w).Select(), &data)
+	err = oo.SqlGet(o.Pre(consts.TbTeamSpaces, w).Select(), &data)
 	return data, err
 }
 
 type TbSBT struct {
-	Id           int64  `db:"id,omitempty" sqler:"skips"`
+	Id           uint64 `db:"id,omitempty" sqler:"skips"`
 	CreateTime   string `db:"create_time,omitempty" sqler:"skips"`
 	UpdateTime   string `db:"update_time,omitempty" sqler:"skips"`
 	ChainId      int64  `db:"chain_id"`
@@ -582,4 +582,21 @@ type TbSBT struct {
 	Way          string `db:"way"`
 	WhiteList    string `db:"whitelist"`
 	Status       string `db:"status"`
+}
+
+func GetTbSBT(w ...[][]interface{}) (data TbSBT, err error) {
+	err = oo.SqlGet(o.Pre(consts.TbSBT, w).Select(), &data)
+	return data, err
+}
+func SelectTbSBT(w ...[][]interface{}) (arr []TbSBT, err error) {
+	err = oo.SqlSelect(o.Pre(consts.TbSBT, w).Select(), &arr)
+	return arr, err
+}
+
+type TbSBTClaim struct {
+	Id         uint64 `db:"id,omitempty" sqler:"skips"`
+	CreateTime string `db:"create_time,omitempty" sqler:"skips"`
+	UpdateTime string `db:"update_time,omitempty" sqler:"skips"`
+	SBTId      uint64 `db:"sbt_id"`
+	Account    string `db:"account"`
 }

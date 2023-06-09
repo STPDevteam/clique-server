@@ -1037,6 +1037,7 @@ type JsonWhitelist struct {
 }
 
 type ResSBTList struct {
+	SBTId        uint64 `json:"SBTId"`
 	ChainId      int64  `json:"chainId"`
 	DaoAddress   string `json:"daoAddress"`
 	DaoName      string `json:"daoName"`
@@ -1047,4 +1048,32 @@ type ResSBTList struct {
 	StartTime    int64  `json:"startTime"`
 	EndTime      int64  `json:"endTime"`
 	Status       string `json:"status"`
+}
+
+type ResSBTDetail struct {
+	ChainId      int64  `json:"chainId"`
+	DaoAddress   string `json:"daoAddress"`
+	DaoName      string `json:"daoName"`
+	DaoLogo      string `json:"daoLogo"`
+	TokenChainId int64  `json:"tokenChainId"`
+	TokenAddress string `json:"tokenAddress"`
+	FileUrl      string `json:"fileUrl"`
+	ItemName     string `json:"itemName"`
+	Introduction string `json:"introduction"`
+	TotalSupply  uint64 `json:"totalSupply"`
+	Way          string `json:"way"`
+	StartTime    int64  `json:"startTime"`
+	EndTime      int64  `json:"endTime"`
+	Status       string `json:"status"`
+}
+
+type ResSBTClaimInfo struct {
+	// Can you Claim
+	CanClaim  bool   `json:"canClaim"`
+	Signature string `json:"signature"`
+}
+
+type ResSBTClaimList struct {
+	Account     string `json:"account"`
+	AccountLogo string `json:"accountLogo"`
 }

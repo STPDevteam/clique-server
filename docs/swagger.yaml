@@ -155,6 +155,13 @@ definitions:
             type: integer
         type: object
     type: object
+  models.JsonWhitelist:
+    properties:
+      account:
+        items:
+          type: string
+        type: array
+    type: object
   models.NotificationInfo:
     properties:
       activityId:
@@ -390,6 +397,32 @@ definitions:
         type: string
       teamSpacesId:
         type: integer
+    type: object
+  models.ReqSBTCreate:
+    properties:
+      chainId:
+        type: integer
+      daoAddress:
+        type: string
+      endTime:
+        type: integer
+      fileUrl:
+        type: string
+      introduction:
+        type: string
+      itemName:
+        type: string
+      startTime:
+        type: integer
+      tokenChainId:
+        type: integer
+      totalSupply:
+        type: integer
+      way:
+        description: anyone;joined;whitelist
+        type: string
+      whitelist:
+        $ref: '#/definitions/models.JsonWhitelist'
     type: object
   models.ReqUpdateTask:
     properties:
@@ -1047,6 +1080,77 @@ definitions:
     properties:
       success:
         type: boolean
+    type: object
+  models.ResSBTClaimInfo:
+    properties:
+      canClaim:
+        description: Can you Claim
+        type: boolean
+      signature:
+        type: string
+    type: object
+  models.ResSBTClaimList:
+    properties:
+      account:
+        type: string
+      accountLogo:
+        type: string
+    type: object
+  models.ResSBTDetail:
+    properties:
+      chainId:
+        type: integer
+      daoAddress:
+        type: string
+      daoLogo:
+        type: string
+      daoName:
+        type: string
+      endTime:
+        type: integer
+      fileUrl:
+        type: string
+      introduction:
+        type: string
+      itemName:
+        type: string
+      startTime:
+        type: integer
+      status:
+        type: string
+      tokenAddress:
+        type: string
+      tokenChainId:
+        type: integer
+      totalSupply:
+        type: integer
+      way:
+        type: string
+    type: object
+  models.ResSBTList:
+    properties:
+      SBTId:
+        type: integer
+      chainId:
+        type: integer
+      daoAddress:
+        type: string
+      daoLogo:
+        type: string
+      daoName:
+        type: string
+      endTime:
+        type: integer
+      fileUrl:
+        type: string
+      itemName:
+        type: string
+      startTime:
+        type: integer
+      status:
+        type: string
+      tokenChainId:
+        type: integer
     type: object
   models.ResSignCreateData:
     properties:
@@ -2011,10 +2115,6 @@ paths:
         type: string
       - description: account address
         in: query
-        name: order
-        type: string
-      - description: account address
-        in: query
         name: account
         type: string
       - description: query keyword:Dao name,Dao address,Token address
@@ -2589,6 +2689,116 @@ paths:
       summary: query proposal snapshot
       tags:
       - proposal
+  /stpdao/v2/sbt/claim/:sbtId:
+    get:
+      description: 'get myself can claim sbt, request header: Authorization=Bearer
+        ${JWT Token}'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResSBTClaimInfo'
+      summary: get myself can claim sbt
+      tags:
+      - sbt
+  /stpdao/v2/sbt/claim/list:
+    get:
+      description: sbt claim list
+      parameters:
+      - description: offset,page
+        in: query
+        name: offset
+        required: true
+        type: integer
+      - description: limit,page
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: sbtId
+        in: query
+        name: sbtId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResSBTClaimList'
+      summary: sbt claim list
+      tags:
+      - sbt
+  /stpdao/v2/sbt/create:
+    post:
+      description: 'create task, need superAdmin, request header: Authorization=Bearer
+        ${JWT Token}'
+      parameters:
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ReqSBTCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+      summary: create sbt
+      tags:
+      - sbt
+  /stpdao/v2/sbt/detail/:sbtId:
+    get:
+      description: sbt detail
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResSBTDetail'
+      summary: sbt detail
+      tags:
+      - sbt
+  /stpdao/v2/sbt/list:
+    get:
+      description: sbt list
+      parameters:
+      - description: offset,page
+        in: query
+        name: offset
+        required: true
+        type: integer
+      - description: limit,page
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: token chainId
+        in: query
+        name: chainId
+        required: true
+        type: integer
+      - description: status:soon;active;ended
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResSBTList'
+      summary: sbt list
+      tags:
+      - sbt
   /stpdao/v2/sign/create:
     post:
       description: sign

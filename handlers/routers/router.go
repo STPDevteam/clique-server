@@ -177,6 +177,9 @@ func Router() {
 			sbt.POST("/create", middlewares.JWTAuthForce(), handlers.CreateSBT)
 
 			sbt.GET("/list", handlers.SBTList)
+			sbt.GET("/detail/:sbtId", handlers.SBTDetail)
+			sbt.GET("/claim/:sbtId", middlewares.JWTAuthForce(), handlers.SBTCanClaim)
+			sbt.GET("/claim/list", handlers.SBTClaimList)
 		}
 
 		ai := router.Group("/ai")

@@ -893,12 +893,6 @@
                     {
                         "type": "string",
                         "description": "account address",
-                        "name": "order",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "account address",
                         "name": "account",
                         "in": "query"
                     },
@@ -1753,6 +1747,169 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.ResProposalContent"
+                        }
+                    }
+                }
+            }
+        },
+        "/stpdao/v2/sbt/claim/:sbtId": {
+            "get": {
+                "description": "get myself can claim sbt, request header: Authorization=Bearer ${JWT Token}",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sbt"
+                ],
+                "summary": "get myself can claim sbt",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResSBTClaimInfo"
+                        }
+                    }
+                }
+            }
+        },
+        "/stpdao/v2/sbt/claim/list": {
+            "get": {
+                "description": "sbt claim list",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sbt"
+                ],
+                "summary": "sbt claim list",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "offset,page",
+                        "name": "offset",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit,page",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "sbtId",
+                        "name": "sbtId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResSBTClaimList"
+                        }
+                    }
+                }
+            }
+        },
+        "/stpdao/v2/sbt/create": {
+            "post": {
+                "description": "create task, need superAdmin, request header: Authorization=Bearer ${JWT Token}",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sbt"
+                ],
+                "summary": "create sbt",
+                "parameters": [
+                    {
+                        "description": "request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ReqSBTCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/stpdao/v2/sbt/detail/:sbtId": {
+            "get": {
+                "description": "sbt detail",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sbt"
+                ],
+                "summary": "sbt detail",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResSBTDetail"
+                        }
+                    }
+                }
+            }
+        },
+        "/stpdao/v2/sbt/list": {
+            "get": {
+                "description": "sbt list",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sbt"
+                ],
+                "summary": "sbt list",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "offset,page",
+                        "name": "offset",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit,page",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "token chainId",
+                        "name": "chainId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "status:soon;active;ended",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResSBTList"
                         }
                     }
                 }
@@ -2854,6 +3011,17 @@
                 }
             }
         },
+        "models.JsonWhitelist": {
+            "type": "object",
+            "properties": {
+                "account": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "models.NotificationInfo": {
             "type": "object",
             "properties": {
@@ -3207,6 +3375,45 @@
                 },
                 "teamSpacesId": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.ReqSBTCreate": {
+            "type": "object",
+            "properties": {
+                "chainId": {
+                    "type": "integer"
+                },
+                "daoAddress": {
+                    "type": "string"
+                },
+                "endTime": {
+                    "type": "integer"
+                },
+                "fileUrl": {
+                    "type": "string"
+                },
+                "introduction": {
+                    "type": "string"
+                },
+                "itemName": {
+                    "type": "string"
+                },
+                "startTime": {
+                    "type": "integer"
+                },
+                "tokenChainId": {
+                    "type": "integer"
+                },
+                "totalSupply": {
+                    "type": "integer"
+                },
+                "way": {
+                    "description": "anyone;joined;whitelist",
+                    "type": "string"
+                },
+                "whitelist": {
+                    "$ref": "#/definitions/models.JsonWhitelist"
                 }
             }
         },
@@ -4205,6 +4412,114 @@
             "properties": {
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "models.ResSBTClaimInfo": {
+            "type": "object",
+            "properties": {
+                "canClaim": {
+                    "description": "Can you Claim",
+                    "type": "boolean"
+                },
+                "signature": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ResSBTClaimList": {
+            "type": "object",
+            "properties": {
+                "account": {
+                    "type": "string"
+                },
+                "accountLogo": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ResSBTDetail": {
+            "type": "object",
+            "properties": {
+                "chainId": {
+                    "type": "integer"
+                },
+                "daoAddress": {
+                    "type": "string"
+                },
+                "daoLogo": {
+                    "type": "string"
+                },
+                "daoName": {
+                    "type": "string"
+                },
+                "endTime": {
+                    "type": "integer"
+                },
+                "fileUrl": {
+                    "type": "string"
+                },
+                "introduction": {
+                    "type": "string"
+                },
+                "itemName": {
+                    "type": "string"
+                },
+                "startTime": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "tokenAddress": {
+                    "type": "string"
+                },
+                "tokenChainId": {
+                    "type": "integer"
+                },
+                "totalSupply": {
+                    "type": "integer"
+                },
+                "way": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ResSBTList": {
+            "type": "object",
+            "properties": {
+                "SBTId": {
+                    "type": "integer"
+                },
+                "chainId": {
+                    "type": "integer"
+                },
+                "daoAddress": {
+                    "type": "string"
+                },
+                "daoLogo": {
+                    "type": "string"
+                },
+                "daoName": {
+                    "type": "string"
+                },
+                "endTime": {
+                    "type": "integer"
+                },
+                "fileUrl": {
+                    "type": "string"
+                },
+                "itemName": {
+                    "type": "string"
+                },
+                "startTime": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "tokenChainId": {
+                    "type": "integer"
                 }
             }
         },
