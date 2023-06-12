@@ -2372,6 +2372,11 @@ paths:
   /stpdao/v2/jobs/left:
     get:
       description: 'jobs left, request header: Authorization=Bearer ${JWT Token}'
+      parameters:
+      - description: 'exceptLevel: C_member'
+        in: query
+        name: exceptLevel
+        type: string
       produces:
       - application/json
       responses:

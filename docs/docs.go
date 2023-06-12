@@ -1292,6 +1292,14 @@ const docTemplate = `{
                     "jobs"
                 ],
                 "summary": "jobs left",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "exceptLevel: C_member",
+                        "name": "exceptLevel",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",

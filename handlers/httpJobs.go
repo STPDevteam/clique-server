@@ -601,6 +601,7 @@ func JobsIdentity(c *gin.Context) {
 // @version 0.0.1
 // @description jobs left, request header: Authorization=Bearer ${JWT Token}
 // @Produce json
+// @Param exceptLevel query string false "exceptLevel: C_member"
 // @Success 200 {object} models.ResJobsLeft
 // @Router /stpdao/v2/jobs/left [get]
 func JobsLeft(c *gin.Context) {
@@ -611,7 +612,14 @@ func JobsLeft(c *gin.Context) {
 		return
 	}
 
-	jobsArr, err := db.SelectTbJobs(o.W("account", user.Account), o.W("job", "!=", consts.Jobs_noRole))
+	levelParam := c.Query("exceptLevel")
+
+	var wLevel [][]any
+	if levelParam != "" {
+		wLevel = o.W("job", "!=", levelParam)
+	}
+
+	jobsArr, err := db.SelectTbJobs(o.W("account", user.Account), o.W("job", "!=", consts.Jobs_noRole), wLevel)
 	if handleErrorIfExists(c, err, errs.ErrServer) {
 		oo.LogW("SQl err:%v", err)
 		return
