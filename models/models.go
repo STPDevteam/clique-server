@@ -1032,6 +1032,11 @@ type ReqSBTCreate struct {
 	Whitelist JsonWhitelist `json:"whitelist"`
 }
 
+type ResSBTCreate struct {
+	Signature string `json:"signature"`
+	Meta      string `json:"meta"`
+}
+
 type JsonWhitelist struct {
 	Account []string `json:"account"`
 }
@@ -1076,4 +1081,11 @@ type ResSBTClaimInfo struct {
 type ResSBTClaimList struct {
 	Account     string `json:"account"`
 	AccountLogo string `json:"accountLogo"`
+}
+
+type MetaData struct {
+	Description string `json:"description"`
+	ExternalUrl string `json:"external_url"`
+	Image       string `json:"image"`
+	Name        string `json:"name"`
 }

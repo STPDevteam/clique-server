@@ -1096,6 +1096,13 @@ definitions:
       accountLogo:
         type: string
     type: object
+  models.ResSBTCreate:
+    properties:
+      meta:
+        type: string
+      signature:
+        type: string
+    type: object
   models.ResSBTDetail:
     properties:
       chainId:
@@ -2754,7 +2761,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/models.ResSBTCreate'
       summary: create sbt
       tags:
       - sbt

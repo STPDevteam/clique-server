@@ -1860,7 +1860,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Response"
+                            "$ref": "#/definitions/models.ResSBTCreate"
                         }
                     }
                 }
@@ -4454,6 +4454,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "accountLogo": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ResSBTCreate": {
+            "type": "object",
+            "properties": {
+                "meta": {
+                    "type": "string"
+                },
+                "signature": {
                     "type": "string"
                 }
             }

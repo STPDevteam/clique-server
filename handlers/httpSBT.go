@@ -22,7 +22,7 @@ import (
 // @description create task, need superAdmin, request header: Authorization=Bearer ${JWT Token}
 // @Produce json
 // @Param request body models.ReqSBTCreate true "request"
-// @Success 200 {object} models.Response
+// @Success 200 {object} models.ResSBTCreate
 // @Router /stpdao/v2/sbt/create [post]
 func CreateSBT(c *gin.Context) {
 	var ok bool
@@ -45,10 +45,6 @@ func CreateSBT(c *gin.Context) {
 	daoData, err := db.GetTbDao(o.W("chain_id", params.ChainId), o.W("dao_address", params.DaoAddress))
 	if handleErrorIfExists(c, err, errs.ErrServer) {
 		oo.LogW("SQL err: %v", err)
-		return
-	}
-	if daoData.DaoName == "" {
-		handleError(c, errs.NewError(403, "dao not exists."))
 		return
 	}
 
@@ -86,7 +82,23 @@ func CreateSBT(c *gin.Context) {
 		return
 	}
 
-	message := fmt.Sprintf("%d", sbtId)
+	scanTaskData, err := db.GetTbScanTaskModel(o.W("event_type", "Deployment"), o.W("chain_id", params.TokenChainId))
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err: %v", err)
+		errTx = err
+		return
+	}
+
+	message := fmt.Sprintf(
+		"%s%s%s%s%s%s%s",
+		strings.TrimPrefix(user.Account, "0x"),
+		fmt.Sprintf("%064x", params.TokenChainId),
+		strings.TrimPrefix(scanTaskData.Address, "0x"),
+		fmt.Sprintf("%064x", sbtId),
+		params.ItemName,
+		params.ItemName,
+		params.FileUrl,
+	)
 	signature, err := utils.SignMessage(message, viper.GetString("app.sign_message_pri_key"))
 	if handleErrorIfExists(c, err, errs.ErrServer) {
 		oo.LogW("SignMessage err: %v", err)
@@ -94,7 +106,25 @@ func CreateSBT(c *gin.Context) {
 		return
 	}
 
-	jsonData(c, signature)
+	var meta = models.MetaData{
+		Description: fmt.Sprintf("The SBT for %s dao only represents a status symbol, cannot be transferred, and has no financial attributes.", daoData.Handle),
+		ExternalUrl: "https://www.myclique.io/daos",
+		Image:       params.FileUrl,
+		Name:        params.ItemName,
+	}
+	metaStr, err := json.Marshal(meta)
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("json.Marshal err: %v", err)
+		errTx = err
+		return
+	}
+
+	resp := models.ResSBTCreate{
+		Signature: signature,
+		Meta:      string(metaStr),
+	}
+
+	jsonData(c, resp)
 }
 
 // @Summary sbt list

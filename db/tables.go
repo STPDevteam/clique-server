@@ -40,6 +40,11 @@ type TbScanTaskModel struct {
 	ChainId         uint64 `db:"chain_id"`
 }
 
+func GetTbScanTaskModel(w ...[][]interface{}) (data TbScanTaskModel, err error) {
+	err = oo.SqlGet(o.Pre(consts.TbNameScanTask, w).Select(), &data)
+	return data, err
+}
+
 type TbAccountModel struct {
 	Id           int64          `db:"id,omitempty" sqler:"skips"`
 	CreateTime   string         `db:"create_time,omitempty" sqler:"skips"`
