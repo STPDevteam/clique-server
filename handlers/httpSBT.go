@@ -226,7 +226,8 @@ func SBTCanClaim(c *gin.Context) {
 		return
 	}
 
-	sbtIdParam := c.Param("sbtId")
+	sbtId := c.Param("sbtId")
+	sbtIdParam, _ := strconv.ParseInt(sbtId, 10, 64)
 
 	sbtData, err := db.GetTbSBT(o.W("id", sbtIdParam))
 	if handleErrorIfExists(c, err, errs.ErrServer) {
@@ -264,9 +265,31 @@ func SBTCanClaim(c *gin.Context) {
 		}
 	}
 
+	var signature string
+	if canClaim {
+		scanTaskData, err1 := db.GetTbScanTaskModel(o.W("event_type", "Deployment"), o.W("chain_id", sbtData.TokenChainId))
+		if handleErrorIfExists(c, err1, errs.ErrServer) {
+			oo.LogW("SQL err: %v", err1)
+			return
+		}
+
+		message := fmt.Sprintf(
+			"%s%s%s%s",
+			fmt.Sprintf("%064x", sbtIdParam),
+			fmt.Sprintf("%064x", sbtData.TokenChainId),
+			strings.TrimPrefix(scanTaskData.Address, "0x"),
+			strings.TrimPrefix(user.Account, "0x"),
+		)
+		signature, err = utils.SignMessage(message, viper.GetString("app.sign_message_pri_key"))
+		if handleErrorIfExists(c, err, errs.ErrServer) {
+			oo.LogW("SignMessage err: %v", err)
+			return
+		}
+	}
+
 	resp := models.ResSBTClaimInfo{
 		CanClaim:  canClaim,
-		Signature: "0x",
+		Signature: signature,
 	}
 
 	jsonData(c, resp)
