@@ -14,6 +14,7 @@ import (
 	"stp_dao_v2/utils"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // @Summary create sbt
@@ -34,6 +35,11 @@ func CreateSBT(c *gin.Context) {
 
 	var params models.ReqSBTCreate
 	if handleErrorIfExists(c, c.ShouldBindJSON(&params), errs.ErrParam) {
+		return
+	}
+	if !oo.InArray(params.Way, consts.SBT_WAY_Arr) {
+		oo.LogW("param err: %#v", params)
+		handleError(c, errs.ErrParam)
 		return
 	}
 
@@ -236,31 +242,33 @@ func SBTCanClaim(c *gin.Context) {
 	}
 
 	var canClaim bool
-	if sbtData.Way == consts.SBT_WAY_anyone {
-		canClaim = true
-
-	} else if sbtData.Way == consts.SBT_WAY_joined {
-		count, err := o.Count(consts.TbJobs, o.W("chain_id", sbtData.ChainId),
-			o.W("dao_address", sbtData.DaoAddress), o.W("account", user.Account))
-		if handleErrorIfExists(c, err, errs.ErrServer) {
-			oo.LogW("SQL err: %v", err)
-			return
-		}
-		if count > 0 {
+	if sbtData.StartTime <= time.Now().Unix() && sbtData.EndTime > time.Now().Unix() && sbtData.Status == consts.StatusActive {
+		if sbtData.Way == consts.SBT_WAY_anyone {
 			canClaim = true
-		}
 
-	} else if sbtData.Way == consts.SBT_WAY_whitelist {
-		var data models.JsonWhitelist
-		err = json.Unmarshal([]byte(sbtData.WhiteList), &data)
-		if handleErrorIfExists(c, err, errs.ErrServer) {
-			oo.LogW("json.Unmarshal err: %v", err)
-			return
-		}
-
-		for _, val := range data.Account {
-			if strings.EqualFold(val, user.Account) {
+		} else if sbtData.Way == consts.SBT_WAY_joined {
+			count, err := o.Count(consts.TbJobs, o.W("chain_id", sbtData.ChainId),
+				o.W("dao_address", sbtData.DaoAddress), o.W("account", user.Account))
+			if handleErrorIfExists(c, err, errs.ErrServer) {
+				oo.LogW("SQL err: %v", err)
+				return
+			}
+			if count > 0 {
 				canClaim = true
+			}
+
+		} else if sbtData.Way == consts.SBT_WAY_whitelist {
+			var data models.JsonWhitelist
+			err = json.Unmarshal([]byte(sbtData.WhiteList), &data)
+			if handleErrorIfExists(c, err, errs.ErrServer) {
+				oo.LogW("json.Unmarshal err: %v", err)
+				return
+			}
+
+			for _, val := range data.Account {
+				if strings.EqualFold(val, user.Account) {
+					canClaim = true
+				}
 			}
 		}
 	}

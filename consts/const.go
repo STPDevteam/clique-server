@@ -116,3 +116,4 @@ const (
 )
 
 var Task_Status_Arr = []string{Task_status_A_notStarted, Task_status_B_inProgress, Task_status_C_done, Task_status_D_notStatus}
+var SBT_WAY_Arr = []string{SBT_WAY_anyone, SBT_WAY_joined, SBT_WAY_whitelist}
