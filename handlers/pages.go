@@ -265,6 +265,7 @@ func PageTbSBT(order string, page ReqPagination, w ...[][]interface{}) (list []m
 			TokenChainId: ls.TokenChainId,
 			FileUrl:      ls.FileUrl,
 			ItemName:     ls.ItemName,
+			Symbol:       ls.Symbol,
 			StartTime:    ls.StartTime,
 			EndTime:      ls.EndTime,
 			Status:       ls.Status,

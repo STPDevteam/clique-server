@@ -414,6 +414,8 @@ definitions:
         type: string
       startTime:
         type: integer
+      symbol:
+        type: string
       tokenChainId:
         type: integer
       totalSupply:
@@ -1098,9 +1100,11 @@ definitions:
     type: object
   models.ResSBTCreate:
     properties:
-      meta:
-        type: string
+      SBTId:
+        type: integer
       signature:
+        type: string
+      tokenURI:
         type: string
     type: object
   models.ResSBTDetail:
@@ -1155,6 +1159,8 @@ definitions:
       startTime:
         type: integer
       status:
+        type: string
+      symbol:
         type: string
       tokenChainId:
         type: integer

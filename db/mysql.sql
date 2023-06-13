@@ -690,6 +690,7 @@ CREATE TABLE `tb_sbt` (
     `token_address` VARCHAR(44) NOT NULL DEFAULT '',
     `file_url` VARCHAR(255) NOT NULL DEFAULT '',
     `item_name` VARCHAR(50) NOT NULL DEFAULT '',
+    `symbol` VARCHAR(50) NOT NULL DEFAULT '',
     `introduction` VARCHAR(2000) NOT NULL DEFAULT '',
     `total_supply` INT UNSIGNED NOT NULL DEFAULT 0,
     `start_time` INT NOT NULL DEFAULT 0,
@@ -904,3 +905,8 @@ CREATE TABLE `tb_sbt_claim` (
 # ('CreatedSale','0xf161dF89C31c63f3a8DC60cAcceFC78FD53f1AFA',16972769,'0x',1),
 # ('Purchased','0xf161dF89C31c63f3a8DC60cAcceFC78FD53f1AFA',16972769,'0x',1),
 # ('CancelSale','0xf161dF89C31c63f3a8DC60cAcceFC78FD53f1AFA',16972769,'0x',1);
+
+# sep testnet sbt
+INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
+('Deployed','0x507e6585455e4C68748D8c623Ad45dA4Ee2a6272',3680428,'0x',11155111),
+('Minted','0x507e6585455e4C68748D8c623Ad45dA4Ee2a6272',3680428,'0x',11155111);

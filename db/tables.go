@@ -580,6 +580,7 @@ type TbSBT struct {
 	TokenAddress string `db:"token_address"`
 	FileUrl      string `db:"file_url"`
 	ItemName     string `db:"item_name"`
+	Symbol       string `db:"symbol"`
 	Introduction string `db:"introduction"`
 	TotalSupply  uint64 `db:"total_supply"`
 	StartTime    int64  `db:"start_time"`

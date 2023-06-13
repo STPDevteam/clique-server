@@ -182,6 +182,11 @@ func Router() {
 			sbt.GET("/claim/list", handlers.SBTClaimList)
 		}
 
+		meta := router.Group("/token")
+		{
+			meta.GET("/:sbtId", handlers.SBTMetaData)
+		}
+
 		ai := router.Group("/ai")
 		{
 			ai.POST("", middlewares.JWTAuthForce(), handlers.Ai)

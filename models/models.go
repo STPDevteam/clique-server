@@ -1023,6 +1023,7 @@ type ReqSBTCreate struct {
 	TokenChainId int64  `json:"tokenChainId"`
 	FileUrl      string `json:"fileUrl"`
 	ItemName     string `json:"itemName"`
+	Symbol       string `json:"symbol"`
 	Introduction string `json:"introduction"`
 	TotalSupply  uint64 `json:"totalSupply"`
 	StartTime    int64  `json:"startTime"`
@@ -1033,8 +1034,9 @@ type ReqSBTCreate struct {
 }
 
 type ResSBTCreate struct {
+	SBTId     uint64 `json:"SBTId"`
 	Signature string `json:"signature"`
-	Meta      string `json:"meta"`
+	TokenURI  string `json:"tokenURI"`
 }
 
 type JsonWhitelist struct {
@@ -1050,6 +1052,7 @@ type ResSBTList struct {
 	TokenChainId int64  `json:"tokenChainId"`
 	FileUrl      string `json:"fileUrl"`
 	ItemName     string `json:"itemName"`
+	Symbol       string `json:"symbol"`
 	StartTime    int64  `json:"startTime"`
 	EndTime      int64  `json:"endTime"`
 	Status       string `json:"status"`
@@ -1083,9 +1086,10 @@ type ResSBTClaimList struct {
 	AccountLogo string `json:"accountLogo"`
 }
 
-type MetaData struct {
+type ResMetaData struct {
 	Description string `json:"description"`
 	ExternalUrl string `json:"external_url"`
 	Image       string `json:"image"`
 	Name        string `json:"name"`
+	TokenId     uint64 `json:"tokenId"`
 }

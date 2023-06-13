@@ -3422,6 +3422,9 @@ const docTemplate = `{
                 "startTime": {
                     "type": "integer"
                 },
+                "symbol": {
+                    "type": "string"
+                },
                 "tokenChainId": {
                     "type": "integer"
                 },
@@ -4461,10 +4464,13 @@ const docTemplate = `{
         "models.ResSBTCreate": {
             "type": "object",
             "properties": {
-                "meta": {
-                    "type": "string"
+                "SBTId": {
+                    "type": "integer"
                 },
                 "signature": {
+                    "type": "string"
+                },
+                "tokenURI": {
                     "type": "string"
                 }
             }
@@ -4547,6 +4553,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "status": {
+                    "type": "string"
+                },
+                "symbol": {
                     "type": "string"
                 },
                 "tokenChainId": {

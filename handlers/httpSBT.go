@@ -53,6 +53,10 @@ func CreateSBT(c *gin.Context) {
 		oo.LogW("SQL err: %v", err)
 		return
 	}
+	if daoData.Handle == "" {
+		handleError(c, errs.ErrParam)
+		return
+	}
 
 	tx, errTx := oo.NewSqlxTx()
 	if handleErrorIfExists(c, errTx, errs.ErrServer) {
@@ -67,6 +71,7 @@ func CreateSBT(c *gin.Context) {
 		"token_chain_id": params.TokenChainId,
 		"file_url":       params.FileUrl,
 		"item_name":      params.ItemName,
+		"symbol":         params.Symbol,
 		"introduction":   params.Introduction,
 		"total_supply":   params.TotalSupply,
 		"start_time":     params.StartTime,
@@ -88,7 +93,7 @@ func CreateSBT(c *gin.Context) {
 		return
 	}
 
-	scanTaskData, err := db.GetTbScanTaskModel(o.W("event_type", "Deployment"), o.W("chain_id", params.TokenChainId))
+	scanTaskData, err := db.GetTbScanTaskModel(o.W("event_type", "Deployed"), o.W("chain_id", params.TokenChainId))
 	if handleErrorIfExists(c, err, errs.ErrServer) {
 		oo.LogW("SQL err: %v", err)
 		errTx = err
@@ -112,22 +117,10 @@ func CreateSBT(c *gin.Context) {
 		return
 	}
 
-	var meta = models.MetaData{
-		Description: fmt.Sprintf("The SBT for %s dao only represents a status symbol, cannot be transferred, and has no financial attributes.", daoData.Handle),
-		ExternalUrl: "https://www.myclique.io/daos",
-		Image:       params.FileUrl,
-		Name:        params.ItemName,
-	}
-	metaStr, err := json.Marshal(meta)
-	if handleErrorIfExists(c, err, errs.ErrServer) {
-		oo.LogW("json.Marshal err: %v", err)
-		errTx = err
-		return
-	}
-
 	resp := models.ResSBTCreate{
+		SBTId:     uint64(sbtId),
 		Signature: signature,
-		Meta:      string(metaStr),
+		TokenURI:  fmt.Sprintf(`https://%s%s/token/%d`, c.Request.Host, viper.GetString("app.base_path"), sbtId),
 	}
 
 	jsonData(c, resp)
@@ -333,4 +326,24 @@ func SBTClaimList(c *gin.Context) {
 	}
 
 	jsonPagination(c, list, total, page)
+}
+
+func SBTMetaData(c *gin.Context) {
+	sbtId := c.Param("sbtId")
+
+	sbtData, err := db.GetTbSBT(o.W("id", sbtId))
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("SQL err:%v", err)
+		return
+	}
+
+	var meta = models.ResMetaData{
+		Description: fmt.Sprintf("The SBT for dao only represents a status symbol, cannot be transferred, and has no financial attributes."),
+		ExternalUrl: "https://www.myclique.io/daos",
+		Image:       sbtData.FileUrl,
+		Name:        sbtData.ItemName,
+		TokenId:     sbtData.Id,
+	}
+
+	c.JSON(200, meta)
 }
