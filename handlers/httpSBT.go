@@ -69,7 +69,7 @@ func CreateSBT(c *gin.Context) {
 		"chain_id":       params.ChainId,
 		"dao_address":    params.DaoAddress,
 		"token_chain_id": params.TokenChainId,
-		"file_url":       params.FileUrl,
+		"file_url":       params.Image,
 		"item_name":      params.ItemName,
 		"symbol":         params.Symbol,
 		"introduction":   params.Introduction,
@@ -100,15 +100,16 @@ func CreateSBT(c *gin.Context) {
 		return
 	}
 
+	tokenURI := fmt.Sprintf(`https://%s%s/token/%d`, c.Request.Host, viper.GetString("app.base_path"), sbtId)
 	message := fmt.Sprintf(
 		"%s%s%s%s%s%s%s",
 		strings.TrimPrefix(user.Account, "0x"),
 		fmt.Sprintf("%064x", params.TokenChainId),
 		strings.TrimPrefix(scanTaskData.Address, "0x"),
 		fmt.Sprintf("%064x", sbtId),
-		params.ItemName,
-		params.ItemName,
-		params.FileUrl,
+		fmt.Sprintf(`%x`, params.ItemName),
+		fmt.Sprintf(`%x`, params.Symbol),
+		fmt.Sprintf(`%x`, tokenURI),
 	)
 	signature, err := utils.SignMessage(message, viper.GetString("app.sign_message_pri_key"))
 	if handleErrorIfExists(c, err, errs.ErrServer) {
@@ -119,8 +120,8 @@ func CreateSBT(c *gin.Context) {
 
 	resp := models.ResSBTCreate{
 		SBTId:     uint64(sbtId),
-		Signature: signature,
-		TokenURI:  fmt.Sprintf(`https://%s%s/token/%d`, c.Request.Host, viper.GetString("app.base_path"), sbtId),
+		Signature: "0x" + signature,
+		TokenURI:  tokenURI,
 	}
 
 	jsonData(c, resp)
@@ -159,7 +160,7 @@ func SBTList(c *gin.Context) {
 		Offset: offsetParam,
 		Limit:  limitParam,
 	}
-	list, total, err := PageTbSBT(order, page, wChain, wStatus)
+	list, total, err := PageTbSBT(order, page, o.W("status", "!=", consts.StatusPending), wChain, wStatus)
 	if handleErrorIfExists(c, err, errs.ErrServer) {
 		oo.LogW("SQL err:%v", err)
 		return

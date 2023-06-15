@@ -1021,7 +1021,7 @@ type ReqSBTCreate struct {
 	ChainId      int64  `json:"chainId"`
 	DaoAddress   string `json:"daoAddress"`
 	TokenChainId int64  `json:"tokenChainId"`
-	FileUrl      string `json:"fileUrl"`
+	Image        string `json:"fileUrl"`
 	ItemName     string `json:"itemName"`
 	Symbol       string `json:"symbol"`
 	Introduction string `json:"introduction"`

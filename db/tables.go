@@ -605,4 +605,5 @@ type TbSBTClaim struct {
 	UpdateTime string `db:"update_time,omitempty" sqler:"skips"`
 	SBTId      uint64 `db:"sbt_id"`
 	Account    string `db:"account"`
+	TokenId    int64  `db:"token_id"`
 }

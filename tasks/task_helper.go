@@ -43,6 +43,11 @@ func EventTypes(event string) string {
 		purchased = utils.Keccak256("Purchased(uint256,uint256,uint256)")
 		//CancelSale(uint256 indexed saleId)
 		cancelSale = utils.Keccak256("CancelSale(uint256)")
+
+		//Deployed(uint256 indexed id, address sbtAddress)
+		deployed = utils.Keccak256("Deployed(uint256,address)")
+		//Minted(uint256 indexed id, address indexed account, uint256 tokenId)
+		minted = utils.Keccak256("Minted(uint256,address,uint256)")
 	)
 	switch event {
 	case createDao:
@@ -92,6 +97,12 @@ func EventTypes(event string) string {
 		break
 	case cancelSale:
 		event = consts.EvCancelSale
+		break
+	case deployed:
+		event = consts.EvDeployed
+		break
+	case minted:
+		event = consts.EvMinted
 		break
 	default:
 		event = "Undefined"

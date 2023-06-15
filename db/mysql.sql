@@ -711,6 +711,7 @@ CREATE TABLE `tb_sbt_claim` (
     `update_time` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `sbt_id` INT UNSIGNED NOT NULL,
     `account` VARCHAR(44) NOT NULL,
+    `token_id` INT UNSIGNED NOT NULL,
     PRIMARY KEY (`id`),
     INDEX `index_sbt_id` (`sbt_id` ASC),
     INDEX `index_account` (`account` ASC)

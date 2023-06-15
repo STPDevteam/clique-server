@@ -56,6 +56,8 @@ const (
 	EvCreatedSale          = "CreatedSale"
 	EvPurchased            = "Purchased"
 	EvCancelSale           = "CancelSale"
+	EvDeployed             = "Deployed"
+	EvMinted               = "Minted"
 
 	LevelSuperAdmin = "superAdmin"
 	LevelAdmin      = "admin"

@@ -1525,6 +1525,38 @@ func save(blockData []map[string]interface{}, currentBlockNum int64, chainId int
 				return
 			}
 		}
+
+		if blockData[i]["event_type"] == consts.EvDeployed {
+			sbtId, _ := utils.Hex2Dec(blockData[i]["topic1"].(string))
+			sbtTokenAddress := utils.FixTo0x40String(blockData[i]["topic2"].(string))
+
+			sbtData := map[string]any{
+				"token_address": sbtTokenAddress,
+				"status":        consts.StatusSoon,
+			}
+			_, errTx = o.UpdateTx(tx, consts.TbSBT, sbtData, o.W("id", sbtId))
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+		}
+
+		if blockData[i]["event_type"] == consts.EvMinted {
+			sbtId, _ := utils.Hex2Dec(blockData[i]["topic1"].(string))
+			account := utils.FixTo0x40String(blockData[i]["topic2"].(string))
+			tokenId, _ := utils.Hex2Dec(blockData[i]["data"].(string))
+
+			sbtMint := []map[string]any{{
+				"sbt_id":   sbtId,
+				"account":  account,
+				"token_id": tokenId,
+			}}
+			_, errTx = o.InsertTx(tx, consts.TbSBTClaim, sbtMint)
+			if errTx != nil {
+				oo.LogW("SQL err: %v", errTx)
+				return
+			}
+		}
 	}
 
 }
