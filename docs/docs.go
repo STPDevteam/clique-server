@@ -1915,8 +1915,7 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "token chainId",
                         "name": "chainId",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     },
                     {
                         "type": "string",

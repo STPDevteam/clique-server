@@ -2801,7 +2801,6 @@ paths:
       - description: token chainId
         in: query
         name: chainId
-        required: true
         type: integer
       - description: status:soon;active;ended
         in: query

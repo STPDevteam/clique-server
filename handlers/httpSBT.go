@@ -134,7 +134,7 @@ func CreateSBT(c *gin.Context) {
 // @Produce json
 // @Param offset query int true "offset,page"
 // @Param limit query int true "limit,page"
-// @Param chainId query int true "token chainId"
+// @Param chainId query int false "token chainId"
 // @Param status query string false "status:soon;active;ended"
 // @Success 200 {object} models.ResSBTList
 // @Router /stpdao/v2/sbt/list [get]
@@ -269,7 +269,7 @@ func SBTCanClaim(c *gin.Context) {
 
 	var signature string
 	if canClaim {
-		scanTaskData, err1 := db.GetTbScanTaskModel(o.W("event_type", "Deployment"), o.W("chain_id", sbtData.TokenChainId))
+		scanTaskData, err1 := db.GetTbScanTaskModel(o.W("event_type", consts.EvDeployed), o.W("chain_id", sbtData.TokenChainId))
 		if handleErrorIfExists(c, err1, errs.ErrServer) {
 			oo.LogW("SQL err: %v", err1)
 			return
