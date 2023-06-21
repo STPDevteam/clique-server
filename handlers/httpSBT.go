@@ -65,6 +65,13 @@ func CreateSBT(c *gin.Context) {
 	}
 	defer oo.CloseSqlxTx(tx, &errTx)
 
+	whitelist, err := json.Marshal(params.Whitelist)
+	if handleErrorIfExists(c, err, errs.ErrServer) {
+		oo.LogW("json.Marshal err: %v", err)
+		errTx = err
+		return
+	}
+
 	mSBT := []map[string]any{{
 		"chain_id":       params.ChainId,
 		"dao_address":    params.DaoAddress,
@@ -77,7 +84,7 @@ func CreateSBT(c *gin.Context) {
 		"start_time":     params.StartTime,
 		"end_time":       params.EndTime,
 		"way":            params.Way,
-		"whitelist":      params.Whitelist,
+		"whitelist":      whitelist,
 	}}
 	res, err := o.InsertTx(tx, consts.TbSBT, mSBT)
 	if handleErrorIfExists(c, err, errs.ErrServer) {
