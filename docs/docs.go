@@ -4444,6 +4444,9 @@ const docTemplate = `{
                     "description": "Can you Claim",
                     "type": "boolean"
                 },
+                "isWhite": {
+                    "type": "boolean"
+                },
                 "signature": {
                     "type": "string"
                 }

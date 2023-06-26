@@ -1076,6 +1076,7 @@ type ResSBTDetail struct {
 }
 
 type ResSBTClaimInfo struct {
+	IsWhite bool `json:"isWhite"`
 	// Can you Claim
 	CanClaim  bool   `json:"canClaim"`
 	Signature string `json:"signature"`

@@ -84,7 +84,7 @@ func CreateSBT(c *gin.Context) {
 		"start_time":     params.StartTime,
 		"end_time":       params.EndTime,
 		"way":            params.Way,
-		"whitelist":      whitelist,
+		"whitelist":      string(whitelist),
 	}}
 	res, err := o.InsertTx(tx, consts.TbSBT, mSBT)
 	if handleErrorIfExists(c, err, errs.ErrServer) {
@@ -246,7 +246,6 @@ func SBTCanClaim(c *gin.Context) {
 	if sbtData.StartTime <= time.Now().Unix() && sbtData.EndTime > time.Now().Unix() && sbtData.Status == consts.StatusActive {
 		if sbtData.Way == consts.SBT_WAY_anyone {
 			canClaim = true
-
 		} else if sbtData.Way == consts.SBT_WAY_joined {
 			count, err := o.Count(consts.TbJobs, o.W("chain_id", sbtData.ChainId),
 				o.W("dao_address", sbtData.DaoAddress), o.W("account", user.Account))
@@ -274,6 +273,22 @@ func SBTCanClaim(c *gin.Context) {
 		}
 	}
 
+	var isWhite bool
+	if sbtData.Way == consts.SBT_WAY_whitelist {
+		var data models.JsonWhitelist
+		err = json.Unmarshal([]byte(sbtData.WhiteList), &data)
+		if handleErrorIfExists(c, err, errs.ErrServer) {
+			oo.LogW("json.Unmarshal err: %v", err)
+			return
+		}
+
+		for _, val := range data.Account {
+			if strings.EqualFold(val, user.Account) {
+				isWhite = true
+			}
+		}
+	}
+
 	var signature string
 	if canClaim {
 		scanTaskData, err1 := db.GetTbScanTaskModel(o.W("event_type", consts.EvDeployed), o.W("chain_id", sbtData.TokenChainId))
@@ -297,6 +312,7 @@ func SBTCanClaim(c *gin.Context) {
 	}
 
 	resp := models.ResSBTClaimInfo{
+		IsWhite:   isWhite,
 		CanClaim:  canClaim,
 		Signature: signature,
 	}
