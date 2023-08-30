@@ -1,9 +1,9 @@
 package consts
 
 const (
-	TbNameEventHistorical = "event_historical_data"
-	TbNameScanTask        = "scan_task"
-	TbSysConfig           = "sysconfig"
+	TbEventHistorical = "event_historical_data"
+	TbNameScanTask    = "scan_task"
+	TbSysConfig       = "sysconfig"
 
 	TbNameAccount             = "tb_account"
 	TbNameAccountFollow       = "tb_account_follow"

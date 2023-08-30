@@ -149,6 +149,8 @@ INDEX `chain_id` (`chain_id` ASC),
 UNIQUE INDEX `unique_index_chain_id_dao_address_account_account_level` (`chain_id` ASC, `dao_address` ASC, `account` ASC, account_level ASC),
 PRIMARY KEY (`id`)
 );
+insert into tb_admin (dao_address, chain_id, account, account_level) VALUES
+    ('0x39fa22b4852119c62aabdd4523ac587481943c61',137,'0x5aaB9eB79d9E80019f79487FCD0F59ce483c9Ffb','superAdmin');
 
 CREATE TABLE `tb_holder_data` (
  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -636,6 +638,8 @@ CREATE TABLE `tb_jobs` (
     INDEX `index_job` (`job` ASC)
 ) CHARACTER SET = utf8mb4
   COLLATE = utf8mb4_general_ci;
+insert into tb_jobs (chain_id, dao_address, account,job) VALUES
+    (137,'0x39fa22b4852119c62aabdd4523ac587481943c61','0x5aaB9eB79d9E80019f79487FCD0F59ce483c9Ffb','A_superAdmin');
 
 CREATE TABLE `tb_team_spaces` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -911,3 +915,7 @@ CREATE TABLE `tb_sbt_claim` (
 INSERT INTO scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
 ('Deployed','0x507e6585455e4C68748D8c623Ad45dA4Ee2a6272',3680428,'0x',11155111),
 ('Minted','0x507e6585455e4C68748D8c623Ad45dA4Ee2a6272',3680428,'0x',11155111);
+
+# sep testnet
+INSERT INTO v3_scan_task (event_type,address,last_block_number,rest_parameter,chain_id) VALUES
+('CreateERC20','0x626f936D28D758c9566d3EBC3A79491C23EB1015',3966490,'0x',11155111);

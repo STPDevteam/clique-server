@@ -53,7 +53,7 @@ func DoPush() {
 	oo.LogD("start PUSH ...")
 	for {
 		var data []db.TbEventHistoricalModel
-		sqlStr := oo.NewSqler().Table(consts.TbNameEventHistorical).Where("id", ">", lastId).Limit(10).Select()
+		sqlStr := oo.NewSqler().Table(consts.TbEventHistorical).Where("id", ">", lastId).Limit(10).Select()
 		if err = oo.SqlSelect(sqlStr, &data); err == nil && len(data) > 0 {
 			for _, datum := range data {
 				uid := fmt.Sprintf(

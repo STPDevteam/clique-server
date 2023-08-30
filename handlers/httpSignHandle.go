@@ -40,7 +40,7 @@ func HttpCreateSign(c *gin.Context) {
 
 	daoAddress := utils.FixTo0x64String(params.DaoAddress)
 	var createDaoEntity []db.TbEventHistoricalModel
-	sqler := oo.NewSqler().Table(consts.TbNameEventHistorical).
+	sqler := oo.NewSqler().Table(consts.TbEventHistorical).
 		Where("event_type", consts.EvCreateDao).
 		Where("topic3", daoAddress).
 		Where("chain_id", params.ChainId).Select()

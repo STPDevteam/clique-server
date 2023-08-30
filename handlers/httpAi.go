@@ -5,7 +5,6 @@ import (
 	oo "github.com/Anna2024/liboo"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
-	"stp_dao_v2/db"
 	"stp_dao_v2/errs"
 	"stp_dao_v2/models"
 	"stp_dao_v2/utils"
@@ -20,12 +19,12 @@ import (
 // @Success 200 {object} models.ResAiChat
 // @Router /stpdao/v2/ai [post]
 func Ai(c *gin.Context) {
-	var ok bool
-	var user *db.TbAccountModel
-	user, ok = parseJWTCache(c)
-	if !ok {
-		return
-	}
+	//var ok bool
+	//var user *db.TbAccountModel
+	//user, ok = parseJWTCache(c)
+	//if !ok {
+	//	return
+	//}
 
 	var params models.ReqAiChai
 	if handleErrorIfExists(c, c.ShouldBindJSON(&params), errs.ErrParam) {
@@ -42,7 +41,7 @@ func Ai(c *gin.Context) {
 	}
 
 	url := "https://api.openai.com/v1/chat/completions"
-	chat, err := utils.AiChat(user.Account, message, url, viper.GetString("app.openai_bearer_key"))
+	chat, err := utils.AiChat("1", message, url, viper.GetString("app.openai_bearer_key"))
 	if handleErrorIfExists(c, err, errs.ErrServer) {
 		oo.LogW("AiChat err:%v", err)
 		return

@@ -226,7 +226,7 @@ func HttpQuerySnapshot(c *gin.Context) {
 
 	var blockNumber string
 	proposalId0x64 := utils.FixTo0x64String(strconv.FormatInt(int64(proposalIdParam), 16))
-	sqlSel := oo.NewSqler().Table(consts.TbNameEventHistorical).
+	sqlSel := oo.NewSqler().Table(consts.TbEventHistorical).
 		Where("event_type", consts.EvCreateProposal).
 		Where("address", daoAddressParam).
 		Where("chain_id", chainIdParam).

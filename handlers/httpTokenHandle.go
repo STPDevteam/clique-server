@@ -32,7 +32,7 @@ func HttpTokenList(c *gin.Context) {
 
 	var total uint64
 	var listEntities []db.TbEventHistoricalModel
-	sqlSel := oo.NewSqler().Table(consts.TbNameEventHistorical).Where("event_type", consts.EvCreateERC20)
+	sqlSel := oo.NewSqler().Table(consts.TbEventHistorical).Where("event_type", consts.EvCreateERC20)
 	if creatorParam != "" {
 		creatorParam = utils.FixTo0x64String(creatorParam)
 		sqlSel = sqlSel.Where("topic1", creatorParam)

@@ -111,7 +111,7 @@ func ScheduledTask() {
 								}
 
 								var eventCount int
-								sqlSel := oo.NewSqler().Table(consts.TbNameEventHistorical).
+								sqlSel := oo.NewSqler().Table(consts.TbEventHistorical).
 									Where("chain_id", chainId).Where("transaction_hash", res.Result[i].TransactionHash).
 									Where("log_index", res.Result[i].LogIndex).Count()
 								err := oo.SqlGet(sqlSel, &eventCount)
@@ -194,7 +194,7 @@ func save(blockData []map[string]interface{}, currentBlockNum int64, chainId int
 	}()
 
 	if len(blockData) != 0 {
-		sqlIns := oo.NewSqler().Table(consts.TbNameEventHistorical).InsertBatch(blockData)
+		sqlIns := oo.NewSqler().Table(consts.TbEventHistorical).InsertBatch(blockData)
 		_, errTx = oo.SqlxTxExec(tx, sqlIns)
 		if errTx != nil {
 			oo.LogW("SQL err: %v", errTx)

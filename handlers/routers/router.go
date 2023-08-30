@@ -38,10 +38,10 @@ func Router() {
 	basePath = viper.GetString("app.base_path")
 	router := GinEngine.Group(path.Join(basePath))
 	{
-		r1 := router.Group("/img")
-		{
-			r1.POST("/upload", handlers.HttpUploadImg)
-		}
+		//r1 := router.Group("/img")
+		//{
+		//	r1.POST("/upload", handlers.HttpUploadImg)
+		//}
 		r2 := router.Group("/dao")
 		{
 			r2.GET("/list", handlers.HttpDaoList)
@@ -189,7 +189,7 @@ func Router() {
 
 		ai := router.Group("/ai")
 		{
-			ai.POST("", middlewares.JWTAuthForce(), handlers.Ai)
+			ai.POST("", handlers.Ai)
 		}
 	}
 

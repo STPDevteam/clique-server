@@ -6,7 +6,6 @@ import (
 	"github.com/spf13/viper"
 	"stp_dao_v2/config"
 	"stp_dao_v2/handlers/routers"
-	"stp_dao_v2/tasks"
 	"time"
 
 	oo "github.com/Anna2024/liboo"
@@ -51,11 +50,11 @@ func main() {
 
 	config.MyCache = cache.New(cache.NoExpiration, time.Duration(24)*time.Hour)
 
-	go tasks.ScheduledTask()
-	go tasks.UpdateDaoInfoTask()
-	go tasks.TokensImgTask()
-	go tasks.UpdateNotification()
-	go tasks.UpdateSBTStatus()
+	//go tasks.ScheduledTask()
+	//go tasks.UpdateDaoInfoTask()
+	//go tasks.TokensImgTask()
+	//go tasks.UpdateNotification()
+	//go tasks.UpdateSBTStatus()
 	//go tasks.UpdateAccountRecord()
 	//go tasks.DaoCountTask()
 	//go tasks.SwapTokenPrice()
